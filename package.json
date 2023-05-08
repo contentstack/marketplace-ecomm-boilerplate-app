@@ -1,0 +1,33 @@
+{
+  "name": "marketplace-ecomm-boilerplate-app",
+  "version": "1.0.0",
+  "description": "Contentstack SFCC Marketplace App",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contentstack-expert-services/marketplace-ecomm-boilerplate-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/contentstack-expert-services/marketplace-ecomm-boilerplate-app/issues"
+  },
+  "homepage": "https://github.com/contentstack-expert-services/marketplace-ecomm-boilerplate-app#readme",
+  "devDependencies": {
+    "husky": "^4.3.8",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "validate-branch-name": "^1.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx validate-branch-name && cd ui && rimraf build && npm run precommit && cd ../api && rimraf build && npm run precommit"
+    }
+  },
+  "validate-branch-name": {
+    "pattern": "^(feature|bugfix|hotfix)/ESI-[0-9]+-[a-z0-9-]{5,30}$",
+    "errorMsg": "Please add valid branch name!"
+  }
+}

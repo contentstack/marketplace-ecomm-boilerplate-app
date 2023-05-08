@@ -1,0 +1,160 @@
+.selector-page-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgb(34 34 34 / 10%);
+  //   border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+
+  .invalid-cred-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 790px;
+  }
+
+  .selector-page-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 57px;
+    padding-left: 20px;
+    border-bottom: 1px solid #edf1f7;
+
+    @media (min-height: 900px) {
+      height: 12vh;
+    }
+
+    .header {
+      font-family: Inter;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 150%;
+      color: #647696;
+    }
+
+    .avatar {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f7f9fc;
+      margin-right: 10px;
+      vertical-align: middle;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+      }
+    }
+  }
+
+  .selector-product-image {
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    > img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: fill;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+  }
+
+  .filterDropdown {
+    position: absolute;
+    top: 7.3vh;
+    right: 230px;
+    z-index: 999;
+    min-width: inherit;
+    max-width: inherit;
+
+    @media (min-height: 900px) {
+      top: 6.5vh;
+    }
+  }
+
+  .Table {
+    height: 79vh;
+    @media (min-height: 900px) {
+      height: 82vh;
+    }
+  }
+
+  .Table__body {
+    height: calc(100vh - 147px);
+    max-height: calc(100vh - 147px);
+    min-height: calc(100vh - 147px);
+    padding-bottom: 70px;
+
+    .Table__body__column {
+      .product-desc {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .TableActionPanel {
+    margin-top: 3.125rem;
+  }
+  .TablePanel {
+    display: flex;
+  }
+
+  .wrappper-svg {
+    width: 180px !important;
+
+    .Table_hoverActions {
+      color: #647696 !important;
+      .flex-v-center {
+        font-weight: 400 !important;
+      }
+
+      svg {
+        margin-right: 7px;
+      }
+    }
+
+    &:hover .Table_hoverActions {
+      color: black !important;
+    }
+  }
+
+  .EmptyStateWrapper {
+    height: 672px;
+    align-items: center;
+    .EmptyState {
+      svg {
+        width: 52px;
+        height: 52px;
+        margin-bottom: 20px;
+        path {
+          stroke: #edf1f7;
+        }
+      }
+    }
+  }
+
+  .buttonGroup {
+    position: sticky;
+    // bottom: 0;
+    // right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px;
+    height: 70px;
+
+    .Button {
+      margin: 0 0.5rem;
+    }
+  }
+}

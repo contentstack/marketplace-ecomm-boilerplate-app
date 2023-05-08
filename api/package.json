@@ -1,0 +1,31 @@
+{
+  "name": "marketplace-commerce-boilerplate-app-api",
+  "version": "1.0.0",
+  "description": "Contentstack Commerce Boilerplate Lambda Function",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "crypto-js": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^3.2.3"
+  },
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "jest",
+    "prettify": "prettier --write .",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './buid/'",
+    "precommit": "npm run prettify && npm run lint:fix"
+  },
+  "author": "Contentstack",
+  "license": "ISC",
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "express": "^4.17.1",
+    "jest": "^28.1.3",
+    "nodemon": "^2.0.14",
+    "prettier": "^2.5.1"
+  }
+}
