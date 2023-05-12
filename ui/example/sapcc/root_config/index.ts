@@ -1,18 +1,25 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ColumnsProp } from "@contentstack/venus-components/build/components/Table/InfiniteScrollTable";
+// eslint-disable-next-line import/no-cycle
+import { wrapWithDiv, getImage } from "../../../src/common/utils";
 import {
   TypeCategory,
   ConfigFields,
   KeyOption,
   TypeProduct,
   SidebarDataObj,
-} from "../../../types";
-import Logo from "../../../assets/Logo.svg";
+} from "../../../src/types";
+import Logo from "../assets/Logo.svg";
 
+/* all values in this file are an example.
+    You can modify its values and implementation,
+    but please do not change any keys or function names.
+
+*/
 const ecommerceEnv: any = {
-  REACT_APP_NAME: "sfcccommercecloud",
+  REACT_APP_NAME: "sapcommercecloud",
   SELECTOR_PAGE_LOGO: Logo,
-  APP_ENG_NAME: "SFCC Commerce Cloud",
+  APP_ENG_NAME: "SAP Commerce Cloud",
   UNIQUE_KEY: {
     product: "code",
     category: "id",
@@ -27,13 +34,13 @@ const ecommerceConfigFields: ConfigFields = {
   3. save the fields that are to be accessed in other location in config
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
   5. If values are stored in serverConfig then those values will not be available to other UI locations */
-
+  
   apiRouteField: {
     label: "API Route",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "/rest/v2/",
     instruction: "Copy and Paste your API Route",
-  },
+    },
   field1: {
     label: "API Base URL",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
@@ -54,29 +61,7 @@ const ecommerceConfigFields: ConfigFields = {
   },
 };
 
-// this function maps the corresponding keys to your product object
-const returnFormattedProduct = (product: any, config: any) =>
-  <TypeProduct>{
-    id: Number(product?.code) || "",
-    name: product?.name || "",
-    description: product?.description || "-",
-    image: product?.images?.[0]?.url ?
-      `https://${config?.base_url}${product?.images[0]?.url}`
-      : "",
-    price: product?.price?.formattedValue || "-",
-    sku: product?.sku || "",
-  };
-
-// this function maps the corresponding keys to your category object
-const returnFormattedCategory = (category: any) =>
-  <TypeCategory>{
-    id: category?.id || "",
-    name: category?.name || "-",
-    customUrl: "",
-    description: category?.description || "Not Available",
-  };
-
-  const getCustomKeys = () =>
+const getCustomKeys = () =>
   <KeyOption[]>[
     {
       label: "approvalStatus",
@@ -351,12 +336,31 @@ const returnFormattedCategory = (category: any) =>
       searchLabel: "volumePricesFlag",
     },
   ];
+// this function maps the corresponding keys to your product object
+const returnFormattedProduct = (product: any, config: any) =>
+  <TypeProduct>{
+    id: Number(product?.code) || "",
+    name: product?.name || "",
+    description: product?.description || "-",
+    image: product?.images?.[0]?.url ? `https://${config?.base_url}${product?.images[0]?.url}` : "",
+    price: product?.price?.formattedValue || "-",
+    sku: product?.sku || "",
+  };
+
+// this function maps the corresponding keys to your category object
+const returnFormattedCategory = (category: any) =>
+  <TypeCategory>{
+    id: category?.id || "",
+    name: category?.name || "-",
+    customUrl: "",
+    description: category?.description || "Not Available",
+  };
 
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getOpenerLink = (id: any, config: any, type: any) =>
-  "https://login.salesforce.com/?locale=in";
+  config?.backoffice_url;
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
@@ -384,60 +388,58 @@ const getSidebarData = (product: any) =>
 
 // this defines what and how will the columns will be displayed in your product selector page
 
-const getProductSelectorColumns =
-  // (config: any)
-  () =>
-    <ColumnsProp[]>[
-      {
-        Header: "ID", // the title of the column
-        id: "code",
-        accessor: "code", // specifies how you want to display data in the column. can be either string or a function
-        default: true,
-        disableSortBy: true, // disable sorting of the table with this column
-        addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
-        columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
-        // 0.x means smaller than one specified unit by 0.x times
-        // x means bigger that one specified unit by x times
-      },
-      {
-        Header: "Image",
-        id: "image",
-        // accessor: (obj: any) => obj?.images?.[0]?.url ?
-        //     getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
-        //   : getImage(obj?.images?.[0]?.url),
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 0.7,
-      },
-      {
-        Header: "Product Name",
-        id: "name",
-        // accessor: (obj: any) => wrapWithDiv(obj?.name),
-        default: true,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 3,
-      },
-      {
-        Header: "Price",
-        id: "price",
-        accessor: (obj: any) => obj?.price?.formattedValue,
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 1,
-      },
-      {
-        Header: "Description",
-        id: "description",
-        // accessor: (obj: any) => wrapWithDiv(obj?.description),
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 2.7,
-      },
-    ];
+const getProductSelectorColumns = (config: any) => 
+ <ColumnsProp[]>[
+    {
+      Header: "ID", // the title of the column
+      id: "code",
+      accessor: "code", // specifies how you want to display data in the column. can be either string or a function
+      default: true,
+      disableSortBy: true, // disable sorting of the table with this column
+      addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
+      columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
+      // 0.x means smaller than one specified unit by 0.x times
+      // x means bigger that one specified unit by x times
+    },
+    {
+      Header: "Image",
+      id: "image",
+      accessor: (obj: any) => obj?.images?.[0]?.url ? 
+          getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
+        : getImage(obj?.images?.[0]?.url),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.7,
+    },
+    {
+      Header: "Product Name",
+      id: "name",
+      accessor: (obj: any) => wrapWithDiv(obj?.name),
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 3,
+    },
+    {
+      Header: "Price",
+      id: "price",
+      accessor: (obj: any) => obj?.price?.formattedValue,
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1,
+    },
+    {
+      Header: "Description",
+      id: 'description',
+      accessor: (obj: any) => wrapWithDiv(obj?.description),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 2.7,
+    },
+  ];
 
 // this defines what and how will the columns will be displayed in your category selector page
 const categorySelectorColumns: ColumnsProp[] = [
@@ -453,7 +455,7 @@ const categorySelectorColumns: ColumnsProp[] = [
   {
     Header: "Category Name",
     id: "name",
-    accessor: (obj: any) => obj?.name || "-",
+    accessor: (obj:any) => obj?.name || '-', 
     default: false,
     disableSortBy: true,
     addToColumnSelector: true,
