@@ -175,17 +175,6 @@ Note : You can give any path values but make sure the path value in `<APP_DIRECT
 
 ## Create Build
 
-To create build for dev,stag and production environments, we have added build.sh file at the location `<APP_DIRECTORY>/build.sh`
-
-Command to run the build script is 
-```
-bash build.sh <uiUrl>
-```
-
-This command takes one argument, which is the UI URL of the app. We are taking this argument to rename the app URL as per the environment in the .env files of ui and ui/rte. 
-After the execution of the build script, the build folder will get created inside the ui folder. Inside that build folder, there will be a dist folder which has the webpack output files for RTE location. Other folders and files from the build folder will be for Configuration and Custom Field locations. 
-
-If you don’t want to use build script, then use below command 
 * To create build for ui, navigate to ui
 ```
 cd <APP_DIRECTORY>/ui 
