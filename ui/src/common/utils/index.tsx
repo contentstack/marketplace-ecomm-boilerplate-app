@@ -71,6 +71,7 @@ const wrapWithDiv = (description: string) =>
   description ? (
     <div
       className="product-desc"
+      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: removeHTMLTags(description) }}
     />
   ) : (
@@ -133,14 +134,12 @@ const getTypeLabel = (type: string, length: number) => {
 const EmptyObjForSearchCase: any = {
   heading: <h4 style={{ color: "#222222" }}>No matching results found!</h4>,
   description: (
-    <p>
-      Try changing the search query or filters to find what you are looking for.
-    </p>
+    <p>{localeTexts.selectorPage.searchQuery}</p>
   ),
   actions: (
     <div>
       <p>
-        Not sure where to start? Visit our{" "}
+      {localeTexts.selectorPage.searchCase}
         <Link
           fontColor="link"
           fontSize="medium"
@@ -151,7 +150,7 @@ const EmptyObjForSearchCase: any = {
           testId="cs-link"
           underline={false}
         >
-          help center
+          {localeTexts.selectorPage.helpCenter}
         </Link>
       </p>
     </div>

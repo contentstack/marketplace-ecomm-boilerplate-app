@@ -23,7 +23,7 @@ const ecommerceEnv: EcommerceEnv = {
 }
 // example config fields. you will need to use these values in the config screen accordingly.
 const ecommerceConfigFields: ConfigFields = {
-    field1: {
+    ConfigInfo: {
         label: "Store ID",
         help: "You can find your store's ID on your ECommerce Console",
         placeholder: "Enter your Store ID",
@@ -406,11 +406,7 @@ const returnFormattedCategory = (category: any) => <TypeCategory>({
     description: category?.description || "Not Available",
 })
 
-// this function returns the link to open the product or category in the third party app
-// you can use the id, config and type to generate links
-const getOpenerLink = (id: any, config: any, type: any) =>
-    `https://store-${config?.storeId}.myexamplecommerce.com/manage/products/${type === "category" ? `categories/${id}/edit` : `edit/${id}`
-    }`;
+
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
@@ -431,6 +427,12 @@ const getSidebarData = (product: any) => <SidebarDataObj[]>
             value: product?.width
         },
     ])
+
+// this function returns the link to open the product or category in the third party app
+// you can use the id, config and type to generate links
+const getOpenerLink = (id: any, config: any, type: any) =>
+`https://store-${config?.storeId}.myexamplecommerce.com/manage/products/${type === "category" ? `categories/${id}/edit` : `edit/${id}`
+}`;
 
 // this defines what and how will the columns will be displayed in your product selector page
 const productSelectorColumns: ColumnsProp[] = [

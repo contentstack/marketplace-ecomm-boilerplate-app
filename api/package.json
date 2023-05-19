@@ -1,7 +1,7 @@
 {
-  "name": "marketplace-commerce-boilerplate-app-api",
+  "name": "marketplace-ecommerce-boilerplate-app-api",
   "version": "1.0.0",
-  "description": "Contentstack Commerce Boilerplate Lambda Function",
+  "description": "API Function of Contentstack Ecommerce Boilerplate Marketplace App",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.24.0",

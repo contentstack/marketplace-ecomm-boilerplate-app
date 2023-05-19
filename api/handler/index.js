@@ -18,7 +18,7 @@ const _getApiOptions = ({ page, limit, query, searchParam, id }, key) => {
         if (id) url += `/${id}?`;
         else url += `?page=${page}&limit=${limit}&`;
     }
-    if (query === "product") url += root_config.PRODUCT_URL_PARAMS;
+    if (query === "product" && root_config.PRODUCT_URL_PARAMS) url += root_config.PRODUCT_URL_PARAMS;
     return { url, method: "GET", headers: _getHeaders(key?.auth_token) };
 };
 

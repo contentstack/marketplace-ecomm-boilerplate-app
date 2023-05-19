@@ -1,5 +1,5 @@
 module.exports = {
-    API_BASE_URL: "https://$.api.commercecloud.salesforce.com", // add the url of your commerce app api
+    API_BASE_URL: "https://$.api.commercecloud.salesforce.com", // this api baseUrl is used in handler/index.js. Please replace the $ with the params?.shortcode value from config in handler
     URI_ENDPOINTS: {
       product: "products",
       category: "categories",

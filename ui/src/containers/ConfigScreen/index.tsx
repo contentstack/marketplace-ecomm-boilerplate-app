@@ -167,7 +167,7 @@ const ConfigScreen: React.FC = function () {
     // if (fieldName === "auth_token") updatedServerConfig[fieldName] = fieldValue;
     updatedConfig[fieldName] = fieldValue;
 
-    delete state.installationData.uiLocations;
+    delete state?.installationData?.uiLocations;
 
     const newConfiguration = Object.entries(updatedConfig)?.reduce(
       (obj: any, [key, value]) => {
@@ -221,21 +221,21 @@ const ConfigScreen: React.FC = function () {
             <FieldLabel required htmlFor="store_id">
               {" "}
               {/* Change the label caption as per your requirement */}
-              {rootConfig.ecommerceConfigFields.field1.label}
+              {rootConfig.ecommerceConfigFields.ConfigInfo.label}
             </FieldLabel>
             {/* Change the help caption as per your requirement */}
-              <Help text={rootConfig.ecommerceConfigFields.field1.help} />
+              <Help text={rootConfig.ecommerceConfigFields.ConfigInfo.help} />
             </div>
             <TextInput
               required
               value={state?.installationData?.configuration?.store_id}
-              placeholder={rootConfig.ecommerceConfigFields.field1.placeholder}
+              placeholder={rootConfig.ecommerceConfigFields.ConfigInfo.placeholder}
               name="store_id"
               data-testid="store_id-input"
               onChange={updateConfig}
             />
             <InstructionText>
-              {rootConfig.ecommerceConfigFields.field1.instruction}
+              {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
             </InstructionText>
           </Field>
 

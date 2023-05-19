@@ -9,6 +9,7 @@ import {
 } from "../../../src/types";
 import Logo from "../../../assets/Logo.svg";
 
+// Please refer the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
   REACT_APP_NAME: "sfcccommercecloud", // add your app name in lower case
   SELECTOR_PAGE_LOGO: Logo,
@@ -23,10 +24,9 @@ const ecommerceEnv: any = {
 const ecommerceConfigFields: ConfigFields = {
 /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
-  2. serverConfig is used when webhooks are implemented
-  3. save the fields that are to be accessed in other location in config
-  4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
-  5. If values are stored in serverConfig then those values will not be available to other UI locations */
+  2. serverConfig is used when webhooks are implemented and those values can only be fetched in the request of webhooks. It will not be given to any of the UI locations in the app other than config page
+  3. The fields that needs to be accessed in all UI locations must be saved in config (not in serverConfig)
+  4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack */
 
   apiRouteField: {
     label: "API Route",
@@ -34,7 +34,7 @@ const ecommerceConfigFields: ConfigFields = {
     placeholder: "/rest/v2/",
     instruction: "Copy and Paste your API Route",
   },
-  field1: {
+  ConfigInfo: {
     label: "API Base URL",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "Enter your API Base URL",

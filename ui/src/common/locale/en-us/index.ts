@@ -17,6 +17,7 @@ export default {
     }
   },
   customField: {
+    add : "Add ",
     noItems: "No $ have been Added",
     listViewTable:{
       nameCol: "Product Name",
@@ -42,6 +43,9 @@ export default {
   },
   selectorPage: {
     heading: "$ Extension",
+    searchQuery : "Try changing the search query or filters to find what you are looking for.",
+    searchCase : "Not sure where to start? Visit our ",
+    helpCenter : "help center",
     selectCategory: {
       placeHolder: "Select Category",
     },

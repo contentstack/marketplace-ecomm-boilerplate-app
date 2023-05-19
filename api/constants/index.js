@@ -11,7 +11,7 @@ module.exports = {
     QUERY_MISSING: "Query string parameters are missing.",
     SOMETHING_WENT_WRONG: "Something went wrong, please try again later.",
     API_ERROR: "Error while making API call.",
-    BAD_REQ: "Bad Request"
+    BAD_REQ: "Bad Request",
   },
   HTTP_RESPONSE_HEADERS: {
     "Access-Control-Allow-Origin": "*",
@@ -19,13 +19,6 @@ module.exports = {
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Expose-Headers": "authToken",
   },
-  WEBHOOK_EVENTS: {
-    INSTALL: "install",
-    UNINSTALL: "uninstall",
-    UPDATE: "update",
-  },
-  CS_MODULE_APP: "app_installation",
-  APP_INSTALLED: "The app has been installed successfully.",
   LOGS: {
     QUERY_PARAMS: "Request's query-string params are: ",
     REQ_BODY: "Request's body: ",
