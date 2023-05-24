@@ -31,7 +31,7 @@
     "test": "jest",
     "eject": "react-app-rewired eject",
     "prettify": "prettier --write .",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './buid/' --ignore-pattern '.eslintrc.js'",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/' --ignore-pattern '.eslintrc.js'",
     "precommit": "npm run prettify && npm run lint:fix"
   },
   "eslintConfig": {

@@ -13,7 +13,7 @@
     "dev": "nodemon server.js",
     "test": "jest",
     "prettify": "prettier --write .",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './buid/'",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/'",
     "precommit": "npm run prettify && npm run lint:fix"
   },
   "author": "Contentstack",

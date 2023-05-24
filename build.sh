@@ -7,12 +7,9 @@ set -e
 rm -rf to-deploy
 mkdir to-deploy
 
-
 #API Build
 cd api
 rm -rf node_modules
-npm install
-# npm run test
 npm install --only=prod
 zip -r api.zip * -x jest* package*.json server.js
 mv api.zip ../to-deploy
@@ -23,7 +20,6 @@ cd ui
 rm -rf build
 rm -rf node_modules
 npm install
-# npm run test
 npm run precommit
 npm run build
 zip -r ui.zip build/
