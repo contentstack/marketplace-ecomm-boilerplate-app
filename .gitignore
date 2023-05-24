@@ -1,0 +1,34 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+/api/node_modules
+/ui/node_modules
+/ui/.npmrc
+/ui/coverage
+
+# production
+/api/build
+/ui/build
+/ui/src/config.js
+/to-deploy
+
+# misc
+.DS_Store
+/api/.DS_Store
+/ui/.DS_Store
+/**/**/npm-debug.log*
+/**/**/yarn-debug.log*
+/**/**/yarn-error.log*
+
+.vercel
+.eslintcache
+
+.env
+.npmrc
+.dccache
+api/.env
+ui/.env
+ui/.npmrc
+coverage/
+/api/server.js

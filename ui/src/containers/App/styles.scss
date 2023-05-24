@@ -1,0 +1,17 @@
+.app {
+  display: flex;
+  .layout-container {
+    width: 100%;
+    display: flex;
+    min-height: fit-content;
+    .page-wrapper {
+      display: flex;
+      flex-direction: row;
+      margin-top: 40px;
+    }
+  }
+}
+
+.Info {
+  margin: 40px 20px 10px 20px !important;
+}
