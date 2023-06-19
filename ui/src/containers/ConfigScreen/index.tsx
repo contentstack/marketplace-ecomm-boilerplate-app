@@ -63,49 +63,6 @@ const ConfigScreen: React.FC = function () {
   const { keySize }: any = localeTexts.Decryption;
   const password = `password#123`;
 
-  const encryptData = (msg: any, pass: any) => {
-    const salt = CryptoJS?.lib?.WordArray?.random(128 / 8);
-    const key = CryptoJS?.PBKDF2(pass, salt, {
-      keySize: keySize / 32,
-      iterations,
-    });
-
-    const iv = CryptoJS?.lib?.WordArray?.random(128 / 8);
-
-    const encrypted = CryptoJS?.AES?.encrypt(msg, key, {
-      iv,
-      padding: CryptoJS?.pad?.Pkcs7,
-      mode: CryptoJS?.mode?.CBC,
-    });
-
-    // salt, iv will be hex 32 in length
-    // append them to the ciphertext for use  in decryption
-    const transitmessage =
-      salt?.toString() + iv?.toString() + encrypted?.toString();
-    return transitmessage;
-  };
-
-  const decryptData = (transitmessage: any, pass: any, flag: string) => {
-    const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
-    const iv = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(32, 32));
-    const encrypted = transitmessage?.substring(64);
-
-    const key = CryptoJS?.PBKDF2(pass, salt, {
-      keySize: keySize / 32,
-      iterations,
-    });
-
-    const decrypted = CryptoJS?.AES?.decrypt(encrypted, key, {
-      iv,
-      padding: CryptoJS?.pad?.Pkcs7,
-      mode: CryptoJS?.mode?.CBC,
-    });
-    if (flag === "checkIfAlreadyDecrypted") {
-      return !!decrypted?.toString(CryptoJS?.enc?.Utf8);
-    }
-    return decrypted?.toString(CryptoJS?.enc?.Utf8);
-  };
-
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
@@ -154,6 +111,56 @@ const ConfigScreen: React.FC = function () {
       });
   }, []);
 
+  useEffect(() => {
+    const e: any = {};
+    e.target = { name: "is_custom_json", value: isCustom };
+    updateConfig(e);
+  }, [isCustom]);
+
+
+  const encryptData = (msg: any, pass: any) => {
+    const salt = CryptoJS?.lib?.WordArray?.random(128 / 8);
+    const key = CryptoJS?.PBKDF2(pass, salt, {
+      keySize: keySize / 32,
+      iterations,
+    });
+
+    const iv = CryptoJS?.lib?.WordArray?.random(128 / 8);
+
+    const encrypted = CryptoJS?.AES?.encrypt(msg, key, {
+      iv,
+      padding: CryptoJS?.pad?.Pkcs7,
+      mode: CryptoJS?.mode?.CBC,
+    });
+
+    // salt, iv will be hex 32 in length
+    // append them to the ciphertext for use  in decryption
+    const transitmessage =
+      salt?.toString() + iv?.toString() + encrypted?.toString();
+    return transitmessage;
+  };
+
+  const decryptData = (transitmessage: any, pass: any, flag: string) => {
+    const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
+    const iv = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(32, 32));
+    const encrypted = transitmessage?.substring(64);
+
+    const key = CryptoJS?.PBKDF2(pass, salt, {
+      keySize: keySize / 32,
+      iterations,
+    });
+
+    const decrypted = CryptoJS?.AES?.decrypt(encrypted, key, {
+      iv,
+      padding: CryptoJS?.pad?.Pkcs7,
+      mode: CryptoJS?.mode?.CBC,
+    });
+    if (flag === "checkIfAlreadyDecrypted") {
+      return !!decrypted?.toString(CryptoJS?.enc?.Utf8);
+    }
+    return decrypted?.toString(CryptoJS?.enc?.Utf8);
+  };
+
   /** updateConfig - Function where you should update the state variable
    * Call this function whenever any field value is changed in the DOM
    * */
@@ -162,9 +169,6 @@ const ConfigScreen: React.FC = function () {
     let { name: fieldName, value: fieldValue } = e.target;
     if (typeof fieldValue === "string") fieldValue = fieldValue.trim();
     const updatedConfig = state?.installationData?.configuration || {};
-    // const updatedServerConfig = state?.installationData?.serverConfiguration;
-
-    // if (fieldName === "auth_token") updatedServerConfig[fieldName] = fieldValue;
     updatedConfig[fieldName] = fieldValue;
 
     delete state?.installationData?.uiLocations;
@@ -199,18 +203,12 @@ const ConfigScreen: React.FC = function () {
     setCustomKeys(list);
     const e: any = {};
     e.target = { name: "custom_keys", value: list };
-    updateConfig(e);
+    await updateConfig(e);
   };
 
   const updateCustomJSON = (e: any) => {
     setIsCustom(e?.target?.id !== "wholeJSON");
   };
-
-  useEffect(() => {
-    const e: any = {};
-    e.target = { name: "is_custom_json", value: isCustom };
-    updateConfig(e);
-  }, [isCustom]);
 
   return (
     <div className="layout-container">
@@ -235,7 +233,7 @@ const ConfigScreen: React.FC = function () {
               onChange={updateConfig}
             />
             <InstructionText>
-              {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
+            {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
             </InstructionText>
           </Field>
 

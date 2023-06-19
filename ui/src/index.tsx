@@ -4,14 +4,18 @@ import ReactDOM from "react-dom";
 /* Import other node modules */
 import reportWebVitals from "./reportWebVitals";
 /* Import our modules */
-import App from "./containers/App";
+import App from "./containers/App/index1";
 /* Import node module CSS */
 /* Import our CSS */
 import "./index.css";
+// eslint-disable-next-line import/order
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

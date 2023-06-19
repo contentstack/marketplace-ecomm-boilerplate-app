@@ -74,34 +74,4 @@ const ProductDescription: React.FC<Props> = function ({ product }) {
   );
 };
 
-// "name": Name
-
-// "type": Type
-
-// "sku": "SLCTBS",
-
-// "description": Description
-
-// "weight": Weight
-
-// Dimensions: (should show data as 5inx2inx3in ([width]x[depth]x[height]) and should include units (in / mm / etc)
-
-// "price": Price (should show currency as well)
-
-// "sale_price": Sale Price
-
-// "categories": Categories (should have names, not just IDs)
-
-// "brand_id": Brand
-
-// "inventory_level": Inventory
-
-// "reviews_rating_sum": Rating
-
-// "total_sold": Number Sold
-
-// "is_featured": Featured
-
-// "view_count": Views
-
 export default ProductDescription;

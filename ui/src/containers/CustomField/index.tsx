@@ -1,6 +1,6 @@
 /* eslint-disable */
 /* Import React modules */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 /* Import other node modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
@@ -51,19 +51,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
     location: {},
     appSdkInitialized: false,
   });
-
-  const fetchData = async (selectedIdsArray: any) => {
-    if (
-      Array.isArray(selectedIdsArray) &&
-      selectedIdsArray.length &&
-      !isInvalidCredentials.error
-    ) {
-      const res = await getSelectedIDs(state.config, type, selectedIdsArray);
-      if (res?.error) {
-        setIsInvalidCredentials(res);
-      } else setSelectedItems(arrangeList(selectedIdsArray, res?.data?.items));
-    }
-  };
 
   useEffect(() => {
     window.addEventListener("beforeunload", () => {
@@ -151,6 +138,19 @@ const CustomField: React.FC<Props> = function ({ type }) {
     }
     setLoading(false);
   }, [selectedItems]);
+
+  const fetchData = async (selectedIdsArray: any) => {
+    if (
+      Array.isArray(selectedIdsArray) &&
+      selectedIdsArray.length &&
+      !isInvalidCredentials.error
+    ) {
+      const res = await getSelectedIDs(state.config, type, selectedIdsArray);
+      if (res?.error) {
+        setIsInvalidCredentials(res);
+      } else setSelectedItems(arrangeList(selectedIdsArray, res?.data?.items));
+    }
+  };
 
   const handleMessage = (event: any) => {
     const { data } = event;
@@ -280,7 +280,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
             buttonType="control"
             disabled={isInvalidCredentials.error || loading}
             // isLoading={loading}
-          >{`localeTexts.customField.add ${
+          >{`Add ${
             type === "category"
               ? localeTexts.customField.buttonText.category
               : localeTexts.customField.buttonText.product

@@ -38,6 +38,7 @@ const SidebarWidget: React.FC = function () {
   const [selectedDropdownProduct, setselectedDropdownProduct] =
     useState<any>("");
   const [selectedField, setSelectedField] = useState("");
+
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
@@ -55,6 +56,7 @@ const SidebarWidget: React.FC = function () {
         console.error("appSdk initialization error", error);
       });
   }, []);
+  
   useEffect(() => {
     if (!state.appSdkInitialized) return;
     setIsInvalidCredentials({
@@ -62,24 +64,6 @@ const SidebarWidget: React.FC = function () {
       data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
     });
   }, [state.config]);
-
-  const fetchSelectedIdData = async (id: any) => {
-    const product = await getSelectedIDs(state?.config, "product", [id]);
-    if (product?.error) {
-      setIsInvalidCredentials(product);
-    } else return product?.data?.items[0];
-
-    return null;
-  };
-
-  const getCurrentFieldData = async (field: any) => {
-    if (!state.appSdkInitialized) return;
-    if (entryData[field.value]?.data?.length) {
-      setProductList(entryData[field.value].data);
-    } else {
-      setProductList([]);
-    }
-  };
 
   useEffect(() => {
     if (!state.appSdkInitialized) return;
@@ -92,8 +76,10 @@ const SidebarWidget: React.FC = function () {
     );
   }, [entryData, state.appSdkInitialized]);
 
+
   useEffect(() => {
     if (fieldList?.length) setSelectedField(fieldList[0]);
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     getCurrentFieldData(fieldList[0]);
   }, [fieldList]);
 
@@ -117,8 +103,10 @@ const SidebarWidget: React.FC = function () {
     }
   }, [productDropdown]);
 
+
   useEffect(() => {
     const setInitialProductDropdown = async () => {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const selectProduct = await fetchSelectedIdData(
         selectedDropdownProduct.value
       );
@@ -136,6 +124,25 @@ const SidebarWidget: React.FC = function () {
   useEffect(() => {
     if (selectedProduct !== "") setProductLoading(false);
   }, [selectedProduct]);
+
+  const getCurrentFieldData = async (field: any) => {
+    if (!state.appSdkInitialized) return;
+    if (entryData[field.value]?.data?.length) {
+      setProductList(entryData[field.value].data);
+    } else {
+      setProductList([]);
+    }
+  };
+
+    const fetchSelectedIdData = async (id: any) => {
+    const product = await getSelectedIDs(state?.config, "product", [id]);
+    if (product?.error) {
+      setIsInvalidCredentials(product);
+    } else return product?.data?.items[0];
+
+    return null;
+  };
+
 
   const handleDropDownChange = async (event: any) => {
     getCurrentFieldData(event);

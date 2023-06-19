@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from "react"
 
 type uniqueKeyOptions = {
