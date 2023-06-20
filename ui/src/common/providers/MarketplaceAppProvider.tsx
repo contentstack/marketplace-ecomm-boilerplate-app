@@ -4,7 +4,7 @@ import ContentstackAppSDK from "@contentstack/app-sdk";
 import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
 import { KeyValueObj } from "../types/type";
-import AppFailed from "../../components/AppFailed";
+// import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 
 
@@ -41,9 +41,9 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
     return <div>Loading...</div>;
   }
 
-  if (failed) {
-    return <AppFailed />;
-  }
+  // if (failed) {
+  //   return <AppFailed />;
+  // }
 
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
