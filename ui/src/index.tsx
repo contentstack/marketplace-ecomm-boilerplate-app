@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 /* Import other node modules */
 import reportWebVitals from "./reportWebVitals";
 /* Import our modules */
-import App from "./containers/App/index1";
+import App from "./containers/App";
 /* Import node module CSS */
 /* Import our CSS */
 import "./index.css";
