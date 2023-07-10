@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
 import { KeyValueObj } from "../types/type";
-// import AppFailed from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 
 
@@ -20,10 +18,10 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   // Initialize the SDK and track analytics event
   useEffect(() => {
     ContentstackAppSDK.init()
-      .then(async (appSdk) => {
-        setAppSdk(appSdk);
-        const appConfig = await appSdk.getConfig();
-        setConfig(appConfig);
+      .then(async (appSdkinit) => {
+        setAppSdk(appSdkinit);
+        const appConfiguration = await appSdkinit.getConfig();
+        setConfig(appConfiguration);
         setFailed(false)
       })
       .catch(() => {
