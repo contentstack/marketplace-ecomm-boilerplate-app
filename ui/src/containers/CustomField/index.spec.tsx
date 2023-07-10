@@ -12,29 +12,9 @@ const customFieldUIElementsIDs = [
     "addProduct-btn",
 ];
 
-// const postMessageData = [
-//     1,
-//     2,
-//     3
-// ];
-
 beforeEach(() => {
     const setStateMock = React.useState;
     const useStateMock: any = (useState: any) => [useState, setStateMock];
-    // const testName = expect.getState().currentTestName;
-    // if (testName.includes("*")) {
-    //     jest
-    //         .spyOn(React, "useState")
-    //         .mockImplementationOnce(() =>
-    //             useStateMock({
-    //                 config: {},
-    //                 location: {},
-    //                 appSdkInitialized: true,
-    //             })
-    //         )
-    //         .mockImplementationOnce(() => useStateMock(postMessageData));
-    // } else {
-
         jest.spyOn(React, "useState").mockImplementationOnce(() =>
             useStateMock({
                 config: {},
@@ -60,10 +40,8 @@ describe(`UI Elements of customField without Products`, () => {
       expect(addBtn).toHaveTextContent(`Add Product(s)`);
       fireEvent.click(addBtn);
       expect(window.open).toHaveBeenCalled();
-    });
-  
+    });  
   });
 
-  
   afterEach(cleanup);
   

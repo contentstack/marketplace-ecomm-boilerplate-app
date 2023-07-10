@@ -7,13 +7,12 @@ const ProductCustomFieldExtensionProvider: React.FC = function ({ children }: an
   const [productCustomField, setProductCustomField] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
-  console.info()
   useEffect(() => {
     (async () => {
       // check if the data was loaded earlier or not
       if (isEmpty(productCustomField)) {
         setLoading(true);
-        const fieldData = await location.field.getData();
+        const fieldData = await location?.field?.getData();
         setProductCustomField(fieldData);
         setLoading(false);
       }
@@ -23,7 +22,7 @@ const ProductCustomFieldExtensionProvider: React.FC = function ({ children }: an
   const setFieldData = useCallback(
     async (data: unknown) => {
       setLoading(true);
-      await location.field.setData(data);
+      await location?.field?.setData(data);
       setProductCustomField(data);
       setLoading(false);
     },

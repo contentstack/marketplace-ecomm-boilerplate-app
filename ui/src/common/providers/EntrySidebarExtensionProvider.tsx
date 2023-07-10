@@ -12,15 +12,11 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any){
     (async () => {
       if (!isEmpty(entryData) || isNull(location)) return;
       setLoading(true);
-      const entry: { [key: string]: any } = await location.entry.getData();
+      const entry: { [key: string]: any } = await location?.entry?.getData();
       setEntry(entry);
       setLoading(false);
     })();
   }, [entryData, location, setLoading, setEntry]);
-
-  // const installInfo = useMemo(() => ({
-  //   entryData, loading 
-  // }), [  entryData, loading ]);
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values

@@ -9,7 +9,6 @@ import { ProductCustomFieldExtensionContext, ProductCustomFieldExtensionContextT
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useProductCustomField = () => {
-  console.info("INSIDE CUSTOM HOOK")
   const { productCustomField, setFieldData, loading } = useContext(
     ProductCustomFieldExtensionContext
   ) as ProductCustomFieldExtensionContextType;

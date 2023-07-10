@@ -127,8 +127,8 @@ const SidebarWidget: React.FC = function () {
 
   const getCurrentFieldData = async (field: any) => {
     if (!state.appSdkInitialized) return;
-    if (entryData[field.value]?.data?.length) {
-      setProductList(entryData[field.value].data);
+    if (entryData?.[field?.value]?.data?.length) {
+      setProductList(entryData?.[field?.value].data);
     } else {
       setProductList([]);
     }
@@ -138,7 +138,7 @@ const SidebarWidget: React.FC = function () {
     const product = await getSelectedIDs(state?.config, "product", [id]);
     if (product?.error) {
       setIsInvalidCredentials(product);
-    } else return product?.data?.items[0];
+    } else return product?.data?.items?.[0];
 
     return null;
   };

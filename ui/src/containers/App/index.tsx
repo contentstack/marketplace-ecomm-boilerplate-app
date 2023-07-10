@@ -13,8 +13,6 @@ import "@contentstack/venus-components/build/main.css";
 import "./styles.scss";
 import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
 
-// import SelectorPage from "../SelectorPage";
-
 
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
