@@ -168,7 +168,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
             type,
             stackApiKey,
           },
-          "*"
+          window.location.origin
         );
       } else if (data.message === "add") {
         setSelectedIds(data.dataIds);
@@ -210,7 +210,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
           tileRadius={10}
         />
       );
-    } if (selectedItems?.length) {
+    } 
+    if (selectedItems?.length) {
       return (
         <div className="extension-content">
           <div className="box-header">

@@ -17,6 +17,7 @@ export default {
     }
   },
   customField: {
+    idLbl: "ID",
     add : "Add ",
     noItems: "No $ have been Added",
     listViewTable:{
@@ -56,6 +57,7 @@ export default {
   },
   selectorPage: {
     heading: "$ Extension",
+    noImageAvailable: "Product image not available",
     searchQuery : "Try changing the search query or filters to find what you are looking for.",
     searchCase : "Not sure where to start? Visit our ",
     helpCenter : "help center",
@@ -81,6 +83,10 @@ export default {
     close: "Close"
   },
   sidebarWidget: {
+    dropdownLabels: {
+      products: "Products",
+      fields: "Fields",
+    },
     altTexts:{
         product: "Product"
     },

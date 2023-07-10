@@ -51,9 +51,9 @@ const SelectorPage: React.FC = function () {
       const { opener: windowOpener } = window;
       if (windowOpener) {
         window.addEventListener("message", handleMessage, false);
-        windowOpener.postMessage("openedReady", "*");
+        windowOpener.postMessage("openedReady", window.location.origin);
         window.addEventListener("beforeunload", () => {
-          windowOpener.postMessage({ message: "close" }, "*");
+          windowOpener.postMessage({ message: "close" }, window.location.origin);
         });
       }
     }, []);
@@ -245,7 +245,7 @@ const SelectorPage: React.FC = function () {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
     if (window.opener) {
-      window.opener.postMessage({ message: "add", dataArr, dataIds }, "*");
+      window.opener.postMessage({ message: "add", dataArr, dataIds }, window.location.origin);
       window.close();
     }
   };
@@ -302,7 +302,7 @@ const SelectorPage: React.FC = function () {
           fetchTableData={fetchData}
           totalCounts={totalCounts}
           loadMoreItems={loadMoreItems}
-          minBatchSizeToFetch={rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20}
+          minBatchSizeToFetch={config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE}
           name={
             config?.type === "category"
               ? {

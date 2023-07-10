@@ -27,6 +27,7 @@ const conditionalRenderUIElements = [
 
 let configScreenRenderedDOM: any = null;
 beforeAll(async () => {
+    // eslint-disable-next-line react/react-in-jsx-scope
     configScreenRenderedDOM = render(<ConfigScreen />)
 })
 
