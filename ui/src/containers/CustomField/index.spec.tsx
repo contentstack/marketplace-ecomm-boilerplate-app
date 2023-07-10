@@ -22,9 +22,6 @@ beforeEach(() => {
                 appSdkInitialized: true,
             })
         );
-    // }
-
-
     render(<ProductsField />);
 });
 
