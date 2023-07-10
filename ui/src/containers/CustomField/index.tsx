@@ -1,6 +1,5 @@
-/* eslint-disable */
 /* Import React modules */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 /* Import other node modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
@@ -62,6 +61,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
+        // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
         const { api_key } = appSdk?.stack?._data;
         setStackApiKey(api_key);
 
@@ -95,6 +95,19 @@ const CustomField: React.FC<Props> = function ({ type }) {
     if (!state.appSdkInitialized) return;
     setSelectedIds(entryIds);
   }, [state.appSdkInitialized, entryIds]);
+
+  const fetchData = async (selectedIdsArray: any) => {
+    if (
+      Array.isArray(selectedIdsArray) &&
+      selectedIdsArray.length &&
+      !isInvalidCredentials.error
+    ) {
+      const res = await getSelectedIDs(state.config, type, selectedIdsArray);
+      if (res?.error) {
+        setIsInvalidCredentials(res);
+      } else setSelectedItems(arrangeList(selectedIdsArray, res?.data?.items));
+    }
+  };
 
   useEffect(() => {
     if (selectedIds.length) fetchData(selectedIds);
@@ -138,19 +151,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
     }
     setLoading(false);
   }, [selectedItems]);
-
-  const fetchData = async (selectedIdsArray: any) => {
-    if (
-      Array.isArray(selectedIdsArray) &&
-      selectedIdsArray.length &&
-      !isInvalidCredentials.error
-    ) {
-      const res = await getSelectedIDs(state.config, type, selectedIdsArray);
-      if (res?.error) {
-        setIsInvalidCredentials(res);
-      } else setSelectedItems(arrangeList(selectedIdsArray, res?.data?.items));
-    }
-  };
 
   const handleMessage = (event: any) => {
     const { data } = event;
@@ -210,7 +210,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
           tileRadius={10}
         />
       );
-    } else if (selectedItems?.length) {
+    } if (selectedItems?.length) {
       return (
         <div className="extension-content">
           <div className="box-header">
@@ -236,8 +236,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
                   <Tooltip content={localeTexts.customField.toolTip.content} position="top">
                     <Icon
                       icon={
-                        view.value === "card"
-                          ? localeTexts.customField.toolTip.thumbnail
+                        view.value === "card" ? localeTexts.customField.toolTip.thumbnail
                           : localeTexts.customField.toolTip.list
                       }
                       size="original"
@@ -281,8 +280,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
             disabled={isInvalidCredentials.error || loading}
             // isLoading={loading}
           >{`Add ${
-            type === "category"
-              ? localeTexts.customField.buttonText.category
+            type === "category" ? localeTexts.customField.buttonText.category
               : localeTexts.customField.buttonText.product
           }`}</Button>
         </div>
