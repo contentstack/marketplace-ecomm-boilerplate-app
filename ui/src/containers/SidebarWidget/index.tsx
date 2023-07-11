@@ -103,7 +103,7 @@ const SidebarWidget: React.FC = function () {
     const tempFieldList: any[] =
       (
         Object.keys(entryData)?.filter(
-          (i: any) => entryData?.[i]?.type === "sfcc_product"
+          (i: any) => entryData?.[i]?.type === "yourappname_product"
         ) || []
       )?.map((i: any) => ({ label: i?.replace(/_/g, " "), value: i })) || [];
 
