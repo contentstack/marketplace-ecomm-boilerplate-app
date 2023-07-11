@@ -28,6 +28,8 @@ interface ConfigInfo {
     help?: string,
     placeholder?: string,
     instruction: string
+    name: string
+    isSensitive?: boolean
 }
 
 export interface ConfigFields {

@@ -279,7 +279,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
             className="add-product-btn"
             buttonType="control"
             disabled={isInvalidCredentials.error || loading}
-          >{`Add ${
+          >{localeTexts.customField.addHere} {`${
             type === "category" ? localeTexts.customField.buttonText.category
               : localeTexts.customField.buttonText.product
           }`}</Button>

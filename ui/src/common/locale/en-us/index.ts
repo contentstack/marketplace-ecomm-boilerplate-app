@@ -1,4 +1,9 @@
 export default {
+  appFailedText: {
+    errorMessage: "Something went wrong. Please try refreshing the page.",
+    appText: "If the issue continues, please reach out to us at support@contentstack.com",
+    learnMore: "Learn more"
+  },
   configPage:{
     saveInEntry: {
         label: "Save In Entry",
@@ -8,6 +13,7 @@ export default {
             "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, you can select only limited number of products.",
         wholeJson: "Whole JSON",
         customJson: "Custom JSON",
+        isCustomJson: "is_custom_json",
     },  
     customKeys: {
         label: "$ Keys",
@@ -34,6 +40,7 @@ export default {
       thumbnail: "Thumbnail",
       list: "List",
     },
+    addHere: "Add",
     buttonText: {
       category: "Category(s)",
       product: "Product(s)",

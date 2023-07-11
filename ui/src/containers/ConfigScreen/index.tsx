@@ -63,6 +63,16 @@ const ConfigScreen: React.FC = function () {
   const { keySize }: any = localeTexts.Decryption;
   const password = `password#123`;
 
+
+  const isConfigSensitive = (name: string) =>{
+    let configField = Object.keys(rootConfig.ecommerceConfigFields)
+    let configFieldLength = configField?.length
+    for(let i=0; i < configFieldLength; i++) {
+      if(rootConfig.ecommerceConfigFields[configField[i]].name === name) {
+        return rootConfig.ecommerceConfigFields[configField[i]].isSensitive 
+      }
+    }
+  }
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
@@ -80,9 +90,7 @@ const ConfigScreen: React.FC = function () {
             )?.reduce((obj: any, [key, value]) => {
               obj[key] =
                 // eslint-disable-next-line no-nested-ternary
-                key === "store_id" || key === "auth_token" ? decryptData(value, password, "checkIfAlreadyDecrypted") === true
-                    ? decryptData(value, password, "")
-                    : value
+                isConfigSensitive(key) ? decryptData(value, password)
                   : value;
               return obj;
             }, {});
@@ -140,7 +148,7 @@ const ConfigScreen: React.FC = function () {
     return transitmessage;
   };
 
-  const decryptData = (transitmessage: any, pass: any, flag: string) => {
+  const decryptData = (transitmessage: any, pass: any) => {
     const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
     const iv = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(32, 32));
     const encrypted = transitmessage?.substring(64);
@@ -155,9 +163,6 @@ const ConfigScreen: React.FC = function () {
       padding: CryptoJS?.pad?.Pkcs7,
       mode: CryptoJS?.mode?.CBC,
     });
-    if (flag === "checkIfAlreadyDecrypted") {
-      return !!decrypted?.toString(CryptoJS?.enc?.Utf8);
-    }
     return decrypted?.toString(CryptoJS?.enc?.Utf8);
   };
 
@@ -173,13 +178,14 @@ const ConfigScreen: React.FC = function () {
 
     delete state?.installationData?.uiLocations;
 
+
     const newConfiguration = Object.entries(updatedConfig)?.reduce(
       (obj: any, [key, value]) => {
         obj[key] =
           /* eslint-disable */
           // prettier-ignore
           value !== ""
-            ? ((key === "store_id" || key === "auth_token")? encryptData(value, password)
+            ? ((isConfigSensitive(key))? encryptData(value, password)
               : value)
             : value;
         return obj;
@@ -228,7 +234,7 @@ const ConfigScreen: React.FC = function () {
               required
               value={state?.installationData?.configuration?.store_id}
               placeholder={rootConfig.ecommerceConfigFields.ConfigInfo.placeholder}
-              name="store_id"
+              name={rootConfig.ecommerceConfigFields.ConfigInfo.name}
               data-testid="store_id-input"
               onChange={updateConfig}
             />
@@ -253,7 +259,7 @@ const ConfigScreen: React.FC = function () {
               required
               value={state?.installationData?.configuration?.auth_token}
               placeholder={rootConfig.ecommerceConfigFields.field2.placeholder}
-              name="auth_token"
+              name={rootConfig.ecommerceConfigFields.field2.name}
               data-testid="auth_token-input"
               onChange={updateConfig}
             />
@@ -283,7 +289,7 @@ const ConfigScreen: React.FC = function () {
                   label={
                     localeTexts.configPage.saveInEntry.wholeJson
                   }
-                  name="is_custom_json"
+                  name={localeTexts.configPage.saveInEntry.customJson}
                   value={false}
                   onChange={updateCustomJSON}
                 />
@@ -295,7 +301,7 @@ const ConfigScreen: React.FC = function () {
                   label={
                     localeTexts.configPage.saveInEntry.customJson
                   }
-                  name="is_custom_json"
+                  name={localeTexts.configPage.saveInEntry.customJson}
                   value={true}
                   onChange={updateCustomJSON}
                 />
@@ -342,7 +348,7 @@ const ConfigScreen: React.FC = function () {
               required
               value={state?.installationData?.configuration?.page_count}
               placeholder={rootConfig.ecommerceConfigFields.field3.placeholder}
-              name="page_count"
+              name={rootConfig.ecommerceConfigFields.field3.name}
               data-testid="page_count-input"
               onChange={updateConfig}
             />

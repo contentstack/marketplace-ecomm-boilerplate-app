@@ -18,7 +18,8 @@ const useAppLocation = (): { locationName: string; location: any } => {
   const { locationName, location } = useMemo(() => {
     let location = null;
     let locationName: string = "";
-    for (let i = 0; i <= locations.length; i++) {
+    const locationsLength = locations?.length;
+    for (let i = 0; i <= locationsLength; i++) {
       if (!isEmpty(get(appSdk, `location.${locations[i]}`, undefined))) {
         locationName = locations[i];
         location = get(appSdk?.location, locationName);
