@@ -13,7 +13,7 @@ const CustomFieldExtensionProvider: React.FC = function ({ children }: any){
       // check if the data was loaded earlier or not
       if (isEmpty(customField)) {
         setLoading(true);
-        const fieldData = await location.field.getData();
+        const fieldData = await location?.field?.getData();
         setCustomField(fieldData);
         setLoading(false);
       }
@@ -23,7 +23,7 @@ const CustomFieldExtensionProvider: React.FC = function ({ children }: any){
   const setFieldData = useCallback(
     async (data: unknown) => {
       setLoading(true);
-      await location.field.setData(data);
+      await location?.field?.setData(data);
       setCustomField(data);
       setLoading(false);
     },

@@ -20,7 +20,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
     ContentstackAppSDK.init()
       .then(async (appSdkinit) => {
         setAppSdk(appSdkinit);
-        const appConfiguration = await appSdkinit.getConfig();
+        const appConfiguration = await appSdkinit?.getConfig();
         setConfig(appConfiguration);
         setFailed(false)
       })

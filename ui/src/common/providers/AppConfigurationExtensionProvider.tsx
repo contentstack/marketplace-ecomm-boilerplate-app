@@ -14,8 +14,7 @@ const AppConfigurationExtensionProvider: React.FC = function ({ children }: any)
   useEffect(() => {
     if (!isEmpty(installationData)) return;
     setLoading(true);
-    location?.installation
-      .getInstallationData()
+    location?.installation?.getInstallationData()
       .then((data: InstallationData) => {
         setInstallation(data);
         setLoading(false);
