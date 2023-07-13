@@ -28,15 +28,20 @@ const ecommerceConfigFields: ConfigFields = {
         help: "You can find your store's ID on your ECommerce Console",
         placeholder: "Enter your Store ID",
         instruction: "Copy and Paste your Store ID",
+        name: "auth_token",
+        isSensitive: true
     },
     field2: {
         label: "Auth Token",
         help: "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
         placeholder: "Enter your Auth Token",
         instruction: "Copy and Paste your Auth Token",
+        name: "store_id",
+        isSensitive: true
     },
     field3: {
         label: "Items per Page",
+        name: "page_count",
         placeholder: "Enter the number items you want to fetch per page.",
         instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
     },

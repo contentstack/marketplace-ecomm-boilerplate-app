@@ -47,6 +47,72 @@ const SelectorPage: React.FC = function () {
       data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
     });
 
+    useEffect(() => {
+      const { opener: windowOpener } = window;
+      if (windowOpener) {
+        window.addEventListener("message", handleMessage, false);
+        windowOpener.postMessage("openedReady", window.location.origin);
+        window.addEventListener("beforeunload", () => {
+          windowOpener.postMessage({ message: "close" }, window.location.origin);
+        });
+      }
+    }, []);
+    
+    useEffect(() => {
+      const categoryDropdownObj: any[] = [];
+      if (categories?.length) {
+        categories.forEach((category: any) => {
+          const obj = {
+            label: rootConfig.returnFormattedCategory(category)?.name,
+            value: rootConfig.returnFormattedCategory(category)?.id,
+          };
+          categoryDropdownObj.push(obj);
+        });
+        setCategoryDropdownList([...categoryDropdownObj]);
+        setDropdown(true);
+      }
+    }, [categories]);
+  
+    useEffect(() => {
+      setLoading(true);
+      fetchInitialData();
+    }, [config]);
+  
+    useEffect(() => {
+      if (isEmpty(config)) return;
+      const fetchCategoryData = async () => {
+        const categoryIds: any[] = [];
+        selectedCategory?.forEach((category: any) =>
+          categoryIds.push(category?.value)
+        );
+        const response = await filter(config, "product", categoryIds);
+        if (!response?.error) {
+          const itemStatusMap: any = {};
+          const responseDataLength = response?.data?.items?.length;
+          for (let index = 0; index < responseDataLength; index += 1) {
+            itemStatusMap[index] = "loaded";
+          }
+          setItemStatus({ ...itemStatusMap });
+          setList(response?.data?.items);
+          setTotalCounts(response?.data?.meta?.total);
+        } else {
+          setIsInvalidCredentials(response);
+        }
+      };
+  
+      if (selectedCategory?.length) {
+        setSearchActive(true);
+        fetchCategoryData();
+      } else {
+        setSearchActive(false);
+        fetchInitialData();
+      }
+    }, [selectedCategory]);
+  
+    useEffect(() => {
+      setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
+    }, [checkedIds]);
+  
   const getSelectedData = async (_type: any, data = []) => {
     if (data?.length) {
       data.forEach((id) => {
@@ -66,17 +132,6 @@ const SelectorPage: React.FC = function () {
       }
   };
 
-  useEffect(() => {
-    const { opener: windowOpener } = window;
-    if (windowOpener) {
-      window.addEventListener("message", handleMessage, false);
-      windowOpener.postMessage("openedReady", "*");
-      window.addEventListener("beforeunload", () => {
-        windowOpener.postMessage({ message: "close" }, "*");
-      });
-    }
-  }, []);
-  
   const fetchInitialData = async () => {
     if (!isEmpty(config)) {
       const itemStatusMap: any = {};
@@ -111,57 +166,6 @@ const SelectorPage: React.FC = function () {
       }
     }
   };
-
-  useEffect(() => {
-    const categoryDropdownObj: any[] = [];
-    if (categories?.length) {
-      categories.forEach((category: any) => {
-        const obj = {
-          label: rootConfig.returnFormattedCategory(category)?.name,
-          value: rootConfig.returnFormattedCategory(category)?.id,
-        };
-        categoryDropdownObj.push(obj);
-      });
-      setCategoryDropdownList([...categoryDropdownObj]);
-      setDropdown(true);
-    }
-  }, [categories]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchInitialData();
-  }, [config]);
-
-  useEffect(() => {
-    if (isEmpty(config)) return;
-    const fetchCategoryData = async () => {
-      const categoryIds: any[] = [];
-      selectedCategory?.forEach((category: any) =>
-        categoryIds.push(category?.value)
-      );
-      const response = await filter(config, "product", categoryIds);
-      if (!response?.error) {
-        const itemStatusMap: any = {};
-        const responseDataLength = response?.data?.items?.length;
-        for (let index = 0; index < responseDataLength; index += 1) {
-          itemStatusMap[index] = "loaded";
-        }
-        setItemStatus({ ...itemStatusMap });
-        setList(response?.data?.items);
-        setTotalCounts(response?.data?.meta?.total);
-      } else {
-        setIsInvalidCredentials(response);
-      }
-    };
-
-    if (selectedCategory?.length) {
-      setSearchActive(true);
-      fetchCategoryData();
-    } else {
-      setSearchActive(false);
-      fetchInitialData();
-    }
-  }, [selectedCategory]);
 
   const fetchData = async (meta: any) => {
     try {
@@ -237,15 +241,11 @@ const SelectorPage: React.FC = function () {
     setCheckedIds(singleSelectedRowIds);
   };
 
-  useEffect(() => {
-    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
-  }, [checkedIds]);
-
   const returnSelectedData = () => {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
     if (window.opener) {
-      window.opener.postMessage({ message: "add", dataArr, dataIds }, "*");
+      window.opener.postMessage({ message: "add", dataArr, dataIds }, window.location.origin);
       window.close();
     }
   };
@@ -302,7 +302,7 @@ const SelectorPage: React.FC = function () {
           fetchTableData={fetchData}
           totalCounts={totalCounts}
           loadMoreItems={loadMoreItems}
-          minBatchSizeToFetch={rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20}
+          minBatchSizeToFetch={config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE}
           name={
             config?.type === "category"
               ? {

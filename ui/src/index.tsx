@@ -8,10 +8,14 @@ import App from "./containers/App";
 /* Import node module CSS */
 /* Import our CSS */
 import "./index.css";
+// eslint-disable-next-line import/order
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

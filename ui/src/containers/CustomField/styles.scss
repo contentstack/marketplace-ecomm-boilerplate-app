@@ -15,7 +15,7 @@
 
   .no-selected-items {
     color: #647696;
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 14px;
     width: 250px;
     height: 16px;
@@ -36,7 +36,7 @@
       .left-header {
         font-size: 12px;
         font-weight: bold;
-        font-family: "Inter";
+        font-family: "Inter", sans-serif;
         letter-spacing: 0.01em;
         color: #475161;
         margin-left: 12px;
@@ -142,7 +142,7 @@
         height: 173px;
 
         .product-name {
-          font-family: Inter;
+          font-family: Inter, sans-serif;
           font-style: normal;
           font-weight: bold;
           font-size: 14px;
@@ -158,7 +158,7 @@
         }
 
         .product-desc {
-          font-family: Inter;
+          font-family: Inter, sans-serif;
           font-style: normal;
           font-weight: normal;
           font-size: 13px !important;
@@ -270,11 +270,12 @@
 
   .add-product-btn {
     margin: 30px 0;
+    padding: 0.75rem 0.75rem 1.75rem 1.875rem !important;
   }
 }
 
 .deleteModalBody {
-  font-family: Inter;
+  font-family: Inter, sans-serif;
   p {
     color: #222;
   }
