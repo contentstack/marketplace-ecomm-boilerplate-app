@@ -9,9 +9,12 @@ import { CustomFieldExtensionContext, CustomFieldExtensionContextType } from "..
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useCustomField = () => {
-  const { customField, setFieldData, loading } = useContext(
-    CustomFieldExtensionContext
-  ) as CustomFieldExtensionContextType;
+  const {
+    customField,
+    setFieldData,
+    loading
+  } = useContext<CustomFieldExtensionContextType>(CustomFieldExtensionContext);
+  
 
   return { customField, setFieldData, loading };
 };

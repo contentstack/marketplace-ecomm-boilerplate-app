@@ -62,7 +62,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
         // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
-        const { api_key } = appSdk?.stack?._data;
+        const { api_key } = appSdk?.stack?._data || {};
         setStackApiKey(api_key);
 
         const config = await appSdk?.getConfig();

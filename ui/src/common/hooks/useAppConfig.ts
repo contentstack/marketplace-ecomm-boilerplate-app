@@ -9,7 +9,7 @@ import { MarketplaceAppContext, MarketplaceAppContextType } from "../contexts/ma
  * const appConfig = useAppConfig();
  */
 const useAppConfig = () => {
-  const { appConfig } = useContext(MarketplaceAppContext) as MarketplaceAppContextType;
+  const { appConfig } = useContext<MarketplaceAppContextType>(MarketplaceAppContext);
   
   return appConfig;
 };

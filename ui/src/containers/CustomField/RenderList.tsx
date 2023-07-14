@@ -21,7 +21,7 @@ const RenderList: React.FC<Props> = function ({
       selectedIds.filter((data: any) => Number(data) !== removeId)
     );
     if (childWindow) {
-      childWindow.postMessage({ message: "remove", removeId }, "*");
+      childWindow.postMessage({ message: "remove", removeId }, window.location.origin);
     }
   };
   // eslint-disable-next-line

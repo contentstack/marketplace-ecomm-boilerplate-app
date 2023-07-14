@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmpty, isNull } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
 import { EntrySidebarExtensionContext } from "../contexts/entrySidebarExtensionContext";
@@ -18,9 +18,13 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any){
     })();
   }, [entryData, location, setLoading, setEntry]);
 
+  const memoizedValue = useMemo(() => ({
+    entryData,
+    loading
+  }), [entryData, loading]);
+
   return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <EntrySidebarExtensionContext.Provider value={ {entryData, loading }}>
+    <EntrySidebarExtensionContext.Provider value={memoizedValue}>
       {children}
     </EntrySidebarExtensionContext.Provider>
   );

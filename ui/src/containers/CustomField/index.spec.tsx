@@ -26,9 +26,9 @@ beforeEach(() => {
 });
 
 describe(`UI Elements of customField without Products`, () => {
-    customFieldUIElementsIDs.forEach((id: String) => {
+    customFieldUIElementsIDs.forEach((id: string) => {
       test(`Rendered ${id} element`, async () => {
-        expect(await screen.getByTestId(`${id}`)).toBeTruthy();
+        expect(screen.getByTestId(`${id}`)).toBeTruthy();
       });
     });
   

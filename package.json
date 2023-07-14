@@ -26,5 +26,7 @@
       "pre-commit": "cd ui && rimraf build && npm run precommit && cd ../api && rimraf build && npm run precommit"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "sass": "^1.63.6"
+  }
 }
