@@ -19,7 +19,6 @@ import { TypeProduct } from "../../types";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
   const { id, name, description, image, price }: TypeProduct = rootConfig.returnFormattedProduct(product);
-  const formattedDescription = removeHTMLTags(description);
   const {
     attributes,
     listeners,
@@ -36,6 +35,20 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
     borderRadius: 12,
   };
+
+  const deleteModal = ((props : any)  => {
+    {
+      return (
+        <DeleteModal
+          type="Product"
+          remove={remove}
+          id={id}
+          name={name}
+          {...props}
+        />
+      );
+    }
+  })
 
   const { error } = product;
   const toolTipActions = [
@@ -55,15 +68,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
       title: "Delete",
       action: () =>
         cbModal({
-          component: (props: any) => (
-            <DeleteModal
-              type="Product"
-              remove={remove}
-              id={id}
-              name={name}
-              {...props}
-            />
-          ),
+          component: (props: any) => (deleteModal(props)),
           modalProps: {
             onClose: () => {},
             onOpen: () => {},

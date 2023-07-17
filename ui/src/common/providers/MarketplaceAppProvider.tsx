@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
@@ -29,14 +29,22 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
       });
   }, []);
 
+  const memoizedValue = useMemo(() => ({
+    appSdk,
+    appConfig
+  }), [appSdk, appConfig]);
+
   // wait until the SDK is initialized. This will ensure the values are set
   // correctly for appSdk.
   if (!failed && isNull(appSdk)) {
     return <div>Loading...</div>;
   }
-
-
+  
   // eslint-disable-next-line react/jsx-no-constructed-context-values
-  return <MarketplaceAppContext.Provider value={{ appSdk, appConfig }}>{children}</MarketplaceAppContext.Provider>;
+  return (
+    <MarketplaceAppContext.Provider value={memoizedValue}>
+      {children}
+    </MarketplaceAppContext.Provider>
+  );
 };
 export default MarketplaceAppProvider;

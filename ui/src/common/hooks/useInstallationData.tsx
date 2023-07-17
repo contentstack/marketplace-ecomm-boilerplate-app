@@ -12,9 +12,13 @@ import {
  * const { installationData, setInstallationData, loading } = useInstallationData();
  */
 const useInstallationData = () => {
-  const { installationData, setInstallationData, loading } = useContext(
-    AppConfigurationExtensionContext
-  ) as AppConfigurationExtensionContextType;
+
+  const {
+    installationData,
+    setInstallationData,
+    loading
+  } = useContext<AppConfigurationExtensionContextType>(AppConfigurationExtensionContext);
+
   return { installationData, setInstallationData, loading };
 };
 export default useInstallationData;

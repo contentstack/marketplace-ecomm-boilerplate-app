@@ -175,9 +175,10 @@ const ConfigScreen: React.FC = function () {
     if (typeof fieldValue === "string") fieldValue = fieldValue.trim();
     const updatedConfig = state?.installationData?.configuration || {};
     updatedConfig[fieldName] = fieldValue;
-
-    delete state?.installationData?.uiLocations;
-
+    const updatedState = { ...state };
+    if (updatedState?.installationData) {
+      delete updatedState.installationData.uiLocations;
+    }
 
     const newConfiguration = Object.entries(updatedConfig)?.reduce(
       (obj: any, [key, value]) => {

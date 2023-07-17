@@ -43,7 +43,7 @@ const request = (config: any, page = 1) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${
       config?.type === "category" ? "category" : "product"
-    }&page=${page}&limit=${rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20}`,
+    }&page=${page}&limit=${rootConfig.ecommerceEnv.FETCH_PER_PAGE ?? 20}`,
     "POST",
     config
   );

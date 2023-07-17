@@ -219,7 +219,7 @@ const SelectorPage: React.FC = function () {
           ) {
             updatedItemStateMap[index] = "loaded";
           }
-          setList([...list, ...response?.data?.items]);
+          setList([...list, ...response?.data?.items  || []]);
           setItemStatus({ ...updatedItemStateMap });
           setLoading(false);
         } else {

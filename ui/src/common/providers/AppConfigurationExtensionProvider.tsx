@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isEmpty } from "lodash";
 import useAppLocation  from "../hooks/useAppLocation";
 import { AppConfigurationExtensionContext, InstallationData } from "../contexts/appConfigurationExtensionContext";
@@ -37,9 +37,14 @@ const AppConfigurationExtensionProvider: React.FC = function ({ children }: any)
     },
     [location, setInstallation, setLoading]
   );
+
+  const memoizedValue = useMemo(() => ({
+  installationData,
+  setInstallationData,
+  loading
+}), [installationData, setInstallationData, loading]);
   return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <AppConfigurationExtensionContext.Provider value={{installationData, setInstallationData, loading}}>
+    <AppConfigurationExtensionContext.Provider value={memoizedValue}>
       {children}
     </AppConfigurationExtensionContext.Provider>
   );

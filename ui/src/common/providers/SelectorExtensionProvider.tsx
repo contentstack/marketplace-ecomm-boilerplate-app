@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmpty, isNull } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
 import { SelectorExtensionContext } from "../contexts/selectorExtensionContext";
@@ -19,9 +19,14 @@ const SelectorExtensionProvider: React.FC = function ({ children }: any){
   }, [listData, location, setLoading, setList]);
 
 
+  const memoizedValue = useMemo(() => ({
+    listData,
+    loading
+  }), [listData, loading]);
+  
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <SelectorExtensionContext.Provider value={{listData, loading}}>
+    <SelectorExtensionContext.Provider value={memoizedValue}>
       {children}
     </SelectorExtensionContext.Provider>
   );
