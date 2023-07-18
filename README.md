@@ -17,16 +17,16 @@ This boilerplate provides a template to customize your own marketplace ECOMMERCE
 marketplace-ecomm-boilerplate-app
 |-- api
     |-- constants
-        |-- index.js
+    |   |-- index.js
     |-- example
     |   |-- sapcc
     |   |   |-- root_config
     |   |   |   |-- index.js
     |   |-- sfcc
-    |       |-- root_config
-    |       |   |-- index.js
+    |   |   |-- root_config
+    |   |   |   |-- index.js
     |-- handler
-        |-- index.js
+    |   |-- index.js
     |-- root_config
     |   |-- index.js
     |-- .eslintrc.js
@@ -39,69 +39,96 @@ marketplace-ecomm-boilerplate-app
     |   |   |-- root_config
     |   |   |   |-- index.tsx
     |   |-- sfcc
-    |       |-- root_config
-    |       |   |-- index.tsx
+    |   |    |-- root_config
+    |   |    |   |-- index.tsx
     |-- public
     |   |-- favicon.ico
     |   |-- index.html
+    |-- .env
     |-- src
-        |-- assets
-            |-- Logo.svg
-    |-- common
-        |-- constants
-            |-- index.ts
-        |-- locale
-            |-- index.ts
-        |-- types
-            |-- index.ts
-        |-- utils
-            |-- index.tsx
-    |-- components
-        |-- ErrorBoundary
-            |-- index.tsx
-        |-- WarningMessage
-            |-- index.tsx
-            |-- styles.scss
-    |-- containers
-        |-- App
-            |-- index.tsx
-            |-- styles.scss
-        |-- CategoryField
-            |-- index.tsx
-        |-- ConfigScreen
-            |-- index.spec.tsx
-            |-- index.tsx
-            |-- styles.scss
-        |-- CustomField
-            |-- Category.tsx
-            |-- DeleteModal.tsx
-            |-- DraggableGrid.tsx
-            |-- DraggableListItem.tsx
-            |-- index.spec.tsx
-            |-- index.tsx
-            |-- ListItem.tsx
-            |-- Product.tsx
-            |-- RenderList.tsx
-            |-- styles.scss
-        |-- ProductsField
-            |-- index.tsx
-        |-- SelectorPage
-            |-- index.tsx
-            |-- styles.scss
-        |-- SidebarWidget
-            |-- index.tsx
-            |-- ProductDescription.tsx
-            |-- styles.scss
-    |-- root_config
-        |-- index.ts
-    |-- services
-        |-- index.ts
-    |-- types
-        |-- index.d.ts
-    |-- index.css
-    |-- index.tsx
-    |-- react-app-env.d.ts
-    |-- reportWebVitals.ts
+    |   |-- assets
+    |   |    |-- Logo.svg
+    |   |-- common
+    |   |    |-- constants
+    |   |        |-- index.ts
+    |   |    |-- contexts
+    |   |        |-- appConfigurationExtensionContext.ts
+    |   |        |-- categoryCustomFieldExtensionContext.ts
+    |   |        |-- customFieldExtensionContext.ts
+    |   |        |-- entrySidebarExtensionContext.ts
+    |   |        |-- marketplaceContext.ts
+    |   |        |-- productCustomFieldExtensionContext.ts      
+    |   |        |-- selectorExtensionContext.ts    
+    |   |   |-- hooks
+    |   |       |-- useAppConfig.ts 
+    |   |       |-- useAppLocation.ts
+    |   |       |-- useAppSdk.tsx
+    |   |       |-- useCategoryCustomField.tsx
+    |   |       |-- useCustomField.tsx
+    |   |       |-- uuseFrame.ts
+    |   |       |-- useInstallationData.tsx    
+    |   |       |-- useProductCustomField.tsx    
+    |   |       |-- useSdkDataByPath.ts                                                   
+    |   |    |-- locale
+    |   |        |-- index.ts
+    |   |   |-- providers
+    |   |        |-- AppConfigurationExtensionProvider.tsx
+    |   |        |-- CategoryCustomFieldExtensionProvider.tsx
+    |   |        |-- CustomFieldExtensionProvider.tsx
+    |   |        |-- EntrySidebarExtensionProvider.tsx
+    |   |        |-- MarketplaceAppProvider.tsx
+    |   |        |-- ProductCustomFieldExtensionProvider.tsx
+    |   |        |-- SelectorExtensionProvider.tsx                                                     
+    |   |   |-- types
+    |   |       |-- index.ts
+    |   |   |-- utils
+    |   |   |   |-- index.tsx
+    |   |-- components
+    |   |   |-- ErrorBoundary
+    |   |       |-- index.tsx
+    |   |   |-- WarningMessage
+    |   |       |-- index.tsx
+    |   |       |-- styles.scss
+    |   |-- containers
+    |   |   |-- App
+    |   |   |   |-- index.tsx
+    |   |   |   |-- styles.scss
+    |   |   |-- CategoryField
+    |   |   |   |-- index.tsx
+    |   |   |-- ConfigScreen
+    |   |   |   |-- index.spec.tsx
+    |   |   |   |-- index.tsx
+    |   |   |   |-- styles.scss
+    |   |   |-- CustomField
+    |   |   |   |-- Category.tsx
+    |   |   |   |-- DeleteModal.tsx
+    |   |   |   |-- DraggableGrid.tsx
+    |   |   |   |-- DraggableListItem.tsx
+    |   |   |   |-- index.spec.tsx
+    |   |   |   |-- index.tsx
+    |   |   |   |-- ListItem.tsx
+    |   |   |   |-- Product.tsx
+    |   |   |   |-- RenderList.tsx
+    |   |   |   |-- styles.scss
+    |   |   |-- ProductsField
+    |   |   |   |-- index.tsx
+    |   |   |-- SelectorPage
+    |   |   |   |-- index.tsx
+    |   |   |   |-- styles.scss
+    |   |   |-- SidebarWidget
+    |   |   |   |-- index.tsx
+    |   |   |   |-- ProductDescription.tsx
+    |   |   |   |-- styles.scss
+    |   |-- root_config
+    |   |    |-- index.ts
+    |   |-- services
+    |   |    |-- index.ts
+    |   |-- types
+    |   |   |-- index.d.ts
+    |   |-- index.css
+    |   |-- index.tsx
+    |   |-- react-app-env.d.ts
+    |   |-- reportWebVitals.ts
 ```
 
 </details>
@@ -145,6 +172,44 @@ The API server will start at port 8000.
 * `.env` files are required in both ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_NAME`,  `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
 * The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be http://localhost:4000 and the url for api will be http://localhost:8000).
 
+## Provider
+
+`<MarketplaceAppProvider>`:  This initialize the contentstack SDK make the SDK instance available via hooks to avoid props drilling.
+`<AppConfigurationExtensionProvider>`: This initialize the configuration screen.
+`<ProductCustomFieldExtensionProvider>`: This provider is responsible for Product Custom Field.
+`<CategoryCustomFieldExtensionProvider>>`: This provider is responsible for Category Custom Field.
+`<EntrySidebarExtensionProvider>`: This provider is responsible for Entry Sidebarwidget.
+`<SelectorExtensionProvider>`: This provider is responsible for Selector Page.
+
+## Hooks
+
+- useAppConfig: Getter and setter hook for App config.
+- useAppLocation: Returns the location name (eg: CustomField) and the location instance from the SDK.
+- useAppSdk: Returns the appSdk instance after initialization.
+- useCategoryCustomField: Getter and setter hook for category custom field data.
+- useCustomField: Getter and setter hook for custom field data.
+- useFrame: Returns the Iframe instance for the location.
+- useInstallationData: Getter & Setter for installation data.
+- useProductCustomField: Getter and setter hook for product custom field data.
+- useSdkDataByPath: This is a generic hook which can return the value at the given path;
+
+## Routes
+
+Each route represents one location. It is recommended to lazy load the route components to reduce the bundle
+size. 
+
+#### Adding new route
+
+- Create a new Route component inside route. Use default export
+  - Inside `App.tsx`, lazy load the route component.  
+    - eg: `const AppConfigurationExtension = React.lazy(() => import("../ConfigScreen/index"))`
+  - Add the route wrapped inside `Suspense`. 
+    - Eg: ``` <Route path="/config" element={<Suspense><AppConfigurationExtensionProvider><AppConfigurationExtension /></AppConfigurationExtensionProvider></Suspense>} />```
+
+## Styling
+
+- This setup uses basic CSS for styling
+
 ## Creating an app in Developer Hub/Marketplace
 
 * Go to developer hub at https://app.contentstack.com/#!/developerhub
@@ -164,11 +229,13 @@ Note : You can give any path values but make sure the path value in `<APP_DIRECT
 
 * After the app is installed, you can refer to the pages developed at various UI locations in the stack. Below are the various UI locations and their corresponding page in source code:
 
-|UI Location      | Page Source                                                 |
-|------------     |-------------                                                |
-|Config Screen    |<APP_DIRECTORY>/ui/src/containers/ConfigScreen/index.tsx     |
-|Custom Field     |<APP_DIRECTORY>/ui/src/containers/CustomField/index.tsx      |
-|Entry Sidebar    |<APP_DIRECTORY>/ui/src/containers/SidebarWidget/index.tsx    |
+|UI Location            | Page Source                                                 | Route path
+|-----------------------|-------------------------------------------------------------|-------------------------------------------------------
+|Config Screen          |<APP_DIRECTORY>/ui/src/containers/ConfigScreen/index.tsx     |<Suspense><CustomFieldExtension /></Suspense>
+|Custom Field           |<APP_DIRECTORY>/ui/src/containers/CustomField/index.tsx      |<Suspense><CustomFieldExtension /></Suspense>
+|Product Custom Field   |<APP_DIRECTORY>/ui/src/containers/CustomField/Category.tsx   |<Suspense><CustomFieldExtension /></Suspense>
+|Category Custom Field  |<APP_DIRECTORY>/ui/src/containers/CustomField/Product.tsx    |<Suspense><CustomFieldExtension /></Suspense>
+|Entry Sidebar          |<APP_DIRECTORY>/ui/src/containers/SidebarWidget/index.tsx    |<Suspense><CustomFieldExtension /></Suspense>
 
 * You can change the source codes and refer to the changes in UI now at corresponding places as mentioned above.
 

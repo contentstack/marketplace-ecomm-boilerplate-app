@@ -4,7 +4,7 @@ import useAppLocation  from "./useAppLocation";
 
 /**
  * Returns the Iframe instance for the location
- * Works only for CustomField and Dashboard Widgets
+ * Works only for CustomField
  */
 const useFrame = (): null | object => {
   const { locationName } = useAppLocation();
