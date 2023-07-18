@@ -1,4 +1,3 @@
-# marketplace-ecomm-boilerplate-app
 # Contentstack Marketplace ECOMMERCE App Boilerplate
 
 This boilerplate provides a template to customize your own marketplace ECOMMERCE app.
