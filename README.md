@@ -166,6 +166,7 @@ npm i
 npm run dev
 ```
 The API server will start at port 8000.
+All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services.index.tsx` file.
 
 ## Environment Variables
 
@@ -229,13 +230,13 @@ Note : You can give any path values but make sure the path value in `<APP_DIRECT
 
 * After the app is installed, you can refer to the pages developed at various UI locations in the stack. Below are the various UI locations and their corresponding page in source code:
 
-|UI Location            | Page Source                                                 | Route path
-|-----------------------|-------------------------------------------------------------|-------------------------------------------------------
-|Config Screen          |<APP_DIRECTORY>/ui/src/containers/ConfigScreen/index.tsx     |<Suspense><CustomFieldExtension /></Suspense>
-|Custom Field           |<APP_DIRECTORY>/ui/src/containers/CustomField/index.tsx      |<Suspense><CustomFieldExtension /></Suspense>
-|Product Custom Field   |<APP_DIRECTORY>/ui/src/containers/CustomField/Category.tsx   |<Suspense><CustomFieldExtension /></Suspense>
-|Category Custom Field  |<APP_DIRECTORY>/ui/src/containers/CustomField/Product.tsx    |<Suspense><CustomFieldExtension /></Suspense>
-|Entry Sidebar          |<APP_DIRECTORY>/ui/src/containers/SidebarWidget/index.tsx    |<Suspense><CustomFieldExtension /></Suspense>
+|UI Location            | Page Source                                                 |
+|-----------------------|-------------------------------------------------------------|
+|Config Screen          |<APP_DIRECTORY>/ui/src/containers/ConfigScreen/index.tsx     |
+|Custom Field           |<APP_DIRECTORY>/ui/src/containers/CustomField/index.tsx      |
+|Product Custom Field   |<APP_DIRECTORY>/ui/src/containers/CustomField/Category.tsx   |
+|Category Custom Field  |<APP_DIRECTORY>/ui/src/containers/CustomField/Product.tsx    |
+|Entry Sidebar          |<APP_DIRECTORY>/ui/src/containers/SidebarWidget/index.tsx    |
 
 * You can change the source codes and refer to the changes in UI now at corresponding places as mentioned above.
 
