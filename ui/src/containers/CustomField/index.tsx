@@ -66,6 +66,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
         setStackApiKey(api_key);
 
         const config = await appSdk?.getConfig();
+        window.iframeRef = null;
+        window.postRobot = appSdk?.postRobot;
         const entryData = appSdk?.location?.CustomField?.field?.getData();
         appSdk?.location?.CustomField?.frame?.enableAutoResizing();
         if (entryData?.data?.length) {

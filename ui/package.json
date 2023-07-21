@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@contentstack/app-sdk": "^1.6.0",
-    "@contentstack/venus-components": "^2.0.1",
+    "@contentstack/venus-components": "^2.1.0",
     "@dnd-kit/core": "^5.0.1",
     "@dnd-kit/sortable": "^6.0.0",
     "@dnd-kit/utilities": "^3.1.0",
