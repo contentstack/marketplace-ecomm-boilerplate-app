@@ -292,8 +292,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
           >
             {localeTexts.customField.addHere}{" "}
             {type === "category" ?
-                localeTexts.customField.buttonText.category
-                : localeTexts.customField.buttonText.product}
+              localeTexts.customField.buttonText.category
+              : localeTexts.customField.buttonText.product}
           </Button>
         </div>
       )}
