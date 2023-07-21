@@ -3,7 +3,10 @@
  * @return the appSdk instance after initialization
  */
 import { useContext } from "react";
-import { MarketplaceAppContext, MarketplaceAppContextType } from "../contexts/marketplaceContext";
+import {
+  MarketplaceAppContext,
+  MarketplaceAppContextType,
+} from "../contexts/marketplaceContext";
 
 /**
  * Getter and setter for appSdk instance.
@@ -14,7 +17,9 @@ import { MarketplaceAppContext, MarketplaceAppContextType } from "../contexts/ma
  * const appSdk = useAppSdk();
  */
 const useAppSdk = () => {
-  const { appSdk } = useContext<MarketplaceAppContextType>(MarketplaceAppContext);
+  const { appSdk } = useContext<MarketplaceAppContextType>(
+    MarketplaceAppContext
+  );
   return appSdk;
 };
 export default useAppSdk;

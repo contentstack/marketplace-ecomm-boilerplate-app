@@ -5,7 +5,6 @@ import { isNull } from "lodash";
 import { KeyValueObj } from "../types/type";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 
-
 /**
  * Marketplace App Provider
  * @param children: React.ReactNode
@@ -22,24 +21,27 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
         setAppSdk(appSdkinit);
         const appConfiguration = await appSdkinit?.getConfig();
         setConfig(appConfiguration);
-        setFailed(false)
+        setFailed(false);
       })
       .catch(() => {
         setFailed(true);
       });
   }, []);
 
-  const memoizedValue = useMemo(() => ({
-    appSdk,
-    appConfig
-  }), [appSdk, appConfig]);
+  const memoizedValue = useMemo(
+    () => ({
+      appSdk,
+      appConfig,
+    }),
+    [appSdk, appConfig]
+  );
 
   // wait until the SDK is initialized. This will ensure the values are set
   // correctly for appSdk.
   if (!failed && isNull(appSdk)) {
     return <div>Loading...</div>;
   }
-  
+
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   return (
     <MarketplaceAppContext.Provider value={memoizedValue}>

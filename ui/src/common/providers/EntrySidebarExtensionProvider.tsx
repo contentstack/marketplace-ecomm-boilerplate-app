@@ -3,7 +3,7 @@ import { isEmpty, isNull } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
 import { EntrySidebarExtensionContext } from "../contexts/entrySidebarExtensionContext";
 
-const EntrySidebarExtensionProvider: React.FC = function ({ children }: any){
+const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
   const [entryData, setEntry] = useState<{ [key: string]: any }>({});
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
@@ -18,10 +18,13 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any){
     })();
   }, [entryData, location, setLoading, setEntry]);
 
-  const memoizedValue = useMemo(() => ({
-    entryData,
-    loading
-  }), [entryData, loading]);
+  const memoizedValue = useMemo(
+    () => ({
+      entryData,
+      loading,
+    }),
+    [entryData, loading]
+  );
 
   return (
     <EntrySidebarExtensionContext.Provider value={memoizedValue}>

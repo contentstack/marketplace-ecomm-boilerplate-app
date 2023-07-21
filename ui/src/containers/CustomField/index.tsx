@@ -31,7 +31,7 @@ import rootConfig from "../../root_config";
 
 const CustomField: React.FC<Props> = function ({ type }) {
   const [stackApiKey, setStackApiKey] = useState("");
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type]
+  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
 
   let childWindow: any;
@@ -43,7 +43,10 @@ const CustomField: React.FC<Props> = function ({ type }) {
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({
       error: false,
-      data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
     });
   const [state, setState] = useState<TypeSDKData>({
     config: {},
@@ -66,6 +69,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
         setStackApiKey(api_key);
 
         const config = await appSdk?.getConfig();
+        window.iframeRef = null;
+        window.postRobot = appSdk?.postRobot;
         const entryData = appSdk?.location?.CustomField?.field?.getData();
         appSdk?.location?.CustomField?.frame?.enableAutoResizing();
         if (entryData?.data?.length) {
@@ -87,7 +92,10 @@ const CustomField: React.FC<Props> = function ({ type }) {
     if (!state.appSdkInitialized) return;
     setIsInvalidCredentials({
       error: Object.values(state.config || {}).includes(""),
-      data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
     });
   }, [state.config]);
 
@@ -122,7 +130,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
       location.CustomField?.field.setData({
         data: selectedItems,
         type: `${appName}_${type}`,
-      });    
+      });
     } else {
       // eslint-disable-next-line
       if (!state.config.is_custom_json)
@@ -180,9 +188,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
   const handleClick = () => {
     if (!childWindow) {
       childWindow = popupWindow({
-        url: `${
-          process.env.REACT_APP_UI_URL
-        }/selector-page`,
+        url: `${process.env.REACT_APP_UI_URL}/selector-page`,
         title: `${rootConfig.ecommerceEnv.APP_ENG_NAME}Client`,
         w: 1440,
         h: 844,
@@ -210,7 +216,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
           tileRadius={10}
         />
       );
-    } 
+    }
     if (selectedItems?.length) {
       return (
         <div className="extension-content">
@@ -234,10 +240,14 @@ const CustomField: React.FC<Props> = function ({ type }) {
                   closeAfterSelect
                   highlightActive={false}
                 >
-                  <Tooltip content={localeTexts.customField.toolTip.content} position="top">
+                  <Tooltip
+                    content={localeTexts.customField.toolTip.content}
+                    position="top"
+                  >
                     <Icon
                       icon={
-                        view.value === "card" ? localeTexts.customField.toolTip.thumbnail
+                        view.value === "card" ?
+                          localeTexts.customField.toolTip.thumbnail
                           : localeTexts.customField.toolTip.list
                       }
                       size="original"
@@ -279,10 +289,12 @@ const CustomField: React.FC<Props> = function ({ type }) {
             className="add-product-btn"
             buttonType="control"
             disabled={isInvalidCredentials.error || loading}
-          >{localeTexts.customField.addHere} {`${
-            type === "category" ? localeTexts.customField.buttonText.category
-              : localeTexts.customField.buttonText.product
-          }`}</Button>
+          >
+            {localeTexts.customField.addHere}{" "}
+            {type === "category" ?
+              localeTexts.customField.buttonText.category
+              : localeTexts.customField.buttonText.product}
+          </Button>
         </div>
       )}
     </div>

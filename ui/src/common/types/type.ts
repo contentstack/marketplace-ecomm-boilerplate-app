@@ -1,3 +1,3 @@
 export interface KeyValueObj {
-    [key: string]: string;
-  }
+  [key: string]: string;
+}

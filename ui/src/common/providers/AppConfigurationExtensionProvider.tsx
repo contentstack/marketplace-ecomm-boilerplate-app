@@ -1,9 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
-import useAppLocation  from "../hooks/useAppLocation";
-import { AppConfigurationExtensionContext, InstallationData } from "../contexts/appConfigurationExtensionContext";
+import useAppLocation from "../hooks/useAppLocation";
+import {
+  AppConfigurationExtensionContext,
+  InstallationData,
+} from "../contexts/appConfigurationExtensionContext";
 
-const AppConfigurationExtensionProvider: React.FC = function ({ children }: any) {
+const AppConfigurationExtensionProvider: React.FC = function ({
+  children,
+}: any) {
   const [installationData, setInstallation] = useState<InstallationData>({
     configuration: {},
     serverConfiguration: {},
@@ -14,7 +19,8 @@ const AppConfigurationExtensionProvider: React.FC = function ({ children }: any)
   useEffect(() => {
     if (!isEmpty(installationData)) return;
     setLoading(true);
-    location?.installation?.getInstallationData()
+    location?.installation
+      ?.getInstallationData()
       .then((data: InstallationData) => {
         setInstallation(data);
         setLoading(false);
@@ -38,11 +44,14 @@ const AppConfigurationExtensionProvider: React.FC = function ({ children }: any)
     [location, setInstallation, setLoading]
   );
 
-  const memoizedValue = useMemo(() => ({
-  installationData,
-  setInstallationData,
-  loading
-}), [installationData, setInstallationData, loading]);
+  const memoizedValue = useMemo(
+    () => ({
+      installationData,
+      setInstallationData,
+      loading,
+    }),
+    [installationData, setInstallationData, loading]
+  );
   return (
     <AppConfigurationExtensionContext.Provider value={memoizedValue}>
       {children}

@@ -1,34 +1,35 @@
 export default {
   appFailedText: {
     errorMessage: "Something went wrong. Please try refreshing the page.",
-    appText: "If the issue continues, please reach out to us at support@contentstack.com",
-    learnMore: "Learn more"
+    appText:
+      "If the issue continues, please reach out to us at support@contentstack.com",
+    learnMore: "Learn more",
   },
-  configPage:{
+  configPage: {
     saveInEntry: {
-        label: "Save In Entry",
-        help: "You can select how you want to save data you get from $.",
-        placeholder: "Enter the structure of data you want to save in the entry",
-        instruction:
-            "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, you can select only limited number of products.",
-        wholeJson: "Whole JSON",
-        customJson: "Custom JSON",
-        isCustomJson: "is_custom_json",
-    },  
+      label: "Save In Entry",
+      help: "You can select how you want to save data you get from $.",
+      placeholder: "Enter the structure of data you want to save in the entry",
+      instruction:
+        "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, you can select only limited number of products.",
+      wholeJson: "Whole JSON",
+      customJson: "Custom JSON",
+      isCustomJson: "is_custom_json",
+    },
     customKeys: {
-        label: "$ Keys",
-        help: "Select the keys you want to save",
-        placeholder: "Select keys",
-        instruction: "Select the keys you want to save",
-    }
+      label: "$ Keys",
+      help: "Select the keys you want to save",
+      placeholder: "Select keys",
+      instruction: "Select the keys you want to save",
+    },
   },
   customField: {
     idLbl: "ID",
-    add : "Add ",
+    add: "Add ",
     noItems: "No $ have been Added",
-    listViewTable:{
+    listViewTable: {
       nameCol: "Product Name",
-      priceCol: "Price"
+      priceCol: "Price",
     },
     listActions: {
       drag: "Drag",
@@ -45,9 +46,9 @@ export default {
       category: "Category(s)",
       product: "Product(s)",
     },
-    categoryCard:{
-        customURL: "Custom URL"
-    }
+    categoryCard: {
+      customURL: "Custom URL",
+    },
   },
   alertModal: {
     header: "Change",
@@ -65,9 +66,10 @@ export default {
   selectorPage: {
     heading: "$ Extension",
     noImageAvailable: "Product image not available",
-    searchQuery : "Try changing the search query or filters to find what you are looking for.",
-    searchCase : "Not sure where to start? Visit our ",
-    helpCenter : "help center",
+    searchQuery:
+      "Try changing the search query or filters to find what you are looking for.",
+    searchCase: "Not sure where to start? Visit our ",
+    helpCenter: "help center",
     selectCategory: {
       placeHolder: "Select Category",
     },
@@ -87,15 +89,15 @@ export default {
   buttonLabels: {
     category: "Category(s)",
     product: "Product(s)",
-    close: "Close"
+    close: "Close",
   },
   sidebarWidget: {
     dropdownLabels: {
       products: "Products",
       fields: "Fields",
     },
-    altTexts:{
-        product: "Product"
+    altTexts: {
+      product: "Product",
     },
     select: {
       field: "Select a field",

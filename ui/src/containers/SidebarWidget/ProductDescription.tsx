@@ -8,68 +8,69 @@ import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
 
 const ProductDescription: React.FC<Props> = function ({ product }) {
-  const { id, name, description, price, sku, image }: TypeProduct = rootConfig.returnFormattedProduct(product);
-  const {
-    nameLbl,
-    skuLbl,
-    descriptionLbl,
-    priceLbl,
-  } = localeTexts.sidebarWidget.labels;
+  const { id, name, description, price, sku, image }: TypeProduct =
+    rootConfig.returnFormattedProduct(product);
+  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
+    localeTexts.sidebarWidget.labels;
 
   return (
     <div>
-      {product &&
-         (
-          <div className="sidebar-widget-wrapper" id={id} key={id}>
-            <div className="product-image">
-              {image ? (
-                <img src={image} alt={localeTexts.sidebarWidget.altTexts.product} />
-              ) : (
-                <Tooltip
-                  content={localeTexts.selectorPage.ImageTooltip.label}
-                  position="top"
-                  showArrow={false}
-                  variantType="light"
-                  type="secondary"
-                >
-                  <Icon
-                    icon="RedAlert"
-                    size="original"
-                    width={150}
-                    height={150}
-                  />
-                </Tooltip>
-              )}
-            </div>
-            <div className="detail-group">
-              <div className="label">{nameLbl}</div>
-              <div className="value">{name}</div>
-            </div>
-            {sku? 
+      {product && (
+        <div className="sidebar-widget-wrapper" id={id} key={id}>
+          <div className="product-image">
+            {image ? (
+              <img
+                src={image}
+                alt={localeTexts.sidebarWidget.altTexts.product}
+              />
+            ) : (
+              <Tooltip
+                content={localeTexts.selectorPage.ImageTooltip.label}
+                position="top"
+                showArrow={false}
+                variantType="light"
+                type="secondary"
+              >
+                <Icon
+                  icon="RedAlert"
+                  size="original"
+                  width={150}
+                  height={150}
+                />
+              </Tooltip>
+            )}
+          </div>
+          <div className="detail-group">
+            <div className="label">{nameLbl}</div>
+            <div className="value">{name}</div>
+          </div>
+          {sku ? (
             <div className="detail-group">
               <div className="label">{skuLbl}</div>
               <div className="value">{sku}</div>
             </div>
-            : ''}
-            <div className="detail-group">
-              <div className="label">{descriptionLbl}</div>
-              <div
-                className="value"
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
-            </div>
-            <div className="detail-group">
-              <div className="label">{priceLbl}</div>
-              <div className="value">{price}</div>
-            </div>
-            {rootConfig.getSidebarData(product)?.map(({title, value}) => (
-              <div className="detail-group" key={title}>
-                <div className="label">{title}</div>
-                <div className="value">{value}</div>
-              </div>
-            ))}
+          ) : (
+            ""
+          )}
+          <div className="detail-group">
+            <div className="label">{descriptionLbl}</div>
+            <div
+              className="value"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           </div>
-        )}
+          <div className="detail-group">
+            <div className="label">{priceLbl}</div>
+            <div className="value">{price}</div>
+          </div>
+          {rootConfig.getSidebarData(product)?.map(({ title, value }) => (
+            <div className="detail-group" key={title}>
+              <div className="label">{title}</div>
+              <div className="value">{value}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

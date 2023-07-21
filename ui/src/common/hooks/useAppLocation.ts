@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import { get, isEmpty, keys } from "lodash";
 import { useMemo } from "react";
-import useAppSdk  from "./useAppSdk"
+import useAppSdk from "./useAppSdk";
 
 /**
  * Returns the location name (eg: CustomField) and the location instance from the SDK

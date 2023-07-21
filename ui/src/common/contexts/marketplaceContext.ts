@@ -7,7 +7,8 @@ export type MarketplaceAppContextType = {
   appConfig: KeyValueObj | null;
 };
 
-export const MarketplaceAppContext = React.createContext<MarketplaceAppContextType>({
-  appSdk: null,
-  appConfig: null,
-});
+export const MarketplaceAppContext =
+  React.createContext<MarketplaceAppContextType>({
+    appSdk: null,
+    appConfig: null,
+  });

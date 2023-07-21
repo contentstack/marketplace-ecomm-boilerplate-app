@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
-import useAppLocation  from "../hooks/useAppLocation";
+import useAppLocation from "../hooks/useAppLocation";
 import { CustomFieldExtensionContext } from "../contexts/customFieldExtensionContext";
 
-const CustomFieldExtensionProvider: React.FC = function ({ children }: any){
+const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
   const [customField, setCustomField] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
@@ -30,10 +30,15 @@ const CustomFieldExtensionProvider: React.FC = function ({ children }: any){
     [location, setLoading, setCustomField]
   );
 
-  const installInfo = useMemo(() => ({
-    customField, setFieldData, loading
-  }), [ customField, setFieldData, loading]);
-  
+  const installInfo = useMemo(
+    () => ({
+      customField,
+      setFieldData,
+      loading,
+    }),
+    [customField, setFieldData, loading]
+  );
+
   return (
     <CustomFieldExtensionContext.Provider value={installInfo}>
       {children}

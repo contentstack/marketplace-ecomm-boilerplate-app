@@ -19,6 +19,13 @@ export interface TypeSDKData {
   appSdkInitialized: boolean;
 }
 
+declare global {
+  export interface Window {
+    iframeRef: any;
+    postRobot: any;
+  }
+}
+
 export type Props = {
   [key: string]: any;
 };

@@ -1,6 +1,6 @@
 /* Import React modules */
 import React, { Suspense } from "react";
-import {  Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";
@@ -13,16 +13,15 @@ import "@contentstack/venus-components/build/main.css";
 import "./styles.scss";
 import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
 
-
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
 */
 const HomeRedirectHandler = function () {
-    if (window?.location?.pathname !== "/") {
-      return <Navigate to={{ pathname: window.location.pathname }} />;
-    }
-    return null;
-  };
+  if (window?.location?.pathname !== "/") {
+    return <Navigate to={{ pathname: window.location.pathname }} />;
+  }
+  return null;
+};
 
 /**
  * All the routes are Lazy loaded.
@@ -30,9 +29,11 @@ const HomeRedirectHandler = function () {
  * improving the page load time
  */
 
-const AppConfigurationExtension = React.lazy(() => import("../ConfigScreen/index"));
-const ProductExtension = React.lazy(() => import("../ProductsField/index"))
-const CategoryExtension = React.lazy(() => import("../CategoryField/index"))
+const AppConfigurationExtension = React.lazy(
+  () => import("../ConfigScreen/index")
+);
+const ProductExtension = React.lazy(() => import("../ProductsField/index"));
+const CategoryExtension = React.lazy(() => import("../CategoryField/index"));
 const SelectorExtension = React.lazy(() => import("../SelectorPage/index"));
 const SidebarExtension = React.lazy(() => import("../SidebarWidget/index"));
 
@@ -62,7 +63,7 @@ function App() {
               </Suspense>
             }
           />
-           <Route
+          <Route
             path="/category-field"
             element={
               <Suspense fallback={null}>
@@ -83,12 +84,12 @@ function App() {
             }
           />
 
-           <Route
+          <Route
             path="/selector-page"
             element={
               <Suspense fallback={null}>
                 <SelectorExtensionProvider>
-                    <SelectorExtension />
+                  <SelectorExtension />
                 </SelectorExtensionProvider>
               </Suspense>
             }

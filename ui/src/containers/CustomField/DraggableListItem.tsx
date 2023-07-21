@@ -14,9 +14,10 @@ import { TypeProduct } from "../../types";
 const DraggableListItem: React.FC<Props> = function ({
   product,
   remove,
-  config
+  config,
 }) {
-  const { id, name, price }: TypeProduct = rootConfig.returnFormattedProduct(product);
+  const { id, name, price }: TypeProduct =
+    rootConfig.returnFormattedProduct(product);
   const {
     attributes,
     listeners,
@@ -33,7 +34,7 @@ const DraggableListItem: React.FC<Props> = function ({
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
   };
 
-  const deleteModal = ((props : any)  => {
+  const deleteModal = (props: any) => {
     {
       return (
         <DeleteModal
@@ -45,7 +46,7 @@ const DraggableListItem: React.FC<Props> = function ({
         />
       );
     }
-  })
+  };
 
   const onHoverActionList = [
     {
@@ -55,7 +56,10 @@ const DraggableListItem: React.FC<Props> = function ({
     },
     {
       label: <Icon icon="NewTab" size="mini" />,
-      title: localeTexts.customField.listActions.openInConsole.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
+      title: localeTexts.customField.listActions.openInConsole.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
       action: () =>
         window.open(rootConfig.getOpenerLink(id, config, "product"), "_blank"),
     },
@@ -64,7 +68,7 @@ const DraggableListItem: React.FC<Props> = function ({
       title: localeTexts.customField.listActions.delete,
       action: () =>
         cbModal({
-          component: (props: any) => (deleteModal(props)),
+          component: (props: any) => deleteModal(props),
           modalProps: {
             onClose: () => {},
             onOpen: () => {},

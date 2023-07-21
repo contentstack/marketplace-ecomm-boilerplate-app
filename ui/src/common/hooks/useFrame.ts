@@ -1,6 +1,6 @@
 import { includes } from "lodash";
-import  useSdkDataByPath  from "./useSdkDataByPath";
-import useAppLocation  from "./useAppLocation";
+import useSdkDataByPath from "./useSdkDataByPath";
+import useAppLocation from "./useAppLocation";
 
 /**
  * Returns the Iframe instance for the location
@@ -13,7 +13,9 @@ const useFrame = (): null | object => {
   if (!includes(availableFrameLocations, locationName)) {
     throw new Error(`useFrame hook cannot be used at ${locationName} location`);
   }
-  const frame = useSdkDataByPath(`location.${locationName}`, null) as object | null;
-  return frame;  
+  const frame = useSdkDataByPath(`location.${locationName}`, null) as
+    | object
+    | null;
+  return frame;
 };
 export default useFrame;
