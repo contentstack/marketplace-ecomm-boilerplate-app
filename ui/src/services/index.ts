@@ -15,21 +15,27 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
       },
     });
     return {
-        error: false,
-        data: {
-            items: response?.data?.data, // assign this to the key that contains your data
-            meta: {
-                total: response?.data?.meta?.pagination?.total, // assign this to the key that specifies the total count of the data fetched
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                current_page: response?.data?.meta?.pagination?.current_page // assign this to the key that corresponds to the current page
-            }
+      error: false,
+      data: {
+        items: response?.data?.data, // assign this to the key that contains your data
+        meta: {
+          total: response?.data?.meta?.pagination?.total, // assign this to the key that specifies the total count of the data fetched
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          current_page: response?.data?.meta?.pagination?.current_page, // assign this to the key that corresponds to the current page
         },
-    }
+      },
+    };
   } catch (e: any) {
     console.error(e);
     const { status, data: resData } = e?.response || {};
     if (status === 500) {
-      return { error: true, data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME) };
+      return {
+        error: true,
+        data: localeTexts.warnings.invalidCredentials.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        ),
+      };
     }
     if (status === 429) {
       return { error: true, data: resData };
@@ -38,7 +44,7 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
   }
 };
 
-// get paginated products and categories 
+// get paginated products and categories
 const request = (config: any, page = 1) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${
@@ -90,10 +96,4 @@ const search = (config: any, keyword: any) =>
     config
   );
 
-export {
-  getSelectedIDs,
-  request,
-  requestCategories,
-  search,
-  filter,
-};
+export { getSelectedIDs, request, requestCategories, search, filter };

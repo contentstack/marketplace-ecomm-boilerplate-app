@@ -6,8 +6,9 @@ export type CategoryCustomFieldExtensionContextType = {
   loading: boolean;
 };
 
-export const CategoryCustomFieldExtensionContext = React.createContext<CategoryCustomFieldExtensionContextType>({
-  categoryCustomField: null,
-  setFieldData: () => {},
-  loading: false,
-});
+export const CategoryCustomFieldExtensionContext =
+  React.createContext<CategoryCustomFieldExtensionContextType>({
+    categoryCustomField: null,
+    setFieldData: () => {},
+    loading: false,
+  });

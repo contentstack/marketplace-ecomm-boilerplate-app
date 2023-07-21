@@ -133,13 +133,11 @@ const getTypeLabel = (type: string, length: number) => {
 
 const EmptyObjForSearchCase: any = {
   heading: <h4 style={{ color: "#222222" }}>No matching results found!</h4>,
-  description: (
-    <p>{localeTexts.selectorPage.searchQuery}</p>
-  ),
+  description: <p>{localeTexts.selectorPage.searchQuery}</p>,
   actions: (
     <div>
       <p>
-      {localeTexts.selectorPage.searchCase}
+        {localeTexts.selectorPage.searchCase}
         <Link
           fontColor="link"
           fontSize="medium"
@@ -157,7 +155,6 @@ const EmptyObjForSearchCase: any = {
   ),
   moduleIcon: "Search",
 };
-
 
 const arrangeList = (sortedIdsArray: any[], dataArray: any[]) => {
   const data: any[] = [];
@@ -201,5 +198,5 @@ export {
   arrangeSelectedIds,
   removeHTMLTags,
   wrapWithDiv,
-  getImage
+  getImage,
 };

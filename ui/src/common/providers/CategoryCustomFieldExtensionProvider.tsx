@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
-import useAppLocation  from "../hooks/useAppLocation";
+import useAppLocation from "../hooks/useAppLocation";
 import { CategoryCustomFieldExtensionContext } from "../contexts/categoryCustomFieldExtensionContext";
 
-const CategoryCustomFieldExtensionProvider: React.FC = function ({ children }: any){
+const CategoryCustomFieldExtensionProvider: React.FC = function ({
+  children,
+}: any) {
   const [categoryCustomField, setCategoryCustomField] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
@@ -30,10 +32,15 @@ const CategoryCustomFieldExtensionProvider: React.FC = function ({ children }: a
     [location, setLoading, setCategoryCustomField]
   );
 
-  const installInfo = useMemo(() => ({
-    categoryCustomField, setFieldData, loading
-  }), [ categoryCustomField, setFieldData, loading]);
-  
+  const installInfo = useMemo(
+    () => ({
+      categoryCustomField,
+      setFieldData,
+      loading,
+    }),
+    [categoryCustomField, setFieldData, loading]
+  );
+
   return (
     <CategoryCustomFieldExtensionContext.Provider value={installInfo}>
       {children}

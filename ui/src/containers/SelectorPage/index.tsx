@@ -10,22 +10,16 @@ import {
 import {
   isEmpty,
   arrangeSelectedIds,
-  EmptyObjForSearchCase
+  EmptyObjForSearchCase,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import { TypeWarningtext } from "../../common/types";
-import {
-  request,
-  requestCategories,
-  filter,
-  search,
-} from "../../services";
+import { request, requestCategories, filter, search } from "../../services";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config";
 
 const SelectorPage: React.FC = function () {
-
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<any>({});
@@ -44,75 +38,78 @@ const SelectorPage: React.FC = function () {
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({
       error: false,
-      data: localeTexts.warnings.invalidCredentials.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
     });
 
-    useEffect(() => {
-      const { opener: windowOpener } = window;
-      if (windowOpener) {
-        window.addEventListener("message", handleMessage, false);
-        windowOpener.postMessage("openedReady", window.location.origin);
-        window.addEventListener("beforeunload", () => {
-          windowOpener.postMessage({ message: "close" }, window.location.origin);
-        });
-      }
-    }, []);
-    
-    useEffect(() => {
-      const categoryDropdownObj: any[] = [];
-      if (categories?.length) {
-        categories.forEach((category: any) => {
-          const obj = {
-            label: rootConfig.returnFormattedCategory(category)?.name,
-            value: rootConfig.returnFormattedCategory(category)?.id,
-          };
-          categoryDropdownObj.push(obj);
-        });
-        setCategoryDropdownList([...categoryDropdownObj]);
-        setDropdown(true);
-      }
-    }, [categories]);
-  
-    useEffect(() => {
-      setLoading(true);
-      fetchInitialData();
-    }, [config]);
-  
-    useEffect(() => {
-      if (isEmpty(config)) return;
-      const fetchCategoryData = async () => {
-        const categoryIds: any[] = [];
-        selectedCategory?.forEach((category: any) =>
-          categoryIds.push(category?.value)
-        );
-        const response = await filter(config, "product", categoryIds);
-        if (!response?.error) {
-          const itemStatusMap: any = {};
-          const responseDataLength = response?.data?.items?.length;
-          for (let index = 0; index < responseDataLength; index += 1) {
-            itemStatusMap[index] = "loaded";
-          }
-          setItemStatus({ ...itemStatusMap });
-          setList(response?.data?.items);
-          setTotalCounts(response?.data?.meta?.total);
-        } else {
-          setIsInvalidCredentials(response);
+  useEffect(() => {
+    const { opener: windowOpener } = window;
+    if (windowOpener) {
+      window.addEventListener("message", handleMessage, false);
+      windowOpener.postMessage("openedReady", window.location.origin);
+      window.addEventListener("beforeunload", () => {
+        windowOpener.postMessage({ message: "close" }, window.location.origin);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const categoryDropdownObj: any[] = [];
+    if (categories?.length) {
+      categories.forEach((category: any) => {
+        const obj = {
+          label: rootConfig.returnFormattedCategory(category)?.name,
+          value: rootConfig.returnFormattedCategory(category)?.id,
+        };
+        categoryDropdownObj.push(obj);
+      });
+      setCategoryDropdownList([...categoryDropdownObj]);
+      setDropdown(true);
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchInitialData();
+  }, [config]);
+
+  useEffect(() => {
+    if (isEmpty(config)) return;
+    const fetchCategoryData = async () => {
+      const categoryIds: any[] = [];
+      selectedCategory?.forEach((category: any) =>
+        categoryIds.push(category?.value)
+      );
+      const response = await filter(config, "product", categoryIds);
+      if (!response?.error) {
+        const itemStatusMap: any = {};
+        const responseDataLength = response?.data?.items?.length;
+        for (let index = 0; index < responseDataLength; index += 1) {
+          itemStatusMap[index] = "loaded";
         }
-      };
-  
-      if (selectedCategory?.length) {
-        setSearchActive(true);
-        fetchCategoryData();
+        setItemStatus({ ...itemStatusMap });
+        setList(response?.data?.items);
+        setTotalCounts(response?.data?.meta?.total);
       } else {
-        setSearchActive(false);
-        fetchInitialData();
+        setIsInvalidCredentials(response);
       }
-    }, [selectedCategory]);
-  
-    useEffect(() => {
-      setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
-    }, [checkedIds]);
-  
+    };
+
+    if (selectedCategory?.length) {
+      setSearchActive(true);
+      fetchCategoryData();
+    } else {
+      setSearchActive(false);
+      fetchInitialData();
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
+  }, [checkedIds]);
+
   const getSelectedData = async (_type: any, data = []) => {
     if (data?.length) {
       data.forEach((id) => {
@@ -126,16 +123,20 @@ const SelectorPage: React.FC = function () {
 
   const handleMessage = (event: any) => {
     const { data } = event;
-      if (data?.message === "init") {
-        getSelectedData(data?.type, data?.selectedItems);
-        setConfig({ ...data?.config, type: data?.type });
-      }
+    if (data?.message === "init") {
+      getSelectedData(data?.type, data?.selectedItems);
+      setConfig({ ...data?.config, type: data?.type });
+    }
   };
 
   const fetchInitialData = async () => {
     if (!isEmpty(config)) {
       const itemStatusMap: any = {};
-      for (let index = 0; index < Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20); index += 1) {
+      for (
+        let index = 0;
+        index < Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
+        index += 1
+      ) {
         itemStatusMap[index] = "loading";
       }
       setItemStatus({ ...itemStatusMap });
@@ -200,7 +201,9 @@ const SelectorPage: React.FC = function () {
         const itemStateMap: any = { ...itemStatus };
         for (
           let index = meta?.startIndex;
-          index < meta?.startIndex + Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
+          index <
+          meta?.startIndex +
+            Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
           index += 1
         ) {
           itemStateMap[index] = "loading";
@@ -214,12 +217,14 @@ const SelectorPage: React.FC = function () {
 
           for (
             let index = meta?.startIndex;
-            index < meta?.startIndex + Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
+            index <
+            meta?.startIndex +
+              Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
             index += 1
           ) {
             updatedItemStateMap[index] = "loaded";
           }
-          setList([...list, ...response?.data?.items  || []]);
+          setList([...list, ...(response?.data?.items || [])]);
           setItemStatus({ ...updatedItemStateMap });
           setLoading(false);
         } else {
@@ -245,7 +250,10 @@ const SelectorPage: React.FC = function () {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
     if (window.opener) {
-      window.opener.postMessage({ message: "add", dataArr, dataIds }, window.location.origin);
+      window.opener.postMessage(
+        { message: "add", dataArr, dataIds },
+        window.location.origin
+      );
       window.close();
     }
   };
@@ -280,8 +288,12 @@ const SelectorPage: React.FC = function () {
         )}
 
         <InfiniteScrollTable
-          uniqueKey= {rootConfig.ecommerceEnv.UNIQUE_KEY}
-          hiddenColumns={config?.type === "category" ? [] : [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]}
+          uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY}
+          hiddenColumns={
+            config?.type === "category"
+              ? []
+              : [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]
+          }
           isRowSelect
           fullRowSelect
           viewSelector
@@ -289,11 +301,18 @@ const SelectorPage: React.FC = function () {
           canSearch
           data={
             list?.length
-              ? list.map((listData) => ({ ...listData, [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]: `${listData[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]}` }))
+              ? list.map((listData) => ({
+                  ...listData,
+                  [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]: `${
+                    listData[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]
+                  }`,
+                }))
               : []
           }
           columns={
-            config?.type === "category" ? rootConfig.categorySelectorColumns : rootConfig.productSelectorColumns
+            config?.type === "category"
+              ? rootConfig.categorySelectorColumns
+              : rootConfig.productSelectorColumns
           }
           loading={loading}
           initialSelectedRowIds={selectedRows}
@@ -302,7 +321,9 @@ const SelectorPage: React.FC = function () {
           fetchTableData={fetchData}
           totalCounts={totalCounts}
           loadMoreItems={loadMoreItems}
-          minBatchSizeToFetch={config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE}
+          minBatchSizeToFetch={
+            config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
+          }
           name={
             config?.type === "category"
               ? {
@@ -314,7 +335,9 @@ const SelectorPage: React.FC = function () {
                   plural: localeTexts.selectorPage.searchPlaceholder.products,
                 }
           }
-          searchPlaceholder={`${localeTexts.selectorPage.searchPlaceholder.caption} ${
+          searchPlaceholder={`${
+            localeTexts.selectorPage.searchPlaceholder.caption
+          } ${
             config?.type === "category"
               ? localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
@@ -326,13 +349,20 @@ const SelectorPage: React.FC = function () {
                 <div className="Table_hoverActions">
                   <Icon
                     icon="NewTab"
-                    data={localeTexts.selectorPage.hoverActions.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME)}
+                    data={localeTexts.selectorPage.hoverActions.replace(
+                      "$",
+                      rootConfig.ecommerceEnv.APP_ENG_NAME
+                    )}
                   />
                 </div>
               ),
               action: (_e: any, data: any) => {
                 window.open(
-                  rootConfig.getOpenerLink(data[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]], config, config?.type),
+                  rootConfig.getOpenerLink(
+                    data[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]],
+                    config,
+                    config?.type
+                  ),
                   "_blank"
                 );
               },
@@ -345,8 +375,10 @@ const SelectorPage: React.FC = function () {
           </Button>
           <Button onClick={returnSelectedData} buttonType="primary">
             <Icon icon="AddPlus" />
-            {localeTexts.selectorPage.add.replace("#", selectedIds?.length.toString())}
-            {" "}
+            {localeTexts.selectorPage.add.replace(
+              "#",
+              selectedIds?.length.toString()
+            )}{" "}
             {config?.type === "category"
               ? `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
@@ -360,9 +392,17 @@ const SelectorPage: React.FC = function () {
     <div className="selector-page-wrapper">
       <div className="selector-page-header">
         <div className="avatar">
-          <img src={rootConfig.ecommerceEnv.SELECTOR_PAGE_LOGO} alt={`${rootConfig.ecommerceEnv.APP_ENG_NAME} Logo`} />
+          <img
+            src={rootConfig.ecommerceEnv.SELECTOR_PAGE_LOGO}
+            alt={`${rootConfig.ecommerceEnv.APP_ENG_NAME} Logo`}
+          />
         </div>
-        <div className="header">{localeTexts.selectorPage.heading.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME)}</div>
+        <div className="header">
+          {localeTexts.selectorPage.heading.replace(
+            "$",
+            rootConfig.ecommerceEnv.APP_ENG_NAME
+          )}
+        </div>
       </div>
       {renderSelectorPage()}
     </div>

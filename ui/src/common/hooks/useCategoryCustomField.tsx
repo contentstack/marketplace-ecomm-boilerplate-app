@@ -1,5 +1,8 @@
 import { useContext } from "react";
-import { CategoryCustomFieldExtensionContext, CategoryCustomFieldExtensionContextType } from "../contexts/categoryCustomFieldExtensionContext";
+import {
+  CategoryCustomFieldExtensionContext,
+  CategoryCustomFieldExtensionContextType,
+} from "../contexts/categoryCustomFieldExtensionContext";
 
 /**
  * Getter and setter hook for custom field data
@@ -9,11 +12,10 @@ import { CategoryCustomFieldExtensionContext, CategoryCustomFieldExtensionContex
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useCategoryCustomField = () => {
-  const {
-    categoryCustomField,
-    setFieldData,
-    loading
-  } = useContext<CategoryCustomFieldExtensionContextType>(CategoryCustomFieldExtensionContext);
+  const { categoryCustomField, setFieldData, loading } =
+    useContext<CategoryCustomFieldExtensionContextType>(
+      CategoryCustomFieldExtensionContext
+    );
 
   return { categoryCustomField, setFieldData, loading };
 };

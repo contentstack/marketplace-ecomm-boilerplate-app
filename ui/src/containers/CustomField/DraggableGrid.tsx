@@ -34,7 +34,7 @@ const DraggableGrid: React.FC<Props> = function ({
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    
+
     setActiveId(null);
     if (active?.id !== over?.id) {
       setSelectedItems(
@@ -72,7 +72,9 @@ const DraggableGrid: React.FC<Props> = function ({
         {activeId ? (
           <Product
             id={activeId}
-            product={products?.find((p: any) => p?.[uniqueKey] === activeId) || {}}
+            product={
+              products?.find((p: any) => p?.[uniqueKey] === activeId) || {}
+            }
           />
         ) : null}
       </DragOverlay>

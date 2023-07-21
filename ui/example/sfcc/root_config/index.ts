@@ -22,7 +22,7 @@ const ecommerceEnv: any = {
 };
 // example config fields. you will need to use these values in the config screen accordingly.
 const ecommerceConfigFields: ConfigFields = {
-/* IMPORTANT: 
+  /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented and those values can only be fetched in the request of webhooks. It will not be given to any of the UI locations in the app other than config page
   3. The fields that needs to be accessed in all UI locations must be saved in config (not in serverConfig)
@@ -76,7 +76,7 @@ const returnFormattedCategory = (category: any) =>
     description: category?.description || "Not Available",
   };
 
-  const getCustomKeys = () =>
+const getCustomKeys = () =>
   <KeyOption[]>[
     {
       label: "approvalStatus",

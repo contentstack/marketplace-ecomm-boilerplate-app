@@ -12,7 +12,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { Props } from "../../common/types";
 import DraggableListItem from "./DraggableListItem";
 import rootConfig from "../../root_config";
-import localeTexts from "../../common/locale/en-us"
+import localeTexts from "../../common/locale/en-us";
 
 const ListItem: React.FC<Props> = function ({
   products,
@@ -20,7 +20,7 @@ const ListItem: React.FC<Props> = function ({
   config,
   setSelectedItems,
 }) {
-  const uniqueKey  = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
+  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 0.1 } })
@@ -72,7 +72,9 @@ const ListItem: React.FC<Props> = function ({
                   className="Table__head__column  "
                 >
                   <div>
-                    <span className="Table__head__column-text">{localeTexts.customField.listViewTable.priceCol}</span>
+                    <span className="Table__head__column-text">
+                      {localeTexts.customField.listViewTable.priceCol}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -104,7 +106,9 @@ const ListItem: React.FC<Props> = function ({
                     <DraggableListItem
                       key={activeId}
                       product={
-                        products?.find((p: any) => p?.[uniqueKey] === activeId) || {}
+                        products?.find(
+                          (p: any) => p?.[uniqueKey] === activeId
+                        ) || {}
                       }
                       id={activeId}
                     />

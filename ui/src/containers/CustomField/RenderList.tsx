@@ -13,7 +13,7 @@ const RenderList: React.FC<Props> = function ({
   selectedIds,
   setSelectedIds,
   view,
-  config
+  config,
 }) {
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const removeItem = (removeId: any) => {
@@ -21,7 +21,10 @@ const RenderList: React.FC<Props> = function ({
       selectedIds.filter((data: any) => Number(data) !== removeId)
     );
     if (childWindow) {
-      childWindow.postMessage({ message: "remove", removeId }, window.location.origin);
+      childWindow.postMessage(
+        { message: "remove", removeId },
+        window.location.origin
+      );
     }
   };
   // eslint-disable-next-line
@@ -43,7 +46,9 @@ const RenderList: React.FC<Props> = function ({
     selectedItemsList = (
       <div
         style={
-          selectedItems?.length > 2 ? { height: "339.5px" } : { height: "203px" }
+          selectedItems?.length > 2 ?
+            { height: "339.5px" }
+            : { height: "203px" }
         }
         className="grid-area"
       >

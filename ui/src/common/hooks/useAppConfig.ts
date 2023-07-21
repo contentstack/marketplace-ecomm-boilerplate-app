@@ -1,5 +1,8 @@
 import { useContext } from "react";
-import { MarketplaceAppContext, MarketplaceAppContextType } from "../contexts/marketplaceContext";
+import {
+  MarketplaceAppContext,
+  MarketplaceAppContextType,
+} from "../contexts/marketplaceContext";
 
 /**
  * Getter and setter hook for App config
@@ -9,8 +12,10 @@ import { MarketplaceAppContext, MarketplaceAppContextType } from "../contexts/ma
  * const appConfig = useAppConfig();
  */
 const useAppConfig = () => {
-  const { appConfig } = useContext<MarketplaceAppContextType>(MarketplaceAppContext);
-  
+  const { appConfig } = useContext<MarketplaceAppContextType>(
+    MarketplaceAppContext
+  );
+
   return appConfig;
 };
 

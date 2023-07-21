@@ -11,11 +11,12 @@ export type AppConfigurationExtensionContextType = {
   loading: boolean;
 };
 
-export const AppConfigurationExtensionContext = React.createContext<AppConfigurationExtensionContextType>({
-  installationData: {
-    configuration: {},
-    serverConfiguration: {},
-  },
-  setInstallationData: () => {},
-  loading: false,
-});
+export const AppConfigurationExtensionContext =
+  React.createContext<AppConfigurationExtensionContextType>({
+    installationData: {
+      configuration: {},
+      serverConfiguration: {},
+    },
+    setInstallationData: () => {},
+    loading: false,
+  });

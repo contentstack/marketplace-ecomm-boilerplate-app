@@ -29,19 +29,19 @@ const ecommerceEnv: any = {
 };
 // example config fields. you will need to use these values in the config screen accordingly.
 const ecommerceConfigFields: ConfigFields = {
-/* IMPORTANT: 
+  /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented and those values can only be fetched in the request of webhooks. It will not be given to any of the UI locations in the app other than config page
   3. The fields that needs to be accessed in all UI locations must be saved in config (not in serverConfig)
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack */
-  
+
   apiRouteField: {
     label: "API Route",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "/rest/v2/",
     instruction: "Copy and Paste your API Route",
-    },
-    ConfigInfo: {
+  },
+  ConfigInfo: {
     label: "API Base URL",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "Enter your API Base URL",
@@ -342,7 +342,9 @@ const returnFormattedProduct = (product: any, config: any) =>
     id: Number(product?.code) || "",
     name: product?.name || "",
     description: product?.description || "-",
-    image: product?.images?.[0]?.url ? `https://${config?.base_url}${product?.images[0]?.url}` : "",
+    image: product?.images?.[0]?.url ?
+      `https://${config?.base_url}${product?.images[0]?.url}`
+      : "",
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
   };
@@ -388,8 +390,8 @@ const getSidebarData = (product: any) =>
 
 // this defines what and how will the columns will be displayed in your product selector page
 
-const getProductSelectorColumns = (config: any) => 
- <ColumnsProp[]>[
+const getProductSelectorColumns = (config: any) =>
+  <ColumnsProp[]>[
     {
       Header: "ID", // the title of the column
       id: "code",
@@ -404,9 +406,10 @@ const getProductSelectorColumns = (config: any) =>
     {
       Header: "Image",
       id: "image",
-      accessor: (obj: any) => obj?.images?.[0]?.url ? 
+      accessor: (obj: any) =>
+        obj?.images?.[0]?.url ?
           getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
-        : getImage(obj?.images?.[0]?.url),
+          : getImage(obj?.images?.[0]?.url),
       default: false,
       disableSortBy: true,
       addToColumnSelector: true,
@@ -432,7 +435,7 @@ const getProductSelectorColumns = (config: any) =>
     },
     {
       Header: "Description",
-      id: 'description',
+      id: "description",
       accessor: (obj: any) => wrapWithDiv(obj?.description),
       default: false,
       disableSortBy: true,
@@ -455,7 +458,7 @@ const categorySelectorColumns: ColumnsProp[] = [
   {
     Header: "Category Name",
     id: "name",
-    accessor: (obj:any) => obj?.name || '-', 
+    accessor: (obj: any) => obj?.name || "-",
     default: false,
     disableSortBy: true,
     addToColumnSelector: true,

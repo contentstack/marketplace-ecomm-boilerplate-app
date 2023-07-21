@@ -18,7 +18,8 @@ import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
-  const { id, name, description, image, price }: TypeProduct = rootConfig.returnFormattedProduct(product);
+  const { id, name, description, image, price }: TypeProduct =
+    rootConfig.returnFormattedProduct(product);
   const {
     attributes,
     listeners,
@@ -36,7 +37,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     borderRadius: 12,
   };
 
-  const deleteModal = ((props : any)  => {
+  const deleteModal = (props: any) => {
     {
       return (
         <DeleteModal
@@ -48,7 +49,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
         />
       );
     }
-  })
+  };
 
   const { error } = product;
   const toolTipActions = [
@@ -59,16 +60,22 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     },
     {
       label: <Icon icon="NewTab" size="mini" />,
-      title: localeTexts.customField.listActions.openInConsole.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME),
+      title: localeTexts.customField.listActions.openInConsole.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
       action: () =>
-        window.open(rootConfig.getOpenerLink(product?.id, config, "product"), "_blank"),
+        window.open(
+          rootConfig.getOpenerLink(product?.id, config, "product"),
+          "_blank"
+        ),
     },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: "Delete",
       action: () =>
         cbModal({
-          component: (props: any) => (deleteModal(props)),
+          component: (props: any) => deleteModal(props),
           modalProps: {
             onClose: () => {},
             onOpen: () => {},
@@ -115,7 +122,9 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
                 <div className="product-body">
                   <span className="product-name">{name}</span>
                   {price && (
-                    <span className="product-name">{localeTexts.customField.listViewTable.priceCol}: {price}</span>
+                    <span className="product-name">
+                      {localeTexts.customField.listViewTable.priceCol}: {price}
+                    </span>
                   )}
                   <span
                     className="product-desc"

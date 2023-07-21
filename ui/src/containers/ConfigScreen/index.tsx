@@ -44,9 +44,7 @@ const ConfigScreen: React.FC = function () {
         ],
         auth_token: "",
       },
-      serverConfiguration: {
-        
-      },
+      serverConfiguration: {},
     },
     setInstallationData: (): any => {
       /* this method 'setInstallationData' is empty */
@@ -63,16 +61,15 @@ const ConfigScreen: React.FC = function () {
   const { keySize }: any = localeTexts.Decryption;
   const password = `password#123`;
 
-
-  const isConfigSensitive = (name: string) =>{
-    let configField = Object.keys(rootConfig.ecommerceConfigFields)
-    let configFieldLength = configField?.length
-    for(let i=0; i < configFieldLength; i++) {
-      if(rootConfig.ecommerceConfigFields[configField[i]].name === name) {
-        return rootConfig.ecommerceConfigFields[configField[i]].isSensitive 
+  const isConfigSensitive = (name: string) => {
+    let configField = Object.keys(rootConfig.ecommerceConfigFields);
+    let configFieldLength = configField?.length;
+    for (let i = 0; i < configFieldLength; i++) {
+      if (rootConfig.ecommerceConfigFields[configField[i]].name === name) {
+        return rootConfig.ecommerceConfigFields[configField[i]].isSensitive;
       }
     }
-  }
+  };
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
@@ -90,8 +87,7 @@ const ConfigScreen: React.FC = function () {
             )?.reduce((obj: any, [key, value]) => {
               obj[key] =
                 // eslint-disable-next-line no-nested-ternary
-                isConfigSensitive(key) ? decryptData(value, password)
-                  : value;
+                isConfigSensitive(key) ? decryptData(value, password) : value;
               return obj;
             }, {});
 
@@ -124,7 +120,6 @@ const ConfigScreen: React.FC = function () {
     e.target = { name: "is_custom_json", value: isCustom };
     updateConfig(e);
   }, [isCustom]);
-
 
   const encryptData = (msg: any, pass: any) => {
     const salt = CryptoJS?.lib?.WordArray?.random(128 / 8);
@@ -222,39 +217,41 @@ const ConfigScreen: React.FC = function () {
       <div className="page-wrapper">
         <Form className="config-wrapper">
           <Field>
-          <div className="flex">
-            <FieldLabel required htmlFor="store_id">
-              {" "}
-              {/* Change the label caption as per your requirement */}
-              {rootConfig.ecommerceConfigFields.ConfigInfo.label}
-            </FieldLabel>
-            {/* Change the help caption as per your requirement */}
+            <div className="flex">
+              <FieldLabel required htmlFor="store_id">
+                {" "}
+                {/* Change the label caption as per your requirement */}
+                {rootConfig.ecommerceConfigFields.ConfigInfo.label}
+              </FieldLabel>
+              {/* Change the help caption as per your requirement */}
               <Help text={rootConfig.ecommerceConfigFields.ConfigInfo.help} />
             </div>
             <TextInput
               required
               value={state?.installationData?.configuration?.store_id}
-              placeholder={rootConfig.ecommerceConfigFields.ConfigInfo.placeholder}
+              placeholder={
+                rootConfig.ecommerceConfigFields.ConfigInfo.placeholder
+              }
               name={rootConfig.ecommerceConfigFields.ConfigInfo.name}
               data-testid="store_id-input"
               onChange={updateConfig}
             />
             <InstructionText>
-            {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
+              {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
             </InstructionText>
           </Field>
 
           <Line type="dashed" />
 
           <Field>
-              <div className="flex">
+            <div className="flex">
               <FieldLabel required htmlFor="auth_token">
                 {" "}
                 {/* Change the label caption as per your requirement */}
                 {rootConfig.ecommerceConfigFields.field2.label}
               </FieldLabel>
               {/* Change the help caption as per your requirement */}
-            <Help text={rootConfig.ecommerceConfigFields.field2.help} />
+              <Help text={rootConfig.ecommerceConfigFields.field2.help} />
             </div>
             <TextInput
               required
@@ -279,7 +276,12 @@ const ConfigScreen: React.FC = function () {
                 {localeTexts.configPage.saveInEntry.label}
               </FieldLabel>
               {/* Change the help caption as per your requirement */}
-              <Help text={localeTexts.configPage.saveInEntry.help.replace('$', rootConfig.ecommerceEnv.APP_ENG_NAME)} />
+              <Help
+                text={localeTexts.configPage.saveInEntry.help.replace(
+                  "$",
+                  rootConfig.ecommerceEnv.APP_ENG_NAME
+                )}
+              />
             </div>
             <>
               <div className="Radio-wrapper">
@@ -287,9 +289,7 @@ const ConfigScreen: React.FC = function () {
                   id="wholeJSON"
                   checked={!isCustom}
                   required
-                  label={
-                    localeTexts.configPage.saveInEntry.wholeJson
-                  }
+                  label={localeTexts.configPage.saveInEntry.wholeJson}
                   name={localeTexts.configPage.saveInEntry.customJson}
                   value={false}
                   onChange={updateCustomJSON}
@@ -299,9 +299,7 @@ const ConfigScreen: React.FC = function () {
                   id="customJSON"
                   checked={isCustom}
                   required
-                  label={
-                    localeTexts.configPage.saveInEntry.customJson
-                  }
+                  label={localeTexts.configPage.saveInEntry.customJson}
                   name={localeTexts.configPage.saveInEntry.customJson}
                   value={true}
                   onChange={updateCustomJSON}
@@ -318,7 +316,10 @@ const ConfigScreen: React.FC = function () {
                   <FieldLabel required htmlFor="custom_keys">
                     {" "}
                     {/* Change the label caption as per your requirement */}
-                    {localeTexts.configPage.customKeys.label.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME)}
+                    {localeTexts.configPage.customKeys.label.replace(
+                      "$",
+                      rootConfig.ecommerceEnv.APP_ENG_NAME
+                    )}
                   </FieldLabel>
                   {/* Change the help caption as per your requirement */}
                   <Help text={localeTexts.configPage.customKeys.help} />
