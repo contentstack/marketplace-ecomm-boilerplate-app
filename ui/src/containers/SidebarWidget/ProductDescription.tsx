@@ -32,11 +32,11 @@ const ProductDescription: React.FC<Props> = function ({ product }) {
                 variantType="light"
                 type="secondary"
               >
-                  <img
-                    src={NoImg}
-                    alt={localeTexts.selectorPage.noImageAvailable}
-                    className="selector-product-image"
-                  />
+                <img
+                  src={NoImg}
+                  alt={localeTexts.selectorPage.noImageAvailable}
+                  className="selector-product-image"
+                />
               </Tooltip>
             )}
           </div>

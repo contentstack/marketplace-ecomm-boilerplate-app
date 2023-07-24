@@ -66,7 +66,6 @@ const setImage = (url: string) =>
       </Tooltip>
     </div>
   );
-  
 
 const categoriesImg = (obj: any) => {
   if (obj?.c_slotBannerImage) {
@@ -335,5 +334,5 @@ export {
   EmptyObjForSearchCase,
   arrangeList,
   arrangeSelectedIds,
-  removeHTMLTags
+  removeHTMLTags,
 };
