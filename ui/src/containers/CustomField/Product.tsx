@@ -37,19 +37,15 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     borderRadius: 12,
   };
 
-  const deleteModal = (props: any) => {
-    {
-      return (
-        <DeleteModal
-          type="Product"
-          remove={remove}
-          id={id}
-          name={name}
-          {...props}
-        />
-      );
-    }
-  };
+  const deleteModal = (props: any) => (
+    <DeleteModal
+      type="Product"
+      remove={remove}
+      id={id}
+      name={name}
+      {...props}
+    />
+  );
 
   const { error } = product;
   const toolTipActions = [
@@ -75,7 +71,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
       title: "Delete",
       action: () =>
         cbModal({
-          component: (props: any) => deleteModal(props),
+          component: deleteModal,
           modalProps: {
             onClose: () => {},
             onOpen: () => {},

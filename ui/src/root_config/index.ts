@@ -1,5 +1,5 @@
 import currency from "currency.js";
-import { ColumnsProp } from "@contentstack/venus-components/build/components/Table/InfiniteScrollTable";
+import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
 import {
@@ -54,6 +54,7 @@ const ecommerceConfigFields: ConfigFields = {
   },
 };
 
+// Custom field to be added for config screen
 const getCustomKeys = () =>
   <KeyOption[]>[
     {
