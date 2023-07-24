@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ColumnsProp } from "@contentstack/venus-components/build/components/Table/InfiniteScrollTable";
+import { ColumnsProp } from "../../../src/common/types"
 import {
   TypeCategory,
   ConfigFields,
@@ -29,24 +29,28 @@ const ecommerceConfigFields: ConfigFields = {
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack */
 
   apiRouteField: {
+    name: "API Base URL",
     label: "API Route",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "/rest/v2/",
     instruction: "Copy and Paste your API Route",
   },
   ConfigInfo: {
+    name: "API Base URL",
     label: "API Base URL",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "Enter your API Base URL",
     instruction: "Copy and Paste your API Base URL  without https://",
   },
   field2: {
+    name: "Base Site ID",
     label: "Base Site ID",
     help: "You can find your Base Site ID in the Base Commerce Section of your SAP Backoffice.",
     placeholder: "Enter your Base Site ID",
     instruction: "Copy and Paste your Base Site ID",
   },
   field3: {
+    name: "Backoffice URL",
     label: "Backoffice URL",
     help: "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
     placeholder: "Enter your Backoffice URL",

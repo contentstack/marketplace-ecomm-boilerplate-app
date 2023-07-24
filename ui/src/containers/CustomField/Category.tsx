@@ -104,6 +104,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
           component: getDeleteModal,
           modalProps: {
             onClose: () => {},
+            onOpen: () => {},
             size: "xsmall",
           },
         }),

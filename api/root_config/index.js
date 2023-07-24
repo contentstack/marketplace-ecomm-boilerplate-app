@@ -1,5 +1,5 @@
 module.exports = {
-  API_BASE_URL: "https://api.examplecommerce.com/stores/$/v3/", // add the url of your commerce app api
+  API_BASE_URL: "https://api.examplecommerce.com/stores/$/v3/", // add the url of your commerce app api where $ is a value added through Users response
   URI_ENDPOINTS: {
     product: "catalog/products",
     category: "catalog/categories",

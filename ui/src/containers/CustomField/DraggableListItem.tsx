@@ -34,9 +34,7 @@ const DraggableListItem: React.FC<Props> = function ({
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
   };
 
-  const deleteModal = (props: any) => {
-    {
-      return (
+  const deleteModal = (props: any) => (
         <DeleteModal
           type="Product"
           remove={remove}
@@ -45,8 +43,6 @@ const DraggableListItem: React.FC<Props> = function ({
           {...props}
         />
       );
-    }
-  };
 
   const onHoverActionList = [
     {
@@ -68,7 +64,7 @@ const DraggableListItem: React.FC<Props> = function ({
       title: localeTexts.customField.listActions.delete,
       action: () =>
         cbModal({
-          component: (props: any) => deleteModal(props),
+          component: deleteModal,
           modalProps: {
             onClose: () => {},
             onOpen: () => {},
