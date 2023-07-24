@@ -6,6 +6,8 @@ const {
   getSelectedProdsAndCats,
   filterByCategory,
 } = require("./handler");
+const root_config = require("../root_config");
+
 
 const _isEmpty = (val) =>
   val === undefined ||
@@ -13,18 +15,15 @@ const _isEmpty = (val) =>
   (typeof val === "object" && !Object.keys(val)?.length) ||
   (typeof val === "string" && !val.trim().length);
 
-// decryption
-const keySize = constants.DECRYPTION.keySize;
-const iterations = constants.DECRYPTION.iterations;
-const password = `password#123`;
+
 const decrypt = (transitmessage, pass) => {
   const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
   const iv = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(32, 32));
   const encrypted = transitmessage?.substring(64);
 
   const key = CryptoJS?.PBKDF2(pass, salt, {
-    keySize: keySize / 32,
-    iterations: iterations,
+    keySize: constants.DECRYPTION.keySize / 32,
+    iterations: constants.DECRYPTION.iterations,
   });
 
   const decrypted = CryptoJS?.AES?.decrypt(encrypted, key, {
@@ -38,9 +37,9 @@ const decrypt = (transitmessage, pass) => {
 exports.handler = async ({ queryStringParameters: query, body }) => {
   let message;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-  for (const [key, value] of Object.entries(body)) {
-    if (key === "store_id" || key === "auth_token") {
-      body[key] = decrypt(value, password);
+  for (const [key, value] of Object.entries(body)) { //body will have the config object
+    if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {
+      body[key] = decrypt(value, constants.DECRYPTION.password);
     }
   }
   try {
@@ -54,6 +53,11 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
       throw resErr;
     }
 
+    /**Below block of code is just for illustration.
+     * Actuall logic of getting products or categories or any other data, 
+     * might change based on the ecommerce platform that you are using to integrate.
+     * Please update the code accordingly.
+     **/
     query.limit =
       query?.limit > constants.BC_FETCH_PRODUCT_LIMIT ?
         constants.BC_FETCH_PRODUCT_LIMIT
@@ -66,6 +70,11 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
       if (query?.id) message = await getById(query, body);
       else message = await getProductAndCategory(query, body);
     }
+    /**Above block of code is just for illustration.
+     * Actuall logic of getting products or categories or any other data, 
+     * might change based on the ecommerce platform that you are using to integrate.
+     * Please update the code accordingly.
+     **/
   } catch (e) {
     statusCode = e?.statusCode || constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
     message = e?.message || constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
@@ -79,8 +88,8 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
       ...constants.HTTP_RESPONSE_HEADERS,
       authToken: body?.authToken ?? "",
     },
-    // body: JSON.stringify(message), // for lambda
-    body: message, // for localhost
+    // body: JSON.stringify(message), // For deploying the code to AWS Lambda
+    body: message, // For Localhost
   };
   console.info("RESPONSE: ", res);
   return res;

@@ -1,5 +1,12 @@
 import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
 
+declare global {
+  export interface Window {
+    iframeRef: any;
+    postRobot: any;
+  }
+}
+
 export interface TypePopupWindowDetails {
   url: string;
   title: string;
@@ -19,20 +26,14 @@ export interface TypeSDKData {
   appSdkInitialized: boolean;
 }
 
-declare global {
-  export interface Window {
-    iframeRef: any;
-    postRobot: any;
-  }
-}
-
 export type Props = {
   [key: string]: any;
-};
+}
+
 export type TypeWarningtext = {
   error: boolean;
   data: any;
-};
+}
 
 export declare type ColumnsProp = {
   Header: string;

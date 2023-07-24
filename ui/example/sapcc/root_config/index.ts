@@ -14,9 +14,9 @@ import Logo from "../assets/Logo.svg";
 /* all values in this file are an example.
     You can modify its values and implementation,
     but please do not change any keys or function names.
-
 */
-// Please refer the doc for getting more information on each ecommerceEnv fields/keys.
+
+// Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
   REACT_APP_NAME: "sapcommercecloud",
   SELECTOR_PAGE_LOGO: Logo,
@@ -27,6 +27,7 @@ const ecommerceEnv: any = {
   },
   FETCH_PER_PAGE: 20,
 };
+
 // example config fields. you will need to use these values in the config screen accordingly.
 const ecommerceConfigFields: ConfigFields = {
   /* IMPORTANT: 
@@ -340,7 +341,8 @@ const getCustomKeys = () =>
       searchLabel: "volumePricesFlag",
     },
   ];
-// this function maps the corresponding keys to your product object
+
+// this function maps the corresponding keys to your product object that gets saved in custom field 
 const returnFormattedProduct = (product: any, config: any) =>
   <TypeProduct>{
     id: Number(product?.code) || "",
@@ -353,7 +355,7 @@ const returnFormattedProduct = (product: any, config: any) =>
     sku: product?.sku || "",
   };
 
-// this function maps the corresponding keys to your category object
+// this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
   <TypeCategory>{
     id: category?.id || "",
@@ -393,7 +395,6 @@ const getSidebarData = (product: any) =>
   ];
 
 // this defines what and how will the columns will be displayed in your product selector page
-
 const getProductSelectorColumns = (config: any) =>
   <ColumnsProp[]>[
     {

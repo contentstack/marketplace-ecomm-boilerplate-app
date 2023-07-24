@@ -4,7 +4,8 @@ import React from "react";
 
 type uniqueKeyOptions = {
   [key: string]: string;
-};
+}
+
 export interface EcommerceEnv {
   REACT_APP_NAME: string;
   SELECTOR_PAGE_LOGO: string;

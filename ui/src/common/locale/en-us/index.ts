@@ -64,7 +64,7 @@ export default {
       "The details of the listed product(s) will be updated based on the new locale. Are you sure you want to proceed?",
   },
   selectorPage: {
-    heading: "$ Extension",
+    heading: "$ App",
     noImageAvailable: "Product image not available",
     searchQuery:
       "Try changing the search query or filters to find what you are looking for.",

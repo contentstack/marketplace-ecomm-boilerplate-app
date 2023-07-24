@@ -5,4 +5,5 @@ module.exports = {
     category: "catalog/categories",
   },
   PRODUCT_URL_PARAMS: "include=primary_image,variants,images",
+  SENSITIVE_CONFIG_KEYS: ["store_id", "auth_token"],
 };
