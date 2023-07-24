@@ -23,6 +23,17 @@ export default {
       instruction: "Select the keys you want to save",
     },
   },
+  gridViewDropdown: {
+    Thumbnail: "Thumbnail",
+    List: "List",
+  },
+  EmptyObj: {
+    NoResults: "No matching results found!",
+    changeQuery:
+      "Try changing the search query or filters to find what you are looking for.",
+    visitCS: "Not sure where to start? Visit our",
+    help: "help center",
+  },
   customField: {
     idLbl: "ID",
     add: "Add ",
