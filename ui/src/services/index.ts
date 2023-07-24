@@ -2,7 +2,7 @@ import axios from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 
-// common function for an API call to your lambda
+// common function for an API call to your backend
 const makeAnApiCall = async (url: any, method: any, data: any) => {
   try {
     const response = await axios({

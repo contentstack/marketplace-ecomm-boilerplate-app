@@ -27,5 +27,6 @@ module.exports = {
   DECRYPTION: {
     keySize: "256",
     iterations: "100",
+    password: "password#123",
   },
 };

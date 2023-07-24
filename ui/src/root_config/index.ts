@@ -16,8 +16,9 @@ import Logo from "../assets/Logo.svg";
 /* all values in this file are an example.
     You can modify its values and implementation,
     but please do not change any keys or function names.
-
 */
+
+// Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: EcommerceEnv = {
   REACT_APP_NAME: "yourappnameinlowercase",
   SELECTOR_PAGE_LOGO: Logo,
@@ -28,8 +29,15 @@ const ecommerceEnv: EcommerceEnv = {
   },
   FETCH_PER_PAGE: 20,
 };
+
 // example config fields. you will need to use these values in the config screen accordingly.
 const ecommerceConfigFields: ConfigFields = {
+  /* IMPORTANT: 
+  1. All sensitive information must be saved in serverConfig
+  2. serverConfig is used when webhooks are implemented and those values can only be fetched in the request of webhooks. It will not be given to any of the UI locations in the app other than config page
+  3. The fields that needs to be accessed in all UI locations must be saved in config (not in serverConfig)
+  4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack */
+
   ConfigInfo: {
     label: "Store ID",
     help: "You can find your store's ID on your ECommerce Console",
@@ -400,7 +408,8 @@ const getCustomKeys = () =>
       searchLabel: "width",
     },
   ];
-// this function maps the corresponding keys to your product object
+
+// this function maps the corresponding keys to your product object that gets saved in custom field 
 const returnFormattedProduct = (product: any) =>
   <TypeProduct>{
     id: product?.id || "",
@@ -411,7 +420,7 @@ const returnFormattedProduct = (product: any) =>
     sku: product?.sku || "",
   };
 
-// this function maps the corresponding keys to your category object
+// this function maps the corresponding keys to your category object that gets saved in custom field 
 const returnFormattedCategory = (category: any) =>
   <TypeCategory>{
     id: category?.id || "",
