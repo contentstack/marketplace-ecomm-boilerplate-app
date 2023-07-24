@@ -29,7 +29,7 @@ const ecommerceConfigFields: ConfigFields = {
   4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack */
 
   apiRouteField: {
-    name: "API Base URL",
+    name: "API Route",
     label: "API Route",
     help: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholder: "/rest/v2/",
