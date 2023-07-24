@@ -1,5 +1,5 @@
 import currency from "currency.js";
-import { ColumnsProp } from "../common/types"
+import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
 import {

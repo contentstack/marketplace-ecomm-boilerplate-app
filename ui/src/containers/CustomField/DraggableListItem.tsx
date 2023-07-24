@@ -35,14 +35,14 @@ const DraggableListItem: React.FC<Props> = function ({
   };
 
   const deleteModal = (props: any) => (
-        <DeleteModal
-          type="Product"
-          remove={remove}
-          id={id}
-          name={name}
-          {...props}
-        />
-      );
+    <DeleteModal
+      type="Product"
+      remove={remove}
+      id={id}
+      name={name}
+      {...props}
+    />
+  );
 
   const onHoverActionList = [
     {

@@ -45,4 +45,3 @@ export declare type ColumnsProp = {
   cssClass?: string;
   columnWidthMultiplier?: number;
 };
-

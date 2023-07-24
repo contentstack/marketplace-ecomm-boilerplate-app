@@ -38,13 +38,13 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
   };
 
   const deleteModal = (props: any) => (
-        <DeleteModal
-          type="Product"
-          remove={remove}
-          id={id}
-          name={name}
-          {...props}
-        />
+    <DeleteModal
+      type="Product"
+      remove={remove}
+      id={id}
+      name={name}
+      {...props}
+    />
   );
 
   const { error } = product;

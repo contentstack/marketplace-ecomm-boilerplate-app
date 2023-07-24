@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ColumnsProp } from "../../../src/common/types"
+import { ColumnsProp } from "../../../src/common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../../../src/common/utils";
 import {

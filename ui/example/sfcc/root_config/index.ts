@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ColumnsProp } from "../../../src/common/types"
+import { ColumnsProp } from "../../../src/common/types";
 import {
   TypeCategory,
   ConfigFields,
