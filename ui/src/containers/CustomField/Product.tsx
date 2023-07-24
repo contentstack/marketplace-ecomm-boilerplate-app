@@ -16,6 +16,7 @@ import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
+import NoImg from "../../assets/NoImg.svg";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
   const { id, name, description, image, price }: TypeProduct =
@@ -104,11 +105,10 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
                       variantType="light"
                       type="secondary"
                     >
-                      <Icon
-                        icon="RedAlert"
-                        size="original"
-                        width={70}
-                        height={70}
+                      <img
+                        src={NoImg}
+                        alt={localeTexts.selectorPage.noImageAvailable}
+                        className="selector-product-image"
                       />
                     </Tooltip>
                   </div>

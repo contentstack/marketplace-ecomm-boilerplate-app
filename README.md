@@ -167,6 +167,8 @@ npm run dev
 ```
 The API server will start at port 8000.
 All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services.index.tsx` file.
+In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different predefined functions can be utilized for fetching products or categories from various third-party ecommerce systems are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
+Storing dynamic user data in the root config enables centralization, allowing the handler/index.js to easily access and process this information, promoting consistency and simplifying data management within the API.
 
 ## Environment Variables
 

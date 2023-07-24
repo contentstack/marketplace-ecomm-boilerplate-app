@@ -6,6 +6,7 @@ import "./styles.scss";
 import { Icon, Tooltip } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
+import NoImg from "../../assets/NoImg.svg";
 
 const ProductDescription: React.FC<Props> = function ({ product }) {
   const { id, name, description, price, sku, image }: TypeProduct =
@@ -31,11 +32,10 @@ const ProductDescription: React.FC<Props> = function ({ product }) {
                 variantType="light"
                 type="secondary"
               >
-                <Icon
-                  icon="RedAlert"
-                  size="original"
-                  width={150}
-                  height={150}
+                <img
+                  src={NoImg}
+                  alt={localeTexts.selectorPage.noImageAvailable}
+                  className="selector-product-image"
                 />
               </Tooltip>
             )}
