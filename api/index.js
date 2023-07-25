@@ -6,7 +6,7 @@ const {
   getSelectedProdsAndCats,
   filterByCategory,
 } = require("./handler");
-const root_config = require("../root_config");
+const root_config = require("./root_config");
 
 
 const _isEmpty = (val) =>
