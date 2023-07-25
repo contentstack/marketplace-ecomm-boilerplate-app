@@ -342,7 +342,7 @@ const getCustomKeys = () =>
     },
   ];
 
-// this function maps the corresponding keys to your product object that gets saved in custom field 
+// this function maps the corresponding keys to your product object that gets saved in custom field
 const returnFormattedProduct = (product: any, config: any) =>
   <TypeProduct>{
     id: Number(product?.code) || "",

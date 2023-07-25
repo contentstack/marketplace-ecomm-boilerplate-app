@@ -37,7 +37,8 @@ const decrypt = (transitmessage, pass) => {
 exports.handler = async ({ queryStringParameters: query, body }) => {
   let message;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-  for (const [key, value] of Object.entries(body)) { //body will have the config object
+  for (const [key, value] of Object.entries(body)) {
+    //body will have the config object
     if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {
       body[key] = decrypt(value, constants.DECRYPTION.password);
     }
@@ -54,7 +55,7 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
     }
 
     /**Below block of code is just for illustration.
-     * Actuall logic of getting products or categories or any other data, 
+     * Actuall logic of getting products or categories or any other data,
      * might change based on the ecommerce platform that you are using to integrate.
      * Please update the code accordingly.
      **/
@@ -71,7 +72,7 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
       else message = await getProductAndCategory(query, body);
     }
     /**Above block of code is just for illustration.
-     * Actuall logic of getting products or categories or any other data, 
+     * Actuall logic of getting products or categories or any other data,
      * might change based on the ecommerce platform that you are using to integrate.
      * Please update the code accordingly.
      **/

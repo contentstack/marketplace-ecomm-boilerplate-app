@@ -409,7 +409,7 @@ const getCustomKeys = () =>
     },
   ];
 
-// this function maps the corresponding keys to your product object that gets saved in custom field 
+// this function maps the corresponding keys to your product object that gets saved in custom field
 const returnFormattedProduct = (product: any) =>
   <TypeProduct>{
     id: product?.id || "",
@@ -420,7 +420,7 @@ const returnFormattedProduct = (product: any) =>
     sku: product?.sku || "",
   };
 
-// this function maps the corresponding keys to your category object that gets saved in custom field 
+// this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
   <TypeCategory>{
     id: category?.id || "",
