@@ -8,13 +8,11 @@ const {
 } = require("./handler");
 const root_config = require("./root_config");
 
-
 const _isEmpty = (val) =>
   val === undefined ||
   val === null ||
   (typeof val === "object" && !Object.keys(val)?.length) ||
   (typeof val === "string" && !val.trim().length);
-
 
 const decrypt = (transitmessage, pass) => {
   const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
