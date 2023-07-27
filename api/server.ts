@@ -5,9 +5,10 @@ without any server requirement.
 As this is only for development, keep only one API always with empty route,
 and handle all the functionality in that API. Don't add multiple APIs. */
 
-import express from "express";
+import express from 'express';
 import cors from 'cors';
 import handler from './index';
+
 const app = express();
 
 app.use(cors({ origin: '*' }));

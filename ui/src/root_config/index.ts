@@ -38,7 +38,14 @@ const verifyAppSigning = async (app_token: any) => {
         stack_api_key,
       } = jwt.verify(app_token, publicKey) as JwtPayload;
 
-      console.info("app token is valid!", app_uid,installation_uid, organization_uid, user_uid, stack_api_key);
+      console.info(
+        "app token is valid!",
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key
+      );
     } catch (e) {
       console.error(
         "app token is invalid or request is not initiated from Contentstack!"

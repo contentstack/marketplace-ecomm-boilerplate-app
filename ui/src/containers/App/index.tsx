@@ -16,8 +16,6 @@ import "@contentstack/venus-components/build/main.css";
 /* Import our CSS */
 import "./styles.scss";
 
-
-
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
 */
