@@ -1,4 +1,7 @@
 import currency from "currency.js";
+import axios from "axios";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
@@ -17,6 +20,36 @@ import Logo from "../assets/Logo.svg";
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
+
+// this function is used for app signing, i.e. for verifying app tokens in ui
+const verifyAppSigning = async (app_token: any) => {
+  if (app_token) {
+    try {
+      const { data } = await axios.get(
+        "https://app.contentstack.com/.well-known/public-keys.json"
+      );
+      const publicKey = data["signing-key"];
+
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      } = jwt.verify(app_token, publicKey) as JwtPayload;
+
+      console.info("app token is valid!");
+    } catch (e) {
+      console.error(
+        "app token is invalid or request is not initiated from Contentstack!"
+      );
+    }
+    return true;
+  } else {
+    console.error("app token is missing!");
+    return false;
+  }
+};
 
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: EcommerceEnv = {
@@ -451,9 +484,9 @@ const getSidebarData = (product: any) =>
 
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
-const getOpenerLink = (id: any, config: any, type: any) =>
+const getOpenerLink = (data: any, config: any, type: any) =>
   `https://store-${config?.storeId}.myexamplecommerce.com/manage/products/${
-    type === "category" ? `categories/${id}/edit` : `edit/${id}`
+    type === "category" ? `categories/${data.id}/edit` : `edit/${data.id}`
   }`;
 
 // this defines what and how will the columns will be displayed in your product selector page
@@ -550,6 +583,7 @@ const categorySelectorColumns: ColumnsProp[] = [
 ];
 
 const rootConfig = {
+  verifyAppSigning,
   ecommerceEnv,
   ecommerceConfigFields,
   returnFormattedProduct,

@@ -92,7 +92,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
       ),
       action: () =>
         window.open(
-          rootConfig.getOpenerLink(categories?.id, config, "product"),
+          rootConfig.getOpenerLink(categories, config, "product"),
           "_blank"
         ),
     },
