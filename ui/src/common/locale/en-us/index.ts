@@ -4,6 +4,7 @@ export default {
     appText:
       "If the issue continues, please reach out to us at support@contentstack.com",
     learnMore: "Learn more",
+    signFail: "Signature Verification failed",
   },
   configPage: {
     saveInEntry: {

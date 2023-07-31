@@ -358,11 +358,7 @@ const SelectorPage: React.FC = function () {
               ),
               action: (_e: any, data: any) => {
                 window.open(
-                  rootConfig.getOpenerLink(
-                    data[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]],
-                    config,
-                    config?.type
-                  ),
+                  rootConfig.getOpenerLink(data, config, config?.type),
                   "_blank"
                 );
               },

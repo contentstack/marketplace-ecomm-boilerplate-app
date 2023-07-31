@@ -31,4 +31,3 @@ api/.env
 ui/.env
 ui/.npmrc
 coverage/
-/api/server.js

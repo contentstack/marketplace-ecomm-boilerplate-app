@@ -1,17 +1,20 @@
 /* Import React modules */
 import React, { Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";
 import AppConfigurationExtensionProvider from "../../common/providers/AppConfigurationExtensionProvider";
 import ProductCustomFieldExtensionProvider from "../../common/providers/ProductCustomFieldExtensionProvider";
 import CategoryCustomFieldExtensionProvider from "../../common/providers/CategoryCustomFieldExtensionProvider";
+import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
+import localeTexts from "../../common/locale/en-us";
+// eslint-disable-next-line import/no-named-as-default
+import rootConfig from "../../root_config";
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
 /* Import our CSS */
 import "./styles.scss";
-import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
 
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
@@ -38,6 +41,11 @@ const SelectorExtension = React.lazy(() => import("../SelectorPage/index"));
 const SidebarExtension = React.lazy(() => import("../SidebarWidget/index"));
 
 function App() {
+  //  below function is called for app signing, i.e. for verifying app tokens in ui
+  const [searchParams] = useSearchParams();
+  if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
+    return <div>{localeTexts.appFailedText.signFail}</div>;
+  }
   return (
     <ErrorBoundary>
       <MarketplaceAppProvider>

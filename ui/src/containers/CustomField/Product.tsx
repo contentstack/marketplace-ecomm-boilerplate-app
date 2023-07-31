@@ -63,7 +63,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
       ),
       action: () =>
         window.open(
-          rootConfig.getOpenerLink(product?.id, config, "product"),
+          rootConfig.getOpenerLink(product, config, "product"),
           "_blank"
         ),
     },

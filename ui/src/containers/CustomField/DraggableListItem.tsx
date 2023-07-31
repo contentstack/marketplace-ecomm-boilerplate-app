@@ -57,7 +57,10 @@ const DraggableListItem: React.FC<Props> = function ({
         rootConfig.ecommerceEnv.APP_ENG_NAME
       ),
       action: () =>
-        window.open(rootConfig.getOpenerLink(id, config, "product"), "_blank"),
+        window.open(
+          rootConfig.getOpenerLink(product, config, "product"),
+          "_blank"
+        ),
     },
     {
       label: <Icon icon="Trash" size="mini" />,

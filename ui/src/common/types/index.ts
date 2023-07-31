@@ -28,12 +28,12 @@ export interface TypeSDKData {
 
 export type Props = {
   [key: string]: any;
-}
+};
 
 export type TypeWarningtext = {
   error: boolean;
   data: any;
-}
+};
 
 export declare type ColumnsProp = {
   Header: string;
