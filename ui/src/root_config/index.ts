@@ -493,7 +493,7 @@ const getSidebarData = (product: any) =>
 // you can use the id, config and type to generate links
 const getOpenerLink = (data: any, config: any, type: any) =>
   `https://store-${config?.storeId}.myexamplecommerce.com/manage/products/${
-    type === "category" ? `categories/${data.id}/edit` : `edit/${data.id}`
+    type === "category" ? `categories/${data?.id}/edit` : `edit/${data?.id}`
   }`;
 
 // this defines what and how will the columns will be displayed in your product selector page
