@@ -22,10 +22,10 @@ import Logo from "../assets/Logo.svg";
 */
 
 // this function is used for app signing, i.e. for verifying app tokens in ui
-const verifyAppSigning = async (app_token: any) => {
+const verifyAppSigning = async (app_token: any): Promise<boolean> => {
   if (app_token) {
     try {
-      const { data } = await axios.get(
+      const { data }: {data: any} = await axios.get(
         "https://app.contentstack.com/.well-known/public-keys.json"
       );
       const publicKey = data["signing-key"];
@@ -36,7 +36,7 @@ const verifyAppSigning = async (app_token: any) => {
         organization_uid,
         user_uid,
         stack_api_key,
-      } = jwt.verify(app_token, publicKey) as JwtPayload;
+      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
 
       console.info(
         "app token is valid!",
@@ -50,6 +50,7 @@ const verifyAppSigning = async (app_token: any) => {
       console.error(
         "app token is invalid or request is not initiated from Contentstack!"
       );
+      return false;
     }
     return true;
   } else {
@@ -589,7 +590,7 @@ const categorySelectorColumns: ColumnsProp[] = [
   },
 ];
 
-const rootConfig = {
+const rootConfig: any = {
   verifyAppSigning,
   ecommerceEnv,
   ecommerceConfigFields,

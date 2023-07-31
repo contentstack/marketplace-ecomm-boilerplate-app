@@ -27,7 +27,7 @@ const _getApiOptions: any = (
   },
   key: any,
 ) => {
-  let url = `${root_config.API_BASE_URL}${root_config.URI_ENDPOINTS?.[query]}`;
+  let url: string = `${root_config.API_BASE_URL}${root_config.URI_ENDPOINTS?.[query]}`;
 
   if (searchParam) url += `?${searchParam}&`;
   else if (id) url += `/${id}?`;
@@ -40,7 +40,7 @@ const _getApiOptions: any = (
 // you can modify it as per your third party service response
 const _makeApiCall: any = async (opts: any) => {
   try {
-    const res = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
+    const res: any = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
     return res?.data;
   } catch (e: any) {
     if (e?.response?.status === constants.HTTP_ERROR_CODES.NOT_FOUND) {
@@ -65,7 +65,7 @@ export const getById: any = ({ id, query }: any, key: any) => _makeApiCall(_getA
 
 // get an array of selected products and categories
 export const getSelectedProdsAndCats: any = (data: any, key: any) => {
-  let url = `${root_config.API_BASE_URL}${
+  let url: string = `${root_config.API_BASE_URL}${
     root_config.URI_ENDPOINTS[data?.query]
   }`;
 

@@ -16,16 +16,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.post('/', async (req: any, res: any) => {
-  const event = {
+  const event: any = {
     queryStringParameters: req.query,
     body: req.body,
   };
-  const response = await handler(event);
+  const response: any = await handler(event);
   res.set(response.headers);
   res.status(response.statusCode).json(response.body);
 });
 
-const port = 8080;
+const port: number = 8080;
 app.listen(port, () => {
   console.info('Server listening at port ', port);
 });

@@ -34,10 +34,10 @@ const decrypt: any = (transitmessage: any, pass: any) => {
 const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let message: any;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-  const configKeys = Object.keys(body);
-  const configKeysLength = configKeys?.length;
+  const configKeys: string[] = Object.keys(body);
+  const configKeysLength: number = configKeys?.length;
   for (let i = 0; i < configKeysLength; i += 1) {
-    const key: any = configKeys[i];
+    const key: string = configKeys[i];
     const value: any = body[configKeys[key]];
     // body will have the config object
     if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {
