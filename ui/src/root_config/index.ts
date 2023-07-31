@@ -25,7 +25,7 @@ import Logo from "../assets/Logo.svg";
 const verifyAppSigning = async (app_token: any): Promise<boolean> => {
   if (app_token) {
     try {
-      const { data }: {data: any} = await axios.get(
+      const { data }: { data: any } = await axios.get(
         "https://app.contentstack.com/.well-known/public-keys.json"
       );
       const publicKey = data["signing-key"];
