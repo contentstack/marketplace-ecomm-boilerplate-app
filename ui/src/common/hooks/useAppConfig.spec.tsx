@@ -17,7 +17,7 @@ describe("useAppConfig", () => {
     render(<AppConfigFunc />);
 
     expect(screen.getByText(/{"key":"value"}/i).textContent).toBe(
-        JSON.stringify({ key: "value" })
-      );
-    });
+      JSON.stringify({ key: "value" })
+    );
+  });
 });

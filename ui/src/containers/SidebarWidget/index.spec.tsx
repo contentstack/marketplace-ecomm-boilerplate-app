@@ -1,5 +1,9 @@
 import React from "react";
-import { render as customRender, screen, cleanup } from "@testing-library/react/pure";
+import {
+  render as customRender,
+  screen,
+  cleanup,
+} from "@testing-library/react/pure";
 import CustomField from "./index";
 
 let customFieldRenderedDOM: any = null;
@@ -39,11 +43,18 @@ beforeEach(() => {
 describe(`UI Elements of SidebarWidget without Products`, () => {
   test(`Rendering text element`, async () => {
     const isTextVisible = () =>
-      screen.queryByText((content, element) => element !== null && element.textContent === "Invalid credentials.");
+      screen.queryByText(
+        (content, element) =>
+          element !== null && element.textContent === "Invalid credentials."
+      );
 
     expect(isTextVisible()).toBeTruthy();
-    expect(customFieldRenderedDOM.container.querySelector(`[class=sidebar]`)).toBeTruthy();
-    expect(customFieldRenderedDOM.container.querySelector("[class=Icon--small]")).toBeTruthy();
+    expect(
+      customFieldRenderedDOM.container.querySelector(`[class=sidebar]`)
+    ).toBeTruthy();
+    expect(
+      customFieldRenderedDOM.container.querySelector("[class=Icon--small]")
+    ).toBeTruthy();
   });
 });
 
