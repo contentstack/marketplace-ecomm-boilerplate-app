@@ -63,7 +63,7 @@ const ProductDescription: React.FC<Props> = function ({ product }) {
             <div className="label">{priceLbl}</div>
             <div className="value">{price}</div>
           </div>
-          {rootConfig.getSidebarData(product)?.map(({ title, value }) => (
+          {rootConfig.getSidebarData(product)?.map(({ title, value }: any) => (
             <div className="detail-group" key={title}>
               <div className="label">{title}</div>
               <div className="value">{value}</div>

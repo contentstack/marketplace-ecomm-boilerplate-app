@@ -37,7 +37,7 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
   const configKeys: string[] = Object.keys(body);
   const configKeysLength: number = configKeys?.length;
   for (let i = 0; i < configKeysLength; i += 1) {
-    const key: string = configKeys[i];
+    const key: any = configKeys[i];
     const value: any = body[configKeys[key]];
     // body will have the config object
     if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {

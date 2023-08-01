@@ -301,7 +301,7 @@ const SelectorPage: React.FC = function () {
           canSearch
           data={
             list?.length
-              ? list.map((listData) => ({
+              ? list.map((listData: any) => ({
                   ...listData,
                   [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]: `${
                     listData[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]
