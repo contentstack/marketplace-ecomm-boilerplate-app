@@ -1,0 +1,60 @@
+{
+    "webhook": {
+      "signed": true,
+      "enabled": true,
+      "target_url": "node-server-url/webhook",
+      "channels": [
+        "cs.apps.installations.update",
+        "cs.apps.installations.uninstall"
+      ],
+      "app_lifecycle_enabled": true,
+      "retry_policy": "manual"
+    },
+    "ui_location": {
+      "base_url": "node-server-url/ui-auth",
+      "signed": true,
+      "locations": [
+        {
+          "type": "cs.cm.stack.custom_field",
+          "meta": [
+            {
+              "signed": true,
+              "path": "/field-extension",
+              "data_type": "json"
+            }
+          ]
+        },
+        {
+          "type": "cs.cm.stack.custom_field",
+          "meta": [
+            {
+              "signed": true,
+              "path": "/product-field",
+              "name": "Ecommerce Boilerplate - Product Field",
+              "data_type": "json"
+            }
+          ]
+        },
+        {
+          "type": "cs.cm.stack.sidebar",
+          "meta": [
+            {
+              "signed": true,
+              "path": "/sidebar-widget",
+              "data_type": "json"
+            }
+          ]
+        },
+        {
+          "type": "cs.cm.stack.config",
+          "meta": [
+            {
+              "signed": true,
+              "path": "/config"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  

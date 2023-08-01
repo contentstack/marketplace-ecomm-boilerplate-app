@@ -1,13 +1,14 @@
 import React from "react";
-import { render, screen, cleanup } from "@testing-library/react/pure";
+import { render as customRender, screen, cleanup } from "@testing-library/react/pure";
 import CustomField from "./index";
 
 let customFieldRenderedDOM: any = null;
 
-jest.mock("../../interceptor", () => ({
-  getTokenFromUrl: jest.fn().mockReturnValue(Promise.resolve([])),
-  setFetchInterceptors: jest.fn().mockReturnValue(Promise.resolve([])),
-}));
+const render = (ui: React.ReactElement, options?: any) => {
+  const { container } = customRender(ui, options);
+  customFieldRenderedDOM = { container };
+  return { container };
+};
 
 beforeEach(() => {
   const setStateMock = React.useState;
@@ -37,14 +38,12 @@ beforeEach(() => {
 
 describe(`UI Elements of SidebarWidget without Products`, () => {
   test(`Rendering text element`, async () => {
-    expect(screen.getByText("Invalid credentials.")).toBeInTheDocument();
-    screen.debug();
-    expect(
-      customFieldRenderedDOM?.container?.querySelector(`[class=sidebar]`)
-    ).toBeTruthy();
-    expect(
-      customFieldRenderedDOM?.container?.querySelector("[class=Icon--small]")
-    ).toBeTruthy();
+    const isTextVisible = () =>
+      screen.queryByText((content, element) => element !== null && element.textContent === "Invalid credentials.");
+
+    expect(isTextVisible()).toBeTruthy();
+    expect(customFieldRenderedDOM.container.querySelector(`[class=sidebar]`)).toBeTruthy();
+    expect(customFieldRenderedDOM.container.querySelector("[class=Icon--small]")).toBeTruthy();
   });
 });
 

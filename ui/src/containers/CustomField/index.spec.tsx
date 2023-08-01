@@ -7,10 +7,6 @@ import {
 } from "@testing-library/react/pure";
 import ProductsField from "../ProductsField";
 
-jest.mock("../../interceptor/index.ts", () => ({
-  getTokenFromUrl: jest.fn(),
-}));
-
 const customFieldUIElementsIDs = [
   "field-wrapper",
   "noAsset-box",
