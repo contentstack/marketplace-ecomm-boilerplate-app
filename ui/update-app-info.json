@@ -4,6 +4,7 @@
     "enabled": true,
     "target_url": "node-server-url/webhook",
     "channels": [
+      "cs.apps.installations.install",
       "cs.apps.installations.update",
       "cs.apps.installations.uninstall"
     ],
