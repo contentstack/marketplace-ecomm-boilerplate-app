@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ColumnsProp } from "../../../src/common/types";
+import axios from "axios";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { ColumnsProp } from "../../../src/common/types/index";
 import {
   TypeCategory,
   ConfigFields,
@@ -7,13 +9,50 @@ import {
   TypeProduct,
   SidebarDataObj,
 } from "../../../src/types";
-import Logo from "../../../assets/Logo.svg";
+import Logo from "../assets/Logo.svg";
+// eslint-disable-next-line import/no-cycle
+import { getImage } from "../../../src/common/utils";
 
 /* all values in this file are an example.
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
+// this function is used for app signing, i.e. for verifying app tokens in ui
+const verifyAppSigning = async (app_token: any): Promise<boolean> => {
+  if (app_token) {
+    try {
+      const { data }: { data: any } = await axios.get(
+        "https://app.contentstack.com/.well-known/public-keys.json"
+      );
+      const publicKey = data["signing-key"];
 
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
+
+      console.info(
+        "app token is valid!",
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key
+      );
+    } catch (e) {
+      console.error(
+        "app token is invalid or request is not initiated from Contentstack!"
+      );
+      return false;
+    }
+    return true;
+  }
+  console.error("app token is missing!");
+  return false;
+};
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
   REACT_APP_NAME: "sfcccommercecloud", // add your app name in lower case
@@ -65,7 +104,7 @@ const ecommerceConfigFields: ConfigFields = {
 };
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) =>
+const returnFormattedProduct = (product: any, config?: any): TypeProduct =>
   <TypeProduct>{
     id: Number(product?.code) || "",
     name: product?.name || "",
@@ -393,106 +432,119 @@ const getSidebarData = (product: any) =>
   ];
 
 // this defines what and how will the columns will be displayed in your product selector page
-const getProductSelectorColumns =
-  // (config: any)
-  () =>
-    <ColumnsProp[]>[
-      {
-        Header: "ID", // the title of the column
-        id: "code",
-        accessor: "code", // specifies how you want to display data in the column. can be either string or a function
-        default: true,
-        disableSortBy: true, // disable sorting of the table with this column
-        addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
-        columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
-        // 0.x means smaller than one specified unit by 0.x times
-        // x means bigger that one specified unit by x times
-      },
-      {
-        Header: "Image",
-        id: "image",
-        // accessor: (obj: any) => obj?.images?.[0]?.url ?
-        //     getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
-        //   : getImage(obj?.images?.[0]?.url),
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 0.7,
-      },
-      {
-        Header: "Product Name",
-        id: "name",
-        // accessor: (obj: any) => wrapWithDiv(obj?.name),
-        default: true,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 3,
-      },
-      {
-        Header: "Price",
-        id: "price",
-        accessor: (obj: any) => obj?.price?.formattedValue,
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 1,
-      },
-      {
-        Header: "Description",
-        id: "description",
-        // accessor: (obj: any) => wrapWithDiv(obj?.description),
-        default: false,
-        disableSortBy: true,
-        addToColumnSelector: true,
-        columnWidthMultiplier: 2.7,
-      },
-    ];
+const productSelectorColumns = (config: any) =>
+  <ColumnsProp[]>[
+    {
+      Header: "ID", // the title of the column
+      id: "code",
+      accessor: "code", // specifies how you want to display data in the column. can be either string or a function
+      default: true,
+      disableSortBy: true, // disable sorting of the table with this column
+      addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
+      columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
+      // 0.x means smaller than one specified unit by 0.x times
+      // x means bigger that one specified unit by x times
+    },
+    {
+      Header: "Image",
+      id: "image",
+      accessor: (obj: any) =>
+        obj?.images?.[0]?.url ?
+          getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
+          : getImage(obj?.images?.[0]?.url),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.7,
+    },
+    {
+      Header: "Product Name",
+      id: "name",
+      // accessor: (obj: any) => wrapWithDiv(obj?.name),
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 3,
+    },
+    {
+      Header: "Price",
+      id: "price",
+      accessor: (obj: any) => obj?.price?.formattedValue,
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1,
+    },
+    {
+      Header: "Description",
+      id: "description",
+      // accessor: (obj: any) => wrapWithDiv(obj?.description),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 2.7,
+    },
+  ];
 
 // this defines what and how will the columns will be displayed in your category selector page
-const categorySelectorColumns: ColumnsProp[] = [
-  {
-    Header: "ID",
-    id: "id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1.5,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: (obj: any) => obj?.name || "-",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1.5,
-  },
-  {
-    Header: "Catalog Name",
-    id: "catalogName",
-    accessor: "catalogName",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Catalog Version",
-    id: "catalogVersionId",
-    accessor: "catalogVersionId",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-];
+const categorySelectorColumns = (config?: any) =>
+  <ColumnsProp[]>[
+    {
+      Header: "ID",
+      id: "id",
+      accessor: "id",
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1.5,
+    },
+    {
+      Header: "Image",
+      id: "image",
+      accessor: (obj: any) =>
+        obj?.images?.[0]?.url ?
+          getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
+          : getImage(obj?.images?.[0]?.url),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.7,
+    },
+    {
+      Header: "Category Name",
+      id: "name",
+      accessor: (obj: any) => obj?.name || "-",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1.5,
+    },
+    {
+      Header: "Catalog Name",
+      id: "catalogName",
+      accessor: "catalogName",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+    },
+    {
+      Header: "Catalog Version",
+      id: "catalogVersionId",
+      accessor: "catalogVersionId",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+    },
+  ];
 
 const rootConfig = {
+  verifyAppSigning,
   ecommerceEnv,
   ecommerceConfigFields,
   returnFormattedProduct,
   returnFormattedCategory,
   getOpenerLink,
-  getProductSelectorColumns,
+  productSelectorColumns,
   categorySelectorColumns,
   getCustomKeys,
   getSidebarData,
