@@ -186,15 +186,15 @@ Storing dynamic user data in the root config enables centralization, allowing th
 
 ## Hooks
 
-- `useAppConfig`: Getter and setter hook for App config.
-- `useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
-- `useAppSdk`: Returns the appSdk instance after initialization.
-- `useCategoryCustomField`: Getter and setter hook for category custom field data.
-- `useCustomField`: Getter and setter hook for custom field data.
-- `useFrame`: Returns the Iframe instance for the location.
-- `useInstallationData`: Getter & Setter for installation data.
-- `useProductCustomField`: Getter and setter hook for product custom field data.
-- `useSdkDataByPath`: This is a generic hook which can return the value at the given path;
+`useAppConfig`: Getter and setter hook for App config.
+`useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
+`useAppSdk`: Returns the appSdk instance after initialization.
+`useCategoryCustomField`: Getter and setter hook for category custom field data.
+`useCustomField`: Getter and setter hook for custom field data.
+`useFrame`: Returns the Iframe instance for the location.
+`useInstallationData`: Getter & Setter for installation data.
+`useProductCustomField`: Getter and setter hook for product custom field data.
+`useSdkDataByPath`: This is a generic hook which can return the value at the given path;
 
 ## Routes
 
