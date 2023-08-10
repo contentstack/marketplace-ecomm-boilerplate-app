@@ -180,21 +180,21 @@ Storing dynamic user data in the root config enables centralization, allowing th
 `<MarketplaceAppProvider>`:  This initialize the contentstack SDK make the SDK instance available via hooks to avoid props drilling.
 `<AppConfigurationExtensionProvider>`: This initialize the configuration screen.
 `<ProductCustomFieldExtensionProvider>`: This provider is responsible for Product Custom Field.
-`<CategoryCustomFieldExtensionProvider>>`: This provider is responsible for Category Custom Field.
+`<CategoryCustomFieldExtensionProvider>`: This provider is responsible for Category Custom Field.
 `<EntrySidebarExtensionProvider>`: This provider is responsible for Entry Sidebarwidget.
 `<SelectorExtensionProvider>`: This provider is responsible for Selector Page.
 
 ## Hooks
 
-- useAppConfig: Getter and setter hook for App config.
-- useAppLocation: Returns the location name (eg: CustomField) and the location instance from the SDK.
-- useAppSdk: Returns the appSdk instance after initialization.
-- useCategoryCustomField: Getter and setter hook for category custom field data.
-- useCustomField: Getter and setter hook for custom field data.
-- useFrame: Returns the Iframe instance for the location.
-- useInstallationData: Getter & Setter for installation data.
-- useProductCustomField: Getter and setter hook for product custom field data.
-- useSdkDataByPath: This is a generic hook which can return the value at the given path;
+- `useAppConfig`: Getter and setter hook for App config.
+- `useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
+- `useAppSdk`: Returns the appSdk instance after initialization.
+- `useCategoryCustomField`: Getter and setter hook for category custom field data.
+- `useCustomField`: Getter and setter hook for custom field data.
+- `useFrame`: Returns the Iframe instance for the location.
+- `useInstallationData`: Getter & Setter for installation data.
+- `useProductCustomField`: Getter and setter hook for product custom field data.
+- `useSdkDataByPath`: This is a generic hook which can return the value at the given path;
 
 ## Routes
 
