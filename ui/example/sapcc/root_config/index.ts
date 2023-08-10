@@ -49,10 +49,9 @@ const verifyAppSigning = async (app_token: any): Promise<boolean> => {
       return false;
     }
     return true;
-  } 
-    console.error("app token is missing!");
-    return false;
-  
+  }
+  console.error("app token is missing!");
+  return false;
 };
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
