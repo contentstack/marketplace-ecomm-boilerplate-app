@@ -158,7 +158,7 @@ npm run start
 The UI server will start at port 4000.
 * To install the necessary packages for API , navigate to the API folder
 ```
-cd <APP_DIRECTORY>/ui/rte
+cd <APP_DIRECTORY>/api
 npm i
 ```
 * After you install the packages, run the following command in the API folder to start the server.
