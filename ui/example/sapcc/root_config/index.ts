@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import axios from "axios";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ColumnsProp } from "../../../src/common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../../../src/common/utils";
@@ -15,7 +17,43 @@ import Logo from "../assets/Logo.svg";
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
+// this function is used for app signing, i.e. for verifying app tokens in ui
+const verifyAppSigning = async (app_token: any): Promise<boolean> => {
+  if (app_token) {
+    try {
+      const { data }: { data: any } = await axios.get(
+        "https://app.contentstack.com/.well-known/public-keys.json"
+      );
+      const publicKey = data["signing-key"];
 
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
+
+      console.info(
+        "app token is valid!",
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key
+      );
+    } catch (e) {
+      console.error(
+        "app token is invalid or request is not initiated from Contentstack!"
+      );
+      return false;
+    }
+    return true;
+  } 
+    console.error("app token is missing!");
+    return false;
+  
+};
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
   REACT_APP_NAME: "sapcommercecloud",
@@ -488,6 +526,7 @@ const categorySelectorColumns: ColumnsProp[] = [
 ];
 
 const rootConfig = {
+  verifyAppSigning,
   ecommerceEnv,
   ecommerceConfigFields,
   returnFormattedProduct,

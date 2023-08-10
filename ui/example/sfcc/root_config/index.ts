@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ColumnsProp } from "../../../src/common/types";
+import axios from "axios";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { ColumnsProp } from "../../../src/common/types/index";
 import {
   TypeCategory,
   ConfigFields,
@@ -7,13 +9,51 @@ import {
   TypeProduct,
   SidebarDataObj,
 } from "../../../src/types";
-import Logo from "../../../assets/Logo.svg";
+import Logo from "../assets/Logo.svg";
+// eslint-disable-next-line import/no-cycle
+import { getImage } from "../../../src/common/utils";
 
 /* all values in this file are an example.
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
+// this function is used for app signing, i.e. for verifying app tokens in ui
+const verifyAppSigning = async (app_token: any): Promise<boolean> => {
+  if (app_token) {
+    try {
+      const { data }: { data: any } = await axios.get(
+        "https://app.contentstack.com/.well-known/public-keys.json"
+      );
+      const publicKey = data["signing-key"];
 
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
+
+      console.info(
+        "app token is valid!",
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key
+      );
+    } catch (e) {
+      console.error(
+        "app token is invalid or request is not initiated from Contentstack!"
+      );
+      return false;
+    }
+    return true;
+  } 
+    console.error("app token is missing!");
+    return false;
+  
+};
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: any = {
   REACT_APP_NAME: "sfcccommercecloud", // add your app name in lower case
@@ -65,8 +105,8 @@ const ecommerceConfigFields: ConfigFields = {
 };
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) =>
-  <TypeProduct>{
+const returnFormattedProduct = (product: any, config?: any): TypeProduct => 
+   <TypeProduct> {
     id: Number(product?.code) || "",
     name: product?.name || "",
     description: product?.description || "-",
@@ -76,6 +116,7 @@ const returnFormattedProduct = (product: any, config: any) =>
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
   };
+
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
@@ -393,9 +434,8 @@ const getSidebarData = (product: any) =>
   ];
 
 // this defines what and how will the columns will be displayed in your product selector page
-const getProductSelectorColumns =
-  // (config: any)
-  () =>
+const productSelectorColumns =
+  (config: any) =>
     <ColumnsProp[]>[
       {
         Header: "ID", // the title of the column
@@ -411,9 +451,9 @@ const getProductSelectorColumns =
       {
         Header: "Image",
         id: "image",
-        // accessor: (obj: any) => obj?.images?.[0]?.url ?
-        //     getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
-        //   : getImage(obj?.images?.[0]?.url),
+        accessor: (obj: any) => obj?.images?.[0]?.url ?
+            getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
+          : getImage(obj?.images?.[0]?.url),
         default: false,
         disableSortBy: true,
         addToColumnSelector: true,
@@ -449,7 +489,7 @@ const getProductSelectorColumns =
     ];
 
 // this defines what and how will the columns will be displayed in your category selector page
-const categorySelectorColumns: ColumnsProp[] = [
+const categorySelectorColumns = (config? : any) => <ColumnsProp[]> [
   {
     Header: "ID",
     id: "id",
@@ -458,6 +498,17 @@ const categorySelectorColumns: ColumnsProp[] = [
     disableSortBy: true,
     addToColumnSelector: true,
     columnWidthMultiplier: 1.5,
+  },
+  {
+    Header: "Image",
+    id: "image",
+    accessor: (obj: any) => obj?.images?.[0]?.url ?
+        getImage(`https://${config?.base_url}${obj?.images?.[0]?.url}`)
+      : getImage(obj?.images?.[0]?.url),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 0.7,
   },
   {
     Header: "Category Name",
@@ -487,12 +538,13 @@ const categorySelectorColumns: ColumnsProp[] = [
 ];
 
 const rootConfig = {
+  verifyAppSigning,
   ecommerceEnv,
   ecommerceConfigFields,
   returnFormattedProduct,
   returnFormattedCategory,
   getOpenerLink,
-  getProductSelectorColumns,
+  productSelectorColumns,
   categorySelectorColumns,
   getCustomKeys,
   getSidebarData,

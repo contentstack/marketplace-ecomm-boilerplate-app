@@ -311,8 +311,8 @@ const SelectorPage: React.FC = function () {
           }
           columns={
             config?.type === "category"
-              ? rootConfig.categorySelectorColumns
-              : rootConfig.productSelectorColumns
+              ? rootConfig.categorySelectorColumns(config)
+              : rootConfig.productSelectorColumns(config)
           }
           loading={loading}
           initialSelectedRowIds={selectedRows}
