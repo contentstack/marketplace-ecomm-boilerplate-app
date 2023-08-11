@@ -1,4 +1,4 @@
-# Contentstack Marketplace ECOMMERCE App Boilerplate Documentation
+# Marketplace Ecommerce App Boilerplate Template Documentation
 
 ## * Front End
 
@@ -180,12 +180,12 @@ At the selector page, you need to define a separate array of objects that define
 |cssClass |string |You can define a custom CSS class to this particular column |
 |columnWidthMultiplier |number |* multiplies this number with one unit of the column width. * 0.x means smaller than one specified unit by 0.x times * x means bigger than one specified unit by x times
 
-### Other Functions
+## Other Functions
 
 1. `getOpenerLink()`
 (ui/src/root_config/index.ts)
 
-* Parameters:
+Parameters:
 Id : product or category id
 config: configuration object
 type: product/category
@@ -240,22 +240,22 @@ These URLs are being used to make API calls in the handler file. You can modify 
 The handler file contains all the functions required to make API calls.
 You will need to implement the following functions as per your requirements.
 
-1. `_getHeaders(key)`
+1. `_getHeaders(key)`:
 This function must return an object that contains necessary headers to make an API call to the third-party service.
 
-2. `_getApiOptions(queryParams, reqBody)`
+2. `_getApiOptions(queryParams, reqBody)`:
 With this function, you can use the queryStringParameters from the UI’s API call to generate an option object that Axios can use. This must return an object that contains an object having URL, method, and headers for Axios to use.
 
-3. `getProductAndCategory(queryParams, reqBody)`
+3. `getProductAndCategory(queryParams, reqBody)`:
 This function should return all the products and categories as per the query.
 
-4. `getById(queryParams, reqBody)`
+4. `getById(queryParams, reqBody)`:
 This function should return a particular product or a category as per the requested ID and query.
 
-5. `getSelectedProdsAndCats(queryParams, reqBody)`
+5. `getSelectedProdsAndCats(queryParams, reqBody)`:
 This function should return the given products and categories from the queryStringParameters. 
 
-6. `filterByCategory(queryParams, reqBody)`
+6. `filterByCategory(queryParams, reqBody)`:
 This function should return products filtered by the given category in the queryStringParameters.
 
 ## Additional Information
@@ -266,31 +266,31 @@ The Sensitive Information in the configuration of the app (like Auth Tokens, API
 API calls that are made on UI locations gets triggered from the service file i.e. `ui/src/services/index.ts`
 
 ## App Manifest for eCommerce Apps
-**Name**: Your App Name
-**UI Locations:**
-1. App Configuration
-    a. Name: Your App Name
-    b. Path: /config
-    c. Signed: enabled
-    d. Enabled: enabled
-2. Custom Field
-    Product Custom Field
-        a. Name: Your App Name - Product Field
-        b. Path: /product-field
-        c. Signed: enabled
-        d. Enabled: enabled
-        e. Data Type: JSON
-    Category Custom Field
-        a. Name: Your App Name - Category Field
-        b. Path: /category-field
-        c. Signed: enabled
-        d. Enabled: enabled
-        e. Data Type: JSON
-3. Entry Sidebar
-    a. Name: Your App Name
-    b. Path: /sidebar-widget
-    c. Signed: enabled
-    d. Enabled: enabled
+* **Name**: Your App Name
+* **UI Locations:**
+- 1. App Configuration
+    - a. Name: Your App Name
+    - b. Path: /config
+    - c. Signed: enabled
+    - d. Enabled: enabled
+- 2. Custom Field
+    - Product Custom Field
+        - a. Name: Your App Name - Product Field
+        - b. Path: /product-field
+        - c. Signed: enabled
+        - d. Enabled: enabled
+        - e. Data Type: JSON
+    - Category Custom Field
+        - a. Name: Your App Name - Category Field
+        - b. Path: /category-field
+        - c. Signed: enabled
+        - d. Enabled: enabled
+        - e. Data Type: JSON
+- 3. Entry Sidebar
+    - a. Name: Your App Name
+    - b. Path: /sidebar-widget
+    - c. Signed: enabled
+    - d. Enabled: enabled
 
 **Webhooks**
 * Enable Webhook: True
