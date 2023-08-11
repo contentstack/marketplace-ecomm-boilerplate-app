@@ -148,7 +148,7 @@ Use the `category` parameter to provide the values to these keys accordingly.
     value: string
 }
 ```
-Here, the `title`` corresponds to the label that you want to display, and the `value` is the actual data to be displayed under that label.
+Here, the `title` corresponds to the label that you want to display, and the `value` is the actual data to be displayed under that label.
 
 ## Selector Page
 
@@ -170,9 +170,7 @@ Here, the `title`` corresponds to the label that you want to display, and the `v
 |-----------------------|-----------------|-------------------------------------------|
 |Header*      |String     |The Title of the Column |
 |id  |string |This is the unique ID for the column. It is used by reference in things like sorting, grouping, filtering, etc. |
-|accessor* |String, Function |* builds the data model for your column.
-* If a string is passed, the column's value will be looked up on the original row via that key, eg. If your column's accessor is ‘name’ then its value would be read from row['name']. You can also specify deeply nested values with accessors like ‘row.name.eng’ or even ‘names[0].value’
-If a function is passed, the column's value will be looked up on the original row using this accessor function, eg. If your column's accessor is row => row.firstName, then its value would be determined by passing the row to this function and using the resulting value. |
+|accessor* |String, Function |* builds the data model for your column. If a string is passed, the column's value will be looked up on the original row via that key, eg. If your column's accessor is ‘name’ then its value would be read from row['name']. You can also specify deeply nested values with accessors like ‘row.name.eng’ or even ‘names[0].value’ If a function is passed, the column's value will be looked up on the original row using this accessor function, eg. If your column's accessor is row => row.firstName, then its value would be determined by passing the row to this function and using the resulting value. |
 |default |boolean  |   |
 |disableSortBy   |boolean   |Determines whether you want that column to be sortable. |
 |Cell  |Function returning a react node   | |
