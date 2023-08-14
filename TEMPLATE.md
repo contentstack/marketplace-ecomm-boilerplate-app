@@ -25,7 +25,7 @@ The root configuration is the file you need to make the most changes to. You nee
 
 ## Configuration Screen
 
-### Step 1. Root Config 
+### Root Config 
 Navigate to the root_config file (ui/src/root_config/index.ts)
 In this file, you need to make two changes. 
 
@@ -61,7 +61,7 @@ You can use this object in the configuration page code.
     isDisabled? : boolean
 }]
 ```
-### Step 2. Config Screen
+### Config Screen
 Navigate to index.tsx of ConfigScreen (ui/src/containers/ConfigScreen/index.tsx).
 * Under the state variable, add your required configuration variables. 
 * The key defined here should match with the name attribute given in the JSX element that handles input to these states.
