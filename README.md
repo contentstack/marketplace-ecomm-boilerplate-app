@@ -256,6 +256,6 @@ npm run build
 ```
 You need to upload all the files from the build folder on AWS S3 or any static file hosting service of your preference. 
 
-## Reference to documentation
+## Updating changes to the boilerplate as per the third party platform
 
-* [Marketplace ECOMMERCE App Boilerplate](https://docs.google.com/document/d/1Ad1qj_PUAfuxZtHVOR2xtOl76dgaDzAQ3PJXuK3hvnM/edit#heading=h.9xnzqz46c5ew)
+For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in `<APP_DIRECTORY>/TEMPLATE.md`, to get to know more details about root_config files.
