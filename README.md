@@ -256,6 +256,4 @@ npm run build
 ```
 You need to upload all the files from the build folder on AWS S3 or any static file hosting service of your preference. 
 
-## Reference to documentation
-
-* [Marketplace ECOMMERCE App Boilerplate](https://docs.google.com/document/d/1Ad1qj_PUAfuxZtHVOR2xtOl76dgaDzAQ3PJXuK3hvnM/edit#heading=h.9xnzqz46c5ew)
+### For more information kindly refer TEMPLATE.md file placed in <APP_DIRECTORY>/TEMPLATE.md
