@@ -172,7 +172,7 @@ Storing dynamic user data in the root config enables centralization, allowing th
 
 ## Environment Variables
 
-* `.env` files are required in both ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_NAME`,  `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
+* `.env` files are required in both ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
 * The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be http://localhost:4000 and the url for api will be http://localhost:8000).
 
 ## Provider
@@ -220,7 +220,7 @@ size.
 * After creating an app, you will be redirected to the Basic Information page. Add the icon for your app. 
 * Open the UI Locations tab and add the URL of your app. 
 For e.g. : https://localhost:4000
-* From Available location(s) , add App Configuration, Custom Field and Entry Sidebar. For App Configuration, add name and path. In `<APP_DIRECTORY>/ui/src/containers/App/index.tsx`, for App Configuration we have added route path as `/config`. Also we are using HashRouter for routing. So the value of path should be `/#/config`. Switch on the toggle for Signed if required. Switch on the toggle for Enabled to enable the Configuration location. Add the description if required.
+* From Available location(s) , add App Configuration, Custom Field and Entry Sidebar. For App Configuration, add name and path. In `<APP_DIRECTORY>/ui/src/containers/App/index.tsx`, for App Configuration we have added route path as `/config`. So the value of path should be `/config`. Switch on the toggle for Signed if required. Switch on the toggle for Enabled to enable the Configuration location. Add the description if required.
 * For Custom Field, add name and path. The value of path should be `/product-field`. Add one more Custom Fied add name and path. The value for second path should be `/category-field`. Switch on the toggle for Enabled to enable the Custom Field location.Select the required Data Type. Add the description if required.
 * For Entry Sidebar Field, add name and path. The value of path should be /sidebar-widget. Switch on the toggle for Enabled to enable the Custom Field location. Add the description if required. 
 
@@ -259,3 +259,5 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 ## Updating changes to the boilerplate as per the third party platform
 
 For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in `<APP_DIRECTORY>/TEMPLATE.md`, to get to know more details about root_config files.
+
+An illustrative file containing samples of ecommerce applications like BigCommerce and SAPCC app has been created within the 'example' directory of both the UI and API components. To confirm the functionality of the application, you can replicate the content of the `example/root_config/index.ts` file and apply it to the `root_config/index.ts` file. Subsequently, you can initiate the execution of both the UI and API components.

@@ -4,13 +4,6 @@ import axios from 'axios';
 import constants from '../constants';
 import root_config from '../root_config';
 
-const _getHeaders: any = (authToken: any) => ({
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'Content-Type': 'application/json',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'X-Auth-Token': authToken,
-});
-
 const _getApiOptions: any = (
   {
     page,
@@ -18,25 +11,22 @@ const _getApiOptions: any = (
     query,
     searchParam,
     id,
+    searchCategories,
   }: {
     page?: number;
     limit?: number;
     query?: any;
     searchParam?: string;
     id?: any;
+    searchCategories?: any;
   },
   key: any,
 ) => {
-  let url: string = `${root_config.API_BASE_URL}${root_config.URI_ENDPOINTS?.[query]}`;
-
-  if (searchParam) url += `?${searchParam}&`;
-  else if (id) url += `/${id}?`;
-  else url += `?page=${page}&limit=${limit}&`;
-  if (query === 'product' && root_config.PRODUCT_URL_PARAMS) url += root_config.PRODUCT_URL_PARAMS;
-  return { url, method: 'GET', headers: _getHeaders(key?.auth_token) };
+  const url: string = `${root_config.getUrl(key, query, searchParam, searchCategories, id, page, limit)}`;
+  return { url, method: 'GET', headers: root_config.getHeaders(key) };
 };
 
-// commonx function for making third party API calls
+// common function for making third party API calls
 // you can modify it as per your third party service response
 const _makeApiCall: any = async (opts: any) => {
   try {
@@ -56,36 +46,56 @@ const _makeApiCall: any = async (opts: any) => {
     throw e;
   }
 };
-
-// get all products and categories
-export const getProductAndCategory: any = (data: any, key: any) => _makeApiCall(_getApiOptions(data, key));
-
 // get a particular product
 export const getById: any = ({ id, query }: any, key: any) => _makeApiCall(_getApiOptions({ id, query }, key));
 
+// get all products and categories
+export const getProductAndCategory: any = async (data: any, key: any) => {
+  const response = await _makeApiCall(_getApiOptions(data, key));
+  if (root_config.getProductAndCategory) {
+    return root_config.getProductAndCategory(data, response);
+  } return response;
+};
+
+const getByCategoryId = (data:any, query:any, key:any) => Promise.all(
+  data.map(async (category:any) => {
+    const url = root_config.getByCategoryIdUrl(key, query, category);
+    const categoryResponse = await _makeApiCall({ url, method: 'GET', headers: root_config.getHeaders(key) });
+    categoryResponse.catalogId = category.catalogId;
+    categoryResponse.catalogVersionId = category.catalogVersionId;
+    return categoryResponse;
+  }),
+).then((response) => response)
+  .catch((err:any) => {
+    console.error(err);
+  });
+
 // get an array of selected products and categories
-export const getSelectedProdsAndCats: any = (data: any, key: any) => {
-  let url: string = `${root_config.API_BASE_URL}${
-    root_config.URI_ENDPOINTS[data?.query]
-  }`;
+export const getSelectedProdsAndCats: any = async (data: any, key: any) => {
+  if (root_config.getSeparateProdCat && root_config.getSeparateProdCat === true) {
+    let response;
+    if (data?.query === 'product') {
+      const idsArr = data?.['id:in'].split(',').filter((id:any) => id !== '');
+      response = await Promise.all(
+        idsArr.map((id:any) => getById({ id, query: data?.query }, key)),
+      );
+    } else {
+      response = await getByCategoryId(key?.selectedIDs, 'category', key);
+    }
 
-  url += data['id:in'] ?
-    `?id:in=${data['id:in']}`
-    : `?sku:in=${data['sku:in']}`;
-  if (data?.query === 'product') url += `&${root_config.PRODUCT_URL_PARAMS}`;
-
+    return { [root_config.URI_ENDPOINTS[data?.query]]: response };
+  }
+  const url = root_config.getSelectedProductandCatUrl(data, key);
   return _makeApiCall({
     url,
     method: 'GET',
-    headers: _getHeaders(key?.auth_token),
+    headers: root_config.getHeaders(key),
   });
 };
 
 // filter products as per categories
 export const filterByCategory: any = (data: any, key: any) => _makeApiCall({
-  url: `${root_config.API_BASE_URL}${
-    root_config.URI_ENDPOINTS[data?.query]
-  }?categories:in=${data['categories:in']}&${root_config.PRODUCT_URL_PARAMS}`,
+  url: `${root_config.getUrl(key, data?.query)}?categories:in=${data['categories:in']}&${root_config.PRODUCT_URL_PARAMS}`,
   method: 'GET',
-  headers: _getHeaders(key?.auth_token),
+  headers: root_config.getHeaders(key),
 });

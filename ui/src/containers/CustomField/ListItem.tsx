@@ -10,17 +10,21 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { Props } from "../../common/types";
+import { findProduct } from "../../common/utils";
 import DraggableListItem from "./DraggableListItem";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
+import DraggableListItemCategory from "./DraggableListItemCategory";
 
 const ListItem: React.FC<Props> = function ({
   products,
   remove,
   config,
   setSelectedItems,
+  type,
 }) {
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
+
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 0.1 } })
@@ -44,6 +48,27 @@ const ListItem: React.FC<Props> = function ({
     }
   };
 
+  const getDraOverlay = () => {
+    if (activeId) {
+      return type === "category" ? (
+        <DraggableListItemCategory
+          key={activeId}
+          product={findProduct(products, activeId)}
+          id={activeId}
+          type={type}
+        />
+      ) : (
+        <DraggableListItem
+          key={activeId}
+          product={findProduct(products, activeId)}
+          id={activeId}
+          type={type}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <div
       role="table"
@@ -55,27 +80,29 @@ const ListItem: React.FC<Props> = function ({
           <div style={{ overflow: "visible", height: "0px" }}>
             <div className="Table__head  ">
               <div role="row" className="Table__head__row ">
-                <div
+              <div
                   aria-colspan={1}
                   role="columnheader"
-                  className="Table__head__column  "
+                  className="Table__head__column  first-child"
                 >
-                  <div>
-                    <span className="Table__head__column-text">
-                      {localeTexts.customField.listViewTable.nameCol}
-                    </span>
-                  </div>
+                  {localeTexts.customField.listViewTable.imgCol}
                 </div>
                 <div
                   aria-colspan={1}
                   role="columnheader"
-                  className="Table__head__column  "
+                  className="Table__head__column  second-child"
                 >
-                  <div>
-                    <span className="Table__head__column-text">
-                      {localeTexts.customField.listViewTable.priceCol}
-                    </span>
-                  </div>
+                  {localeTexts.customField.listViewTable.nameCol}
+                </div>
+                <div
+                  aria-colspan={1}
+                  role="columnheader"
+                  className="Table__head__column third-child "
+                >
+                  {
+                    type === "category" ? 
+                    localeTexts.customField.listViewTable.id : localeTexts.customField.listViewTable.price
+                  } 
                 </div>
               </div>
             </div>
@@ -91,28 +118,30 @@ const ListItem: React.FC<Props> = function ({
                 onDragStart={handleDragStart}
               >
                 <SortableContext items={products}>
-                  {products?.map((product: any) => (
+              { type === "category" ?       
+               products?.map((data: any) => (
+                <DraggableListItemCategory
+                  key={data?.[uniqueKey] || data.id}
+                  product={data}
+                  id={data?.[uniqueKey] || data?.id}
+                  remove={remove}
+                  type={type}
+                  config={config}
+                />
+              ))
+              : products?.map((product: any) => (
                     <DraggableListItem
-                      key={product?.[uniqueKey]}
+                      key={product?.[uniqueKey] || product?.code}
                       product={product}
-                      id={product?.[uniqueKey]}
+                      id={product?.[uniqueKey] || product?.code}
                       remove={remove}
                       config={config}
+                      type={type}
                     />
                   ))}
                 </SortableContext>
                 <DragOverlay>
-                  {activeId ? (
-                    <DraggableListItem
-                      key={activeId}
-                      product={
-                        products?.find(
-                          (p: any) => p?.[uniqueKey] === activeId
-                        ) || {}
-                      }
-                      id={activeId}
-                    />
-                  ) : null}
+                  {getDraOverlay()}
                 </DragOverlay>
               </DndContext>
             </div>

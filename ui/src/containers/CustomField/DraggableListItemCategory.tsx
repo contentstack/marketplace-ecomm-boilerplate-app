@@ -1,25 +1,28 @@
 /* eslint-disable */
+
 import React from "react";
-import { ActionTooltip, cbModal, Icon, Tooltip } from "@contentstack/venus-components";
+import {
+  ActionTooltip,
+  cbModal,
+  Icon,
+  Tooltip,
+} from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Props } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
-import currency from "currency.js";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
-import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
-const DraggableListItem: React.FC<Props> = function ({
+const DraggableListItemCategory: React.FC<Props> = function ({
   product,
   remove,
+  id,
   config,
+  type
 }) {
-  const { id, name, price, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product, config);
-
   const {
     attributes,
     listeners,
@@ -27,7 +30,7 @@ const DraggableListItem: React.FC<Props> = function ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product?.id || product?.code });
+  } = useSortable({ id: product?.id || product?.productId || product?.code});
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -35,13 +38,13 @@ const DraggableListItem: React.FC<Props> = function ({
     border: isDragging ? constants.droppingDOMBorder : undefined,
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
   };
-
-  const deleteModal = (props: any) => (
+  
+  const getDeleteModal = (props: any) => (
     <DeleteModal
       type={"Product" || "Category"}
       remove={remove}
-      id={id  || product?.code}
-      name={name}
+      id={id || product?.id}
+      name={product?.name || product?.productName || product?.code || product?.id}
       {...props}
     />
   );
@@ -59,26 +62,54 @@ const DraggableListItem: React.FC<Props> = function ({
         rootConfig.ecommerceEnv.APP_ENG_NAME
       ),
       action: () =>
-        window.open(
-          rootConfig.getOpenerLink(product, config, "product"),
-          "_blank"
-        ),
+        window.open(rootConfig.getOpenerLink(id, config, "product"), "_blank"),
     },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: localeTexts.customField.listActions.delete,
       action: () =>
         cbModal({
-          component: deleteModal,
+          component: getDeleteModal,
           modalProps: {
             onClose: () => {},
-            onOpen: () => {},
             size: "xsmall",
           },
         }),
       className: "ActionListItem--warning",
     },
   ];
+
+  const getImageUrl = (category: any) => {
+    let imageSrc = category?.c_slotBannerImage || category?.image;
+
+    if (!imageSrc && category?.c_headerMenuBanner) {
+      imageSrc = category?.c_headerMenuBanner
+        .match(/(https?:\/\/[^ ]*)/)[1]
+        .replace(/"/g, "");
+    }
+    return imageSrc ? (
+      <div className="custom-field-product-image">
+        <img src={imageSrc} alt={category?.name || category?.productName} />
+      </div>
+    ) : (
+      <div className="custom-field-product-image">
+        <Tooltip
+          content={localeTexts.selectorPage.ImageTooltip.label}
+          position="top"
+          showArrow={false}
+          variantType="light"
+          type="secondary"
+        >
+          <img
+            src={NoImg}
+            alt={localeTexts.selectorPage.noImageAvailable}
+            className="custom-field-product-image"
+          />
+        </Tooltip>
+      </div>
+    );
+  };
+
   return (
     <div
       className="Table__body__row"
@@ -92,39 +123,19 @@ const DraggableListItem: React.FC<Props> = function ({
       ) : (
         <ActionTooltip list={onHoverActionList}>
           <div role="cell" className="Table__body__column">
-            {(
-            <>
-            {image ? (
-              <div className="product-image">
-              <img src={image} alt={name} />
-            </div>
-            ) :
-            (
-              <div className="product-image">
-                <Tooltip
-                  content={localeTexts.selectorPage.ImageTooltip.label}
-                  position="top"
-                  showArrow={false}
-                  variantType="light"
-                  type="secondary"
-                >
-                  <img
-                    src={NoImg}
-                    alt={localeTexts.selectorPage.noImageAvailable}
-                    className="selector-product-image"
-                  />
-                </Tooltip>
-              </div>
-            )
-            }
-            </>)
-            }
+            {getImageUrl(product) || product?.image}
+          </div>
+          <div
+            role="cell"
+            className="Table__body__column"
+          >
+            {product?.name || product?.productName}
           </div>
           <div role="cell" className="Table__body__column">
-            {name}
-          </div>
-          <div role="cell" className="Table__body__column">
-            {`$${currency(price)}`}
+            {
+              type === "category" ? 
+              product?.id : product?.price
+            }     
           </div>
         </ActionTooltip>
       )}
@@ -132,4 +143,4 @@ const DraggableListItem: React.FC<Props> = function ({
   );
 };
 
-export default React.memo(DraggableListItem);
+export default DraggableListItemCategory;

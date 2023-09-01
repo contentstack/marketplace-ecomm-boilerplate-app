@@ -80,7 +80,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
   const toolTipActions = [
     {
       label: <Icon icon="MoveIcon" size="mini" className="drag" />,
-      title: "Drag",
+      title: localeTexts.customField.listActions.drag,
       action: () => {},
       className: "ActionListItem--warning",
     },
@@ -98,7 +98,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
     },
     {
       label: <Icon icon="Trash" size="mini" />,
-      title: "Delete",
+      title: localeTexts.customField.listActions.delete,
       action: () =>
         cbModal({
           component: getDeleteModal,

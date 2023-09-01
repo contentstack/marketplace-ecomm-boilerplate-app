@@ -7,14 +7,15 @@ export default {
     signFail: "Signature Verification failed",
   },
   configPage: {
+    errorInADK: "Something Went Wrong While Loading App SDK",
     saveInEntry: {
       label: "Save In Entry",
       help: "You can select how you want to save data you get from $.",
       placeholder: "Enter the structure of data you want to save in the entry",
       instruction:
-        "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, you can select only limited number of products.",
-      wholeJson: "Whole JSON",
-      customJson: "Custom JSON",
+        "You can select the structure of data you want to save in the entry, if you select Custom Fields. If you select All Field, you can select only limited number of products.",
+      wholeJson: "All Fields",
+      customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
     },
     customKeys: {
@@ -22,6 +23,12 @@ export default {
       help: "Select the keys you want to save",
       placeholder: "Select keys",
       instruction: "Select the keys you want to save",
+    },
+    pageCount: {
+      label: "Items per Page",
+      name: "page_count",
+      placeholder: "Enter the number items you want to fetch per page.",
+      instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
     },
   },
   gridViewDropdown: {
@@ -40,13 +47,15 @@ export default {
     add: "Add ",
     noItems: "No $ have been Added",
     listViewTable: {
-      nameCol: "Product Name",
-      priceCol: "Price",
+      imgCol: "Image",
+      nameCol: "Name",
+      id: "ID",
+      price: "Price"
     },
     listActions: {
       drag: "Drag",
       openInConsole: "Open in $",
-      delete: "Delete",
+      delete: "Remove",
     },
     toolTip: {
       content: "Change View",
@@ -76,6 +85,7 @@ export default {
       "The details of the listed product(s) will be updated based on the new locale. Are you sure you want to proceed?",
   },
   selectorPage: {
+    errHandling: 'error loading more searched data',
     heading: "$ App",
     noImageAvailable: "Product image not available",
     searchQuery:
@@ -104,6 +114,7 @@ export default {
     close: "Close",
   },
   sidebarWidget: {
+    appSdkErr: "appSdk initialization error",
     dropdownLabels: {
       products: "Products",
       fields: "Fields",
@@ -130,10 +141,10 @@ export default {
     },
   },
   deleteModal: {
-    header: "Delete",
-    body: "This will delete <b>&apos;$&apos;</b> permanently.",
+    header: "Remove",
+    body: "This will remove <b>&apos;$&apos;</b> permanently.",
     cancelButton: "Cancel",
-    confirmButton: "Delete",
+    confirmButton: "Remove",
   },
   warnings: {
     invalidCredentials:

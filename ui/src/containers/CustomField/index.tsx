@@ -1,5 +1,5 @@
 /* Import React modules */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 /* Import other node modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
@@ -12,13 +12,13 @@ import {
 import { Props, TypeSDKData, TypeWarningtext } from "../../common/types";
 /* Import our modules */
 import RenderList from "./RenderList";
-import { getSelectedIDs } from "../../services";
+import {  filter, getSelectedIDs } from "../../services";
 import WarningMessage from "../../components/WarningMessage";
 import {
-  arrangeList,
   popupWindow,
   getTypeLabel,
   gridViewDropdown,
+  isEmpty,
 } from "../../common/utils";
 
 /* Import node module CSS */
@@ -31,9 +31,8 @@ import rootConfig from "../../root_config";
 
 const CustomField: React.FC<Props> = function ({ type }) {
   const [stackApiKey, setStackApiKey] = useState("");
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
-
+  const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   let childWindow: any;
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
@@ -53,6 +52,29 @@ const CustomField: React.FC<Props> = function ({ type }) {
     location: {},
     appSdkInitialized: false,
   });
+
+  const fetchData = async (selectedIdsArray: any) => {
+    if (
+      Array.isArray(selectedIdsArray) &&
+      !isEmpty(state?.config) &&
+      selectedIdsArray.length &&
+      !isInvalidCredentials.error
+    ) {
+      let res;
+      if(rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category"){
+        res = await filter(state?.config, type, selectedIdsArray);
+        if (res?.error) {
+          setIsInvalidCredentials(res);
+        } else setSelectedItems(res?.data?.items);
+      } else {
+         res = await getSelectedIDs(state?.config, type, selectedIdsArray);
+      if (res?.error) {
+        setIsInvalidCredentials(res);
+      } else setSelectedItems(rootConfig.arrangeList(selectedIdsArray, res?.data?.data || res?.data?.items, uniqueKey)); 
+    }
+    }
+  };
+
 
   useEffect(() => {
     window.addEventListener("beforeunload", () => {
@@ -74,9 +96,17 @@ const CustomField: React.FC<Props> = function ({ type }) {
         const entryData = appSdk?.location?.CustomField?.field?.getData();
         appSdk?.location?.CustomField?.frame?.enableAutoResizing();
         if (entryData?.data?.length) {
-          setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
-        }
+          if (rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category"){
+              setEntryIds(
+                entryData?.data?.map((i: any) => ({
+                  [uniqueKey]: i?.[uniqueKey],
+                  catalogId: i?.catalogId,
+                  catalogVersionId: i?.catalogVersionId,
+                }))
+              )}
+          else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
 
+        }
         setState({
           config,
           location: appSdk.location,
@@ -104,19 +134,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
     setSelectedIds(entryIds);
   }, [state.appSdkInitialized, entryIds]);
 
-  const fetchData = async (selectedIdsArray: any) => {
-    if (
-      Array.isArray(selectedIdsArray) &&
-      selectedIdsArray.length &&
-      !isInvalidCredentials.error
-    ) {
-      const res = await getSelectedIDs(state.config, type, selectedIdsArray);
-      if (res?.error) {
-        setIsInvalidCredentials(res);
-      } else setSelectedItems(arrangeList(selectedIdsArray, res?.data?.items));
-    }
-  };
-
   useEffect(() => {
     if (selectedIds.length) fetchData(selectedIds);
     else setSelectedItems([]);
@@ -132,6 +149,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
         type: `${appName}_${type}`,
       });
     } else {
+
       // eslint-disable-next-line
       if (!state.config.is_custom_json)
         location.CustomField?.field?.setData({
@@ -141,7 +159,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
       else {
         const data: any[] = [];
         const keys = state?.config?.custom_keys?.map((i: any) => i?.value);
-
         if (selectedItems?.length) {
           selectedItems.forEach((item: any) => {
             const obj1: any = {};
@@ -157,6 +174,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
         });
       }
     }
+
     setLoading(false);
   }, [selectedItems]);
 
@@ -179,7 +197,10 @@ const CustomField: React.FC<Props> = function ({ type }) {
           window.location.origin
         );
       } else if (data.message === "add") {
-        setSelectedIds(data.dataIds);
+        if(rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category" ) 
+            setEntryIds(data?.dataArr)
+        else 
+            setSelectedIds(data?.dataIds);
       } else if (data.message === "close") {
         childWindow = undefined;
       }
@@ -197,13 +218,14 @@ const CustomField: React.FC<Props> = function ({ type }) {
     } else childWindow.focus();
   };
 
-  const handleToggle = (event: any) => {
+  const handleToggle = useCallback((event: any) => {
     setView(event);
-  };
+  }, []);
 
   const renderCustomField = () => {
+
     if (isInvalidCredentials.error)
-      return <WarningMessage content={isInvalidCredentials.data} />;
+      return <WarningMessage content={isInvalidCredentials?.data} />;
     if (loading) {
       return (
         <SkeletonTile
@@ -225,9 +247,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
               {selectedItems.length} {getTypeLabel(type, selectedItems.length)}
             </span>
             <div className="viewToggler">
-              {type === "category" ? (
-                ""
-              ) : (
+              
                 <Dropdown
                   list={gridViewDropdown}
                   dropDownType="primary"
@@ -254,7 +274,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
                     />
                   </Tooltip>
                 </Dropdown>
-              )}
+               
             </div>
           </div>
           <RenderList
@@ -263,7 +283,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
             setSelectedItems={setSelectedItems}
             setSelectedIds={setSelectedIds}
             type={type}
-            view={view.value}
+            view={view?.value}
             childWindow={childWindow}
             config={state.config}
           />
@@ -281,7 +301,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
         the configuration details from the appSdk. */
   return (
     <div className="layout-container">
-      {state.appSdkInitialized && (
+      {state?.appSdkInitialized && (
         <div className="field-extension-wrapper">
           {renderCustomField()}
           <Button

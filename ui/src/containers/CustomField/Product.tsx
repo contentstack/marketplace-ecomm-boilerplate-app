@@ -20,7 +20,9 @@ import NoImg from "../../assets/NoImg.svg";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
   const { id, name, description, image, price }: TypeProduct =
-    rootConfig.returnFormattedProduct(product);
+    rootConfig.returnFormattedProduct(product,config);
+
+  
   const {
     attributes,
     listeners,
@@ -28,7 +30,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product?.id });
+  } = useSortable({ id: product?.id || product?.code });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -42,7 +44,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     <DeleteModal
       type="Product"
       remove={remove}
-      id={id}
+      id={id || product?.code}
       name={name}
       {...props}
     />
@@ -69,7 +71,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     },
     {
       label: <Icon icon="Trash" size="mini" />,
-      title: "Delete",
+      title: localeTexts.customField.listActions.delete,
       action: () =>
         cbModal({
           component: deleteModal,
@@ -89,7 +91,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
         ""
       ) : (
         <ActionTooltip list={toolTipActions}>
-          <div className="product" key={id} data-testid="render-card-item">
+          <div className="product" key={id || product?.code} data-testid="render-card-item">
             {!error ? (
               <>
                 {image ? (
@@ -119,7 +121,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
                   <span className="product-name">{name}</span>
                   {price && (
                     <span className="product-name">
-                      {localeTexts.customField.listViewTable.priceCol}: {price}
+                      {localeTexts.customField.listViewTable.price}: {price}
                     </span>
                   )}
                   <span

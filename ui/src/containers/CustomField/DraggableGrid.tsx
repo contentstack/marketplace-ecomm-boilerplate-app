@@ -10,14 +10,17 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { Props } from "../../common/types";
+import { findProduct } from "../../common/utils";
 import Product from "./Product";
 import rootConfig from "../../root_config";
+import Category from "./Category";
 
 const DraggableGrid: React.FC<Props> = function ({
   products,
   remove,
   config,
   setSelectedItems,
+  type,
 }) {
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -31,6 +34,10 @@ const DraggableGrid: React.FC<Props> = function ({
     }
     setActiveId(active.id);
   };
+
+  function handleDragCancel() {
+    setActiveId(null);
+  }
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -46,22 +53,51 @@ const DraggableGrid: React.FC<Props> = function ({
       );
     }
   };
+  
+  const getDraOverlay = () => {
+    if (activeId) {
+      return type === "category" ? (
+        <Category
+          config={config}
+          categories={findProduct(products, activeId)}
+          remove={remove}
+        />
+      ) : (
+        <Product
+          config={config}
+          product={findProduct(products, activeId)}
+          remove={remove}
+        />
+      );
+    }
+    return null;
+  };
 
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => setActiveId(null)}
+      onDragCancel={handleDragCancel}
       onDragStart={handleDragStart}
     >
       <SortableContext items={products}>
         <div className="gridContainer">
-          {products?.map((product: any) => (
+          {type === "category"
+          ? products?.map((data: any) => (
+            <Category
+              categories={data}
+              remove={remove}
+              config={config}
+              key={data?.[uniqueKey] || data?.id}
+              id={data?.[uniqueKey] || data?.id}
+            />
+          ))
+          : products?.map((product: any) => (
             <Product
-              key={product?.[uniqueKey]}
+              key={product?.id || product?.code}
               product={product}
-              id={product?.[uniqueKey]}
+              id={product?.id || product?.code}
               remove={remove}
               config={config}
             />
@@ -69,14 +105,7 @@ const DraggableGrid: React.FC<Props> = function ({
         </div>
       </SortableContext>
       <DragOverlay>
-        {activeId ? (
-          <Product
-            id={activeId}
-            product={
-              products?.find((p: any) => p?.[uniqueKey] === activeId) || {}
-            }
-          />
-        ) : null}
+      {getDraOverlay()}
       </DragOverlay>
     </DndContext>
   );

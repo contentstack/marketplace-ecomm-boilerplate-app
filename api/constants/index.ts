@@ -22,7 +22,7 @@ const constants: any = {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     'Access-Control-Allow-Headers': 'Content-Type',
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    'Access-Control-Expose-Headers': 'authToken',
+    // 'Access-Control-Expose-Headers': 'authToken',
   },
   LOGS: {
     QUERY_PARAMS: "Request's query-string params are: ",

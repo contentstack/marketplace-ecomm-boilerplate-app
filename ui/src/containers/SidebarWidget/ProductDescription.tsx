@@ -8,9 +8,9 @@ import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
-const ProductDescription: React.FC<Props> = function ({ product }) {
+const ProductDescription: React.FC<Props> = function ({ product, config }) {
   const { id, name, description, price, sku, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product);
+    rootConfig.returnFormattedProduct(product, config);
   const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
     localeTexts.sidebarWidget.labels;
 

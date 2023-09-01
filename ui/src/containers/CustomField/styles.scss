@@ -267,6 +267,99 @@
         }
       }
     }
+    .list-view {
+      height: fit-content;
+      .TablePanel {
+        display: none;
+      }
+
+      .Table__head__row .Table__head__column:first-child {
+        width: 100px;
+      }
+
+      .Table__body__row .Table__body__column:first-child {
+        width: 100px;
+        min-width: 100px;
+        height: 60px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        padding: 0;
+      }
+
+      .Table__head__row .Table__head__column:nth-child(2) {
+        width: 23rem;
+      }
+
+      .Table__body__row .Table__body__column:nth-child(2) {
+        width: 23rem;
+      }
+
+      .Table__head__row .Table__head__column:nth-child(3) {
+        width: 13rem;
+      }
+
+      .Table__body__row .Table__body__column:nth-child(3) {
+        width: 13rem;
+      }
+
+      .Table {
+        min-height: 203px;
+        max-height: 340px;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        border-top: 0;
+        flex-wrap: nowrap;
+        .listContainer {
+          overflow-y: auto;
+        }
+      }
+
+      .Table__body__column {
+        img,
+        svg {
+          width: 50px;
+          height: 50px;
+        }
+        svg {
+          display: flex;
+        }
+      }
+
+      .Table__body {
+        height: auto;
+        min-height: 203px;
+        max-height: 290px;
+        width: 100%;
+        overflow: auto;
+        direction: ltr;
+
+        .Table__body__row {
+          height: 60px;
+          width: 100%;
+          .Table__body__column:first-child {
+            width: 100px;
+          }
+          .ActionTooltip {
+            &:hover {
+              height: 60px;
+            }
+          }
+        }
+
+        .ActionTooltip {
+          cursor: -webkit-grabbing;
+          cursor: grabbing;
+          cursor: -moz-grabbing;
+
+          &:active {
+            cursor: -webkit-grabbing;
+            cursor: grabbing;
+            cursor: -moz-grabbing;
+          }
+        }
+      }
+    }
   }
 
   .add-product-btn {
@@ -311,6 +404,19 @@
   .item-price {
     display: inline-block;
   }
+}
+
+.listview__body__column {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: center;
+  flex-wrap: wrap;
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 0.9375rem;
+  padding: 0.625rem 1rem;
 }
 
 .main {
