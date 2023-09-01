@@ -21,7 +21,7 @@ const DraggableListItemCategory: React.FC<Props> = function ({
   remove,
   id,
   config,
-  type
+  type,
 }) {
   const {
     attributes,
@@ -30,7 +30,7 @@ const DraggableListItemCategory: React.FC<Props> = function ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product?.id || product?.productId || product?.code});
+  } = useSortable({ id: product?.id || product?.productId || product?.code });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -38,13 +38,15 @@ const DraggableListItemCategory: React.FC<Props> = function ({
     border: isDragging ? constants.droppingDOMBorder : undefined,
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
   };
-  
+
   const getDeleteModal = (props: any) => (
     <DeleteModal
       type={"Product" || "Category"}
       remove={remove}
       id={id || product?.id}
-      name={product?.name || product?.productName || product?.code || product?.id}
+      name={
+        product?.name || product?.productName || product?.code || product?.id
+      }
       {...props}
     />
   );
@@ -125,17 +127,11 @@ const DraggableListItemCategory: React.FC<Props> = function ({
           <div role="cell" className="Table__body__column">
             {getImageUrl(product) || product?.image}
           </div>
-          <div
-            role="cell"
-            className="Table__body__column"
-          >
+          <div role="cell" className="Table__body__column">
             {product?.name || product?.productName}
           </div>
           <div role="cell" className="Table__body__column">
-            {
-              type === "category" ? 
-              product?.id : product?.price
-            }     
+            {type === "category" ? product?.id : product?.price}
           </div>
         </ActionTooltip>
       )}

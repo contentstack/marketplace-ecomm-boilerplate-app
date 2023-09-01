@@ -80,7 +80,7 @@ const ListItem: React.FC<Props> = function ({
           <div style={{ overflow: "visible", height: "0px" }}>
             <div className="Table__head  ">
               <div role="row" className="Table__head__row ">
-              <div
+                <div
                   aria-colspan={1}
                   role="columnheader"
                   className="Table__head__column  first-child"
@@ -99,10 +99,9 @@ const ListItem: React.FC<Props> = function ({
                   role="columnheader"
                   className="Table__head__column third-child "
                 >
-                  {
-                    type === "category" ? 
-                    localeTexts.customField.listViewTable.id : localeTexts.customField.listViewTable.price
-                  } 
+                  {type === "category"
+                    ? localeTexts.customField.listViewTable.id
+                    : localeTexts.customField.listViewTable.price}
                 </div>
               </div>
             </div>
@@ -118,31 +117,29 @@ const ListItem: React.FC<Props> = function ({
                 onDragStart={handleDragStart}
               >
                 <SortableContext items={products}>
-              { type === "category" ?       
-               products?.map((data: any) => (
-                <DraggableListItemCategory
-                  key={data?.[uniqueKey] || data.id}
-                  product={data}
-                  id={data?.[uniqueKey] || data?.id}
-                  remove={remove}
-                  type={type}
-                  config={config}
-                />
-              ))
-              : products?.map((product: any) => (
-                    <DraggableListItem
-                      key={product?.[uniqueKey] || product?.code}
-                      product={product}
-                      id={product?.[uniqueKey] || product?.code}
-                      remove={remove}
-                      config={config}
-                      type={type}
-                    />
-                  ))}
+                  {type === "category"
+                    ? products?.map((data: any) => (
+                        <DraggableListItemCategory
+                          key={data?.[uniqueKey] || data.id}
+                          product={data}
+                          id={data?.[uniqueKey] || data?.id}
+                          remove={remove}
+                          type={type}
+                          config={config}
+                        />
+                      ))
+                    : products?.map((product: any) => (
+                        <DraggableListItem
+                          key={product?.[uniqueKey] || product?.code}
+                          product={product}
+                          id={product?.[uniqueKey] || product?.code}
+                          remove={remove}
+                          config={config}
+                          type={type}
+                        />
+                      ))}
                 </SortableContext>
-                <DragOverlay>
-                  {getDraOverlay()}
-                </DragOverlay>
+                <DragOverlay>{getDraOverlay()}</DragOverlay>
               </DndContext>
             </div>
           </div>

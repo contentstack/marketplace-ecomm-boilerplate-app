@@ -14,13 +14,23 @@ const root_config: any = {
     'X-Auth-Token': key?.configField2,
   }),
 
-  getAuthToken: (key?:any) => {
+  getAuthToken: (key?: any) => {
     const authToken: any = key?.configField2 ?? '';
     return authToken;
   },
 
-  getUrl: (key: any, query: any, searchParam?:any, searchCategories?:any, id?:any, page?:any, limit?:any) => {
-    let url = root_config.API_BASE_URL.replace('$', key?.configField1) + root_config.URI_ENDPOINTS[query];
+  getUrl: (
+    key: any,
+    query: any,
+    searchParam?: any,
+    searchCategories?: any,
+    id?: any,
+    page?: any,
+    limit?: any,
+  ) => {
+    let url =
+      root_config.API_BASE_URL.replace('$', key?.configField1) +
+      root_config.URI_ENDPOINTS[query];
     url += `?page=${page}&limit=${limit}`;
     if (searchParam) {
       url += `${encodeURI(searchParam)}&`;
@@ -30,8 +40,10 @@ const root_config: any = {
     return url;
   },
 
-  getSelectedProductandCatUrl: (data:any, key:any) => {
-    let url: string = root_config.API_BASE_URL.replace('$', key?.configField1) + root_config.URI_ENDPOINTS[data?.query];
+  getSelectedProductandCatUrl: (data: any, key: any) => {
+    let url: string =
+      root_config.API_BASE_URL.replace('$', key?.configField1) +
+      root_config.URI_ENDPOINTS[data?.query];
     const urlHasQueryParams: boolean = url.indexOf('?') > -1;
     url += data['id:in'] ?
       `${urlHasQueryParams ? '&' : '?'}id:in=${data['id:in']}`

@@ -95,7 +95,7 @@ const findProduct = (products: any, id: any) =>
 const findProductIndex = (products: any, id: any) =>
   products?.findIndex((p: any) => p?.id === id);
 
-  const getImage = (url: string, customField: boolean = false) =>
+const getImage = (url: string, customField: boolean = false) =>
   url ? (
     <div
       className={
@@ -142,9 +142,12 @@ const productColumns = [
   },
   {
     Header: "Image",
-    accessor: (obj: any) => obj?.images?.[0]?.url ?
-    getImage(`https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`)
-    : getImage(obj?.images?.[0]?.url),
+    accessor: (obj: any) =>
+      obj?.images?.[0]?.url ?
+        getImage(
+            `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
+          )
+        : getImage(obj?.images?.[0]?.url),
     default: false,
     disableSortBy: true,
     addToColumnSelector: true,
@@ -236,7 +239,6 @@ const gridViewDropdown = [
 const removeHTMLTags = (description: string) =>
   description ? description.replace(/(<([^>]+)>)/gi, " ") : "";
 
-
 const getTypeLabel = (type: string, length: number) => {
   if (type === "category") {
     if (length > 1) return "Categories";
@@ -245,7 +247,6 @@ const getTypeLabel = (type: string, length: number) => {
   if (length > 1) return "Products";
   return "Product";
 };
-
 
 const getRowsStatus = (len: number, loading: boolean = true) => ({
   ...[...Array(len)]?.map(() => (loading ? "loading" : "loaded")),
@@ -284,7 +285,7 @@ const getItemStatusMap = (
   limit: number
 ) => {
   const itemStatusMapTemp: any = { ...itemStatusMap };
-  for (let index = start; index <  limit; index += 1) {
+  for (let index = start; index < limit; index += 1) {
     itemStatusMapTemp[index] = status;
   }
   return itemStatusMapTemp;

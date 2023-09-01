@@ -1,3 +1,4 @@
+/* eslint-disable */
 import currency from "currency.js";
 import axios from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -71,8 +72,8 @@ const ecommerceEnv: EcommerceEnv = {
   FETCH_PER_PAGE: 20,
 };
 // example config fields. you will need to use these values in the config screen accordingly.
-const bigCommerceLimit: any = 250
-const configureConfigScreen: any = () => 
+const bigCommerceLimit: any = 250;
+const configureConfigScreen: any = () =>
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
   2. serverConfig is used when webhooks are implemented
@@ -81,7 +82,7 @@ const configureConfigScreen: any = () =>
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
 
-   ({
+  ({
     configField1: {
       type: "textInputFields",
       labelText: "Store ID",
@@ -94,23 +95,23 @@ const configureConfigScreen: any = () =>
     configField2: {
       type: "textInputFields",
       labelText: "Auth Token",
-      helpText: "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
+      helpText:
+        "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
       placeholderText: "Enter your Auth Token",
       instructionText: "Copy and Paste your Auth Token",
       saveInConfig: true,
       isSensitive: true,
     },
-  })
+  });
 
-
-  const customKeys: any = [
-    { label: "id", value: "id" },
-    { label: "name", value: "name" },
-  ]
-  // Key used in function used in selector page to open your application 
-  const openSelectorPage = (config: any) => {
-    return config.configField1 ? true : false;
-}
+const customKeys: any = [
+  { label: "id", value: "id" },
+  { label: "name", value: "name" },
+];
+// Key used in function used in selector page to open your application
+const openSelectorPage = (config: any) => {
+  return config.configField1 ? true : false;
+};
 
 const returnUrl = (response: any) => ({
   items: response?.data?.data,
@@ -120,8 +121,10 @@ const returnUrl = (response: any) => ({
   },
 });
 
-const getSelectedCategoriesUrl = (config:any, type:any, selectedIDs:any) => {
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&categories:in=${
+const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
+  const apiUrl = `${
+    process.env.REACT_APP_API_URL
+  }?query=${type}&categories:in=${
     selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
   }`;
   const requestData = {
@@ -130,9 +133,15 @@ const getSelectedCategoriesUrl = (config:any, type:any, selectedIDs:any) => {
   return { apiUrl, requestData };
 };
 
-const generateSearchApiUrlAndData = (config: any, keyword:any, page:any, limit:any, categories:any) => {
-  const catQuery = categories.length ?
-    `&searchCategories=${categories.map((str: any) => str.value).join(",")}`
+const generateSearchApiUrlAndData = (
+  config: any,
+  keyword: any,
+  page: any,
+  limit: any,
+  categories: any
+) => {
+  const catQuery = categories.length
+    ? `&searchCategories=${categories.map((str: any) => str.value).join(",")}`
     : "";
 
   const queryType = config.type === "category" ? "category" : "product";
@@ -490,7 +499,7 @@ const getCustomKeys = () =>
   ];
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config?:any) =>
+const returnFormattedProduct = (product: any, config?: any) =>
   <TypeProduct>{
     id: product?.id || "",
     name: product?.name || "",
@@ -529,7 +538,6 @@ const getSidebarData = (product: any) =>
     },
   ];
 
-
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 const getOpenerLink = (data: any, config: any, type: any) =>
@@ -539,109 +547,113 @@ const getOpenerLink = (data: any, config: any, type: any) =>
 
 // this defines what and how will the columns will be displayed in your product selector page
 const getProductSelectorColumns = (config?: any) =>
-<ColumnsProp[]>[
-  {
-    Header: "ID", // the title of the column
-    id: "id",
-    accessor: "id", // specifies how you want to display data in the column. can be either string or a function
-    default: false,
-    disableSortBy: true, // disable sorting of the table with this column
-    addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
-    columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
-    // 0.x means smaller than one specified unit by 0.x times
-    // x means bigger that one specified unit by x times
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) => getImage(obj?.primary_image?.url_tiny),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.7,
-  },
-  {
-    Header: "SKU",
-    id: "sku",
-    accessor: "sku",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Product Name",
-    id: "name",
-    accessor: "name",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3,
-  },
-  {
-    Header: "Price",
-    accessor: (obj: any) => `$${currency(obj?.price)}`,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3.5,
-  },
-];
+  <ColumnsProp[]>[
+    {
+      Header: "ID", // the title of the column
+      id: "id",
+      accessor: "id", // specifies how you want to display data in the column. can be either string or a function
+      default: false,
+      disableSortBy: true, // disable sorting of the table with this column
+      addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
+      columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
+      // 0.x means smaller than one specified unit by 0.x times
+      // x means bigger that one specified unit by x times
+    },
+    {
+      Header: "Image",
+      accessor: (obj: any) => getImage(obj?.primary_image?.url_tiny),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.7,
+    },
+    {
+      Header: "SKU",
+      id: "sku",
+      accessor: "sku",
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.8,
+    },
+    {
+      Header: "Product Name",
+      id: "name",
+      accessor: "name",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 3,
+    },
+    {
+      Header: "Price",
+      accessor: (obj: any) => `$${currency(obj?.price)}`,
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1,
+    },
+    {
+      Header: "Description",
+      accessor: (obj: any) => wrapWithDiv(obj?.description),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 3.5,
+    },
+  ];
 
 // this defines what and how will the columns will be displayed in your category selector page
 const categorySelectorColumns = (config?: any) =>
-<ColumnsProp[]> [
-  {
-    Header: "ID",
-    id: "id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Image",
-    id: "image",
-    accessor: (obj: any) => getImage(obj?.primary_image?.url_tiny),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.7,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: "name",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Custom URL",
-    accessor: "custom_url.url",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 4,
-  },
-];
+  <ColumnsProp[]>[
+    {
+      Header: "ID",
+      id: "id",
+      accessor: "id",
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.8,
+    },
+    {
+      Header: "Image",
+      id: "image",
+      accessor: (obj: any) => getImage(obj?.primary_image?.url_tiny),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 0.7,
+    },
+    {
+      Header: "Category Name",
+      id: "name",
+      accessor: "name",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+    },
+    {
+      Header: "Custom URL",
+      accessor: "custom_url.url",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+    },
+    {
+      Header: "Description",
+      accessor: (obj: any) => wrapWithDiv(obj?.description),
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 4,
+    },
+  ];
 
-const arrangeList = (sortedIdsArray: any[] = [], dataArray: any[] = [], uniqueKey?: string) => {
+const arrangeList = (
+  sortedIdsArray: any[] = [],
+  dataArray: any[] = [],
+  uniqueKey?: string
+) => {
   const data: any[] = [];
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
@@ -656,7 +668,7 @@ const arrangeList = (sortedIdsArray: any[] = [], dataArray: any[] = [], uniqueKe
 const rootConfig: any = {
   verifyAppSigning,
   ecommerceEnv,
-  // ecommerceConfigFields, 
+  // ecommerceConfigFields,
   configureConfigScreen,
   customKeys,
   openSelectorPage,

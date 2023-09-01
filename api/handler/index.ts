@@ -22,7 +22,15 @@ const _getApiOptions: any = (
   },
   key: any,
 ) => {
-  const url: string = `${root_config.getUrl(key, query, searchParam, searchCategories, id, page, limit)}`;
+  const url: string = `${root_config.getUrl(
+    key,
+    query,
+    searchParam,
+    searchCategories,
+    id,
+    page,
+    limit,
+  )}`;
   return { url, method: 'GET', headers: root_config.getHeaders(key) };
 };
 
@@ -54,30 +62,39 @@ export const getProductAndCategory: any = async (data: any, key: any) => {
   const response = await _makeApiCall(_getApiOptions(data, key));
   if (root_config.getProductAndCategory) {
     return root_config.getProductAndCategory(data, response);
-  } return response;
+  }
+  return response;
 };
 
-const getByCategoryId = (data:any, query:any, key:any) => Promise.all(
-  data.map(async (category:any) => {
+const getByCategoryId = (data: any, query: any, key: any) => Promise.all(
+  data.map(async (category: any) => {
     const url = root_config.getByCategoryIdUrl(key, query, category);
-    const categoryResponse = await _makeApiCall({ url, method: 'GET', headers: root_config.getHeaders(key) });
+    const categoryResponse = await _makeApiCall({
+      url,
+      method: 'GET',
+      headers: root_config.getHeaders(key),
+    });
     categoryResponse.catalogId = category.catalogId;
     categoryResponse.catalogVersionId = category.catalogVersionId;
     return categoryResponse;
   }),
-).then((response) => response)
-  .catch((err:any) => {
+)
+  .then((response) => response)
+  .catch((err: any) => {
     console.error(err);
   });
 
 // get an array of selected products and categories
 export const getSelectedProdsAndCats: any = async (data: any, key: any) => {
-  if (root_config.getSeparateProdCat && root_config.getSeparateProdCat === true) {
+  if (
+    root_config.getSeparateProdCat &&
+    root_config.getSeparateProdCat === true
+  ) {
     let response;
     if (data?.query === 'product') {
-      const idsArr = data?.['id:in'].split(',').filter((id:any) => id !== '');
+      const idsArr = data?.['id:in'].split(',').filter((id: any) => id !== '');
       response = await Promise.all(
-        idsArr.map((id:any) => getById({ id, query: data?.query }, key)),
+        idsArr.map((id: any) => getById({ id, query: data?.query }, key)),
       );
     } else {
       response = await getByCategoryId(key?.selectedIDs, 'category', key);
@@ -95,7 +112,9 @@ export const getSelectedProdsAndCats: any = async (data: any, key: any) => {
 
 // filter products as per categories
 export const filterByCategory: any = (data: any, key: any) => _makeApiCall({
-  url: `${root_config.getUrl(key, data?.query)}?categories:in=${data['categories:in']}&${root_config.PRODUCT_URL_PARAMS}`,
+  url: `${root_config.getUrl(key, data?.query)}?categories:in=${
+    data['categories:in']
+  }&${root_config.PRODUCT_URL_PARAMS}`,
   method: 'GET',
   headers: root_config.getHeaders(key),
 });

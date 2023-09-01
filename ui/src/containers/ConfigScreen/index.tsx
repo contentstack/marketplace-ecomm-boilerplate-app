@@ -8,7 +8,17 @@ import CryptoJS from "crypto-js";
 // For all the available venus components, please refer below doc
 // https://venus-storybook.contentstack.com/?path=/docs/components-textinput--default
 import ContentstackAppSdk from "@contentstack/app-sdk";
-import { Line, Field, FieldLabel, Help, Radio, InstructionText, Select, TextInput, Form } from "@contentstack/venus-components";
+import {
+  Line,
+  Field,
+  FieldLabel,
+  Help,
+  Radio,
+  InstructionText,
+  Select,
+  TextInput,
+  Form,
+} from "@contentstack/venus-components";
 
 /* Import our modules */
 import rootConfig from "../../root_config";
@@ -55,8 +65,7 @@ const ConfigScreen: React.FC = function () {
         custom_keys: rootConfig.customKeys,
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
-      serverConfiguration: {
-      },
+      serverConfiguration: {},
     },
     setInstallationData: (): any => {},
     appSdkInitialized: false,
@@ -153,46 +162,47 @@ const ConfigScreen: React.FC = function () {
       });
   }, []);
 
-
-
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
    * */
   const updateConfig = async (e: any) => {
-      // eslint-disable-next-line prefer-const
-      let { name: fieldName, value: fieldValue } = e?.target;
-      if (typeof fieldValue === "string") {
-        fieldValue = fieldValue?.trim();
-      }
+    // eslint-disable-next-line prefer-const
+    let { name: fieldName, value: fieldValue } = e?.target;
+    if (typeof fieldValue === "string") {
+      fieldValue = fieldValue?.trim();
+    }
 
-      const updatedConfig = state?.installationData?.configuration || {};
-      if (configInputFields?.[fieldName]?.saveInConfig ||  state?.installationData?.configuration) {
-        updatedConfig[fieldName] = fieldValue;
-      }
+    const updatedConfig = state?.installationData?.configuration || {};
+    if (
+      configInputFields?.[fieldName]?.saveInConfig ||
+      state?.installationData?.configuration
+    ) {
+      updatedConfig[fieldName] = fieldValue;
+    }
 
-      const newConfiguration = Object.entries(updatedConfig)?.reduce(
-        (obj: any, [key, value]) => {
-          // eslint-disable-next-line no-param-reassign
-          obj[key] =
-            /* eslint-disable */
-            // prettier-ignore
-            value !== ""
+    const newConfiguration = Object.entries(updatedConfig)?.reduce(
+      (obj: any, [key, value]) => {
+        // eslint-disable-next-line no-param-reassign
+        obj[key] =
+          /* eslint-disable */
+          // prettier-ignore
+          value !== ""
               ? ((isConfigSensitive(key))? encryptData(value, password)
                 : value)
               : value;
-          return obj;
-        },
-        {}
-      );
+        return obj;
+      },
+      {}
+    );
 
-      if (state?.setInstallationData) {
-        await state.setInstallationData({
-          ...state.installationData,
-          configuration: newConfiguration,
-        });
-      }
-      return true;
+    if (state?.setInstallationData) {
+      await state.setInstallationData({
+        ...state.installationData,
+        configuration: newConfiguration,
+      });
     }
+    return true;
+  };
 
   useEffect(() => {
     const e: any = {};
@@ -217,40 +227,47 @@ const ConfigScreen: React.FC = function () {
   const renderConfig = () =>
     Object.entries(configInputFields)?.map(([objKey, objValue, index]: any) => {
       if (objValue?.type === "textInputFields") {
-          return (
-            <div key={`${objKey}_${index}`}>
-              <Field>
-                  <FieldLabel required htmlFor={`${objKey}-id`} data-testid="text_label">
-                    {" "}
-                    {/* Change the label caption as per your requirement */}
-                    {objValue?.labelText}
-                  </FieldLabel>
-                  {objValue?.helpText && (
-                    <Help text={objValue?.helpText} data-testid="text_help" />
-                  )}
-                  {/* Change the help caption as per your requirement */}
-                  <TextInput
-                    id={`${objKey}-id`}
-                    required
-                    value={objValue?.saveInConfig ? (state?.installationData?.configuration?.[objKey])
-                      : (objValue?.saveInServerConfig ? state?.installationData?.serverConfiguration?.[objKey]
-                      : "")}
-                    placeholder={objValue?.placeholderText}
-                    name={objKey}
-                    onChange={updateConfig}
-                    data-testid="text_input"
-                  />
-                  <InstructionText data-testid="text_instruction">
-                    {objValue?.instructionText}
-                  </InstructionText>
-              </Field>
-                <Line type="dashed" />
-            </div>
-          );
-        }
-          return null;
+        return (
+          <div key={`${objKey}_${index}`}>
+            <Field>
+              <FieldLabel
+                required
+                htmlFor={`${objKey}-id`}
+                data-testid="text_label"
+              >
+                {" "}
+                {/* Change the label caption as per your requirement */}
+                {objValue?.labelText}
+              </FieldLabel>
+              {objValue?.helpText && (
+                <Help text={objValue?.helpText} data-testid="text_help" />
+              )}
+              {/* Change the help caption as per your requirement */}
+              <TextInput
+                id={`${objKey}-id`}
+                required
+                value={
+                  objValue?.saveInConfig
+                    ? state?.installationData?.configuration?.[objKey]
+                    : objValue?.saveInServerConfig
+                    ? state?.installationData?.serverConfiguration?.[objKey]
+                    : ""
+                }
+                placeholder={objValue?.placeholderText}
+                name={objKey}
+                onChange={updateConfig}
+                data-testid="text_input"
+              />
+              <InstructionText data-testid="text_instruction">
+                {objValue?.instructionText}
+              </InstructionText>
+            </Field>
+            <Line type="dashed" />
+          </div>
+        );
       }
-    )
+      return null;
+    });
 
   /* If need to get any data from API then use,
   getDataFromAPI({queryParams, headers, method, body}) function.
@@ -353,7 +370,6 @@ const ConfigScreen: React.FC = function () {
               {localeTexts.configPage.pageCount.instruction}
             </InstructionText>
           </Field>
-          
         </Form>
       </div>
     </div>

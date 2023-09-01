@@ -16,8 +16,17 @@ const RenderList: React.FC<Props> = function ({
 }) {
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   const removeItem = (removeId: any) => {
-    if (rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true) {
-      rootConfig.removeItemsFromCustomField(removeId, selectedIds, setSelectedIds, type, uniqueKey)
+    if (
+      rootConfig.ecomCustomFieldCategoryData &&
+      rootConfig.ecomCustomFieldCategoryData === true
+    ) {
+      rootConfig.removeItemsFromCustomField(
+        removeId,
+        selectedIds,
+        setSelectedIds,
+        type,
+        uniqueKey
+      );
     } else {
       setSelectedIds(
         selectedIds?.filter((data: any) => Number(data) !== removeId)

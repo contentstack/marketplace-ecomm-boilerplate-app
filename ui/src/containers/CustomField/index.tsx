@@ -12,7 +12,7 @@ import {
 import { Props, TypeSDKData, TypeWarningtext } from "../../common/types";
 /* Import our modules */
 import RenderList from "./RenderList";
-import {  filter, getSelectedIDs } from "../../services";
+import { filter, getSelectedIDs } from "../../services";
 import WarningMessage from "../../components/WarningMessage";
 import {
   popupWindow,
@@ -61,20 +61,30 @@ const CustomField: React.FC<Props> = function ({ type }) {
       !isInvalidCredentials.error
     ) {
       let res;
-      if(rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category"){
+      if (
+        rootConfig.ecomCustomFieldCategoryData &&
+        rootConfig.ecomCustomFieldCategoryData === true &&
+        type === "category"
+      ) {
         res = await filter(state?.config, type, selectedIdsArray);
         if (res?.error) {
           setIsInvalidCredentials(res);
         } else setSelectedItems(res?.data?.items);
       } else {
-         res = await getSelectedIDs(state?.config, type, selectedIdsArray);
-      if (res?.error) {
-        setIsInvalidCredentials(res);
-      } else setSelectedItems(rootConfig.arrangeList(selectedIdsArray, res?.data?.data || res?.data?.items, uniqueKey)); 
-    }
+        res = await getSelectedIDs(state?.config, type, selectedIdsArray);
+        if (res?.error) {
+          setIsInvalidCredentials(res);
+        } else
+          setSelectedItems(
+            rootConfig.arrangeList(
+              selectedIdsArray,
+              res?.data?.data || res?.data?.items,
+              uniqueKey
+            )
+          );
+      }
     }
   };
-
 
   useEffect(() => {
     window.addEventListener("beforeunload", () => {
@@ -96,16 +106,19 @@ const CustomField: React.FC<Props> = function ({ type }) {
         const entryData = appSdk?.location?.CustomField?.field?.getData();
         appSdk?.location?.CustomField?.frame?.enableAutoResizing();
         if (entryData?.data?.length) {
-          if (rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category"){
-              setEntryIds(
-                entryData?.data?.map((i: any) => ({
-                  [uniqueKey]: i?.[uniqueKey],
-                  catalogId: i?.catalogId,
-                  catalogVersionId: i?.catalogVersionId,
-                }))
-              )}
-          else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
-
+          if (
+            rootConfig.ecomCustomFieldCategoryData &&
+            rootConfig.ecomCustomFieldCategoryData === true &&
+            type === "category"
+          ) {
+            setEntryIds(
+              entryData?.data?.map((i: any) => ({
+                [uniqueKey]: i?.[uniqueKey],
+                catalogId: i?.catalogId,
+                catalogVersionId: i?.catalogVersionId,
+              }))
+            );
+          } else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
         }
         setState({
           config,
@@ -149,7 +162,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
         type: `${appName}_${type}`,
       });
     } else {
-
       // eslint-disable-next-line
       if (!state.config.is_custom_json)
         location.CustomField?.field?.setData({
@@ -197,10 +209,13 @@ const CustomField: React.FC<Props> = function ({ type }) {
           window.location.origin
         );
       } else if (data.message === "add") {
-        if(rootConfig.ecomCustomFieldCategoryData && rootConfig.ecomCustomFieldCategoryData === true && type === "category" ) 
-            setEntryIds(data?.dataArr)
-        else 
-            setSelectedIds(data?.dataIds);
+        if (
+          rootConfig.ecomCustomFieldCategoryData &&
+          rootConfig.ecomCustomFieldCategoryData === true &&
+          type === "category"
+        )
+          setEntryIds(data?.dataArr);
+        else setSelectedIds(data?.dataIds);
       } else if (data.message === "close") {
         childWindow = undefined;
       }
@@ -223,7 +238,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
   }, []);
 
   const renderCustomField = () => {
-
     if (isInvalidCredentials.error)
       return <WarningMessage content={isInvalidCredentials?.data} />;
     if (loading) {
@@ -247,34 +261,32 @@ const CustomField: React.FC<Props> = function ({ type }) {
               {selectedItems.length} {getTypeLabel(type, selectedItems.length)}
             </span>
             <div className="viewToggler">
-              
-                <Dropdown
-                  list={gridViewDropdown}
-                  dropDownType="primary"
-                  type="click"
-                  viewAs="label"
-                  onChange={handleToggle}
-                  withArrow
-                  withIcon
-                  dropDownPosition="bottom"
-                  closeAfterSelect
-                  highlightActive={false}
+              <Dropdown
+                list={gridViewDropdown}
+                dropDownType="primary"
+                type="click"
+                viewAs="label"
+                onChange={handleToggle}
+                withArrow
+                withIcon
+                dropDownPosition="bottom"
+                closeAfterSelect
+                highlightActive={false}
+              >
+                <Tooltip
+                  content={localeTexts.customField.toolTip.content}
+                  position="top"
                 >
-                  <Tooltip
-                    content={localeTexts.customField.toolTip.content}
-                    position="top"
-                  >
-                    <Icon
-                      icon={
-                        view.value === "card" ?
-                          localeTexts.customField.toolTip.thumbnail
-                          : localeTexts.customField.toolTip.list
-                      }
-                      size="original"
-                    />
-                  </Tooltip>
-                </Dropdown>
-               
+                  <Icon
+                    icon={
+                      view.value === "card" ?
+                        localeTexts.customField.toolTip.thumbnail
+                        : localeTexts.customField.toolTip.list
+                    }
+                    size="original"
+                  />
+                </Tooltip>
+              </Dropdown>
             </div>
           </div>
           <RenderList

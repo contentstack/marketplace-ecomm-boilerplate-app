@@ -20,9 +20,8 @@ import NoImg from "../../assets/NoImg.svg";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
   const { id, name, description, image, price }: TypeProduct =
-    rootConfig.returnFormattedProduct(product,config);
+    rootConfig.returnFormattedProduct(product, config);
 
-  
   const {
     attributes,
     listeners,
@@ -91,7 +90,11 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
         ""
       ) : (
         <ActionTooltip list={toolTipActions}>
-          <div className="product" key={id || product?.code} data-testid="render-card-item">
+          <div
+            className="product"
+            key={id || product?.code}
+            data-testid="render-card-item"
+          >
             {!error ? (
               <>
                 {image ? (

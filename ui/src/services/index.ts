@@ -39,7 +39,7 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 };
 
 // get paginated products and categories
-  const request = (config: any, requestType: any, page = 1) =>
+const request = (config: any, requestType: any, page = 1) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${requestType}&page=${page}&limit=${config?.page_count}`,
     "POST",
@@ -56,7 +56,7 @@ const requestCategories = (config: any) =>
 
 // get selected products/categories
 const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
- Array.isArray(selectedIDs) && selectedIDs?.length ?
+  Array.isArray(selectedIDs) && selectedIDs?.length ?
     makeAnApiCall(
         `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${
           selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
@@ -66,32 +66,35 @@ const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
       )
     : null;
 
-
 // filter products with categories
-const filter = async (config: any, type: any, selectedIDs: any) =>{
- if (Array.isArray(selectedIDs) && selectedIDs.length)  {
-  const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(config, type, selectedIDs);
-  return makeAnApiCall(apiUrl, "POST", requestData);
-   } 
-   return null;
-}
-// search products and categories
-  const search = (
-    config: any,
-    keyword: any,
-    page: any,
-    limit: any,
-    categories = [],
-  ) => {
-    const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
+const filter = async (config: any, type: any, selectedIDs: any) => {
+  if (Array.isArray(selectedIDs) && selectedIDs.length) {
+    const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(
       config,
-      keyword,
-      page,
-      limit,
-      categories
+      type,
+      selectedIDs
     );
-  
     return makeAnApiCall(apiUrl, "POST", requestData);
-  };
+  }
+  return null;
+};
+// search products and categories
+const search = (
+  config: any,
+  keyword: any,
+  page: any,
+  limit: any,
+  categories = []
+) => {
+  const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
+    config,
+    keyword,
+    page,
+    limit,
+    categories
+  );
+
+  return makeAnApiCall(apiUrl, "POST", requestData);
+};
 
 export { getSelectedIDs, request, requestCategories, search, filter };

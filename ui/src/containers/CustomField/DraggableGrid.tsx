@@ -53,7 +53,7 @@ const DraggableGrid: React.FC<Props> = function ({
       );
     }
   };
-  
+
   const getDraOverlay = () => {
     if (activeId) {
       return type === "category" ? (
@@ -84,29 +84,27 @@ const DraggableGrid: React.FC<Props> = function ({
       <SortableContext items={products}>
         <div className="gridContainer">
           {type === "category"
-          ? products?.map((data: any) => (
-            <Category
-              categories={data}
-              remove={remove}
-              config={config}
-              key={data?.[uniqueKey] || data?.id}
-              id={data?.[uniqueKey] || data?.id}
-            />
-          ))
-          : products?.map((product: any) => (
-            <Product
-              key={product?.id || product?.code}
-              product={product}
-              id={product?.id || product?.code}
-              remove={remove}
-              config={config}
-            />
-          ))}
+            ? products?.map((data: any) => (
+                <Category
+                  categories={data}
+                  remove={remove}
+                  config={config}
+                  key={data?.[uniqueKey] || data?.id}
+                  id={data?.[uniqueKey] || data?.id}
+                />
+              ))
+            : products?.map((product: any) => (
+                <Product
+                  key={product?.id || product?.code}
+                  product={product}
+                  id={product?.id || product?.code}
+                  remove={remove}
+                  config={config}
+                />
+              ))}
         </div>
       </SortableContext>
-      <DragOverlay>
-      {getDraOverlay()}
-      </DragOverlay>
+      <DragOverlay>{getDraOverlay()}</DragOverlay>
     </DndContext>
   );
 };

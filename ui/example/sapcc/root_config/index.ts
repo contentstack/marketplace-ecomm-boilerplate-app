@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable */
+/* @typescript-eslint/naming-convention */
 import axios from "axios";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ColumnsProp } from "../common/types";
@@ -65,14 +66,13 @@ const ecommerceEnv: any = {
   FETCH_PER_PAGE: 20,
 };
 
-
 // example config fields. you will need to use these values in the config screen accordingly.
-const configureConfigScreen: any = () => 
-  ({
+const configureConfigScreen: any = () => ({
   configField1: {
     type: "textInputFields",
     labelText: "API Route",
-    helpText: "Your API Route is the endpoint from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
+    helpText:
+      "Your API Route is the endpoint from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholderText: "/rest/v2/",
     instructionText: "Copy and Paste your API Route",
     saveInConfig: true,
@@ -81,7 +81,8 @@ const configureConfigScreen: any = () =>
   configField2: {
     type: "textInputFields",
     labelText: "API Base URL",
-    helpText: "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
+    helpText:
+      "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
     placeholderText: "Enter your API Base URL",
     instructionText: "Copy and Paste your API Base URL  without https://",
     saveInConfig: true,
@@ -90,7 +91,8 @@ const configureConfigScreen: any = () =>
   configField3: {
     type: "textInputFields",
     labelText: "Base Site ID",
-    helpText: "You can find your Base Site ID in the Base Commerce Section of your SAP Backoffice.",
+    helpText:
+      "You can find your Base Site ID in the Base Commerce Section of your SAP Backoffice.",
     placeholderText: "Enter your Base Site ID",
     instructionText: "Copy and Paste your Base Site ID",
     saveInConfig: true,
@@ -99,20 +101,21 @@ const configureConfigScreen: any = () =>
   configField4: {
     type: "textInputFields",
     labelText: "Backoffice URL",
-    helpText: "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
+    helpText:
+      "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
     placeholderText: "Enter your Backoffice URL",
     instructionText: "Copy and Paste your Backoffice URL",
     saveInConfig: true,
     isSensitive: true,
   },
-})
+});
 
 const customKeys: any = [
   { label: "code", value: "code" },
   { label: "name", value: "name" },
-]
+];
 
-const openSelectorPage = (config: any) => !!config.configField1
+const openSelectorPage = (config: any) => !!config.configField1;
 
 const returnUrl = (response: any) => ({
   items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
@@ -399,19 +402,25 @@ const getCustomKeys = () =>
     },
   ];
 
-const getSelectedCategoriesUrl = (config:any, type:any, selectedIDs:any) => {
+const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
   const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=categories`;
   const requestData = {
     config,
-    selectedIDs
+    selectedIDs,
   };
   return { apiUrl, requestData };
 };
 const ecomCustomFieldCategoryData: any = true;
 
-const generateSearchApiUrlAndData = (config: any, keyword:any, page:any, limit:any, categories?:any) => {
-  const catQuery = categories.length ?
-    `&searchCategories=${categories.map((str: any) => str.value).join(",")}`
+const generateSearchApiUrlAndData = (
+  config: any,
+  keyword: any,
+  page: any,
+  limit: any,
+  categories?: any
+) => {
+  const catQuery = categories.length
+    ? `&searchCategories=${categories.map((str: any) => str.value).join(",")}`
     : "";
 
   const queryType = config.type === "category" ? "category" : "product";
@@ -421,15 +430,14 @@ const generateSearchApiUrlAndData = (config: any, keyword:any, page:any, limit:a
   return { apiUrl, requestData: config };
 };
 
-
 // this function maps the corresponding keys to your product object that gets saved in custom field
 const returnFormattedProduct = (product: any, config: any) =>
   <TypeProduct>{
     id: Number(product?.code) || "",
     name: product?.name || "",
     description: product?.description || "-",
-    image: product?.images?.[0]?.url ?
-      `https://${config?.configField2}${product?.images[0]?.url}`
+    image: product?.images?.[0]?.url
+      ? `https://${config?.configField2}${product?.images[0]?.url}`
       : "",
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
@@ -447,8 +455,7 @@ const returnFormattedCategory = (category: any) =>
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getOpenerLink = (id: any, config: any, type: any) =>
-  config?.configField4;
+const getOpenerLink = (id: any, config: any, type: any) => config?.configField4;
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
@@ -491,8 +498,8 @@ const getProductSelectorColumns = (config: any) =>
     {
       Header: "Image",
       accessor: (obj: any) =>
-        obj?.images?.[0]?.url ?
-          getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
+        obj?.images?.[0]?.url
+          ? getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
           : getImage(obj?.images?.[0]?.url),
       default: false,
       disableSortBy: true,
@@ -531,34 +538,34 @@ const getProductSelectorColumns = (config: any) =>
 // this defines what and how will the columns will be displayed in your category selector page
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const categorySelectorColumns = (config?: any) =>
-<ColumnsProp[]>  [
-  {
-    Header: "Category ID",
-    id: "code",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1.5,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: (obj: any) => obj?.name || "-",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1.5,
-  },
-  {
-    Header: "Catalog Version",
-    id: "catalogVersionId",
-    accessor: "catalogVersionId",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-];
+  <ColumnsProp[]>[
+    {
+      Header: "Category ID",
+      id: "code",
+      accessor: "id",
+      default: true,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1.5,
+    },
+    {
+      Header: "Category Name",
+      id: "name",
+      accessor: (obj: any) => obj?.name || "-",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+      columnWidthMultiplier: 1.5,
+    },
+    {
+      Header: "Catalog Version",
+      id: "catalogVersionId",
+      accessor: "catalogVersionId",
+      default: false,
+      disableSortBy: true,
+      addToColumnSelector: true,
+    },
+  ];
 
 const arrangeList = (
   sortedIdsArray: any[],
@@ -575,16 +582,22 @@ const arrangeList = (
   });
   return data;
 };
-const removeItemsFromCustomField = (removeId: any, selectedIds:any, setSelectedIds:any, type: any, uniqueKey:any) => {
+const removeItemsFromCustomField = (
+  removeId: any,
+  selectedIds: any,
+  setSelectedIds: any,
+  type: any,
+  uniqueKey: any
+) => {
   if (type === "category")
-  setSelectedIds(
-    selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
-  );
-else
-  setSelectedIds(
-    selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
-  );
-}
+    setSelectedIds(
+      selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
+    );
+  else
+    setSelectedIds(
+      selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
+    );
+};
 
 const rootConfig = {
   verifyAppSigning,

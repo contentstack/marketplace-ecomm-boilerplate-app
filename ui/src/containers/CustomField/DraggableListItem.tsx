@@ -1,6 +1,11 @@
 /* eslint-disable */
 import React from "react";
-import { ActionTooltip, cbModal, Icon, Tooltip } from "@contentstack/venus-components";
+import {
+  ActionTooltip,
+  cbModal,
+  Icon,
+  Tooltip,
+} from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Props } from "../../common/types";
@@ -40,7 +45,7 @@ const DraggableListItem: React.FC<Props> = function ({
     <DeleteModal
       type={"Product" || "Category"}
       remove={remove}
-      id={id  || product?.code}
+      id={id || product?.code}
       name={name}
       {...props}
     />
@@ -92,32 +97,30 @@ const DraggableListItem: React.FC<Props> = function ({
       ) : (
         <ActionTooltip list={onHoverActionList}>
           <div role="cell" className="Table__body__column">
-            {(
-            <>
-            {image ? (
-              <div className="product-image">
-              <img src={image} alt={name} />
-            </div>
-            ) :
-            (
-              <div className="product-image">
-                <Tooltip
-                  content={localeTexts.selectorPage.ImageTooltip.label}
-                  position="top"
-                  showArrow={false}
-                  variantType="light"
-                  type="secondary"
-                >
-                  <img
-                    src={NoImg}
-                    alt={localeTexts.selectorPage.noImageAvailable}
-                    className="selector-product-image"
-                  />
-                </Tooltip>
-              </div>
-            )
-            }
-            </>)
+            {
+              <>
+                {image ? (
+                  <div className="product-image">
+                    <img src={image} alt={name} />
+                  </div>
+                ) : (
+                  <div className="product-image">
+                    <Tooltip
+                      content={localeTexts.selectorPage.ImageTooltip.label}
+                      position="top"
+                      showArrow={false}
+                      variantType="light"
+                      type="secondary"
+                    >
+                      <img
+                        src={NoImg}
+                        alt={localeTexts.selectorPage.noImageAvailable}
+                        className="selector-product-image"
+                      />
+                    </Tooltip>
+                  </div>
+                )}
+              </>
             }
           </div>
           <div role="cell" className="Table__body__column">

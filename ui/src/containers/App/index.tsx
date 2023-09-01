@@ -13,7 +13,7 @@ import "@contentstack/venus-components/build/main.css";
 /* Import our CSS */
 import "./styles.scss";
 import rootConfig from "../../root_config";
-import localeTexts from "../../common/locale/en-us"
+import localeTexts from "../../common/locale/en-us";
 
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.

@@ -6,7 +6,7 @@ import {
   AsyncLoader,
   Select,
   SkeletonTile,
-  FieldLabel
+  FieldLabel,
 } from "@contentstack/venus-components";
 
 import ProductDescription from "./ProductDescription";
@@ -47,13 +47,14 @@ const SidebarWidget: React.FC = function () {
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
-
         const config = await appSdk?.getConfig();
-        if (!config?.is_custom_baseUrl)
-          delete config?.api_route
-        const contentTypeUid = appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
+        if (!config?.is_custom_baseUrl) delete config?.api_route;
+        const contentTypeUid =
+          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
         const data = appSdk?.location?.SidebarWidget?.entry?.getData();
-        const contentTypeDetails = await appSdk.stack.getContentType(contentTypeUid)
+        const contentTypeDetails = await appSdk.stack.getContentType(
+          contentTypeUid
+        );
         setEntryData(data);
         setContentTypeSchema(contentTypeDetails?.content_type?.schema);
         setState({
@@ -98,8 +99,8 @@ const SidebarWidget: React.FC = function () {
   useEffect(() => {
     if (isInvalidCredentials.error)
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      isInvalidCredentials?.data
-  }, [isInvalidCredentials])
+      isInvalidCredentials?.data;
+  }, [isInvalidCredentials]);
 
   useEffect(() => {
     if (!state.appSdkInitialized) return;
@@ -107,14 +108,17 @@ const SidebarWidget: React.FC = function () {
       (i: any) =>
         entryData?.[i]?.type ===
         `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
-    )
+    );
     const fieldListTemp: any = [];
     sapProductsField?.forEach((field: string) => {
       contentTypeSchema?.forEach((schemaField: any) => {
         if (schemaField?.uid === field)
-          fieldListTemp.push({ label: schemaField?.display_name, value: schemaField?.uid })
-      })
-    })
+          fieldListTemp.push({
+            label: schemaField?.display_name,
+            value: schemaField?.uid,
+          });
+      });
+    });
     setFieldList(fieldListTemp);
   }, [entryData, state.appSdkInitialized]);
   useEffect(() => {
@@ -123,7 +127,7 @@ const SidebarWidget: React.FC = function () {
   }, [fieldList]);
 
   useEffect(() => {
-    if (!state.appSdkInitialized) return
+    if (!state.appSdkInitialized) return;
     setProductDropdown(
       productList?.map((i: any) => ({
         label: i?.name,
@@ -133,7 +137,7 @@ const SidebarWidget: React.FC = function () {
   }, [productList]);
 
   useEffect(() => {
-    if (!state.appSdkInitialized) return
+    if (!state.appSdkInitialized) return;
     if (!productList?.length) {
       setLoading(false);
       setIsProduct(false);
@@ -144,16 +148,14 @@ const SidebarWidget: React.FC = function () {
       setselectedDropdownProduct({
         label: productList?.[0]?.name,
         value: productList?.[0]?.[rootConfig.ecommerceEnv.UNIQUE_KEY.product],
-        searchLabel: productList?.[0]?.name
+        searchLabel: productList?.[0]?.name,
       });
     }
   }, [productDropdown]);
 
   useEffect(() => {
-
-    if (!loading && !selectedDropdownProduct)
-      setIsFieldEmpty(true)
-  }, [selectedDropdownProduct])
+    if (!loading && !selectedDropdownProduct) setIsFieldEmpty(true);
+  }, [selectedDropdownProduct]);
 
   useEffect(() => {
     const setInitialProductDropdown = async () => {
@@ -180,26 +182,32 @@ const SidebarWidget: React.FC = function () {
       getCurrentFieldData(event);
       setSelectedField(event);
     },
-    [selectedField],
-  )
-
+    [selectedField]
+  );
 
   const handleProductChange = useCallback(
     async (event: any) => {
       setselectedDropdownProduct(event);
     },
-    [selectedDropdownProduct],
-  )
+    [selectedDropdownProduct]
+  );
 
   const renderProduct = () => {
-    if ((productLoading || !selectedProduct) && isProduct) return <AsyncLoader color={constants.loaderColor} />
+    if ((productLoading || !selectedProduct) && isProduct)
+      return <AsyncLoader color={constants.loaderColor} />;
     if (!isProduct)
-      return <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
-    return <ProductDescription product={selectedProduct} config={state?.config} />
+      return (
+        <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
+      );
+    return (
+      <ProductDescription product={selectedProduct} config={state?.config} />
+    );
+  };
 
-  }
-
-  const getNoOptionsMessage = useCallback(() => localeTexts.sidebarWidget.select.noOptions, [])
+  const getNoOptionsMessage = useCallback(
+    () => localeTexts.sidebarWidget.select.noOptions,
+    []
+  );
 
   const renderSidebarContent = () => {
     if (isInvalidCredentials?.error)

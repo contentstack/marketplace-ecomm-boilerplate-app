@@ -50,7 +50,7 @@ export default {
       imgCol: "Image",
       nameCol: "Name",
       id: "ID",
-      price: "Price"
+      price: "Price",
     },
     listActions: {
       drag: "Drag",
@@ -85,7 +85,7 @@ export default {
       "The details of the listed product(s) will be updated based on the new locale. Are you sure you want to proceed?",
   },
   selectorPage: {
-    errHandling: 'error loading more searched data',
+    errHandling: "error loading more searched data",
     heading: "$ App",
     noImageAvailable: "Product image not available",
     searchQuery:

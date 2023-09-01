@@ -16,17 +16,12 @@ import {
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import { TypeWarningtext } from "../../common/types";
-import {
-  request,
-  filter,
-  search,
-} from "../../services/index";
+import { request, filter, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
 
 const SelectorPage: React.FC = function () {
-
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<any>({});
@@ -42,7 +37,9 @@ const SelectorPage: React.FC = function () {
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchCurrentPage, setSearchCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [hiddenColumns, setHiddenColumns] = useState<any>(config?.type === "category" ? [] : ["id"])
+  const [hiddenColumns, setHiddenColumns] = useState<any>(
+    config?.type === "category" ? [] : ["id"]
+  );
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({
       error: false,
@@ -83,16 +80,10 @@ const SelectorPage: React.FC = function () {
   }, []);
 
   const fetchInitialData = async (searchTextParam: any) => {
-
     try {
-      if (!isEmpty(config) ) {
+      if (!isEmpty(config)) {
         setItemStatus({
-          ...getItemStatusMap(
-            {},
-            "loading",
-            0,
-            Number(config?.page_count)
-          ),
+          ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
         });
         const response = searchTextParam
           ? await search(config, searchTextParam, 1, config?.page_count)
@@ -103,10 +94,9 @@ const SelectorPage: React.FC = function () {
         }
         if (!response?.error) {
           setList(response?.data?.items);
-          if(config?.type === "category")  
-           setTotalCounts(response?.data?.items?.length)
-          else 
-           setTotalCounts(response?.data?.meta?.total);
+          if (config?.type === "category")
+            setTotalCounts(response?.data?.items?.length);
+          else setTotalCounts(response?.data?.meta?.total);
           const responseDataLength = response?.data?.items?.length;
           setItemStatus({
             ...getItemStatusMap(
@@ -123,13 +113,12 @@ const SelectorPage: React.FC = function () {
           searchText
             ? setSearchCurrentPage(response?.data?.meta?.current_page)
             : setCurrentPage(response?.data?.meta?.current_page);
-          
         } else {
           setIsInvalidCredentials(response);
         }
       }
     } catch (error) {
-      console.error('error fetching initial data', error)
+      console.error("error fetching initial data", error);
     }
   };
 
@@ -150,14 +139,11 @@ const SelectorPage: React.FC = function () {
   useEffect(() => {
     setLoading(true);
     fetchInitialData(searchText);
-
   }, [config]);
 
   useEffect(() => {
-
     if (isEmpty(config) || !categoryActive) return;
     const fetchCategoryData = async () => {
-
       const categoryIds: any[] = [];
       selectedCategory?.forEach((category: any) =>
         categoryIds.push(category?.value)
@@ -187,7 +173,7 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } catch (err) {
-        console.error('error fetching category data',err);
+        console.error("error fetching category data", err);
       }
     };
 
@@ -198,12 +184,11 @@ const SelectorPage: React.FC = function () {
       setSearchActive(false);
       setCategoriesActive(false);
       fetchInitialData(searchText);
-    } 
+    }
   }, [categoryActive, selectedCategory]);
 
   const fetchData = async (meta: any) => {
     try {
-
       if (meta?.searchText && !isEmpty(config)) {
         setSearchActive(true);
         setSearchText(meta?.searchText);
@@ -232,7 +217,7 @@ const SelectorPage: React.FC = function () {
         fetchInitialData("");
       }
     } catch (err) {
-      console.error('error fetching table data',err);
+      console.error("error fetching table data", err);
     }
   };
 
@@ -247,11 +232,7 @@ const SelectorPage: React.FC = function () {
             meta?.startIndex + Number(config?.page_count)
           ),
         });
-        const response = await request(
-          config,
-          config?.type,
-          currentPage + 1,
-        );
+        const response = await request(config, config?.type, currentPage + 1);
         if (!response?.error) {
           setCurrentPage(response?.data?.meta?.current_page);
           setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
@@ -268,7 +249,7 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } catch (err) {
-        console.error('error loading more channel data',err);
+        console.error("error loading more channel data", err);
       }
     } else {
       try {
@@ -301,7 +282,7 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } catch (err) {
-        console.error(localeTexts.selectorPage.errHandling ,err);
+        console.error(localeTexts.selectorPage.errHandling, err);
       }
     }
   };
@@ -338,20 +319,19 @@ const SelectorPage: React.FC = function () {
   };
 
   const onToggleColumnSelector = (event: any) => {
-    let hiddenColumnsTemp: any = []
+    let hiddenColumnsTemp: any = [];
     Object.keys(event)?.forEach((key: string) => {
-        if(!event[key] && !hiddenColumnsTemp.includes(key))
-            hiddenColumnsTemp.push(key);
-        if(event[key] && hiddenColumnsTemp.includes(key)){
-            const index = hiddenColumnsTemp.indexOf(key)
-            hiddenColumnsTemp = hiddenColumnsTemp.splice(index, 1);
-        }
-    })
-    setHiddenColumns(hiddenColumnsTemp)
-  }
-  
-    const renderSelectorPage = () => {
-      
+      if (!event[key] && !hiddenColumnsTemp.includes(key))
+        hiddenColumnsTemp.push(key);
+      if (event[key] && hiddenColumnsTemp.includes(key)) {
+        const index = hiddenColumnsTemp.indexOf(key);
+        hiddenColumnsTemp = hiddenColumnsTemp.splice(index, 1);
+      }
+    });
+    setHiddenColumns(hiddenColumnsTemp);
+  };
+
+  const renderSelectorPage = () => {
     if (isInvalidCredentials?.error)
       return (
         <div className="invalid-cred-selector">
@@ -371,15 +351,18 @@ const SelectorPage: React.FC = function () {
           canSearch
           data={
             list?.length
-              ? list.map((listData) => ({ ...listData, 
-                [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
-                listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
-              }`, }))
+              ? list.map((listData) => ({
+                  ...listData,
+                  [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
+                    listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
+                  }`,
+                }))
               : []
           }
           columns={
-            config?.type === "category" ?  rootConfig.categorySelectorColumns(config)
-            : rootConfig.getProductSelectorColumns(config)
+            config?.type === "category"
+              ? rootConfig.categorySelectorColumns(config)
+              : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
           initialSelectedRowIds={selectedRows}
@@ -389,7 +372,9 @@ const SelectorPage: React.FC = function () {
           totalCounts={totalCounts}
           loadMoreItems={loadMoreItems}
           fixedlistRef={tableRef}
-          minBatchSizeToFetch={config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE}
+          minBatchSizeToFetch={
+            config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
+          }
           name={
             config.type === "category"
               ? {
@@ -454,13 +439,17 @@ const SelectorPage: React.FC = function () {
     <div className="selector-page-wrapper">
       <div className="selector-page-header">
         <div className="avatar">
-          <img src={rootConfig.ecommerceEnv.SELECTOR_PAGE_LOGO} 
-          alt={`${rootConfig.ecommerceEnv.APP_ENG_NAME} Logo`} />
+          <img
+            src={rootConfig.ecommerceEnv.SELECTOR_PAGE_LOGO}
+            alt={`${rootConfig.ecommerceEnv.APP_ENG_NAME} Logo`}
+          />
         </div>
-        <div className="header">{localeTexts.selectorPage.heading.replace(
-                  "$",
-                  rootConfig.ecommerceEnv.APP_ENG_NAME
-                )}</div>
+        <div className="header">
+          {localeTexts.selectorPage.heading.replace(
+            "$",
+            rootConfig.ecommerceEnv.APP_ENG_NAME
+          )}
+        </div>
       </div>
       {renderSelectorPage()}
     </div>
