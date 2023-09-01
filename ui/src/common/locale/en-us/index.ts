@@ -25,7 +25,7 @@ export default {
       instruction: "Select the keys you want to save",
     },
     pageCount: {
-      label: "Items per Page",
+      label: "Items Per Page",
       name: "page_count",
       placeholder: "Enter the number items you want to fetch per page.",
       instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
