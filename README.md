@@ -258,6 +258,6 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 
 ## Updating changes to the boilerplate as per the third party platform
 
-For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in `<APP_DIRECTORY>/TEMPLATE.md`, to get to know more details about root_config files.
+For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in  [`<APP_DIRECTORY>/TEMPLATE.md`](./TEMPLATE.md), to get to know more details about root_config files.
 
 An illustrative file containing samples of ecommerce applications like BigCommerce and SAPCC app has been created within the 'example' directory of both the UI and API components. To confirm the functionality of the application, you can replicate the content of the `example/root_config/index.ts` file and apply it to the `root_config/index.ts` file. Subsequently, you can initiate the execution of both the UI and API components.
