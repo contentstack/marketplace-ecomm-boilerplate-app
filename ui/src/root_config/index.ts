@@ -115,7 +115,7 @@ const openSelectorPage = (config: any) => {
 
 // Function to create your app url in UI for service/index.ts file
 const returnUrl = (response: any) => ({
-  items: response?.data?.data,
+  items: response?.data?.data, //response?.item?.data
   meta: {
     total: response?.data?.meta?.pagination?.total,
     current_page: response?.data?.meta?.pagination?.current_page,
