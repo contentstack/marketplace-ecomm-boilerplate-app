@@ -1,17 +1,18 @@
-import CryptoJS from 'crypto-js';
-import constants from './constants';
+import CryptoJS from "crypto-js";
+import constants from "./constants";
 import {
   getProductAndCategory,
   getById,
   getSelectedProdsAndCats,
   filterByCategory,
-} from './handler';
-import root_config from './root_config';
+} from "./handler";
+import root_config from "./root_config";
 
-const _isEmpty: any = (val: any) => val === undefined ||
+const _isEmpty: any = (val: any) =>
+  val === undefined ||
   val === null ||
-  (typeof val === 'object' && !Object.keys(val)?.length) ||
-  (typeof val === 'string' && !val.trim().length);
+  (typeof val === "object" && !Object.keys(val)?.length) ||
+  (typeof val === "string" && !val.trim().length);
 
 const decrypt: any = (transitmessage: any, pass: any) => {
   const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
@@ -64,8 +65,10 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
       query?.limit > constants.FETCH_PRODUCT_LIMIT ?
         constants.FETCH_PRODUCT_LIMIT
         : query?.limit;
-    if (query['sku:in'] || query['id:in']) message = await getSelectedProdsAndCats(query, body);
-    else if (query['categories:in']) message = await filterByCategory(query, body);
+    if (query["sku:in"] || query["id:in"])
+      message = await getSelectedProdsAndCats(query, body);
+    else if (query["categories:in"])
+      message = await filterByCategory(query, body);
     else if (query?.id) message = await getById(query, body);
     else message = await getProductAndCategory(query, body);
     /** Above block of code is just for illustration.
@@ -77,14 +80,14 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     statusCode = e?.statusCode || constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
     message = e?.message || constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
     console.error(
-      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`,
+      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`
     );
   }
   const res = {
     statusCode,
     headers: {
       ...constants.HTTP_RESPONSE_HEADERS,
-      authToken: '',
+      authToken: "",
     },
     // body: JSON.stringify(message), // For deploying the code to AWS Lambda
     body: message, // For Localhost
