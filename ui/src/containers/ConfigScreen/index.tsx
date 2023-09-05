@@ -253,11 +253,11 @@ const ConfigScreen: React.FC = function () {
                 id={`${objKey}-id`}
                 required
                 value={
-                  objValue?.saveInConfig
+                 ( objValue?.saveInConfig
                     ? state?.installationData?.configuration?.[objKey]
                     : objValue?.saveInServerConfig
                     ? state?.installationData?.serverConfiguration?.[objKey]
-                    : ""
+                    : "")
                 }
                 placeholder={objValue?.placeholderText}
                 name={objKey}
