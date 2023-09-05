@@ -62,7 +62,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
     ) {
       let res;
       if (
-        rootConfig.ecomCustomFieldCategoryData &&
         rootConfig.ecomCustomFieldCategoryData === true &&
         type === "category"
       ) {
@@ -210,7 +209,6 @@ const CustomField: React.FC<Props> = function ({ type }) {
         );
       } else if (data.message === "add") {
         if (
-          rootConfig.ecomCustomFieldCategoryData &&
           rootConfig.ecomCustomFieldCategoryData === true &&
           type === "category"
         )

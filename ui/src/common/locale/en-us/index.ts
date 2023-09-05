@@ -86,10 +86,10 @@ export default {
       "The details of the listed product(s) will be updated based on the new locale. Are you sure you want to proceed?",
   },
   selectorPage: {
-    loadingError: "error loading more data",
-    tableFetchError: "error fetching table data",
-    initialErr: "error fetching initial data",
-    errHandling: "error loading more searched data",
+    loadingError: "Error loading more data",
+    tableFetchError: "Error fetching table data",
+    initialErr: "Error fetching initial data",
+    errHandling: "Error loading more searched data",
     heading: "$ App",
     noImageAvailable: "Product image not available",
     searchQuery:
