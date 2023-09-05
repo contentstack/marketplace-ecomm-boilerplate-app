@@ -3,10 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    "prettier",
-    "plugin:import/typescript",
-  ],
+  extends: ["prettier", "plugin:import/typescript"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {

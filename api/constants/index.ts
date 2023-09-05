@@ -8,29 +8,29 @@ const constants: any = {
     SOMETHING_WRONG: 500,
   },
   HTTP_ERROR_TEXTS: {
-    QUERY_MISSING: 'Query string parameters are missing.',
-    SOMETHING_WENT_WRONG: 'Something went wrong, please try again later.',
-    API_ERROR: 'Error while making API call.',
-    BAD_REQ: 'Bad Request',
+    QUERY_MISSING: "Query string parameters are missing.",
+    SOMETHING_WENT_WRONG: "Something went wrong, please try again later.",
+    API_ERROR: "Error while making API call.",
+    BAD_REQ: "Bad Request",
   },
   FETCH_PRODUCT_LIMIT: 250,
   HTTP_RESPONSE_HEADERS: {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    'Access-Control-Allow-Origin': '*',
+    "Access-Control-Allow-Origin": "*",
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    'Content-type': 'application/json',
+    "Content-type": "application/json",
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    'Access-Control-Allow-Headers': 'Content-Type',
+    "Access-Control-Allow-Headers": "Content-Type",
   },
   LOGS: {
     QUERY_PARAMS: "Request's query-string params are: ",
     REQ_BODY: "Request's body: ",
-    RESPONSE: 'Final response is: ',
+    RESPONSE: "Final response is: ",
   },
   DECRYPTION: {
     keySize: 256,
     iterations: 100,
-    password: 'password#123',
+    password: "password#123",
   },
 };
 
