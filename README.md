@@ -139,6 +139,11 @@ marketplace-ecomm-boilerplate-app
 * Open the root html file of the app (available at `<APP_DIRECTORY>/ui/public/index.html`) and update the `<title>` tag value to the name of your app.
 * Change the favicon.ico as per the requirement of your app. favicon.ico file is available at `<APP_DIRECTORY>/ui/public/favicon.ico`.
 
+## Environment Variables
+
+* `.env` file are required in <APP_DIRECTORY>/ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
+* The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be http://localhost:4000 and the url for api will be http://localhost:8080).
+
 ## Install Dependencies
 
 * In the terminal go to APP_DIRECTORY and install the necessary packages :
@@ -165,15 +170,11 @@ npm i
 ```
 npm run dev
 ```
-The API server will start at port 8000.
+The API server will start at port 8080.
 All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services.index.tsx` file.
+
 In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different predefined functions can be utilized for fetching products or categories from various third-party ecommerce systems are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
 Storing dynamic user data in the root config enables centralization, allowing the handler/index.js to easily access and process this information, promoting consistency and simplifying data management within the API.
-
-## Environment Variables
-
-* `.env` files are required in both ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_NAME`,  `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
-* The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be http://localhost:4000 and the url for api will be http://localhost:8000).
 
 ## Provider
 
@@ -220,9 +221,9 @@ size.
 * After creating an app, you will be redirected to the Basic Information page. Add the icon for your app. 
 * Open the UI Locations tab and add the URL of your app. 
 For e.g. : https://localhost:4000
-* From Available location(s) , add App Configuration, Custom Field and Entry Sidebar. For App Configuration, add name and path. In `<APP_DIRECTORY>/ui/src/containers/App/index.tsx`, for App Configuration we have added route path as `/config`. Also we are using HashRouter for routing. So the value of path should be `/#/config`. Switch on the toggle for Signed if required. Switch on the toggle for Enabled to enable the Configuration location. Add the description if required.
+* From Available location(s) , add App Configuration, Custom Field and Entry Sidebar. For App Configuration, add name and path. In `<APP_DIRECTORY>/ui/src/containers/App/index.tsx`, for App Configuration we have added route path as `/config`. So the value of path should be `/config`. Switch on the toggle for Signed if required. Switch on the toggle for Enabled to enable the Configuration location. Add the description if required.
 * For Custom Field, add name and path. The value of path should be `/product-field`. Add one more Custom Fied add name and path. The value for second path should be `/category-field`. Switch on the toggle for Enabled to enable the Custom Field location.Select the required Data Type. Add the description if required.
-* For Entry Sidebar Field, add name and path. The value of path should be /sidebar-widget. Switch on the toggle for Enabled to enable the Custom Field location. Add the description if required. 
+* For Entry Sidebar Field, add name and path. The value of path should be `/sidebar-widget`. Switch on the toggle for Enabled to enable the Custom Field location. Add the description if required. 
 
 * Now install the app by clicking the Install App button at top right. From the next window, select the stack in which you want to install the app.
 
@@ -258,4 +259,6 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 
 ## Updating changes to the boilerplate as per the third party platform
 
-For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in [`<APP_DIRECTORY>/TEMPLATE.md`](./TEMPLATE.md), to get to know more details about root_config files.
+For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in  [`<APP_DIRECTORY>/TEMPLATE.md`](./TEMPLATE.md), to get to know more details about root_config files.
+
+An illustrative file containing samples of ecommerce applications like BigCommerce and SAP Commerce Cloud app has been created within the 'example' directory of both the UI and API components. To confirm the functionality of the application, you can replicate the content of the `example/APPNAME/root_config/index.ts` file and apply it to the `root_config/index.ts of the API and UI` file. Subsequently, you can restart the execution of both the UI and API components.

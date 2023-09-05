@@ -3,8 +3,6 @@ import { Icon, Tooltip, Link } from "@contentstack/venus-components";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
-// eslint-disable-next-line import/no-cycle
-import rootConfig from "../../root_config";
 
 const isEmpty = (val: any): boolean =>
   val === undefined ||
@@ -24,7 +22,6 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   const top = window.screen.height / 2 - windowDetails.h / 2;
   return window.open(
     windowDetails.url,
-    // JSON.stringify(windowDetails.title),
     windowDetails.title,
     "toolbar=no, location=no, directories=no, " +
       `status=no, menubar=no, scrollbars=no, resizable=no, ` +
@@ -44,44 +41,6 @@ const mergeObjects = (target: any, source: any) => {
   return target;
 };
 
-const setImage = (url: string) =>
-  url ? (
-    <div className="selector-product-image">
-      <img src={url} alt="item-img" />
-    </div>
-  ) : (
-    <div className="selector-product-image">
-      <Tooltip
-        content={localeTexts.selectorPage.ImageTooltip.label}
-        position="top"
-        showArrow={false}
-        variantType="light"
-        type="secondary"
-      >
-        <img
-          src={NoImg}
-          alt={localeTexts.selectorPage.noImageAvailable}
-          className="selector-product-image"
-        />
-      </Tooltip>
-    </div>
-  );
-
-const categoriesImg = (obj: any) => {
-  if (obj?.c_slotBannerImage) {
-    return obj?.c_slotBannerImage;
-  }
-  if (obj?.image) {
-    return obj?.image;
-  }
-  if (obj?.c_headerMenuBanner) {
-    // eslint-disable-next-line
-    return obj?.c_headerMenuBanner
-      .match(/(https?:\/\/[^ ]*)/)[1]
-      .replace(/"/g, "");
-  }
-  return undefined;
-};
 const getCurrencySymbol = (code: string) => {
   switch (code) {
     case "USD":
@@ -119,92 +78,6 @@ const getCurrencySymbol = (code: string) => {
   }
 };
 
-const getPrice = (obj: any) =>
-  `${getCurrencySymbol(obj?.currency)} ${obj?.price}`;
-
-const productColumns = [
-  {
-    Header: "Product Id",
-    id: "productId",
-    accessor: "productId",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) => setImage(obj?.image?.disBaseLink),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Product Name",
-    id: "productName",
-    accessor: "productName",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Price",
-    accessor: (obj: any) => (!obj.price ? "" : getPrice(obj)),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-];
-const categoryColumns = [
-  {
-    Header: "Id",
-    id: "Id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) => setImage(categoriesImg(obj)),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Name",
-    id: "Name",
-    accessor: "name",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-];
-
-const gridViewDropdown = [
-  {
-    label: (
-      <span className="select-view">
-        <Icon icon="Thumbnail" size="original" />
-        <div>{localeTexts.gridViewDropdown.Thumbnail}</div>
-      </span>
-    ),
-    value: "card",
-    default: true,
-  },
-  {
-    label: (
-      <span className="select-view">
-        <Icon icon="List" />
-        <div>{localeTexts.gridViewDropdown.List}</div>
-      </span>
-    ),
-    value: "list",
-  },
-];
-
-const removeHTMLTags = (description: string) =>
-  description ? description.replace(/(<([^>]+)>)/gi, " ") : "";
-
 const wrapWithDiv = (description: string) =>
   description ? (
     <div
@@ -213,17 +86,14 @@ const wrapWithDiv = (description: string) =>
       dangerouslySetInnerHTML={{ __html: removeHTMLTags(description) }}
     />
   ) : (
-    "Not Available"
+    ""
   );
 
-const getTypeLabel = (type: string, length: number) => {
-  if (type === "category") {
-    if (length > 1) return "Categories";
-    return "Category";
-  }
-  if (length > 1) return "Products";
-  return "Product";
-};
+const findProduct = (products: any, id: any) =>
+  products?.find((p: any) => p?.id === id) || {};
+
+const findProductIndex = (products: any, id: any) =>
+  products?.findIndex((p: any) => p?.id === id);
 
 const getImage = (url: string, customField: boolean = false) =>
   url ? (
@@ -259,6 +129,125 @@ const getImage = (url: string, customField: boolean = false) =>
       </Tooltip>
     </div>
   );
+
+const productColumns = [
+  {
+    Header: "Product Id",
+    id: "code",
+    accessor: "code",
+    default: true,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 0.8,
+  },
+  {
+    Header: "Image",
+    accessor: (obj: any) =>
+      obj?.images?.[0]?.url ?
+        getImage(
+            `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
+          )
+        : getImage(obj?.images?.[0]?.url),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 0.7,
+  },
+  {
+    Header: "Product Name",
+    id: "name",
+    accessor: "name",
+    default: true,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 3,
+  },
+  {
+    Header: "Price",
+    accessor: (obj: any) => obj?.price?.formattedValue,
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 1,
+  },
+  {
+    Header: "Description",
+    accessor: (obj: any) => wrapWithDiv(obj?.description),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 3.5,
+  },
+];
+const categoryColumns = [
+  {
+    Header: "ID",
+    id: "id",
+    accessor: "id",
+    default: true,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 0.8,
+  },
+  {
+    Header: "Category Name",
+    id: "name",
+    accessor: "name",
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+  },
+  {
+    Header: "Custom URL",
+    accessor: (obj: any) => obj?.custom_url?.url || obj?.url,
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+  },
+  {
+    Header: "Description",
+    accessor: (obj: any) => wrapWithDiv(obj?.description),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 4,
+  },
+];
+
+const gridViewDropdown = [
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="Thumbnail" size="original" />
+        <div>{localeTexts.gridViewDropdown.Thumbnail}</div>
+      </span>
+    ),
+    value: "card",
+    default: true,
+  },
+  {
+    label: (
+      <span className="select-view">
+        <Icon icon="List" />
+        <div>{localeTexts.gridViewDropdown.List}</div>
+      </span>
+    ),
+    value: "list",
+  },
+];
+
+const removeHTMLTags = (description: string) =>
+  description ? description.replace(/(<([^>]+)>)/gi, " ") : "";
+
+const getTypeLabel = (type: string, length: number) => {
+  if (type === "category") {
+    if (length > 1) return "Categories";
+    return "Category";
+  }
+  if (length > 1) return "Products";
+  return "Product";
+};
+
 const getRowsStatus = (len: number, loading: boolean = true) => ({
   ...[...Array(len)]?.map(() => (loading ? "loading" : "loaded")),
 });
@@ -289,19 +278,17 @@ const EmptyObjForSearchCase: any = {
   moduleIcon: "Search",
 };
 
-const arrangeList = (sortedIdsArray: any[], dataArray: any[]) => {
-  const data: any[] = [];
-  sortedIdsArray?.forEach((mItem: any) => {
-    dataArray?.forEach((sItem: any) => {
-      if (
-        Number(sItem?.[rootConfig.ecommerceEnv.UNIQUE_KEY.product]) ===
-        Number(mItem)
-      ) {
-        data.push(sItem);
-      }
-    });
-  });
-  return data;
+const getItemStatusMap = (
+  itemStatusMap: any,
+  status: string,
+  start: number,
+  limit: number
+) => {
+  const itemStatusMapTemp: any = { ...itemStatusMap };
+  for (let index = start; index < limit; index += 1) {
+    itemStatusMapTemp[index] = status;
+  }
+  return itemStatusMapTemp;
 };
 
 const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
@@ -329,10 +316,12 @@ export {
   wrapWithDiv,
   getTypeLabel,
   getCurrencySymbol,
+  findProduct,
+  findProductIndex,
   getImage,
   getRowsStatus,
   EmptyObjForSearchCase,
-  arrangeList,
   arrangeSelectedIds,
+  getItemStatusMap,
   removeHTMLTags,
 };

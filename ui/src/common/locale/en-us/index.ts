@@ -7,21 +7,29 @@ export default {
     signFail: "Signature Verification failed",
   },
   configPage: {
+    errorInADK: "Something Went Wrong While Loading App SDK",
     saveInEntry: {
       label: "Save In Entry",
-      help: "You can select how you want to save data you get from $.",
+      help: "You can select different ways to store your ecommerce data.",
       placeholder: "Enter the structure of data you want to save in the entry",
       instruction:
-        "You can select the structure of data you want to save in the entry, if you select Custom JSON. If you select Whole JSON, you can select only limited number of products.",
-      wholeJson: "Whole JSON",
-      customJson: "Custom JSON",
+        "Select Custom Fields to include specific fields from your ecommerce website into your entry or select All Fields to save complete data of the selected product(s) into your entry by adding only a limited number of products.",
+      wholeJson: "All Fields",
+      customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
     },
     customKeys: {
-      label: "$ Keys",
+      label: "Ecommerce Fields",
       help: "Select the keys you want to save",
       placeholder: "Select keys",
       instruction: "Select the keys you want to save",
+    },
+    pageCount: {
+      label: "Items Per Page",
+      name: "page_count",
+      placeholder: "Enter the number items you want to fetch per page.",
+      instruction:
+        "Select the number of items/products to be displayed on a single page while fetching data from your ecommerce site. For example, 1,5,10.",
     },
   },
   gridViewDropdown: {
@@ -40,13 +48,15 @@ export default {
     add: "Add ",
     noItems: "No $ have been Added",
     listViewTable: {
-      nameCol: "Product Name",
-      priceCol: "Price",
+      imgCol: "Image",
+      nameCol: "Name",
+      id: "ID",
+      price: "Price",
     },
     listActions: {
       drag: "Drag",
       openInConsole: "Open in $",
-      delete: "Delete",
+      delete: "Remove",
     },
     toolTip: {
       content: "Change View",
@@ -76,6 +86,10 @@ export default {
       "The details of the listed product(s) will be updated based on the new locale. Are you sure you want to proceed?",
   },
   selectorPage: {
+    loadingError: "Error loading more data",
+    tableFetchError: "Error fetching table data",
+    initialErr: "Error fetching initial data",
+    errHandling: "Error loading more searched data",
     heading: "$ App",
     noImageAvailable: "Product image not available",
     searchQuery:
@@ -104,6 +118,7 @@ export default {
     close: "Close",
   },
   sidebarWidget: {
+    appSdkErr: "appSdk initialization error",
     dropdownLabels: {
       products: "Products",
       fields: "Fields",
@@ -130,10 +145,10 @@ export default {
     },
   },
   deleteModal: {
-    header: "Delete",
-    body: "This will delete <b>&apos;$&apos;</b> permanently.",
+    header: "Remove",
+    body: "This will remove <b>&apos;$&apos;</b> permanently.",
     cancelButton: "Cancel",
-    confirmButton: "Delete",
+    confirmButton: "Remove",
   },
   warnings: {
     invalidCredentials:

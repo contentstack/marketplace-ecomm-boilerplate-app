@@ -1,16 +1,15 @@
-/* eslint-disable */
 import React from "react";
+import { Tooltip } from "@contentstack/venus-components";
 import { Props } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import "./styles.scss";
-import { Icon, Tooltip } from "@contentstack/venus-components";
 import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
-const ProductDescription: React.FC<Props> = function ({ product }) {
+const ProductDescription: React.FC<Props> = function ({ product, config }) {
   const { id, name, description, price, sku, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product);
+    rootConfig.returnFormattedProduct(product, config);
   const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
     localeTexts.sidebarWidget.labels;
 
@@ -56,6 +55,7 @@ const ProductDescription: React.FC<Props> = function ({ product }) {
             <div className="label">{descriptionLbl}</div>
             <div
               className="value"
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               dangerouslySetInnerHTML={{ __html: description }}
             />
           </div>

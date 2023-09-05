@@ -1,5 +1,4 @@
 import React from "react";
-import Category from "./Category";
 import ListItem from "./ListItem";
 import DraggableGrid from "./DraggableGrid";
 import { Props } from "../../common/types";
@@ -15,11 +14,24 @@ const RenderList: React.FC<Props> = function ({
   view,
   config,
 }) {
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
+  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   const removeItem = (removeId: any) => {
-    setSelectedIds(
-      selectedIds.filter((data: any) => Number(data) !== removeId)
-    );
+    if (
+      rootConfig.ecomCustomFieldCategoryData &&
+      rootConfig.ecomCustomFieldCategoryData === true
+    ) {
+      rootConfig.removeItemsFromCustomField(
+        removeId,
+        selectedIds,
+        setSelectedIds,
+        type,
+        uniqueKey
+      );
+    } else {
+      setSelectedIds(
+        selectedIds?.filter((data: any) => Number(data) !== removeId)
+      );
+    }
     if (childWindow) {
       childWindow.postMessage(
         { message: "remove", removeId },
@@ -33,16 +45,7 @@ const RenderList: React.FC<Props> = function ({
   };
 
   let selectedItemsList;
-  if (type === "category") {
-    selectedItemsList = selectedItems.map((item: any) => (
-      <Category
-        categories={item}
-        remove={removeItem}
-        config={config}
-        key={item[uniqueKey]}
-      />
-    ));
-  } else if (view === "card")
+  if (view === "card")
     selectedItemsList = (
       <div
         style={
@@ -57,6 +60,7 @@ const RenderList: React.FC<Props> = function ({
           remove={removeItem}
           config={config}
           setSelectedItems={updateList}
+          type={type}
         />
       </div>
     );
@@ -66,6 +70,7 @@ const RenderList: React.FC<Props> = function ({
         products={selectedItems}
         remove={removeItem}
         config={config}
+        type={type}
         setSelectedItems={updateList}
       />
     );

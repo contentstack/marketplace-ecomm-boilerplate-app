@@ -38,7 +38,7 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
   const configKeysLength: number = configKeys?.length;
   for (let i = 0; i < configKeysLength; i += 1) {
     const key: any = configKeys[i];
-    const value: any = body[configKeys[key]];
+    const value: any = body[key];
     // body will have the config object
     if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {
       body[key] = decrypt(value, constants.DECRYPTION.password);
@@ -84,12 +84,11 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     statusCode,
     headers: {
       ...constants.HTTP_RESPONSE_HEADERS,
-      authToken: body?.authToken ?? '',
+      authToken: '',
     },
     // body: JSON.stringify(message), // For deploying the code to AWS Lambda
     body: message, // For Localhost
   };
-  console.info('RESPONSE: ', res);
   return res;
 };
 

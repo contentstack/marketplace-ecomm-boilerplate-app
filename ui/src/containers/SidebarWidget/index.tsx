@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 /* Import other node modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
   AsyncLoader,
-  Dropdown,
-  Field,
-  FieldLabel,
+  Select,
   SkeletonTile,
+  FieldLabel,
 } from "@contentstack/venus-components";
 
 import ProductDescription from "./ProductDescription";
@@ -34,28 +33,30 @@ const SidebarWidget: React.FC = function () {
         rootConfig.ecommerceEnv.APP_ENG_NAME
       ),
     });
+  const [entryData, setEntryData] = useState<any>({});
+  const [contentTypeSchema, setContentTypeSchema] = useState<any>({});
+  const [productList, setProductList] = useState<any>([]);
   const [fieldList, setFieldList] = useState<any>([]);
   const [productDropdown, setProductDropdown] = useState<any>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>([]);
-  const [entryData, setEntryData] = useState<any>([]);
+  const [isProduct, setIsProduct] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedDropdownProduct, setselectedDropdownProduct] =
     useState<any>("");
-  const [selectedField, setSelectedField] = useState("");
-
-  const setInvalidConfig = () => {
-    setIsInvalidCredentials({
-      error: true,
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
-  };
+  const [isFieldEmpty, setIsFieldEmpty] = useState(false);
+  const [selectedField, setSelectedField] = useState<any>("");
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
         const config = await appSdk?.getConfig();
-        setEntryData(appSdk?.location?.SidebarWidget?.entry?.getData());
+        if (!config?.is_custom_baseUrl) delete config?.api_route;
+        const contentTypeUid =
+          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
+        const data = appSdk?.location?.SidebarWidget?.entry?.getData();
+        const contentTypeDetails = await appSdk?.stack?.getContentType(
+          contentTypeUid
+        );
+        setEntryData(data);
+        setContentTypeSchema(contentTypeDetails?.content_type?.schema);
         setState({
           config,
           location: appSdk?.location,
@@ -63,10 +64,19 @@ const SidebarWidget: React.FC = function () {
         });
       })
       .catch((error) => {
-        console.error("appSdk initialization error", error);
-        setInvalidConfig();
+        console.error(localeTexts.sidebarWidget.appSdkErr, error);
       });
   }, []);
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    setIsInvalidCredentials({
+      error: Object.values(state?.config || {}).includes(""),
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
+    });
+  }, [state.config]);
 
   const fetchSelectedIdData = async (data: any) => {
     const product = await getSelectedIDs(state?.config, "product", [data]);
@@ -78,54 +88,82 @@ const SidebarWidget: React.FC = function () {
   };
 
   const getCurrentFieldData = async (field: any) => {
-    if (!state?.appSdkInitialized) return;
-    const prodList = entryData?.[field?.value]?.data?.length ?
-      entryData?.[field?.value]?.data
-      : [];
-    setLoading(false);
-    if (prodList?.length) {
-      setselectedDropdownProduct({
-        label: prodList[0]?.name,
-        value: prodList[0]?.id,
-      });
-      const prods =
-        prodList?.map((i: any) => ({
-          label: i?.name,
-          value: i?.id,
-        })) || [];
-      prods[0] = { ...prods[0], default: true };
-      setProductDropdown(prods);
+    if (!state.appSdkInitialized) return;
+    if (entryData?.[field?.value]?.data?.length) {
+      setProductList(entryData?.[field?.value]?.data);
+    } else {
+      setProductList([]);
     }
   };
 
   useEffect(() => {
-    if (!state?.appSdkInitialized) return;
-    const tempFieldList: any[] =
-      (
-        Object.keys(entryData)?.filter(
-          (i: any) => entryData?.[i]?.type === "yourappname_product"
-        ) || []
-      )?.map((i: any) => ({ label: i?.replace(/_/g, " "), value: i })) || [];
+    if (isInvalidCredentials.error)
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      isInvalidCredentials?.data;
+  }, [isInvalidCredentials]);
 
-    if (!tempFieldList?.length) {
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    const sapProductsField = Object.keys(entryData)?.filter(
+      (i: any) =>
+        entryData?.[i]?.type ===
+        `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+    );
+    const fieldListTemp: any = [];
+    sapProductsField?.forEach((field: string) => {
+      contentTypeSchema?.forEach((schemaField: any) => {
+        if (schemaField?.uid === field)
+          fieldListTemp.push({
+            label: schemaField?.display_name,
+            value: schemaField?.uid,
+          });
+      });
+    });
+    setFieldList(fieldListTemp);
+  }, [entryData, state.appSdkInitialized]);
+  useEffect(() => {
+    if (fieldList?.length) setSelectedField(fieldList[0]);
+    getCurrentFieldData(fieldList?.[0]);
+  }, [fieldList]);
+
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    setProductDropdown(
+      productList?.map((i: any) => ({
+        label: i?.name,
+        value: i?.[rootConfig.ecommerceEnv.UNIQUE_KEY.product],
+      })) || []
+    );
+  }, [productList]);
+
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    if (!productList?.length) {
       setLoading(false);
+      setIsProduct(false);
       return;
     }
+    setIsProduct(true);
+    if (!isInvalidCredentials.error) {
+      setselectedDropdownProduct({
+        label: productList?.[0]?.name,
+        value: productList?.[0]?.[rootConfig.ecommerceEnv.UNIQUE_KEY.product],
+        searchLabel: productList?.[0]?.name,
+      });
+    }
+  }, [productDropdown]);
 
-    tempFieldList[0] = { ...tempFieldList[0], default: true };
-    setFieldList(tempFieldList);
-    setSelectedField(tempFieldList[0]?.value);
-    getCurrentFieldData(tempFieldList[0]);
-  }, [entryData, state?.appSdkInitialized]);
+  useEffect(() => {
+    if (!loading && !selectedDropdownProduct) setIsFieldEmpty(true);
+  }, [selectedDropdownProduct]);
 
   useEffect(() => {
     const setInitialProductDropdown = async () => {
-      const selectProduct = (
-        await fetchSelectedIdData(selectedDropdownProduct?.value)
-      )?.[0];
+      const selectProduct = await fetchSelectedIdData(
+        selectedDropdownProduct?.value
+      );
       if (selectProduct) {
         setSelectedProduct(selectProduct);
-        if (selectProduct !== "") setProductLoading(false);
       }
     };
     if (selectedDropdownProduct) {
@@ -135,28 +173,41 @@ const SidebarWidget: React.FC = function () {
     }
   }, [selectedDropdownProduct]);
 
-  const handleDropDownChange = async (event: any) => {
-    if (selectedField !== event?.value) {
-      setSelectedField(event?.value);
-      setselectedDropdownProduct(null);
-      setProductDropdown([]);
+  useEffect(() => {
+    if (selectedProduct !== "") setProductLoading(false);
+  }, [selectedProduct]);
+
+  const handleDropDownChange = useCallback(
+    async (event: any) => {
       getCurrentFieldData(event);
-    }
-  };
+      setSelectedField(event);
+    },
+    [selectedField]
+  );
 
-  const handleProductChange = async (event: any) => {
-    if (selectedDropdownProduct?.value !== event?.value)
+  const handleProductChange = useCallback(
+    async (event: any) => {
       setselectedDropdownProduct(event);
+    },
+    [selectedDropdownProduct]
+  );
+
+  const renderProduct = () => {
+    if ((productLoading || !selectedProduct) && isProduct)
+      return <AsyncLoader color={constants.loaderColor} />;
+    if (!isProduct)
+      return (
+        <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
+      );
+    return (
+      <ProductDescription product={selectedProduct} config={state?.config} />
+    );
   };
 
-  const renderProduct = () =>
-    productDropdown?.length >= 1 ? (
-      <ProductDescription product={selectedProduct} />
-    ) : (
-      <div className="no__inner_products">
-        {localeTexts.sidebarWidget.noProducts}
-      </div>
-    );
+  const getNoOptionsMessage = useCallback(
+    () => localeTexts.sidebarWidget.select.noOptions,
+    []
+  );
 
   const renderSidebarContent = () => {
     if (isInvalidCredentials?.error)
@@ -184,66 +235,50 @@ const SidebarWidget: React.FC = function () {
           />
         </div>
       );
-    if (!fieldList?.length) {
+    if (isFieldEmpty)
       return (
         <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
       );
-    }
-
     return (
       <>
-        {fieldList?.length >= 1 ? (
-          <Field>
-            <FieldLabel htmlFor="field_list">
-              {" "}
-              {localeTexts.sidebarWidget.dropdownLabels.fields}
+        {fieldList?.length > 1 ? (
+          <>
+            <FieldLabel htmlFor="fieldSelect">
+              {localeTexts.sidebarWidget.dropdownLabels.products}
             </FieldLabel>
-            <br />
-            <Dropdown
-              withSearch
-              maxWidth={250}
-              className="sidebar_dropdowns"
-              type="select"
-              withArrow
-              dropDownPosition="bottom"
-              closeAfterSelect
-              highlightActive
-              list={fieldList}
+            <Select
+              options={fieldList}
               onChange={handleDropDownChange}
+              value={selectedField}
+              updateOption={handleDropDownChange}
+              placeholder={localeTexts.sidebarWidget.select.field}
+              width="250px"
             />
-          </Field>
+          </>
         ) : (
           ""
         )}
 
-        {productDropdown?.length >= 1 ? (
-          <Field>
-            <FieldLabel htmlFor="field_list">
-              {" "}
+        {productDropdown?.length > 1 ? (
+          <>
+            <FieldLabel htmlFor="productSelect">
               {localeTexts.sidebarWidget.dropdownLabels.products}
             </FieldLabel>
-            <br />
-            <Dropdown
-              withSearch
-              maxWidth={250}
-              className="sidebar_dropdowns"
-              type="select"
-              withArrow
-              dropDownPosition="bottom"
-              closeAfterSelect
-              highlightActive
-              list={productDropdown}
+            <Select
+              options={productDropdown}
               onChange={handleProductChange}
+              updateOption={handleProductChange}
+              value={selectedDropdownProduct}
+              placeholder={localeTexts.sidebarWidget.select.products}
+              noOptionsMessage={getNoOptionsMessage}
+              width="250px"
+              isSearchable
             />
-          </Field>
+          </>
         ) : (
           ""
         )}
-        {productLoading ? (
-          <AsyncLoader color={constants.loaderColor} />
-        ) : (
-          renderProduct()
-        )}
+        {renderProduct()}
       </>
     );
   };

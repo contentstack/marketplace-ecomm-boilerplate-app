@@ -29,22 +29,30 @@ The root configuration is the file you need to make the most changes to. You nee
 Navigate to the root_config file (ui/src/root_config/index.ts)
 In this file, you need to make two changes. 
 
-1. `ecommerceConfigFields` variable
-* ecommerceConfigFields is an object that will contain objects of the type ConfigInfo along with their corresponding field key names. An example can be found in the codebase.
+1. `configureConfigScreen` function
+* configureConfigScreen is a function that will contain objects of Config Screen keys along with their corresponding field key names. An example can be found in the codebase.
 ```
-ConfigInfo : {
-    label: string,
-    help?: string,
-    placeholder?: string,
-    instruction: string
-}
+configField1: {
+    type: "textInputFields",
+    labelText: "Sample Ecommerce App Client ID",
+    helpText:
+    "You can use this field for information such as Store ID, Auth Token, Client ID, Base URL, etc.",
+    placeholderText: "Enter the value",
+    instructionText: "Enter the Client ID from your ecommerce platform",
+    saveInConfig: true,
+    isSensitive: true,
+},
 ```
+
 |Key                    | Type            | Description
 |-----------------------|-----------------|---------------------------------------------|
-|label*      |string    |The label of the field. |
-|help  |string |Help text for the field. Appears as a tooltip beside the label. |
-|placeholder |string |Placeholder for the input field. |
-|instruction* |string |Any additional information you want to display for that field. Appears below the input field.|
+|type            |string    | type of field, here textfield is handled |
+|labelText*      |string    |The label of the field. |
+|helpText  |string |Help text for the field. Appears as a tooltip beside the label. |
+|placeholderText |string |Placeholder for the input field. |
+|instructionText* |string |Any additional information you want to display for that field. Appears below the input field.|
+|saveInConfig |boolean |Determines whether you want to save it in a config |
+|isSensitive  |boolean  |Determines whether the informaion should be encrypted |
 
 You can use this object in the configuration page code. 
 
@@ -61,41 +69,7 @@ You can use this object in the configuration page code.
     isDisabled? : boolean
 }]
 ```
-### Config Screen
-Navigate to index.tsx of ConfigScreen (ui/src/containers/ConfigScreen/index.tsx).
-* Under the state variable, add your required configuration variables. 
-* The key defined here should match with the name attribute given in the JSX element that handles input to these states.
-* Best Practice: You should ideally store sensitive information (like API Keys, Auth Tokens) in the server_configuration in the app state. The data saved in the server_configuration is not exposed in any UI locations.
-* You must use the ecommerceConfigFields object defined in the root_config here to build your components that take input for the corresponding config variables.
 
-For example, if your state variable is `store_id`, the JSX code that handles this should look something like this:
-
-```
-  <Field>
-    <div className="flex">
-        <FieldLabel required htmlFor="store_id">
-        {" "}
-        {/* Change the label caption as per your requirement */}
-        {rootConfig.ecommerceConfigFields.ConfigInfo.label}
-        </FieldLabel>
-        {/* Change the help caption as per your requirement */}
-        <Help text={rootConfig.ecommerceConfigFields.ConfigInfo.help} />
-    </div>
-    <TextInput
-        required
-        value={state?.installationData?.configuration?.store_id}
-        placeholder={
-        rootConfig.ecommerceConfigFields.ConfigInfo.placeholder
-        }
-        name={rootConfig.ecommerceConfigFields.ConfigInfo.name}
-        data-testid="store_id-input"
-        onChange={updateConfig}
-    />
-    <InstructionText>
-        {rootConfig.ecommerceConfigFields.ConfigInfo.instruction}
-    </InstructionText>
-    </Field>
-```
 
 ## Product Custom Field
 
@@ -180,17 +154,47 @@ At the selector page, you need to define a separate array of objects that define
 |cssClass |string |You can define a custom CSS class to this particular column |
 |columnWidthMultiplier |number |* multiplies this number with one unit of the column width. * 0.x means smaller than one specified unit by 0.x times * x means bigger than one specified unit by x times
 
-## Other Functions
+## Other Functions In Root Config
 
 1. `getOpenerLink()`
-(ui/src/root_config/index.ts)
-
 Parameters:
 Id : product or category id
 config: configuration object
 type: product/category
 
-2. `makeAnApiCall()`
+2. `verifyAppSigning()`
+This function is used for app signing, i.e. for verifying app tokens in ui
+Parameters:
+app_token
+
+3. `customKeys` 
+It is variable which stores the custom JSON default keys.
+
+4. `openSelectorPage()`
+This function is used in selector page to open your application if any extra configuration to be needed. It used `config` as its parameter.
+
+5. `returnUrl()`
+returnUrl() function modifies the response of the UI api file i.e. `ui/services/index.ts`. It require `response` as the parameter inorder to modify.
+
+6. `getSelectedCategoriesUrl`
+This function creates the URL to fetch the categories in the custom field UI location.
+It fetches `config`, `type`, `selectedID: array` as its parameter.
+
+7. `generateSearchApiUrlAndData()`
+`generateSearchApiUrlAndData()` used parameter as `config`, `keyword`, `page`, `limit`
+, `categories`. This function is generally used to search the products or category on selector page.
+
+8. `getProductSelectorColumns()`
+This function defines what and how will the columns be displayed on the product selector page.
+
+9. `categorySelectorColumns()`
+This function defines what and how will the columns be displayed on the category selector page.
+
+10. `arrangeList`
+This function is use to arrange the product list on the custom field
+
+## Other Functions in the Services
+`makeAnApiCall()`
 (ui/src/services/index.ts)
 
 In this function, only at the successful API call, you will need to structure the data returned from your backend. It should be of the following format:
@@ -210,12 +214,13 @@ Please observe the data key.
 * In the `items` key, you need to provide the corresponding key that contains the array of products/categories from the response object.
 * In the meta`` key, you need to assign the corresponding values of `total` and `current_page` from the response object. The `total` key indicates the number of items in the array, and `current_page` key indicates the page number, for pagination.
 
+
+
 ## * Back End
 The backend implementation for this app will be present in the /api folder at the root level. 
 
-Here, you need to make changes in two files.
+Here, you need to make changes in one files.
 * `root_config` (/api/root_config/index.js)
-* `handler` ( /api/handler/index.js)
 
 ## Root Config
 (/api/root_config/index.js)
@@ -231,32 +236,26 @@ Currently, we have the following configurations:
         category: string,
     },
     PRODUCT_URL_PARAMS: string,
+    SENSITIVE_CONFIG_KEYS: "",
+    getHeaders : () => ({
+        Here, we will have the app specific headers 
+    }),
+
+    getAuthToken: () =>{
+        If you need AuthToken to authenticate your app, you can add the keys here.
+    },
+
+    getUrl: () => {
+        App specific url and endpoints can be added here.
+    },
+
+    getSelectedProductandCatUrl: () => {
+        Add the url for fetching the data from selector page to the custom field here
+    },
 }
 ```
-These URLs are being used to make API calls in the handler file. You can modify these existing ones, and even add more, based on your usage.
+Additionally, if you have your app specific details or function, you can add them in the root_config and manage it accordingly in the handler file. These URLs are being used to make API calls in the handler file. You can modify these existing ones, and even add more, based on your usage.
 
-## Handler
-(/api/handler/index.js)
-The handler file contains all the functions required to make API calls.
-You will need to implement the following functions as per your requirements.
-
-1. `_getHeaders(key)`:
-This function must return an object that contains necessary headers to make an API call to the third-party service.
-
-2. `_getApiOptions(queryParams, reqBody)`:
-With this function, you can use the queryStringParameters from the UI’s API call to generate an option object that Axios can use. This must return an object that contains an object having URL, method, and headers for Axios to use.
-
-3. `getProductAndCategory(queryParams, reqBody)`:
-This function should return all the products and categories as per the query.
-
-4. `getById(queryParams, reqBody)`:
-This function should return a particular product or a category as per the requested ID and query.
-
-5. `getSelectedProdsAndCats(queryParams, reqBody)`:
-This function should return the given products and categories from the queryStringParameters. 
-
-6. `filterByCategory(queryParams, reqBody)`:
-This function should return products filtered by the given category in the queryStringParameters.
 
 ## Additional Information
 ### App Signing and Sensitive Information
@@ -292,7 +291,7 @@ API calls that are made on UI locations gets triggered from the service file i.e
     - c. Signed: enabled
     - d. Enabled: enabled
 
-**Webhooks**
+**For adding Webhooks**
 * Enable Webhook: True
 * URL To Notify: Absolute URL of your backend
 * App Events: Install, Update, Uninstall

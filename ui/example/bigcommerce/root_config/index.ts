@@ -1,3 +1,4 @@
+/* eslint-disable */
 import currency from "currency.js";
 import axios from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -60,9 +61,9 @@ const verifyAppSigning = async (app_token: any): Promise<boolean> => {
 
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: EcommerceEnv = {
-  REACT_APP_NAME: "yourappnameinlowercasefordisplayingitemsoncustomfield",
+  REACT_APP_NAME: "bc",
   SELECTOR_PAGE_LOGO: Logo,
-  APP_ENG_NAME: "YourAppName",
+  APP_ENG_NAME: "BigCommerce",
   UNIQUE_KEY: {
     product: "id",
     category: "id",
@@ -70,7 +71,7 @@ const ecommerceEnv: EcommerceEnv = {
   FETCH_PER_PAGE: 20,
 };
 // example config fields. you will need to use these values in the config screen accordingly.
-
+const bigCommerceLimit: any = 250;
 const configureConfigScreen: any = () =>
   /* IMPORTANT: 
   1. All sensitive information must be saved in serverConfig
@@ -83,27 +84,25 @@ const configureConfigScreen: any = () =>
   ({
     configField1: {
       type: "textInputFields",
-      labelText: "Sample Ecommerce App Client ID",
-      helpText:
-        "You can use this field for information such as Store ID, Auth Token, Client ID, Base URL, etc.",
-      placeholderText: "Enter the value",
-      instructionText: "Enter the Client ID from your ecommerce platform",
+      labelText: "Store ID",
+      helpText: "You can find your store's ID on your ECommerce ConsoleL",
+      placeholderText: "Enter your Store ID",
+      instructionText: "Copy and Paste your Store ID",
       saveInConfig: true,
       isSensitive: true,
     },
     configField2: {
       type: "textInputFields",
-      labelText: "Sample Ecommerce App Client Secret",
+      labelText: "Auth Token",
       helpText:
-        "You can use this field for information such as Store ID, Auth Token, Client ID, Base URL, etc.",
-      placeholderText: "Enter the value",
-      instructionText: "Enter the Client Secret from your ecommerce platform.",
+        "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
+      placeholderText: "Enter your Auth Token",
+      instructionText: "Copy and Paste your Auth Token",
       saveInConfig: true,
       isSensitive: true,
     },
   });
 
-// Keys to fetch the custom json on the custom field
 const customKeys: any = [
   { label: "id", value: "id" },
   { label: "name", value: "name" },
@@ -113,16 +112,14 @@ const openSelectorPage = (config: any) => {
   return config.configField1 ? true : false;
 };
 
-// Function to create your app url in UI for service/index.ts file
 const returnUrl = (response: any) => ({
-  items: response?.data?.data, //response?.item?.data
+  items: response?.data?.data,
   meta: {
     total: response?.data?.meta?.pagination?.total,
     current_page: response?.data?.meta?.pagination?.current_page,
   },
 });
 
-// url created to fetch the categories on custom field
 const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
   const apiUrl = `${
     process.env.REACT_APP_API_URL
@@ -135,7 +132,6 @@ const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
   return { apiUrl, requestData };
 };
 
-// URL to search products and categories
 const generateSearchApiUrlAndData = (
   config: any,
   keyword: any,
@@ -158,14 +154,14 @@ const generateSearchApiUrlAndData = (
 const getCustomKeys = () =>
   <KeyOption[]>[
     {
-      label: "product_name",
-      value: "product_name",
-      searchLabel: "product_name",
+      label: "availability",
+      value: "availability",
+      searchLabel: "availability",
     },
     {
-      label: "product_id",
-      value: "product_id",
-      searchLabel: "product_id",
+      label: "availability_description",
+      value: "availability_description",
+      searchLabel: "availability_description",
     },
     {
       label: "base_variant_id",
@@ -173,9 +169,34 @@ const getCustomKeys = () =>
       searchLabel: "base_variant_id",
     },
     {
+      label: "brand_id",
+      value: "brand_id",
+      searchLabel: "brand_id",
+    },
+    {
+      label: "calculated_price",
+      value: "calculated_price",
+      searchLabel: "calculated_price",
+    },
+    {
+      label: "categories",
+      value: "categories",
+      searchLabel: "categories",
+    },
+    {
+      label: "condition",
+      value: "condition",
+      searchLabel: "condition",
+    },
+    {
       label: "cost_price",
       value: "cost_price",
       searchLabel: "cost_price",
+    },
+    {
+      label: "custom_url",
+      value: "custom_url",
+      searchLabel: "custom_url",
     },
     {
       label: "date_created",
@@ -193,9 +214,35 @@ const getCustomKeys = () =>
       searchLabel: "description",
     },
     {
+      label: "fixed_cost_shipping_price",
+      value: "fixed_cost_shipping_price",
+      searchLabel: "fixed_cost_shipping_price",
+    },
+    {
       label: "gift_wrapping_options_list",
       value: "gift_wrapping_options_list",
       searchLabel: "gift_wrapping_options_list",
+    },
+    {
+      label: "gift_wrapping_options_type",
+      value: "gift_wrapping_options_type",
+      searchLabel: "gift_wrapping_options_type",
+    },
+    {
+      label: "gtin",
+      value: "gtin",
+      searchLabel: "gtin",
+    },
+    {
+      label: "height",
+      value: "height",
+      searchLabel: "height",
+    },
+    {
+      label: "id",
+      value: "id",
+      searchLabel: "id",
+      isDisabled: true,
     },
     {
       label: "images",
@@ -203,9 +250,145 @@ const getCustomKeys = () =>
       searchLabel: "images",
     },
     {
+      label: "inventory_level",
+      value: "inventory_level",
+      searchLabel: "inventory_level",
+    },
+    {
+      label: "inventory_tracking",
+      value: "inventory_tracking",
+      searchLabel: "inventory_tracking",
+    },
+    {
+      label: "inventory_warning_level",
+      value: "inventory_warning_level",
+      searchLabel: "inventory_warning_level",
+    },
+    {
+      label: "is_condition_shown",
+      value: "is_condition_shown",
+      searchLabel: "is_condition_shown",
+    },
+    {
+      label: "is_featured",
+      value: "is_featured",
+      searchLabel: "is_featured",
+    },
+    {
+      label: "is_free_shipping",
+      value: "is_free_shipping",
+      searchLabel: "is_free_shipping",
+    },
+    {
+      label: "is_preorder_only",
+      value: "is_preorder_only",
+      searchLabel: "is_preorder_only",
+    },
+    {
+      label: "is_price_hidden",
+      value: "is_price_hidden",
+      searchLabel: "is_price_hidden",
+    },
+    {
+      label: "is_visible",
+      value: "is_visible",
+      searchLabel: "is_visible",
+    },
+    {
+      label: "layout_file",
+      value: "layout_file",
+      searchLabel: "layout_file",
+    },
+    {
+      label: "map_price",
+      value: "map_price",
+      searchLabel: "map_price",
+    },
+    {
+      label: "meta_description",
+      value: "meta_description",
+      searchLabel: "meta_description",
+    },
+    {
       label: "meta_keywords",
       value: "meta_keywords",
       searchLabel: "meta_keywords",
+    },
+    {
+      label: "mpn",
+      value: "mpn",
+      searchLabel: "mpn",
+    },
+    {
+      label: "name",
+      value: "name",
+      searchLabel: "name",
+      isDisabled: true,
+    },
+    {
+      label: "open_graph_description",
+      value: "open_graph_description",
+      searchLabel: "open_graph_description",
+    },
+    {
+      label: "open_graph_title",
+      value: "open_graph_title",
+      searchLabel: "open_graph_title",
+    },
+    {
+      label: "open_graph_type",
+      value: "open_graph_type",
+      searchLabel: "open_graph_type",
+    },
+    {
+      label: "open_graph_use_image",
+      value: "open_graph_use_image",
+      searchLabel: "open_graph_use_image",
+    },
+    {
+      label: "open_graph_use_meta_description",
+      value: "open_graph_use_meta_description",
+      searchLabel: "open_graph_use_meta_description",
+    },
+    {
+      label: "open_graph_use_product_name",
+      value: "open_graph_use_product_name",
+      searchLabel: "open_graph_use_product_name",
+    },
+    {
+      label: "option_set_display",
+      value: "option_set_display",
+      searchLabel: "option_set_display",
+    },
+    {
+      label: "option_set_id",
+      value: "option_set_id",
+      searchLabel: "option_set_id",
+    },
+    {
+      label: "order_quantity_maximum",
+      value: "order_quantity_maximum",
+      searchLabel: "order_quantity_maximum",
+    },
+    {
+      label: "order_quantity_minimum",
+      value: "order_quantity_minimum",
+      searchLabel: "order_quantity_minimum",
+    },
+    {
+      label: "page_title",
+      value: "page_title",
+      searchLabel: "page_title",
+    },
+    {
+      label: "preorder_message",
+      value: "preorder_message",
+      searchLabel: "preorder_message",
+    },
+    {
+      label: "preorder_release_date",
+      value: "preorder_release_date",
+      searchLabel: "preorder_release_date",
     },
     {
       label: "price",
@@ -226,6 +409,86 @@ const getCustomKeys = () =>
       label: "product_tax_code",
       value: "product_tax_code",
       searchLabel: "product_tax_code",
+    },
+    {
+      label: "related_products",
+      value: "related_products",
+      searchLabel: "related_products",
+    },
+    {
+      label: "retail_price",
+      value: "retail_price",
+      searchLabel: "retail_price",
+    },
+    {
+      label: "reviews_count",
+      value: "reviews_count",
+      searchLabel: "reviews_count",
+    },
+    {
+      label: "reviews_rating_sum",
+      value: "reviews_rating_sum",
+      searchLabel: "reviews_rating_sum",
+    },
+    {
+      label: "sale_price",
+      value: "sale_price",
+      searchLabel: "sale_price",
+    },
+    {
+      label: "search_keywords",
+      value: "search_keywords",
+      searchLabel: "search_keywords",
+    },
+    {
+      label: "sku",
+      value: "sku",
+      searchLabel: "sku",
+    },
+    {
+      label: "sort_order",
+      value: "sort_order",
+      searchLabel: "sort_order",
+    },
+    {
+      label: "tax_class_id",
+      value: "tax_class_id",
+      searchLabel: "tax_class_id",
+    },
+    {
+      label: "total_sold",
+      value: "total_sold",
+      searchLabel: "total_sold",
+    },
+    {
+      label: "type",
+      value: "type",
+      searchLabel: "type",
+    },
+    {
+      label: "upc",
+      value: "upc",
+      searchLabel: "upc",
+    },
+    {
+      label: "variants",
+      value: "variants",
+      searchLabel: "variants",
+    },
+    {
+      label: "view_count",
+      value: "view_count",
+      searchLabel: "view_count",
+    },
+    {
+      label: "warranty",
+      value: "warranty",
+      searchLabel: "warranty",
+    },
+    {
+      label: "weight",
+      value: "weight",
+      searchLabel: "weight",
     },
     {
       label: "width",
@@ -277,7 +540,7 @@ const getSidebarData = (product: any) =>
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 const getOpenerLink = (data: any, config: any, type: any) =>
-  `https://app.mybigcommerce.com/manage/products/${
+  `https://store-${config?.configField1}.mybigcommerce.com/manage/products/${
     type === "category" ? `categories/${data?.id}/edit` : `edit/${data?.id}`
   }`;
 
@@ -384,7 +647,7 @@ const categorySelectorColumns = (config?: any) =>
       columnWidthMultiplier: 4,
     },
   ];
-// this function is used to arrange the product list on custom field
+
 const arrangeList = (
   sortedIdsArray: any[] = [],
   dataArray: any[] = [],
@@ -404,6 +667,7 @@ const arrangeList = (
 const rootConfig: any = {
   verifyAppSigning,
   ecommerceEnv,
+  // ecommerceConfigFields,
   configureConfigScreen,
   customKeys,
   openSelectorPage,
@@ -418,6 +682,7 @@ const rootConfig: any = {
   getCustomKeys,
   getSidebarData,
   arrangeList,
+  bigCommerceLimit,
 };
 
 export default rootConfig;
