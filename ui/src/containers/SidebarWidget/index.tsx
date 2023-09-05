@@ -52,7 +52,7 @@ const SidebarWidget: React.FC = function () {
         const contentTypeUid =
           appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
         const data = appSdk?.location?.SidebarWidget?.entry?.getData();
-        const contentTypeDetails = await appSdk.stack.getContentType(
+        const contentTypeDetails = await appSdk?.stack?.getContentType(
           contentTypeUid
         );
         setEntryData(data);
@@ -123,7 +123,7 @@ const SidebarWidget: React.FC = function () {
   }, [entryData, state.appSdkInitialized]);
   useEffect(() => {
     if (fieldList?.length) setSelectedField(fieldList[0]);
-    getCurrentFieldData(fieldList[0]);
+    getCurrentFieldData(fieldList?.[0]);
   }, [fieldList]);
 
   useEffect(() => {

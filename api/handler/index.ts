@@ -67,15 +67,15 @@ export const getProductAndCategory: any = async (data: any, key: any) => {
 };
 
 const getByCategoryId = (data: any, query: any, key: any) => Promise.all(
-  data.map(async (category: any) => {
+  data?.map(async (category: any) => {
     const url = root_config.getByCategoryIdUrl(key, query, category);
     const categoryResponse = await _makeApiCall({
       url,
       method: 'GET',
       headers: root_config.getHeaders(key),
     });
-    categoryResponse.catalogId = category.catalogId;
-    categoryResponse.catalogVersionId = category.catalogVersionId;
+    categoryResponse.catalogId = category?.catalogId;
+    categoryResponse.catalogVersionId = category?.catalogVersionId;
     return categoryResponse;
   }),
 )
@@ -94,7 +94,7 @@ export const getSelectedProdsAndCats: any = async (data: any, key: any) => {
     if (data?.query === 'product') {
       const idsArr = data?.['id:in'].split(',').filter((id: any) => id !== '');
       response = await Promise.all(
-        idsArr.map((id: any) => getById({ id, query: data?.query }, key)),
+        idsArr?.map((id: any) => getById({ id, query: data?.query }, key)),
       );
     } else {
       response = await getByCategoryId(key?.selectedIDs, 'category', key);

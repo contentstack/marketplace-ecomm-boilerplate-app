@@ -84,7 +84,6 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     statusCode,
     headers: {
       ...constants.HTTP_RESPONSE_HEADERS,
-      // authToken: root_config.getAuthToken(body),
       authToken: '',
     },
     // body: JSON.stringify(message), // For deploying the code to AWS Lambda

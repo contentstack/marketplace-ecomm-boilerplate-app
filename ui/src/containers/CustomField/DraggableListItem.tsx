@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from "react";
 import {
   ActionTooltip,
@@ -8,9 +7,9 @@ import {
 } from "@contentstack/venus-components";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import currency from "currency.js";
 import { Props } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
-import currency from "currency.js";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
@@ -47,6 +46,7 @@ const DraggableListItem: React.FC<Props> = function ({
       remove={remove}
       id={id || product?.code}
       name={name}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
   );
@@ -89,7 +89,9 @@ const DraggableListItem: React.FC<Props> = function ({
       className="Table__body__row"
       style={style}
       ref={setNodeRef}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...attributes}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...listeners}
     >
       {isDragging ? (
@@ -97,9 +99,7 @@ const DraggableListItem: React.FC<Props> = function ({
       ) : (
         <ActionTooltip list={onHoverActionList}>
           <div role="cell" className="Table__body__column">
-            {
-              <>
-                {image ? (
+              {image ? (
                   <div className="product-image">
                     <img src={image} alt={name} />
                   </div>
@@ -120,8 +120,6 @@ const DraggableListItem: React.FC<Props> = function ({
                     </Tooltip>
                   </div>
                 )}
-              </>
-            }
           </div>
           <div role="cell" className="Table__body__column">
             {name}

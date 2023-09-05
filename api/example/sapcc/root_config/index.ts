@@ -86,7 +86,7 @@ const root_config: any = {
       const onlineCategories = catalog?.catalogVersions?.filter(
         (version: any) => version?.id === 'Online',
       );
-      const formattedCategories = onlineCategories[n]?.categories?.reduce(
+      const formattedCategories = onlineCategories?.[n]?.categories?.reduce(
         flat,
         [],
       );

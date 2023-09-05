@@ -7,7 +7,6 @@ import { ColumnsProp } from "../common/types";
 import { wrapWithDiv, getImage } from "../common/utils";
 import {
   TypeCategory,
-  // ConfigFields,
   KeyOption,
   TypeProduct,
   SidebarDataObj,
@@ -419,8 +418,8 @@ const generateSearchApiUrlAndData = (
   limit: any,
   categories?: any
 ) => {
-  const catQuery = categories.length
-    ? `&searchCategories=${categories.map((str: any) => str.value).join(",")}`
+  const catQuery = categories?.length
+    ? `&searchCategories=${categories?.map((str: any) => str.value).join(",")}`
     : "";
 
   const queryType = config.type === "category" ? "category" : "product";
@@ -437,7 +436,7 @@ const returnFormattedProduct = (product: any, config: any) =>
     name: product?.name || "",
     description: product?.description || "-",
     image: product?.images?.[0]?.url
-      ? `https://${config?.configField2}${product?.images[0]?.url}`
+      ? `https://${config?.configField2}${product?.images?.[0]?.url}`
       : "",
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",

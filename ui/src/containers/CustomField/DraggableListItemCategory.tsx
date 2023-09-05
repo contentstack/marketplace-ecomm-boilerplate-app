@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React from "react";
 import {
   ActionTooltip,
@@ -47,6 +45,7 @@ const DraggableListItemCategory: React.FC<Props> = function ({
       name={
         product?.name || product?.productName || product?.code || product?.id
       }
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
   );
@@ -85,9 +84,7 @@ const DraggableListItemCategory: React.FC<Props> = function ({
     let imageSrc = category?.c_slotBannerImage || category?.image;
 
     if (!imageSrc && category?.c_headerMenuBanner) {
-      imageSrc = category?.c_headerMenuBanner
-        .match(/(https?:\/\/[^ ]*)/)[1]
-        .replace(/"/g, "");
+      imageSrc = category?.c_headerMenuBanner?.match(/(https?:\/\/[^ ]*)/)[1]?.replace(/"/g, "");
     }
     return imageSrc ? (
       <div className="custom-field-product-image">
@@ -117,7 +114,9 @@ const DraggableListItemCategory: React.FC<Props> = function ({
       className="Table__body__row"
       style={style}
       ref={setNodeRef}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...attributes}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...listeners}
     >
       {isDragging ? (

@@ -7,7 +7,6 @@ import { ColumnsProp } from "../common/types";
 import { wrapWithDiv, getImage } from "../common/utils";
 import {
   TypeCategory,
-  // ConfigFields,
   EcommerceEnv,
   KeyOption,
   TypeProduct,

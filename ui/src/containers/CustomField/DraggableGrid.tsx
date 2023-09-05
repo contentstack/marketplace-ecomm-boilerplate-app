@@ -22,7 +22,8 @@ const DraggableGrid: React.FC<Props> = function ({
   setSelectedItems,
   type,
 }) {
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
+
+  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 0.1 } })
@@ -89,8 +90,8 @@ const DraggableGrid: React.FC<Props> = function ({
                   categories={data}
                   remove={remove}
                   config={config}
-                  key={data?.[uniqueKey] || data?.id}
-                  id={data?.[uniqueKey] || data?.id}
+                  key={data?.id}
+                  id={data?.id}
                 />
               ))
             : products?.map((product: any) => (

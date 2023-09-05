@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState } from "react";
 import {
   DndContext,
@@ -23,7 +22,7 @@ const ListItem: React.FC<Props> = function ({
   setSelectedItems,
   type,
 }) {
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.product;
+  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
@@ -99,15 +98,14 @@ const ListItem: React.FC<Props> = function ({
                   role="columnheader"
                   className="Table__head__column third-child "
                 >
-                  {type === "category"
-                    ? localeTexts.customField.listViewTable.id
+                  {type === "category" ? localeTexts.customField.listViewTable.id
                     : localeTexts.customField.listViewTable.price}
                 </div>
               </div>
             </div>
             <div
               className="Table__body"
-              style={{ height: `${products?.length * 60}` }}
+              style={{ height: `${(products?.length || 0) * 60}` }}
             >
               <DndContext
                 sensors={sensors}
@@ -117,10 +115,9 @@ const ListItem: React.FC<Props> = function ({
                 onDragStart={handleDragStart}
               >
                 <SortableContext items={products}>
-                  {type === "category"
-                    ? products?.map((data: any) => (
+                  {type === "category" ? products?.map((data: any) => (
                         <DraggableListItemCategory
-                          key={data?.[uniqueKey] || data.id}
+                          key={data?.[uniqueKey] || data?.id}
                           product={data}
                           id={data?.[uniqueKey] || data?.id}
                           remove={remove}

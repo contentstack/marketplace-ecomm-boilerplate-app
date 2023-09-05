@@ -1,12 +1,9 @@
-/* eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
 import {
-  AsyncSelect,
   Button,
   ButtonGroup,
   Icon,
   InfiniteScrollTable,
-  Select,
 } from "@contentstack/venus-components";
 import {
   isEmpty,
@@ -16,7 +13,7 @@ import {
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import { TypeWarningtext } from "../../common/types";
-import { request, filter, search } from "../../services/index";
+import { request, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
@@ -31,8 +28,6 @@ const SelectorPage: React.FC = function () {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemStatus, setItemStatus] = useState({});
   const [config, setConfig] = useState<any>({});
-  const [selectedCategory, setSelectedCategory] = useState<any>([]);
-  const [categoryActive, setCategoriesActive] = useState<any>(false);
   const [searchActive, setSearchActive] = useState(false);
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchCurrentPage, setSearchCurrentPage] = useState(1);
@@ -85,8 +80,7 @@ const SelectorPage: React.FC = function () {
         setItemStatus({
           ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
         });
-        const response = searchTextParam
-          ? await search(config, searchTextParam, 1, config?.page_count)
+        const response = searchTextParam ? await search(config, searchTextParam, 1, config?.page_count)
           : await request(config, config?.type, currentPage + 1);
         if (searchText) {
           setSearchActive(true);
@@ -106,33 +100,19 @@ const SelectorPage: React.FC = function () {
               responseDataLength
             ),
           });
-          // if (config?.type === "product") setDropdown(true);
-          // setTotalCounts(response?.data?.meta?.total);
           setLoading(false);
           setCurrentPage(response?.data?.meta?.current_page);
-          searchText
-            ? setSearchCurrentPage(response?.data?.meta?.current_page)
-            : setCurrentPage(response?.data?.meta?.current_page);
+          if (searchText) {
+            setSearchCurrentPage(response?.data?.meta?.current_page);
+          } else {
+            setCurrentPage(response?.data?.meta?.current_page);
+          }          
         } else {
           setIsInvalidCredentials(response);
         }
       }
     } catch (error) {
-      console.error("error fetching initial data", error);
-    }
-  };
-
-  const createCategoriesDropdownList = (categoriesData: any) => {
-    const categoryDropdownObj: any[] = [];
-    if (categoriesData?.length) {
-      categoriesData?.forEach((category: any) => {
-        const obj = {
-          label: category?.name,
-          value: category?.id,
-        };
-        categoryDropdownObj.push(obj);
-      });
-      return categoryDropdownObj;
+      console.error(localeTexts.selectorPage.initialErr , error);
     }
   };
 
@@ -140,52 +120,6 @@ const SelectorPage: React.FC = function () {
     setLoading(true);
     fetchInitialData(searchText);
   }, [config]);
-
-  useEffect(() => {
-    if (isEmpty(config) || !categoryActive) return;
-    const fetchCategoryData = async () => {
-      const categoryIds: any[] = [];
-      selectedCategory?.forEach((category: any) =>
-        categoryIds.push(category?.value)
-      );
-      try {
-        const response = searchText
-          ? await search(
-              config,
-              searchText,
-              1,
-              config?.page_count,
-              selectedCategory
-            )
-          : await filter(config, "product", categoryIds);
-        if (!response?.error) {
-          const responseDataLength = response?.data?.items?.length;
-          setItemStatus({
-            ...getItemStatusMap({}, "loaded", 0, responseDataLength),
-          });
-          setList(response?.data?.items);
-          setTotalCounts(response?.data?.meta?.total);
-          if (searchText) {
-            setSearchActive(true);
-            setSearchCurrentPage(1);
-          }
-        } else {
-          setIsInvalidCredentials(response);
-        }
-      } catch (err) {
-        console.error("error fetching category data", err);
-      }
-    };
-
-    if (selectedCategory?.length) {
-      setSearchActive(true);
-      fetchCategoryData();
-    } else {
-      setSearchActive(false);
-      setCategoriesActive(false);
-      fetchInitialData(searchText);
-    }
-  }, [categoryActive, selectedCategory]);
 
   const fetchData = async (meta: any) => {
     try {
@@ -197,7 +131,6 @@ const SelectorPage: React.FC = function () {
           meta?.searchText,
           1,
           config?.page_count,
-          selectedCategory
         );
         if (!response?.error) {
           setList(response?.data?.items);
@@ -217,7 +150,7 @@ const SelectorPage: React.FC = function () {
         fetchInitialData("");
       }
     } catch (err) {
-      console.error("error fetching table data", err);
+      console.error(localeTexts.selectorPage.tableFetchError, err);
     }
   };
 
@@ -229,7 +162,7 @@ const SelectorPage: React.FC = function () {
             { ...itemStatus },
             "loading",
             meta?.startIndex,
-            meta?.startIndex + Number(config?.page_count)
+            meta?.startIndex ?? 0 + Number(config?.page_count)
           ),
         });
         const response = await request(config, config?.type, currentPage + 1);
@@ -242,14 +175,14 @@ const SelectorPage: React.FC = function () {
               { ...itemStatus },
               "loaded",
               meta?.startIndex,
-              meta?.startIndex + Number(config?.page_count)
+              meta?.startIndex ?? 0 + Number(config?.page_count)
             ),
           });
         } else {
           setIsInvalidCredentials(response);
         }
       } catch (err) {
-        console.error("error loading more channel data", err);
+        console.error(localeTexts.selectorPage.loadingError, err);
       }
     } else {
       try {
@@ -258,7 +191,7 @@ const SelectorPage: React.FC = function () {
             { ...itemStatus },
             "loading",
             meta?.startIndex,
-            meta?.startIndex + Number(config?.page_count)
+            meta?.startIndex ?? 0 + Number(config?.page_count)
           ),
         });
         const response = await search(
@@ -269,13 +202,14 @@ const SelectorPage: React.FC = function () {
         );
         if (!response?.error) {
           setSearchCurrentPage(response?.data?.meta?.current_page);
+          // eslint-disable-next-line no-unsafe-optional-chaining
           setList([...list, ...response?.data?.items]);
           setItemStatus({
             ...getItemStatusMap(
               { ...itemStatus },
               "loaded",
               meta?.startIndex,
-              meta?.startIndex + Number(config?.page_count)
+              meta?.startIndex ?? 0 + Number(config?.page_count)
             ),
           });
         } else {
@@ -313,11 +247,6 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  const handleDropDown = (event: any) => {
-    setSelectedCategory(event);
-    setCategoriesActive(true);
-  };
-
   const onToggleColumnSelector = (event: any) => {
     let hiddenColumnsTemp: any = [];
     Object.keys(event)?.forEach((key: string) => {
@@ -348,10 +277,9 @@ const SelectorPage: React.FC = function () {
           fullRowSelect
           viewSelector
           canRefresh
-          canSearch
+          canSearch={config?.type !== "category"}
           data={
-            list?.length
-              ? list.map((listData) => ({
+            list?.length ? list.map((listData) => ({
                   ...listData,
                   [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
                     listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
@@ -360,8 +288,7 @@ const SelectorPage: React.FC = function () {
               : []
           }
           columns={
-            config?.type === "category"
-              ? rootConfig.categorySelectorColumns(config)
+            config?.type === "category" ? rootConfig.categorySelectorColumns(config)
               : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
@@ -376,8 +303,7 @@ const SelectorPage: React.FC = function () {
             config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
           }
           name={
-            config.type === "category"
-              ? {
+            config.type === "category" ? {
                   singular: localeTexts.selectorPage.searchPlaceholder.category,
                   plural: localeTexts.selectorPage.searchPlaceholder.categories,
                 }
@@ -389,8 +315,7 @@ const SelectorPage: React.FC = function () {
           searchPlaceholder={`${
             localeTexts.selectorPage.searchPlaceholder.caption
           } ${
-            config?.type === "category"
-              ? localeTexts.selectorPage.searchPlaceholder.categories
+            config?.type === "category" ? localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
@@ -426,8 +351,7 @@ const SelectorPage: React.FC = function () {
               "#",
               selectedIds?.length.toString()
             )}{" "}
-            {config?.type === "category"
-              ? `${localeTexts.buttonLabels.category}`
+            {config?.type === "category" ? `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
           </Button>
         </ButtonGroup>

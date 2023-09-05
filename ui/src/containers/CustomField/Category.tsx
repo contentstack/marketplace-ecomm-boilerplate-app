@@ -69,7 +69,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
 
   const getDeleteModal = (props: any) => (
     <DeleteModal
-      type="Product"
+      type="Category"
       remove={remove}
       id={categories?.id}
       name={categories?.name}
@@ -82,7 +82,6 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
       label: <Icon icon="MoveIcon" size="mini" className="drag" />,
       title: localeTexts.customField.listActions.drag,
       action: () => {},
-      className: "ActionListItem--warning",
     },
     {
       label: <Icon icon="NewTab" size="mini" />,
@@ -92,7 +91,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
       ),
       action: () =>
         window.open(
-          rootConfig.getOpenerLink(categories, config, "product"),
+          rootConfig.getOpenerLink(categories, config, "category"),
           "_blank"
         ),
     },

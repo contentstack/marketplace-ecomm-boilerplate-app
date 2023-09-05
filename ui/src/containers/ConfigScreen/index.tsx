@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable no-unsafe-optional-chaining */
 /* Import React modules */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
 /* ContentStack Modules */
 // For all the available venus components, please refer below doc
@@ -35,8 +32,8 @@ const ConfigScreen: React.FC = function () {
   const saveInConfig: any = {};
 
   Object.keys(configInputFields)?.forEach((field: any) => {
-    if (configInputFields[field]?.saveInConfig)
-      saveInConfig[field] = configInputFields[field];
+    if (configInputFields?.[field]?.saveInConfig)
+      saveInConfig[field] = configInputFields?.[field];
   });
 
   // state for configuration
@@ -61,7 +58,9 @@ const ConfigScreen: React.FC = function () {
         }, {}),
         // eslint-disable-next-line @typescript-eslint/naming-convention
         page_count: "",
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         is_custom_json: false,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         custom_keys: rootConfig.customKeys,
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
@@ -74,8 +73,8 @@ const ConfigScreen: React.FC = function () {
   const isConfigSensitive = (name: string) => {
     let isSensitive = false;
     Object.keys(configInputFields)?.forEach((field: any) => {
-      if (configInputFields[field]?.name === name) {
-        isSensitive = configInputFields[field]?.isSensitive;
+      if (configInputFields?.[field]?.name === name) {
+        isSensitive = configInputFields?.[field]?.isSensitive;
       }
     });
     return isSensitive;
@@ -98,8 +97,7 @@ const ConfigScreen: React.FC = function () {
 
     // salt, iv will be hex 32 in length
     // append them to the ciphertext for use  in decryption
-    const transitmessage =
-      salt?.toString() + iv?.toString() + encrypted?.toString();
+    const transitmessage =(salt?.toString() ?? "") + (iv?.toString() ?? "") + (encrypted?.toString() ?? "");
     return transitmessage;
   };
 
@@ -165,9 +163,9 @@ const ConfigScreen: React.FC = function () {
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
    * */
-  const updateConfig = async (e: any) => {
+  const updateConfig = useCallback(async (e: any) => {
     // eslint-disable-next-line prefer-const
-    let { name: fieldName, value: fieldValue } = e?.target;
+    let { name: fieldName, value: fieldValue } = e?.target || {};
     if (typeof fieldValue === "string") {
       fieldValue = fieldValue?.trim();
     }
@@ -195,34 +193,34 @@ const ConfigScreen: React.FC = function () {
       {}
     );
 
-    if (state?.setInstallationData) {
+    if (typeof state.setInstallationData !== "undefined") {
       await state.setInstallationData({
         ...state.installationData,
         configuration: newConfiguration,
       });
     }
     return true;
-  };
+  },[    state.setInstallationData,
+    state.installationData])
+
+  const updateTypeObj = useCallback(async (list: any[]) => {
+    const customKeysTemp: any[] = [];
+    list?.forEach((key: any) => customKeysTemp.push(key?.value));
+    setCustomKeys(list);
+    const e: any = {};
+    e.target = { name: "custom_keys", value: list };
+    updateConfig(e);
+  }, [updateConfig])
+
+  const updateCustomJSON = useCallback((e: any) => {
+    setIsCustom(e?.target?.id !== "wholeJSON");
+  }, []);
 
   useEffect(() => {
     const e: any = {};
     e.target = { name: "is_custom_json", value: isCustom };
     updateConfig(e);
   }, [isCustom]);
-
-  const updateTypeObj = async (list: any[]) => {
-    const customKeysTemp: any[] = [];
-    list?.forEach((key: any) => customKeysTemp.push(key?.value));
-    setCustomKeys(list);
-    const e: any = {};
-    e.target = { name: "custom_keys", value: list };
-    await updateConfig(e);
-  };
-
-  const updateCustomJSON = (e: any) => {
-    setIsCustom(e?.target?.id !== "wholeJSON");
-  };
-
   // return render jsx for the config object provided
   const renderConfig = () =>
     Object.entries(configInputFields)?.map(([objKey, objValue, index]: any) => {
@@ -247,11 +245,11 @@ const ConfigScreen: React.FC = function () {
                 id={`${objKey}-id`}
                 required
                 value={
-                  objValue?.saveInConfig
+                 ( objValue?.saveInConfig
                     ? state?.installationData?.configuration?.[objKey]
                     : objValue?.saveInServerConfig
                     ? state?.installationData?.serverConfiguration?.[objKey]
-                    : ""
+                    : "")
                 }
                 placeholder={objValue?.placeholderText}
                 name={objKey}
