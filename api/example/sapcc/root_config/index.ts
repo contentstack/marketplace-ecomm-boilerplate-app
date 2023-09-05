@@ -9,12 +9,7 @@ const root_config: any = {
   FIELDS_URL: 'fields=FULL',
   SENSITIVE_CONFIG_KEYS: ['base_site_id', 'backoffice_url', 'base_url'],
 
-  generateBaseURL: (key: any) => {
-    if (key?.is_custom_json) {
-      return `https://${key?.configField2}${key?.configField1}`;
-    }
-    return root_config.API_BASE_URL.replace('$', key?.configField2);
-  },
+  generateBaseURL: (key: any) => root_config.API_BASE_URL.replace('$', key?.configField2),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getHeaders: (key?: any) => ({
     'Content-Type': 'application/json',
