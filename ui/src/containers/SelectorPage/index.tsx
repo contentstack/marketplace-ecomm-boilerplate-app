@@ -1,23 +1,22 @@
-/* eslint-disable */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   ButtonGroup,
   Icon,
   InfiniteScrollTable,
-  Select,
 } from "@contentstack/venus-components";
 import {
   isEmpty,
   arrangeSelectedIds,
   EmptyObjForSearchCase,
+  getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import { TypeWarningtext } from "../../common/types";
-import { request, requestCategories, filter, search } from "../../services";
+import { request, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
-import rootConfig from "../../root_config";
+import rootConfig from "../../root_config/index";
 
 const SelectorPage: React.FC = function () {
   const [list, setList] = useState<any[]>([]);
@@ -29,20 +28,40 @@ const SelectorPage: React.FC = function () {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemStatus, setItemStatus] = useState({});
   const [config, setConfig] = useState<any>({});
-  const [categories, setCategories] = useState<any>({});
-  const [dropdown, setDropdown] = useState(false);
-  const [categoryDropdownList, setCategoryDropdownList] = useState<any>([]);
-  const [selectedCategory, setSelectedCategory] = useState<any>([]);
   const [searchActive, setSearchActive] = useState(false);
   const [checkedIds, setCheckedIds] = useState([]);
+  const [searchCurrentPage, setSearchCurrentPage] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const [hiddenColumns, setHiddenColumns] = useState<any>(
+    config?.type === "category" ? [] : ["id"]
+  );
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({
       error: false,
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
+      data: localeTexts.warnings.invalidCredentials,
     });
+
+  const tableRef: any = useRef(null);
+  const getSelectedData = async (_type: any, data = []) => {
+    if (data?.length) {
+      data?.forEach((id: any) => {
+        selectedRows[id] = true;
+      });
+    }
+    setSelectedRows({ ...selectedRows });
+    setSelectedIds(data);
+    return selectedRows;
+  };
+
+  const handleMessage = (event: any) => {
+    const { data } = event;
+    if (data) {
+      if (data?.message === "init") {
+        getSelectedData(data?.type, data?.selectedItems);
+        setConfig({ ...data?.config, type: data?.type });
+      }
+    }
+  };
 
   useEffect(() => {
     const { opener: windowOpener } = window;
@@ -55,187 +74,154 @@ const SelectorPage: React.FC = function () {
     }
   }, []);
 
-  useEffect(() => {
-    const categoryDropdownObj: any[] = [];
-    if (categories?.length) {
-      categories.forEach((category: any) => {
-        const obj = {
-          label: rootConfig.returnFormattedCategory(category)?.name,
-          value: rootConfig.returnFormattedCategory(category)?.id,
-        };
-        categoryDropdownObj.push(obj);
-      });
-      setCategoryDropdownList([...categoryDropdownObj]);
-      setDropdown(true);
+  const fetchInitialData = async (searchTextParam: any) => {
+    try {
+      if (!isEmpty(config)) {
+        setItemStatus({
+          ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
+        });
+        const response = searchTextParam ?
+          await search(config, searchTextParam, 1, config?.page_count)
+          : await request(config, config?.type, currentPage + 1);
+        if (searchText) {
+          setSearchActive(true);
+          setSearchCurrentPage(1);
+        }
+        if (!response?.error) {
+          setList(response?.data?.items);
+          if (config?.type === "category")
+            setTotalCounts(response?.data?.items?.length);
+          else setTotalCounts(response?.data?.meta?.total);
+          const responseDataLength = response?.data?.items?.length;
+          setItemStatus({
+            ...getItemStatusMap(
+              { ...itemStatus },
+              "loaded",
+              0,
+              responseDataLength
+            ),
+          });
+          setLoading(false);
+          setCurrentPage(response?.data?.meta?.current_page);
+          if (searchText) {
+            setSearchCurrentPage(response?.data?.meta?.current_page);
+          } else {
+            setCurrentPage(response?.data?.meta?.current_page);
+          }
+        } else {
+          setIsInvalidCredentials(response);
+        }
+      }
+    } catch (error) {
+      console.error(localeTexts.selectorPage.initialErr, error);
     }
-  }, [categories]);
+  };
 
   useEffect(() => {
     setLoading(true);
-    fetchInitialData();
+    fetchInitialData(searchText);
   }, [config]);
-
-  useEffect(() => {
-    if (isEmpty(config)) return;
-    const fetchCategoryData = async () => {
-      const categoryIds: any[] = [];
-      selectedCategory?.forEach((category: any) =>
-        categoryIds.push(category?.value)
-      );
-      const response = await filter(config, "product", categoryIds);
-      if (!response?.error) {
-        const itemStatusMap: any = {};
-        const responseDataLength = response?.data?.items?.length;
-        for (let index = 0; index < responseDataLength; index += 1) {
-          itemStatusMap[index] = "loaded";
-        }
-        setItemStatus({ ...itemStatusMap });
-        setList(response?.data?.items);
-        setTotalCounts(response?.data?.meta?.total);
-      } else {
-        setIsInvalidCredentials(response);
-      }
-    };
-
-    if (selectedCategory?.length) {
-      setSearchActive(true);
-      fetchCategoryData();
-    } else {
-      setSearchActive(false);
-      fetchInitialData();
-    }
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
-  }, [checkedIds]);
-
-  const getSelectedData = async (_type: any, data = []) => {
-    if (data?.length) {
-      data.forEach((id) => {
-        selectedRows[id] = true;
-      });
-    }
-    setSelectedRows({ ...selectedRows });
-    setSelectedIds(data);
-    return selectedRows;
-  };
-
-  const handleMessage = (event: any) => {
-    const { data } = event;
-    if (data?.message === "init") {
-      getSelectedData(data?.type, data?.selectedItems);
-      setConfig({ ...data?.config, type: data?.type });
-    }
-  };
-
-  const fetchInitialData = async () => {
-    if (!isEmpty(config)) {
-      const itemStatusMap: any = {};
-      for (
-        let index = 0;
-        index < Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
-        index += 1
-      ) {
-        itemStatusMap[index] = "loading";
-      }
-      setItemStatus({ ...itemStatusMap });
-
-      const response = await request(config);
-      if (!response?.error) {
-        setList(response?.data?.items);
-        if (config.type === "product") {
-          const categoriesData = await requestCategories(config);
-          if (!categoriesData?.error) {
-            setCategories(categoriesData?.data?.items);
-          } else {
-            setIsInvalidCredentials(categoriesData);
-          }
-        }
-
-        setTotalCounts(response?.data?.meta?.total);
-        setLoading(false);
-        setCurrentPage(response?.data?.meta?.current_page);
-        const updatedItemStatusMap: any = {};
-        const responseDataLength = response?.data?.items?.length;
-        for (let index = 0; index < responseDataLength; index += 1) {
-          updatedItemStatusMap[index] = "loaded";
-        }
-        setItemStatus({ ...updatedItemStatusMap });
-      } else {
-        setIsInvalidCredentials(response);
-      }
-    }
-  };
 
   const fetchData = async (meta: any) => {
     try {
       if (meta?.searchText && !isEmpty(config)) {
         setSearchActive(true);
-        const response = await search(config, meta.searchText);
+        setSearchText(meta?.searchText);
+        const response = await search(
+          config,
+          meta?.searchText,
+          1,
+          config?.page_count
+        );
         if (!response?.error) {
           setList(response?.data?.items);
           setLoading(false);
           setTotalCounts(response?.data?.meta?.total);
-          const itemStatusMap: any = {};
+          setSearchCurrentPage(response?.data?.meta?.current_page);
           const responseDataLength = response?.data?.items?.length;
-          for (let index = 0; index < responseDataLength; index += 1) {
-            itemStatusMap[index] = "loaded";
-          }
-          setItemStatus({ ...itemStatusMap });
+          setItemStatus({
+            ...getItemStatusMap({}, "loaded", 0, responseDataLength),
+          });
         } else {
           setIsInvalidCredentials(response);
         }
       } else {
         setSearchActive(false);
-        fetchInitialData();
+        setSearchText("");
+        fetchInitialData("");
       }
     } catch (err) {
-      console.error(err);
+      console.error(localeTexts.selectorPage.tableFetchError, err);
     }
   };
 
   const loadMoreItems = async (meta: any) => {
-    if (!searchActive && !isEmpty(config)) {
+    if (searchActive && !isEmpty(config)) {
       try {
-        const itemStateMap: any = { ...itemStatus };
-        for (
-          let index = meta?.startIndex;
-          index <
-          meta?.startIndex +
-            Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
-          index += 1
-        ) {
-          itemStateMap[index] = "loading";
-        }
-        setItemStatus({ ...itemStateMap });
-        setLoading(true);
-        const response = await request(config, currentPage + 1);
+        setItemStatus({
+          ...getItemStatusMap(
+            { ...itemStatus },
+            "loading",
+            meta?.startIndex,
+            meta?.startIndex ?? 0 + Number(config?.page_count)
+          ),
+        });
+        const response = await request(config, config?.type, currentPage + 1);
         if (!response?.error) {
           setCurrentPage(response?.data?.meta?.current_page);
-          const updatedItemStateMap: any = { ...itemStatus };
-
-          for (
-            let index = meta?.startIndex;
-            index <
-            meta?.startIndex +
-              Number(rootConfig.ecommerceEnv.FETCH_PER_PAGE || 20);
-            index += 1
-          ) {
-            updatedItemStateMap[index] = "loaded";
-          }
-          setList([...list, ...(response?.data?.items || [])]);
-          setItemStatus({ ...updatedItemStateMap });
+          setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
           setLoading(false);
+          setItemStatus({
+            ...getItemStatusMap(
+              { ...itemStatus },
+              "loaded",
+              meta?.startIndex,
+              meta?.startIndex ?? 0 + Number(config?.page_count)
+            ),
+          });
         } else {
           setIsInvalidCredentials(response);
         }
       } catch (err) {
-        console.error(err);
+        console.error(localeTexts.selectorPage.loadingError, err);
+      }
+    } else {
+      try {
+        setItemStatus({
+          ...getItemStatusMap(
+            { ...itemStatus },
+            "loading",
+            meta?.startIndex,
+            meta?.startIndex ?? 0 + Number(config?.page_count)
+          ),
+        });
+        const response = await search(
+          config,
+          meta?.searchText,
+          searchCurrentPage + 1,
+          config?.page_count
+        );
+        if (!response?.error) {
+          setSearchCurrentPage(response?.data?.meta?.current_page);
+          // eslint-disable-next-line no-unsafe-optional-chaining
+          setList([...list, ...response?.data?.items]);
+          setItemStatus({
+            ...getItemStatusMap(
+              { ...itemStatus },
+              "loaded",
+              meta?.startIndex,
+              meta?.startIndex ?? 0 + Number(config?.page_count)
+            ),
+          });
+        } else {
+          setIsInvalidCredentials(response);
+        }
+      } catch (err) {
+        console.error(localeTexts.selectorPage.errHandling, err);
       }
     }
   };
-  // eslint-disable-next-line
+
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
     const selectedObj: any = [];
     singleSelectedRowIds?.forEach((assetUid: any) => {
@@ -246,10 +232,14 @@ const SelectorPage: React.FC = function () {
     setCheckedIds(singleSelectedRowIds);
   };
 
+  useEffect(() => {
+    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
+  }, [checkedIds]);
+
   const returnSelectedData = () => {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
-    if (window.opener) {
+    if (window?.opener) {
       window.opener.postMessage(
         { message: "add", dataArr, dataIds },
         window.location.origin
@@ -258,61 +248,51 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  const handleDropDown = (event: any) => {
-    setSelectedCategory(event);
+  const onToggleColumnSelector = (event: any) => {
+    let hiddenColumnsTemp: any = [];
+    Object.keys(event)?.forEach((key: string) => {
+      if (!event[key] && !hiddenColumnsTemp.includes(key))
+        hiddenColumnsTemp.push(key);
+      if (event[key] && hiddenColumnsTemp.includes(key)) {
+        const index = hiddenColumnsTemp.indexOf(key);
+        hiddenColumnsTemp = hiddenColumnsTemp.splice(index, 1);
+      }
+    });
+    setHiddenColumns(hiddenColumnsTemp);
   };
 
   const renderSelectorPage = () => {
-    if (isInvalidCredentials.error)
+    if (isInvalidCredentials?.error)
       return (
         <div className="invalid-cred-selector">
-          <WarningMessage content={isInvalidCredentials.data} />
+          <WarningMessage content={isInvalidCredentials?.data} />
         </div>
       );
     return (
       <>
-        {dropdown ? (
-          <div className="filterDropdown">
-            <Select
-              onChange={handleDropDown}
-              value={selectedCategory}
-              isMulti
-              multiDisplayLimit={3}
-              placeholder={localeTexts.selectorPage.selectCategory.placeHolder}
-              options={categoryDropdownList}
-              updateOption={handleDropDown}
-            />
-          </div>
-        ) : (
-          ""
-        )}
-
         <InfiniteScrollTable
-          uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY}
-          hiddenColumns={
-            config?.type === "category"
-              ? []
-              : [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]
-          }
+          uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
+          hiddenColumns={hiddenColumns}
+          onToggleColumnSelector={onToggleColumnSelector}
           isRowSelect
           fullRowSelect
           viewSelector
           canRefresh
-          canSearch
+          canSearch={config?.type !== "category"}
           data={
-            list?.length
-              ? list.map((listData: any) => ({
+            list?.length ?
+              list.map((listData) => ({
                   ...listData,
-                  [rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]: `${
-                    listData[rootConfig.ecommerceEnv.UNIQUE_KEY?.[config?.type]]
+                  [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
+                    listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
                   }`,
                 }))
               : []
           }
           columns={
-            config?.type === "category"
-              ? rootConfig.categorySelectorColumns(config)
-              : rootConfig.productSelectorColumns(config)
+            config?.type === "category" ?
+              rootConfig.categorySelectorColumns(config)
+              : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
           initialSelectedRowIds={selectedRows}
@@ -321,12 +301,13 @@ const SelectorPage: React.FC = function () {
           fetchTableData={fetchData}
           totalCounts={totalCounts}
           loadMoreItems={loadMoreItems}
+          fixedlistRef={tableRef}
           minBatchSizeToFetch={
             config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
           }
           name={
-            config?.type === "category"
-              ? {
+            config.type === "category" ?
+              {
                   singular: localeTexts.selectorPage.searchPlaceholder.category,
                   plural: localeTexts.selectorPage.searchPlaceholder.categories,
                 }
@@ -338,8 +319,8 @@ const SelectorPage: React.FC = function () {
           searchPlaceholder={`${
             localeTexts.selectorPage.searchPlaceholder.caption
           } ${
-            config?.type === "category"
-              ? localeTexts.selectorPage.searchPlaceholder.categories
+            config?.type === "category" ?
+              localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
@@ -358,7 +339,7 @@ const SelectorPage: React.FC = function () {
               ),
               action: (_e: any, data: any) => {
                 window.open(
-                  rootConfig.getOpenerLink(data, config, config?.type),
+                  rootConfig.getOpenerLink(data?.id, config, config?.type),
                   "_blank"
                 );
               },
@@ -375,8 +356,8 @@ const SelectorPage: React.FC = function () {
               "#",
               selectedIds?.length.toString()
             )}{" "}
-            {config?.type === "category"
-              ? `${localeTexts.buttonLabels.category}`
+            {config?.type === "category" ?
+              `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
           </Button>
         </ButtonGroup>

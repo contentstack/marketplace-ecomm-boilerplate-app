@@ -30,10 +30,30 @@ export type Props = {
   [key: string]: any;
 };
 
+export interface TypeOption {
+  label: string;
+  value: string;
+}
+
+export interface TypeConfigComponent {
+  objKey: string;
+  objValue: any;
+  currentValue: any;
+  updateConfig: Function;
+}
+
 export type TypeWarningtext = {
   error: boolean;
   data: any;
 };
+
+export interface TypeRadioOption {
+  fieldName: string;
+  mode: TypeOption;
+  index: number;
+  radioOption: TypeOption;
+  updateRadioOptions: Function;
+}
 
 export declare type ColumnsProp = {
   Header: string;

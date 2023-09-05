@@ -8,13 +8,12 @@ import AppConfigurationExtensionProvider from "../../common/providers/AppConfigu
 import ProductCustomFieldExtensionProvider from "../../common/providers/ProductCustomFieldExtensionProvider";
 import CategoryCustomFieldExtensionProvider from "../../common/providers/CategoryCustomFieldExtensionProvider";
 import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
-import localeTexts from "../../common/locale/en-us";
-// eslint-disable-next-line import/no-named-as-default
-import rootConfig from "../../root_config";
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
 /* Import our CSS */
 import "./styles.scss";
+import rootConfig from "../../root_config";
+import localeTexts from "../../common/locale/en-us";
 
 /** HomeRedirectHandler - component to nandle redirect based on the window location pathname,
     as react Router does not identifies pathname if the app is rendered in an iframe.
@@ -52,7 +51,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeRedirectHandler />} />
           <Route
-            path="/app-configuration"
+            path="/config"
             element={
               <Suspense fallback={null}>
                 <AppConfigurationExtensionProvider>

@@ -14,16 +14,10 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
         "Access-Control-Allow-Origin": "*",
       },
     });
+
     return {
       error: false,
-      data: {
-        items: response?.data?.data, // assign this to the key that contains your data
-        meta: {
-          total: response?.data?.meta?.pagination?.total, // assign this to the key that specifies the total count of the data fetched
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          current_page: response?.data?.meta?.pagination?.current_page, // assign this to the key that corresponds to the current page
-        },
-      },
+      data: rootConfig.returnUrl(response),
     };
   } catch (e: any) {
     console.error(e);
@@ -45,11 +39,9 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 };
 
 // get paginated products and categories
-const request = (config: any, page = 1) =>
+const request = (config: any, requestType: any, page = 1) =>
   makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=${
-      config?.type === "category" ? "category" : "product"
-    }&page=${page}&limit=${rootConfig.ecommerceEnv.FETCH_PER_PAGE ?? 20}`,
+    `${process.env.REACT_APP_API_URL}?query=${requestType}&page=${page}&limit=${config?.page_count}`,
     "POST",
     config
   );
@@ -75,25 +67,34 @@ const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
     : null;
 
 // filter products with categories
-const filter = async (config: any, type: any, selectedIDs: any) =>
-  Array.isArray(selectedIDs) && selectedIDs?.length ?
-    makeAnApiCall(
-        `${process.env.REACT_APP_API_URL}?query=${type}&categories:in=${
-          selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
-        }`,
-        "POST",
-        config
-      )
-    : null;
-
+const filter = async (config: any, type: any, selectedIDs: any) => {
+  if (Array.isArray(selectedIDs) && selectedIDs.length) {
+    const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(
+      config,
+      type,
+      selectedIDs
+    );
+    return makeAnApiCall(apiUrl, "POST", requestData);
+  }
+  return null;
+};
 // search products and categories
-const search = (config: any, keyword: any) =>
-  makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=${
-      config?.type === "category" ? "category" : "product"
-    }&searchParam=keyword=${keyword}`,
-    "POST",
-    config
+const search = (
+  config: any,
+  keyword: any,
+  page: any,
+  limit: any,
+  categories = []
+) => {
+  const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
+    config,
+    keyword,
+    page,
+    limit,
+    categories
   );
+
+  return makeAnApiCall(apiUrl, "POST", requestData);
+};
 
 export { getSelectedIDs, request, requestCategories, search, filter };
