@@ -98,7 +98,8 @@ const ListItem: React.FC<Props> = function ({
                   role="columnheader"
                   className="Table__head__column third-child "
                 >
-                  {type === "category" ? localeTexts.customField.listViewTable.id
+                  {type === "category" ?
+                    localeTexts.customField.listViewTable.id
                     : localeTexts.customField.listViewTable.price}
                 </div>
               </div>
@@ -115,7 +116,8 @@ const ListItem: React.FC<Props> = function ({
                 onDragStart={handleDragStart}
               >
                 <SortableContext items={products}>
-                  {type === "category" ? products?.map((data: any) => (
+                  {type === "category" ?
+                    products?.map((data: any) => (
                         <DraggableListItemCategory
                           key={data?.[uniqueKey] || data?.id}
                           product={data}

@@ -80,7 +80,8 @@ const SelectorPage: React.FC = function () {
         setItemStatus({
           ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
         });
-        const response = searchTextParam ? await search(config, searchTextParam, 1, config?.page_count)
+        const response = searchTextParam ?
+          await search(config, searchTextParam, 1, config?.page_count)
           : await request(config, config?.type, currentPage + 1);
         if (searchText) {
           setSearchActive(true);
@@ -106,13 +107,13 @@ const SelectorPage: React.FC = function () {
             setSearchCurrentPage(response?.data?.meta?.current_page);
           } else {
             setCurrentPage(response?.data?.meta?.current_page);
-          }          
+          }
         } else {
           setIsInvalidCredentials(response);
         }
       }
     } catch (error) {
-      console.error(localeTexts.selectorPage.initialErr , error);
+      console.error(localeTexts.selectorPage.initialErr, error);
     }
   };
 
@@ -130,7 +131,7 @@ const SelectorPage: React.FC = function () {
           config,
           meta?.searchText,
           1,
-          config?.page_count,
+          config?.page_count
         );
         if (!response?.error) {
           setList(response?.data?.items);
@@ -279,7 +280,8 @@ const SelectorPage: React.FC = function () {
           canRefresh
           canSearch={config?.type !== "category"}
           data={
-            list?.length ? list.map((listData) => ({
+            list?.length ?
+              list.map((listData) => ({
                   ...listData,
                   [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
                     listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
@@ -288,7 +290,8 @@ const SelectorPage: React.FC = function () {
               : []
           }
           columns={
-            config?.type === "category" ? rootConfig.categorySelectorColumns(config)
+            config?.type === "category" ?
+              rootConfig.categorySelectorColumns(config)
               : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
@@ -303,7 +306,8 @@ const SelectorPage: React.FC = function () {
             config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
           }
           name={
-            config.type === "category" ? {
+            config.type === "category" ?
+              {
                   singular: localeTexts.selectorPage.searchPlaceholder.category,
                   plural: localeTexts.selectorPage.searchPlaceholder.categories,
                 }
@@ -315,7 +319,8 @@ const SelectorPage: React.FC = function () {
           searchPlaceholder={`${
             localeTexts.selectorPage.searchPlaceholder.caption
           } ${
-            config?.type === "category" ? localeTexts.selectorPage.searchPlaceholder.categories
+            config?.type === "category" ?
+              localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
@@ -351,7 +356,8 @@ const SelectorPage: React.FC = function () {
               "#",
               selectedIds?.length.toString()
             )}{" "}
-            {config?.type === "category" ? `${localeTexts.buttonLabels.category}`
+            {config?.type === "category" ?
+              `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
           </Button>
         </ButtonGroup>

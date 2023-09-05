@@ -5,12 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
-import {
-  TypeCategory,
-  KeyOption,
-  TypeProduct,
-  SidebarDataObj,
-} from "../types";
+import { TypeCategory, KeyOption, TypeProduct, SidebarDataObj } from "../types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.

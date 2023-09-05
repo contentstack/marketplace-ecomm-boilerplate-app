@@ -21,7 +21,6 @@ const constants: any = {
     'Content-type': 'application/json',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     'Access-Control-Allow-Headers': 'Content-Type',
-
   },
   LOGS: {
     QUERY_PARAMS: "Request's query-string params are: ",

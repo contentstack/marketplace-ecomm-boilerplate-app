@@ -28,7 +28,8 @@ export default {
       label: "Items Per Page",
       name: "page_count",
       placeholder: "Enter the number items you want to fetch per page.",
-      instruction: "Select the number of items/products to be displayed on a single page while fetching data from your ecommerce site. For example, 1,5,10.",
+      instruction:
+        "Select the number of items/products to be displayed on a single page while fetching data from your ecommerce site. For example, 1,5,10.",
     },
   },
   gridViewDropdown: {
@@ -87,7 +88,7 @@ export default {
   selectorPage: {
     loadingError: "error loading more data",
     tableFetchError: "error fetching table data",
-    initialErr:"error fetching initial data",
+    initialErr: "error fetching initial data",
     errHandling: "error loading more searched data",
     heading: "$ App",
     noImageAvailable: "Product image not available",

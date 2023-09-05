@@ -97,7 +97,10 @@ const ConfigScreen: React.FC = function () {
 
     // salt, iv will be hex 32 in length
     // append them to the ciphertext for use  in decryption
-    const transitmessage =(salt?.toString() ?? "") + (iv?.toString() ?? "") + (encrypted?.toString() ?? "");
+    const transitmessage =
+      (salt?.toString() ?? "") +
+      (iv?.toString() ?? "") +
+      (encrypted?.toString() ?? "");
     return transitmessage;
   };
 
@@ -163,54 +166,59 @@ const ConfigScreen: React.FC = function () {
   /** updateConfig - Function where you should update the State variable
    * Call this function whenever any field value is changed in the DOM
    * */
-  const updateConfig = useCallback(async (e: any) => {
-    // eslint-disable-next-line prefer-const
-    let { name: fieldName, value: fieldValue } = e?.target || {};
-    if (typeof fieldValue === "string") {
-      fieldValue = fieldValue?.trim();
-    }
+  const updateConfig = useCallback(
+    async (e: any) => {
+      // eslint-disable-next-line prefer-const
+      let { name: fieldName, value: fieldValue } = e?.target || {};
+      if (typeof fieldValue === "string") {
+        fieldValue = fieldValue?.trim();
+      }
 
-    const updatedConfig = state?.installationData?.configuration || {};
-    if (
-      configInputFields?.[fieldName]?.saveInConfig ||
-      state?.installationData?.configuration
-    ) {
-      updatedConfig[fieldName] = fieldValue;
-    }
+      const updatedConfig = state?.installationData?.configuration || {};
+      if (
+        configInputFields?.[fieldName]?.saveInConfig ||
+        state?.installationData?.configuration
+      ) {
+        updatedConfig[fieldName] = fieldValue;
+      }
 
-    const newConfiguration = Object.entries(updatedConfig)?.reduce(
-      (obj: any, [key, value]) => {
-        // eslint-disable-next-line no-param-reassign
-        obj[key] =
-          /* eslint-disable */
-          // prettier-ignore
-          value !== ""
+      const newConfiguration = Object.entries(updatedConfig)?.reduce(
+        (obj: any, [key, value]) => {
+          // eslint-disable-next-line no-param-reassign
+          obj[key] =
+            /* eslint-disable */
+            // prettier-ignore
+            value !== ""
               ? ((isConfigSensitive(key))? encryptData(value, password)
                 : value)
               : value;
-        return obj;
-      },
-      {}
-    );
+          return obj;
+        },
+        {}
+      );
 
-    if (typeof state.setInstallationData !== "undefined") {
-      await state.setInstallationData({
-        ...state.installationData,
-        configuration: newConfiguration,
-      });
-    }
-    return true;
-  },[    state.setInstallationData,
-    state.installationData])
+      if (typeof state.setInstallationData !== "undefined") {
+        await state.setInstallationData({
+          ...state.installationData,
+          configuration: newConfiguration,
+        });
+      }
+      return true;
+    },
+    [state.setInstallationData, state.installationData]
+  );
 
-  const updateTypeObj = useCallback(async (list: any[]) => {
-    const customKeysTemp: any[] = [];
-    list?.forEach((key: any) => customKeysTemp.push(key?.value));
-    setCustomKeys(list);
-    const e: any = {};
-    e.target = { name: "custom_keys", value: list };
-    updateConfig(e);
-  }, [updateConfig])
+  const updateTypeObj = useCallback(
+    async (list: any[]) => {
+      const customKeysTemp: any[] = [];
+      list?.forEach((key: any) => customKeysTemp.push(key?.value));
+      setCustomKeys(list);
+      const e: any = {};
+      e.target = { name: "custom_keys", value: list };
+      updateConfig(e);
+    },
+    [updateConfig]
+  );
 
   const updateCustomJSON = useCallback((e: any) => {
     setIsCustom(e?.target?.id !== "wholeJSON");
@@ -245,11 +253,11 @@ const ConfigScreen: React.FC = function () {
                 id={`${objKey}-id`}
                 required
                 value={
-                 ( objValue?.saveInConfig
+                  objValue?.saveInConfig
                     ? state?.installationData?.configuration?.[objKey]
                     : objValue?.saveInServerConfig
                     ? state?.installationData?.serverConfiguration?.[objKey]
-                    : "")
+                    : ""
                 }
                 placeholder={objValue?.placeholderText}
                 name={objKey}

@@ -99,27 +99,27 @@ const DraggableListItem: React.FC<Props> = function ({
       ) : (
         <ActionTooltip list={onHoverActionList}>
           <div role="cell" className="Table__body__column">
-              {image ? (
-                  <div className="product-image">
-                    <img src={image} alt={name} />
-                  </div>
-                ) : (
-                  <div className="product-image">
-                    <Tooltip
-                      content={localeTexts.selectorPage.ImageTooltip.label}
-                      position="top"
-                      showArrow={false}
-                      variantType="light"
-                      type="secondary"
-                    >
-                      <img
-                        src={NoImg}
-                        alt={localeTexts.selectorPage.noImageAvailable}
-                        className="selector-product-image"
-                      />
-                    </Tooltip>
-                  </div>
-                )}
+            {image ? (
+              <div className="product-image">
+                <img src={image} alt={name} />
+              </div>
+            ) : (
+              <div className="product-image">
+                <Tooltip
+                  content={localeTexts.selectorPage.ImageTooltip.label}
+                  position="top"
+                  showArrow={false}
+                  variantType="light"
+                  type="secondary"
+                >
+                  <img
+                    src={NoImg}
+                    alt={localeTexts.selectorPage.noImageAvailable}
+                    className="selector-product-image"
+                  />
+                </Tooltip>
+              </div>
+            )}
           </div>
           <div role="cell" className="Table__body__column">
             {name}

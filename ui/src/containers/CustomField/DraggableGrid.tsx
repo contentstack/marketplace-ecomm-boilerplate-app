@@ -22,7 +22,6 @@ const DraggableGrid: React.FC<Props> = function ({
   setSelectedItems,
   type,
 }) {
-
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(

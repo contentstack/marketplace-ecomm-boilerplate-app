@@ -84,7 +84,9 @@ const DraggableListItemCategory: React.FC<Props> = function ({
     let imageSrc = category?.c_slotBannerImage || category?.image;
 
     if (!imageSrc && category?.c_headerMenuBanner) {
-      imageSrc = category?.c_headerMenuBanner?.match(/(https?:\/\/[^ ]*)/)[1]?.replace(/"/g, "");
+      imageSrc = category?.c_headerMenuBanner
+        ?.match(/(https?:\/\/[^ ]*)/)[1]
+        ?.replace(/"/g, "");
     }
     return imageSrc ? (
       <div className="custom-field-product-image">
