@@ -252,13 +252,13 @@ const ConfigScreen: React.FC = function () {
               <TextInput
                 id={`${objKey}-id`}
                 required
-                value={
-                 ( objValue?.saveInConfig
+                value={(
+                  objValue?.saveInConfig
                     ? state?.installationData?.configuration?.[objKey]
                     : objValue?.saveInServerConfig
                     ? state?.installationData?.serverConfiguration?.[objKey]
-                    : "")
-                }
+                    : ""
+                )}
                 placeholder={objValue?.placeholderText}
                 name={objKey}
                 onChange={updateConfig}
