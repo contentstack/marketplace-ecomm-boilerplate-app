@@ -29,6 +29,7 @@
   },
   "scripts": {
     "start": "export PORT=4000 && react-app-rewired start",
+    "startWin": "SET PORT=4000 && react-app-rewired start",
     "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
     "test": "jest",
     "eject": "react-app-rewired eject",

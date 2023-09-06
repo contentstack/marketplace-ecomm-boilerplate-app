@@ -325,7 +325,15 @@ const ConfigScreen: React.FC = function () {
               </div>
             </>
             <InstructionText>
-              {localeTexts.configPage.saveInEntry.instruction}
+              {localeTexts.configPage.saveInEntry.instruction1}
+              <a
+                href={localeTexts.configPage.saveInEntry.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {localeTexts.configPage.saveInEntry.link}
+              </a>
+              {localeTexts.configPage.saveInEntry.instruction2}
             </InstructionText>
 
             {isCustom ? (
