@@ -13,11 +13,12 @@ export default {
       help: "You can select different ways to store your ecommerce data.",
       placeholder: "Enter the structure of data you want to save in the entry",
       instruction1:
-      "If you select the ''Custom Fields'' option, you can select the structure of the data you want to save in the entry. If 'All Fields' option is selected, you might be able to add limited products in the custom field depending on the size of the data (Refer to the ",
-    link: "Custom Fields Limitations documentation",
-    url: "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/",
-    instruction2:
-      ", for more details). To increase this limit, please contact support.",      wholeJson: "All Fields",
+        "If you select the ''Custom Fields'' option, you can select the structure of the data you want to save in the entry. If 'All Fields' option is selected, you might be able to add limited products in the custom field depending on the size of the data (Refer to the ",
+      link: "Custom Fields Limitations documentation",
+      url: "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/",
+      instruction2:
+        ", for more details). To increase this limit, please contact support.",
+      wholeJson: "All Fields",
       customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
     },
@@ -31,8 +32,7 @@ export default {
       label: "Items Per Page",
       name: "page_count",
       placeholder: "Enter the number items you want to fetch per page.",
-      instruction:
-        "You can enter the page count as numbers eg. 1, 5, 10, etc",
+      instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
     },
   },
   gridViewDropdown: {
