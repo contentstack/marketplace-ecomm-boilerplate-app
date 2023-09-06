@@ -156,10 +156,15 @@ npm i
 cd <APP_DIRECTORY>/ui 
 npm i
 ``` 
-* After you install the packages, run the following command in the ui folder to get started:
+* After you install the packages, run the following command in the ui folder to get started on all the Operation System(except Windows):
 ```
 npm run start
 ```
+* For Windows OS
+```
+npm run startWin
+```
+
 The UI server will start at port 4000.
 * To install the necessary packages for API , navigate to the API folder
 ```
