@@ -27,20 +27,20 @@ marketplace-ecomm-boilerplate-app
     |-- package-lock.json
     |-- package.json
 |-- example
-   |-- sapcc
-      |-- api
-        |-- root_config
-          |-- index.js
-      |-- ui
-        |-- root_config
-          |-- index.js
-   |-- bigcommerce
-      |-- api
-        |-- root_config
-          |-- index.js
-      |-- ui
-        |-- root_config
-          |-- index.js
+    |-- sapcc
+    |  |-- api
+    |  |  |-- root_config
+    |  |   |-- index.js
+    |  |-- ui
+    |  | |-- root_config
+    |  |   |-- index.js
+    |-- bigcommerce
+    |  |-- api
+    |  | |-- root_config
+    |  |   |-- index.js
+    |  |-- ui
+    |  | |-- root_config
+    |  |   |-- index.js
 |-- ui
     |-- public
     |   |-- favicon.ico
