@@ -22,7 +22,7 @@ marketplace-ecomm-boilerplate-app
     |   |-- sapcc
     |   |   |-- root_config
     |   |   |   |-- index.js
-    |   |-- sfcc
+    |   |-- bigcommerce
     |   |   |-- root_config
     |   |   |   |-- index.js
     |-- handler
@@ -38,7 +38,7 @@ marketplace-ecomm-boilerplate-app
     |   |-- sapcc
     |   |   |-- root_config
     |   |   |   |-- index.tsx
-    |   |-- sfcc
+    |   |-- bigcommerce
     |   |    |-- root_config
     |   |    |   |-- index.tsx
     |-- public
@@ -104,6 +104,7 @@ marketplace-ecomm-boilerplate-app
     |   |   |   |-- DeleteModal.tsx
     |   |   |   |-- DraggableGrid.tsx
     |   |   |   |-- DraggableListItem.tsx
+        |   |   |-- DraggableListItemCategory.tsx
     |   |   |   |-- index.spec.tsx
     |   |   |   |-- index.tsx
     |   |   |   |-- ListItem.tsx
@@ -129,6 +130,23 @@ marketplace-ecomm-boilerplate-app
     |   |-- index.tsx
     |   |-- react-app-env.d.ts
     |   |-- reportWebVitals.ts
+    |   |-- .babelrc
+    |-- .eslintrc
+    |-- config.overides.js
+    |-- jest.config.js
+    |-- jest.CSStub.js
+    |-- jest.setup.js
+    |-- package-lock.json
+    |-- package.json
+    |-- tsconfig.json
+    |-- update-app-info.json
+└─ .gitignore
+└─ LICENSE
+└─ README.md
+└─ SECURITY.md
+└─ build.sh
+└─ package.lock.json
+└─ package. json
 ```
 
 </details>
