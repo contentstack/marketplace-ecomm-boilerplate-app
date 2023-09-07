@@ -18,13 +18,6 @@ marketplace-ecomm-boilerplate-app
 |-- api
     |-- constants
     |   |-- index.js
-    |-- example
-    |   |-- sapcc
-    |   |   |-- root_config
-    |   |   |   |-- index.js
-    |   |-- bigcommerce
-    |   |   |-- root_config
-    |   |   |   |-- index.js
     |-- handler
     |   |-- index.js
     |-- root_config
@@ -33,14 +26,22 @@ marketplace-ecomm-boilerplate-app
     |-- index.js
     |-- package-lock.json
     |-- package.json
+|-- example
+    |-- sapcc
+    |  |-- api
+    |  |  |-- root_config
+    |  |   |-- index.js
+    |  |-- ui
+    |  | |-- root_config
+    |  |   |-- index.js
+    |-- bigcommerce
+    |  |-- api
+    |  | |-- root_config
+    |  |   |-- index.js
+    |  |-- ui
+    |  | |-- root_config
+    |  |   |-- index.js
 |-- ui
-    |-- example
-    |   |-- sapcc
-    |   |   |-- root_config
-    |   |   |   |-- index.tsx
-    |   |-- bigcommerce
-    |   |    |-- root_config
-    |   |    |   |-- index.tsx
     |-- public
     |   |-- favicon.ico
     |   |-- index.html
@@ -284,4 +285,4 @@ You need to upload all the files from the build folder on AWS S3 or any static f
 
 For continuing to develop your corresponding ecommerce app, you might have to do changes on root_config files on ui and api as per your needs. Please refer to the TEMPLATE.md file placed in  [`<APP_DIRECTORY>/TEMPLATE.md`](./TEMPLATE.md), to get to know more details about root_config files.
 
-An illustrative file containing samples of ecommerce applications like BigCommerce and SAP Commerce Cloud app has been created within the 'example' directory of both the UI and API components. To confirm the functionality of the application, you can replicate the content of the `example/APPNAME/root_config/index.ts` file and apply it to the `root_config/index.ts of the API and UI` file. Subsequently, you can restart the execution of both the UI and API components.
+An illustrative file containing samples of ecommerce applications like BigCommerce and SAP Commerce Cloud app has been created within the 'example' directory. To confirm the functionality of the application, you can replicate the content of the `example/APPNAME/root_config/index.ts` file and apply it to the `root_config/index.ts of the API and UI` file. Subsequently, you can restart the execution of both the UI and API components.
