@@ -83,18 +83,18 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
       title: localeTexts.customField.listActions.drag,
       action: () => {},
     },
-    {
-      label: <Icon icon="NewTab" size="mini" />,
-      title: localeTexts.customField.listActions.openInConsole.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-      action: () =>
-        window.open(
-          rootConfig.getOpenerLink(categories, config, "category"),
-          "_blank"
-        ),
-    },
+    // {
+    //   label: <Icon icon="NewTab" size="mini" />,
+    //   title: localeTexts.customField.listActions.openInConsole.replace(
+    //     "$",
+    //     rootConfig.ecommerceEnv.APP_ENG_NAME
+    //   ),
+    //   action: () =>
+    //     window.open(
+    //       rootConfig.getOpenerLink(categories, config, "category"),
+    //       "_blank"
+    //     ),
+    // },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: localeTexts.customField.listActions.delete,

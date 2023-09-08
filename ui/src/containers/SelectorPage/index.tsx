@@ -82,10 +82,10 @@ const SelectorPage: React.FC = function () {
         });
         const response = searchTextParam ?
           await search(config, searchTextParam, 1, config?.page_count)
-          : await request(config, config?.type, currentPage + 1);
+          : await request(config, config?.type, currentPage);
         if (searchText) {
           setSearchActive(true);
-          setSearchCurrentPage(1);
+          setSearchCurrentPage(0);
         }
         if (!response?.error) {
           setList(response?.data?.items);
@@ -324,27 +324,27 @@ const SelectorPage: React.FC = function () {
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
-          onHoverActionList={[
-            {
-              label: (
-                <div className="Table_hoverActions">
-                  <Icon
-                    icon="NewTab"
-                    data={localeTexts.selectorPage.hoverActions.replace(
-                      "$",
-                      rootConfig.ecommerceEnv.APP_ENG_NAME
-                    )}
-                  />
-                </div>
-              ),
-              action: (_e: any, data: any) => {
-                window.open(
-                  rootConfig.getOpenerLink(data?.id, config, config?.type),
-                  "_blank"
-                );
-              },
-            },
-          ]}
+          // onHoverActionList={[
+          //   {
+          //     label: (
+          //       <div className="Table_hoverActions">
+          //         <Icon
+          //           icon="NewTab"
+          //           data={localeTexts.selectorPage.hoverActions.replace(
+          //             "$",
+          //             rootConfig.ecommerceEnv.APP_ENG_NAME
+          //           )}
+          //         />
+          //       </div>
+          //     ),
+          //     action: (_e: any, data: any) => {
+          //       window.open(
+          //         rootConfig.getOpenerLink(data?.id, config, config?.type),
+          //         "_blank"
+          //       );
+          //     },
+          //   },
+          // ]}
         />
         <ButtonGroup className="buttonGroup">
           <Button onClick={window.close} buttonType="light">

@@ -19,8 +19,10 @@ import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
 const Product: React.FC<Props> = function ({ product, remove, config }) {
-  const { id, name, description, image, price }: TypeProduct =
-    rootConfig.returnFormattedProduct(product, config);
+  const { id, name, price }: TypeProduct = rootConfig.returnFormattedProduct(
+    product,
+    config
+  );
 
   const {
     attributes,
@@ -56,18 +58,18 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
       title: localeTexts.customField.listActions.drag,
       action: () => {},
     },
-    {
-      label: <Icon icon="NewTab" size="mini" />,
-      title: localeTexts.customField.listActions.openInConsole.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-      action: () =>
-        window.open(
-          rootConfig.getOpenerLink(product, config, "product"),
-          "_blank"
-        ),
-    },
+    // {
+    //   label: <Icon icon="NewTab" size="mini" />,
+    //   title: localeTexts.customField.listActions.openInConsole.replace(
+    //     "$",
+    //     rootConfig.ecommerceEnv.APP_ENG_NAME
+    //   ),
+    //   action: () =>
+    //     window.open(
+    //       rootConfig.getOpenerLink(product, config, "product"),
+    //       "_blank"
+    //     ),
+    // },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: localeTexts.customField.listActions.delete,
@@ -97,9 +99,9 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
           >
             {!error ? (
               <>
-                {image ? (
+                {product?.primaryProductImage?.url ? (
                   <div className="product-image">
-                    <img src={image} alt={name} />
+                    <img src={product?.primaryProductImage?.url} alt={name} />
                   </div>
                 ) : (
                   <div className="product-image">
@@ -130,7 +132,9 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
                   <span
                     className="product-desc"
                     dangerouslySetInnerHTML={{
-                      __html: `${removeHTMLTags(description)}`,
+                      __html: `${removeHTMLTags(
+                        product?.shortPositioningText
+                      )}`,
                     }}
                   />
                 </div>

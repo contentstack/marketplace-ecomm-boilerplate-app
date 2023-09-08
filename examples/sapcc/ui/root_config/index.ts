@@ -70,7 +70,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "/rest/v2/",
     instructionText: "Copy and Paste your API Route",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
   configField2: {
     type: "textInputFields",
@@ -80,7 +80,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "Enter your API Base URL",
     instructionText: "Copy and Paste your API Base URL  without https://",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
   configField3: {
     type: "textInputFields",
@@ -90,15 +90,25 @@ const configureConfigScreen: any = () => ({
     placeholderText: "Enter your Base Site ID",
     instructionText: "Copy and Paste your Base Site ID",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
-  configField4: {
+  // configField4: {
+  //   type: "textInputFields",
+  //   labelText: "Backoffice URL",
+  //   helpText:
+  //     "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
+  //   placeholderText: "Enter your Backoffice URL",
+  //   instructionText: "Copy and Paste your Backoffice URL",
+  //   saveInConfig: true,
+  //   isSensitive: true,
+  // },
+  configField5: {
     type: "textInputFields",
-    labelText: "Backoffice URL",
+    labelText: "API Key",
     helpText:
-      "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
-    placeholderText: "Enter your Backoffice URL",
-    instructionText: "Copy and Paste your Backoffice URL",
+      "You can get your API key from the SAP Commerce Cloud Portal.",
+    placeholderText: "Enter your API key",
+    instructionText: "Copy and Paste your API key",
     saveInConfig: true,
     isSensitive: true,
   },
@@ -108,6 +118,8 @@ const customKeys: any = [
   { label: "code", value: "code" },
   { label: "name", value: "name" },
 ];
+
+const getApiKey = (config: any) => ({ apikey: config?.configField5 });
 
 const openSelectorPage = (config: any) => !!config.configField1;
 
@@ -458,8 +470,8 @@ const getOpenerLink = (id: any, config: any, type: any) => config?.configField4;
 const getSidebarData = (product: any) =>
   <SidebarDataObj[]>[
     {
-      title: "Manufacturer",
-      value: product?.manufacturer,
+      title: "Category name",
+      value: product?.hierarchyCategoryName,
     },
     {
       title: "Available For Pickup",
@@ -468,10 +480,6 @@ const getSidebarData = (product: any) =>
     {
       title: "Configurable",
       value: product?.configurable ? "Yes" : "No",
-    },
-    {
-      title: "Url",
-      value: product?.url,
     },
   ];
 
@@ -485,16 +493,16 @@ const getProductSelectorColumns = (config: any) =>
       default: true,
       disableSortBy: true, // disable sorting of the table with this column
       addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
-      columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
+      columnWidthMultiplier: 2, // multiplies this number with one unit of column with.
       // 0.x means smaller than one specified unit by 0.x times
       // x means bigger that one specified unit by x times
     },
     {
       Header: "Image",
       accessor: (obj: any) =>
-        obj?.images?.[0]?.url
-          ? getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
-          : getImage(obj?.images?.[0]?.url),
+        obj?.primaryProductImage?.url 
+          && getImage(obj?.primaryProductImage?.url),
+
       default: false,
       disableSortBy: true,
       addToColumnSelector: true,
@@ -521,7 +529,7 @@ const getProductSelectorColumns = (config: any) =>
     {
       Header: "Description",
       id: "description",
-      accessor: (obj: any) => wrapWithDiv(obj?.description),
+      accessor: (obj: any) => wrapWithDiv(obj?.shortPositioningText),
       default: false,
       disableSortBy: true,
       addToColumnSelector: true,
@@ -612,6 +620,7 @@ const rootConfig = {
   getSidebarData,
   arrangeList,
   removeItemsFromCustomField,
+  getApiKey
 };
 
 export default rootConfig;
