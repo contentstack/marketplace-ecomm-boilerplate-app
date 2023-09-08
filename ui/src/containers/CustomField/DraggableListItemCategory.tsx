@@ -11,14 +11,14 @@ import { Props } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
-import rootConfig from "../../root_config";
+// import rootConfig from "../../root_config";
 import NoImg from "../../assets/NoImg.svg";
 
 const DraggableListItemCategory: React.FC<Props> = function ({
   product,
   remove,
   id,
-  config,
+  // config,
   type,
 }) {
   const {
@@ -56,15 +56,15 @@ const DraggableListItemCategory: React.FC<Props> = function ({
       title: localeTexts.customField.listActions.drag,
       action: () => {},
     },
-    {
-      label: <Icon icon="NewTab" size="mini" />,
-      title: localeTexts.customField.listActions.openInConsole.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-      action: () =>
-        window.open(rootConfig.getOpenerLink(id, config, "product"), "_blank"),
-    },
+    // {
+    //   label: <Icon icon="NewTab" size="mini" />,
+    //   title: localeTexts.customField.listActions.openInConsole.replace(
+    //     "$",
+    //     rootConfig.ecommerceEnv.APP_ENG_NAME
+    //   ),
+    //   action: () =>
+    //     window.open(rootConfig.getOpenerLink(id, config, "product"), "_blank"),
+    // },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: localeTexts.customField.listActions.delete,

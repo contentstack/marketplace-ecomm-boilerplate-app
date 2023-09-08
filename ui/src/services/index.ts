@@ -3,7 +3,12 @@ import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 
 // common function for an API call to your backend
-const makeAnApiCall = async (url: any, method: any, data: any) => {
+const makeAnApiCall = async (
+  url: any,
+  method: any,
+  data: any,
+  config?: any
+) => {
   try {
     const response = await axios({
       url,
@@ -12,6 +17,7 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         "Access-Control-Allow-Origin": "*",
+        apikey: config?.configField5,
       },
     });
 
