@@ -11,7 +11,7 @@ const root_config: any = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getHeaders: (key?: any) => ({
     "Content-Type": "application/json",
-    "apikey": key?.configField5
+    apikey: key?.configField5,
   }),
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,9 +29,7 @@ const root_config: any = {
     page?: any,
     limit?: any
   ) => {
-    let url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${
-      root_config.URI_ENDPOINTS[query]
-    }`;
+    let url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
 
     if (id) {
       url += `/${id}?${root_config.FIELDS_URL}`;
@@ -51,9 +49,7 @@ const root_config: any = {
   },
 
   getByCategoryIdUrl: (key: any, query: any, category: any) => {
-    const url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${
-      category?.catalogVersionId
-    }/categories/${category?.id}`;
+    const url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${category?.catalogVersionId}/categories/${category?.id}`;
     return url;
   },
 
