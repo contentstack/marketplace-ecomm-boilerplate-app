@@ -21,10 +21,8 @@ const DraggableListItem: React.FC<Props> = function ({
   remove,
   config,
 }) {
-  const { id, name, price }: TypeProduct = rootConfig.returnFormattedProduct(
-    product,
-    config
-  );
+  const { id, name, price, image }: TypeProduct =
+    rootConfig.returnFormattedProduct(product, config);
 
   const {
     attributes,
@@ -59,18 +57,18 @@ const DraggableListItem: React.FC<Props> = function ({
       title: localeTexts.customField.listActions.drag,
       action: () => {},
     },
-    // {
-    //   label: <Icon icon="NewTab" size="mini" />,
-    //   title: localeTexts.customField.listActions.openInConsole.replace(
-    //     "$",
-    //     rootConfig.ecommerceEnv.APP_ENG_NAME
-    //   ),
-    //   action: () =>
-    //     window.open(
-    //       rootConfig.getOpenerLink(product, config, "product"),
-    //       "_blank"
-    //     ),
-    // },
+    {
+      label: <Icon icon="NewTab" size="mini" />,
+      title: localeTexts.customField.listActions.openInConsole.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
+      action: () =>
+        window.open(
+          rootConfig.getOpenerLink(product, config, "product"),
+          "_blank"
+        ),
+    },
     {
       label: <Icon icon="Trash" size="mini" />,
       title: localeTexts.customField.listActions.delete,
@@ -101,9 +99,9 @@ const DraggableListItem: React.FC<Props> = function ({
       ) : (
         <ActionTooltip list={onHoverActionList}>
           <div role="cell" className="Table__body__column">
-            {product?.primaryProductImage?.url ? (
+            {image ? (
               <div className="product-image">
-                <img src={product?.primaryProductImage?.url} alt={name} />
+                <img src={image} alt={name} />
               </div>
             ) : (
               <div className="product-image">
