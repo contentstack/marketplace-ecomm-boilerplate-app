@@ -70,7 +70,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "/rest/v2/",
     instructionText: "Copy and Paste your API Route",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
   configField2: {
     type: "textInputFields",
@@ -80,7 +80,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "Enter your API Base URL",
     instructionText: "Copy and Paste your API Base URL  without https://",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
   configField3: {
     type: "textInputFields",
@@ -90,7 +90,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "Enter your Base Site ID",
     instructionText: "Copy and Paste your Base Site ID",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
   configField4: {
     type: "textInputFields",
@@ -100,7 +100,7 @@ const configureConfigScreen: any = () => ({
     placeholderText: "Enter your Backoffice URL",
     instructionText: "Copy and Paste your Backoffice URL",
     saveInConfig: true,
-    isSensitive: true,
+    isSensitive: false,
   },
 });
 

@@ -251,6 +251,7 @@ const ConfigScreen: React.FC = function () {
               {/* Change the help caption as per your requirement */}
               <TextInput
                 id={`${objKey}-id`}
+                type={objValue?.isSensitive === true && "password"}
                 required
                 value={
                   objValue?.saveInConfig

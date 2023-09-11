@@ -89,7 +89,7 @@ const configureConfigScreen: any = () =>
       placeholderText: "Enter your Store ID",
       instructionText: "Copy and Paste your Store ID",
       saveInConfig: true,
-      isSensitive: true,
+      isSensitive: false,
     },
     configField2: {
       type: "textInputFields",
