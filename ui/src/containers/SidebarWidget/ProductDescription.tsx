@@ -8,9 +8,8 @@ import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
 const ProductDescription: React.FC<Props> = function ({ product, config }) {
-  const { id, name, price, sku }: TypeProduct =
+  const { id, name, description, price, sku, image }: TypeProduct =
     rootConfig.returnFormattedProduct(product, config);
-
   const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
     localeTexts.sidebarWidget.labels;
 
@@ -19,9 +18,9 @@ const ProductDescription: React.FC<Props> = function ({ product, config }) {
       {product && (
         <div className="sidebar-widget-wrapper" id={id} key={id}>
           <div className="product-image">
-            {product?.primaryProductImage?.url ? (
+            {image ? (
               <img
-                src={product?.primaryProductImage?.url}
+                src={image}
                 alt={localeTexts.sidebarWidget.altTexts.product}
               />
             ) : (
@@ -56,11 +55,8 @@ const ProductDescription: React.FC<Props> = function ({ product, config }) {
             <div className="label">{descriptionLbl}</div>
             <div
               className="value"
-              // eslint-disable-next-line @typescript-eslint/naming-convention, react/no-danger
-              dangerouslySetInnerHTML={{
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                __html: product?.shortPositioningText,
-              }}
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              dangerouslySetInnerHTML={{ __html: description }}
             />
           </div>
           <div className="detail-group">

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 const root_config: any = {
+  API_BASE_URL: "https://$/occ/v2/", // this api baseUrl is used in handler/index.js. Please replace the $ with the baseURL value from config in handler
   URI_ENDPOINTS: {
     product: "products",
     category: "catalogs",
@@ -8,10 +9,11 @@ const root_config: any = {
   FIELDS_URL: "fields=FULL",
   SENSITIVE_CONFIG_KEYS: ["base_site_id", "backoffice_url", "base_url"],
 
+  generateBaseURL: (key: any) =>
+    root_config.API_BASE_URL.replace("$", key?.configField2),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getHeaders: (key?: any) => ({
     "Content-Type": "application/json",
-    "apikey": key?.configField5
   }),
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,7 +31,7 @@ const root_config: any = {
     page?: any,
     limit?: any
   ) => {
-    let url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${
+    let url = `${root_config.generateBaseURL(key)}${key?.configField3}/${
       root_config.URI_ENDPOINTS[query]
     }`;
 
@@ -51,7 +53,9 @@ const root_config: any = {
   },
 
   getByCategoryIdUrl: (key: any, query: any, category: any) => {
-    const url = `https://${key.configField2}/${key.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${
+    const url = `${root_config.generateBaseURL(key?.config)}${
+      key?.config.configField3
+    }/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${
       category?.catalogVersionId
     }/categories/${category?.id}`;
     return url;
