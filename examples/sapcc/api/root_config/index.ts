@@ -28,7 +28,7 @@ const root_config: any = {
     page?: any,
     limit?: any
   ) => {
-    let url = `https://${key.configField2}${key.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
+    let url = `https://${key?.configField2}${key?.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
 
     if (id) {
       url += `/${id}?${root_config.FIELDS_URL}`;
@@ -48,8 +48,8 @@ const root_config: any = {
   },
 
   getByCategoryIdUrl: (key: any, query: any, category: any) => {
-    const url = `https://${key.config.configField2}${key.config.configField1}/${
-      key?.config.configField3
+    const url = `https://${key?.config?.configField2}${key?.config?.configField1}/${
+      key?.config?.configField3
     }/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${
       category?.catalogVersionId
     }/categories/${category?.id}`;
