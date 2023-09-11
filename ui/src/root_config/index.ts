@@ -89,7 +89,7 @@ const configureConfigScreen: any = () =>
       placeholderText: "Enter the value",
       instructionText: "Enter the Client ID from your ecommerce platform",
       saveInConfig: true,
-      isSensitive: true,
+      isSensitive: false,
     },
     configField2: {
       type: "textInputFields",
