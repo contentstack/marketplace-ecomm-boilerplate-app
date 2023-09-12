@@ -1,7 +1,6 @@
 /* eslint-disable */
 /* @typescript-eslint/naming-convention */
 const root_config: any = {
-  API_BASE_URL: "https://my.example.com/$/v3/", // add the url of your commerce app api where $ is a value added through Users response
   URI_ENDPOINTS: {
     product: "catalog/products",
     category: "catalog/categories",
