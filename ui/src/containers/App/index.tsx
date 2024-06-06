@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Import React modules */
 import React, { Suspense } from "react";
 import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
@@ -41,12 +42,13 @@ const SidebarExtension = React.lazy(() => import("../SidebarWidget/index"));
 
 function App() {
   //  below function is called for app signing, i.e. for verifying app tokens in ui
-  const [searchParams] = useSearchParams();
-  if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
-    return <div>{localeTexts.appFailedText.signFail}</div>;
-  }
+  // const [searchParams] = useSearchParams();
+  // if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
+  //   return <div>{localeTexts.appFailedText.signFail}</div>;
+  // }
   return (
-    <ErrorBoundary>
+    <div className="app">
+      <ErrorBoundary>
       <MarketplaceAppProvider>
         <Routes>
           <Route path="/" element={<HomeRedirectHandler />} />
@@ -64,7 +66,7 @@ function App() {
             path="/product-field"
             element={
               <Suspense fallback={null}>
-                <ProductCustomFieldExtensionProvider>
+                <ProductCustomFieldExtensionProvider type="product">
                   <ProductExtension />
                 </ProductCustomFieldExtensionProvider>
               </Suspense>
@@ -104,6 +106,7 @@ function App() {
         </Routes>
       </MarketplaceAppProvider>
     </ErrorBoundary>
+    </div>
   );
 }
 

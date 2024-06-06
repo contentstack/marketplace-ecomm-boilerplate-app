@@ -17,6 +17,7 @@ import {
   Form,
 } from "@contentstack/venus-components";
 
+/* eslint-disable */
 /* Import our modules */
 import rootConfig from "../../root_config";
 import { isEmpty, mergeObjects } from "../../common/utils";
@@ -69,7 +70,7 @@ const ConfigScreen: React.FC = function () {
     setInstallationData: (): any => {},
     appSdkInitialized: false,
   });
-
+  console.info("Config screen state", state);
   const isConfigSensitive = (name: string) => {
     let isSensitive = false;
     Object.keys(configInputFields)?.forEach((field: any) => {
@@ -125,6 +126,7 @@ const ConfigScreen: React.FC = function () {
   useEffect(() => {
     ContentstackAppSdk.init()
       .then(async (appSdk) => {
+        console.info("App SDK Initialized", appSdk);
         const sdkConfigData = appSdk?.location?.AppConfigWidget?.installation;
         if (sdkConfigData) {
           const installationDataFromSDK =

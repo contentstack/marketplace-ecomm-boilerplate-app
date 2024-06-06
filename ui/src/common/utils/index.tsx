@@ -88,9 +88,8 @@ const wrapWithDiv = (description: string) =>
   ) : (
     ""
   );
-
-const findProduct = (products: any, id: any) =>
-  products?.find((p: any) => p?.id === id) || {};
+const findProduct = (products: any, id: any, uniqueKey: any) =>
+  products?.find((p: any) => p?.[uniqueKey] === id) || {};
 
 const findProductIndex = (products: any, id: any) =>
   products?.findIndex((p: any) => p?.id === id);
