@@ -17,9 +17,7 @@
     "currency.js": "^2.0.4",
     "jsonwebtoken": "^9.0.1",
     "lodash": "^4.17.21",
-    "node-polyfill-webpack-plugin": "^2.0.1",
     "react": "^18.2.0",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.1",
@@ -28,11 +26,11 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "export PORT=4000 && react-app-rewired start",
-    "startWin": "SET PORT=4000 && react-app-rewired start",
-    "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
+    "start": "export PORT=4000 && react-scripts start",
+    "startWin": "SET PORT=4000 && react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "jest",
-    "eject": "react-app-rewired eject",
+    "eject": "react-scripts eject",
     "prettify": "prettier --write .",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/' --ignore-pattern '.eslintrc.js'",
     "precommit": "npm run prettify && npm run lint:fix"
