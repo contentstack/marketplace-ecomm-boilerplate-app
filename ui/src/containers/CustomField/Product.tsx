@@ -17,8 +17,10 @@ import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
 import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
+import useAppConfig from "../../common/hooks/useAppConfig";
 
-const Product: React.FC<Props> = function ({ product, remove, config }) {
+const Product: React.FC<Props> = function ({ product, remove }) {
+  const config = useAppConfig();
   const { id, name, description, image, price }: TypeProduct =
     rootConfig.returnFormattedProduct(product, config);
 
@@ -29,7 +31,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product?.id || product?.code });
+  } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -43,7 +45,7 @@ const Product: React.FC<Props> = function ({ product, remove, config }) {
     <DeleteModal
       type="Product"
       remove={remove}
-      id={id || product?.code}
+      id={id}
       name={name}
       {...props}
     />

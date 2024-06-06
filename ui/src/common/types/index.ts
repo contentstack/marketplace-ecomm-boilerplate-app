@@ -66,3 +66,7 @@ export declare type ColumnsProp = {
   cssClass?: string;
   columnWidthMultiplier?: number;
 };
+
+export interface KeyValueObj {
+  [key: string]: any;
+}

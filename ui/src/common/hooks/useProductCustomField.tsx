@@ -12,11 +12,30 @@ import {
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useProductCustomField = () => {
-  const { productCustomField, setFieldData, loading } =
-    useContext<ProductCustomFieldExtensionContextType>(
-      ProductCustomFieldExtensionContext
-    );
+  const {
+    setFieldData,
+    selectedIds,
+    selectedItems,
+    setSelectedIds,
+    setSelectedItems,
+    removeIdFromField,
+    handleDragEvent,
+    loading,
+    stackApiKey,
+  } = useContext<ProductCustomFieldExtensionContextType>(
+    ProductCustomFieldExtensionContext
+  );
 
-  return { productCustomField, setFieldData, loading };
+  return {
+    setFieldData,
+    selectedIds,
+    selectedItems,
+    setSelectedIds,
+    setSelectedItems,
+    removeIdFromField,
+    handleDragEvent,
+    loading,
+    stackApiKey,
+  };
 };
 export default useProductCustomField;

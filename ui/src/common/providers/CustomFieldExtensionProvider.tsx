@@ -5,6 +5,7 @@ import { CustomFieldExtensionContext } from "../contexts/customFieldExtensionCon
 
 const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
   const [customField, setCustomField] = useState<unknown>(null);
+  // const [selectedIds, setSelectedIds] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
 
@@ -14,6 +15,7 @@ const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
       if (isEmpty(customField)) {
         setLoading(true);
         const fieldData = await location?.field?.getData();
+        console.info(fieldData, "field data");
         setCustomField(fieldData);
         setLoading(false);
       }

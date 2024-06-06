@@ -14,14 +14,10 @@ import DraggableListItem from "./DraggableListItem";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
 import DraggableListItemCategory from "./DraggableListItemCategory";
+import useProductCustomField from "../../common/hooks/useProductCustomField";
 
-const ListItem: React.FC<Props> = function ({
-  products,
-  remove,
-  config,
-  setSelectedItems,
-  type,
-}) {
+const ListItem: React.FC<Props> = function ({ remove, type }) {
+  const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
 
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -37,11 +33,11 @@ const ListItem: React.FC<Props> = function ({
     const { active, over } = event;
     setActiveId(null);
     if (active?.id !== over?.id) {
-      setSelectedItems(
+      handleDragEvent(
         arrayMove(
-          products,
-          products?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
-          products?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
+          selectedItems,
+          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
+          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
         )
       );
     }
@@ -52,14 +48,14 @@ const ListItem: React.FC<Props> = function ({
       return type === "category" ? (
         <DraggableListItemCategory
           key={activeId}
-          product={findProduct(products, activeId)}
+          category={findProduct(selectedItems, activeId, uniqueKey)}
           id={activeId}
           type={type}
         />
       ) : (
         <DraggableListItem
           key={activeId}
-          product={findProduct(products, activeId)}
+          product={findProduct(selectedItems, activeId, uniqueKey)}
           id={activeId}
           type={type}
         />
@@ -72,7 +68,7 @@ const ListItem: React.FC<Props> = function ({
     <div
       role="table"
       className="Table"
-      style={{ height: products?.length > 2 ? "340px" : "203px" }}
+      style={{ height: selectedItems?.length > 2 ? "340px" : "203px" }}
     >
       <div role="rowgroup">
         <div style={{ position: "relative" }}>
@@ -106,7 +102,7 @@ const ListItem: React.FC<Props> = function ({
             </div>
             <div
               className="Table__body"
-              style={{ height: `${(products?.length || 0) * 60}` }}
+              style={{ height: `${(selectedItems?.length || 0) * 60}` }}
             >
               <DndContext
                 sensors={sensors}
@@ -115,25 +111,23 @@ const ListItem: React.FC<Props> = function ({
                 onDragCancel={() => setActiveId(null)}
                 onDragStart={handleDragStart}
               >
-                <SortableContext items={products}>
+                <SortableContext items={selectedItems}>
                   {type === "category" ?
-                    products?.map((data: any) => (
+                    selectedItems?.map((category: any) => (
                         <DraggableListItemCategory
-                          key={data?.[uniqueKey] || data?.id}
-                          product={data}
-                          id={data?.[uniqueKey] || data?.id}
+                          key={category?.[uniqueKey]}
+                          product={category}
+                          id={category?.[uniqueKey]}
                           remove={remove}
                           type={type}
-                          config={config}
                         />
                       ))
-                    : products?.map((product: any) => (
+                    : selectedItems?.map((product: any) => (
                         <DraggableListItem
                           key={product?.[uniqueKey] || product?.code}
                           product={product}
                           id={product?.[uniqueKey] || product?.code}
                           remove={remove}
-                          config={config}
                           type={type}
                         />
                       ))}

@@ -25,7 +25,7 @@ app.post("/", async (req: any, res: any) => {
   res.status(response.statusCode).json(response.body);
 });
 
-const port: number = 8080;
+const port: number = 8081;
 app.listen(port, () => {
   console.info("Server listening at port ", port);
 });

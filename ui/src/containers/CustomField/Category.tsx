@@ -15,8 +15,9 @@ import NoImg from "../../assets/NoImg.svg";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import constants from "../../common/constants";
+import useAppConfig from "../../common/hooks/useAppConfig";
 
-const Category: React.FC<Props> = function ({ categories, remove, config }) {
+const Category: React.FC<Props> = function ({ categories, remove }) {
   const {
     attributes,
     listeners,
@@ -25,6 +26,7 @@ const Category: React.FC<Props> = function ({ categories, remove, config }) {
     transition,
     isDragging,
   } = useSortable({ id: categories?.id });
+  const config = useAppConfig();
   const { error } = categories;
 
   const getImageUrl = (category: any) => {

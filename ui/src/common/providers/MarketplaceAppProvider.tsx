@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
-import { KeyValueObj } from "../types/type";
+import { KeyValueObj, TypeWarningtext } from "../types";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
+import localeTexts from "../locale/en-us";
+import rootConfig from "../../root_config";
 
 /**
  * Marketplace App Provider
@@ -13,6 +15,14 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<Extension | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
+  const [isInvalidCredentials, setIsInvalidCredentials] =
+    useState<TypeWarningtext>({
+      error: false,
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
+    });
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
@@ -32,6 +42,8 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
     () => ({
       appSdk,
       appConfig,
+      isInvalidCredentials,
+      setIsInvalidCredentials,
     }),
     [appSdk, appConfig]
   );

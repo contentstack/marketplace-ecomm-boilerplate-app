@@ -2,46 +2,25 @@ import React from "react";
 import ListItem from "./ListItem";
 import DraggableGrid from "./DraggableGrid";
 import { Props } from "../../common/types";
-import rootConfig from "../../root_config";
+import useProductCustomField from "../../common/hooks/useProductCustomField";
 
 const RenderList: React.FC<Props> = function ({
   type,
-  selectedItems = [],
-  setSelectedItems,
+  // selectedItems = [],
   childWindow,
-  selectedIds,
-  setSelectedIds,
   view,
-  config,
 }) {
-  const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
+  const { selectedItems, removeIdFromField } = useProductCustomField();
+  // const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
+  console.info(selectedItems, "selectedItems in render list");
   const removeItem = (removeId: any) => {
-    if (
-      rootConfig.ecomCustomFieldCategoryData &&
-      rootConfig.ecomCustomFieldCategoryData === true
-    ) {
-      rootConfig.removeItemsFromCustomField(
-        removeId,
-        selectedIds,
-        setSelectedIds,
-        type,
-        uniqueKey
-      );
-    } else {
-      setSelectedIds(
-        selectedIds?.filter((data: any) => Number(data) !== removeId)
-      );
-    }
+    removeIdFromField(removeId);
     if (childWindow) {
       childWindow.postMessage(
         { message: "remove", removeId },
         window.location.origin
       );
     }
-  };
-  // eslint-disable-next-line
-  const updateList = (list: any) => {
-    setSelectedItems([...list]);
   };
 
   let selectedItemsList;
@@ -55,25 +34,10 @@ const RenderList: React.FC<Props> = function ({
         }
         className="grid-area"
       >
-        <DraggableGrid
-          products={selectedItems}
-          remove={removeItem}
-          config={config}
-          setSelectedItems={updateList}
-          type={type}
-        />
+        <DraggableGrid remove={removeItem} type={type} />
       </div>
     );
-  else
-    selectedItemsList = (
-      <ListItem
-        products={selectedItems}
-        remove={removeItem}
-        config={config}
-        type={type}
-        setSelectedItems={updateList}
-      />
-    );
+  else selectedItemsList = <ListItem remove={removeItem} type={type} />;
 
   return (
     <div className={view === "card" ? "card-view" : "list-view"}>

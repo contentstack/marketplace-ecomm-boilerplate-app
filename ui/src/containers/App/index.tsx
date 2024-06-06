@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Import React modules */
 import React, { Suspense } from "react";
 import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
@@ -41,69 +42,71 @@ const SidebarExtension = React.lazy(() => import("../SidebarWidget/index"));
 
 function App() {
   //  below function is called for app signing, i.e. for verifying app tokens in ui
-  const [searchParams] = useSearchParams();
-  if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
-    return <div>{localeTexts.appFailedText.signFail}</div>;
-  }
+  // const [searchParams] = useSearchParams();
+  // if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
+  //   return <div>{localeTexts.appFailedText.signFail}</div>;
+  // }
   return (
-    <ErrorBoundary>
-      <MarketplaceAppProvider>
-        <Routes>
-          <Route path="/" element={<HomeRedirectHandler />} />
-          <Route
-            path="/config"
-            element={
-              <Suspense fallback={null}>
-                <AppConfigurationExtensionProvider>
-                  <AppConfigurationExtension />
-                </AppConfigurationExtensionProvider>
-              </Suspense>
-            }
-          />
-          <Route
-            path="/product-field"
-            element={
-              <Suspense fallback={null}>
-                <ProductCustomFieldExtensionProvider>
-                  <ProductExtension />
-                </ProductCustomFieldExtensionProvider>
-              </Suspense>
-            }
-          />
-          <Route
-            path="/category-field"
-            element={
-              <Suspense fallback={null}>
-                <CategoryCustomFieldExtensionProvider>
-                  <CategoryExtension />
-                </CategoryCustomFieldExtensionProvider>
-              </Suspense>
-            }
-          />
-          <Route
-            path="/sidebar-widget"
-            element={
-              <Suspense fallback={null}>
-                <EntrySidebarExtensionProvider>
-                  <SidebarExtension />
-                </EntrySidebarExtensionProvider>
-              </Suspense>
-            }
-          />
+    <div className="app">
+      <ErrorBoundary>
+        <MarketplaceAppProvider>
+          <Routes>
+            <Route path="/" element={<HomeRedirectHandler />} />
+            <Route
+              path="/config"
+              element={
+                <Suspense fallback={null}>
+                  <AppConfigurationExtensionProvider>
+                    <AppConfigurationExtension />
+                  </AppConfigurationExtensionProvider>
+                </Suspense>
+              }
+            />
+            <Route
+              path="/product-field"
+              element={
+                <Suspense fallback={null}>
+                  <ProductCustomFieldExtensionProvider type="product">
+                    <ProductExtension />
+                  </ProductCustomFieldExtensionProvider>
+                </Suspense>
+              }
+            />
+            <Route
+              path="/category-field"
+              element={
+                <Suspense fallback={null}>
+                  <CategoryCustomFieldExtensionProvider>
+                    <CategoryExtension />
+                  </CategoryCustomFieldExtensionProvider>
+                </Suspense>
+              }
+            />
+            <Route
+              path="/sidebar-widget"
+              element={
+                <Suspense fallback={null}>
+                  <EntrySidebarExtensionProvider>
+                    <SidebarExtension />
+                  </EntrySidebarExtensionProvider>
+                </Suspense>
+              }
+            />
 
-          <Route
-            path="/selector-page"
-            element={
-              <Suspense fallback={null}>
-                <SelectorExtensionProvider>
-                  <SelectorExtension />
-                </SelectorExtensionProvider>
-              </Suspense>
-            }
-          />
-        </Routes>
-      </MarketplaceAppProvider>
-    </ErrorBoundary>
+            <Route
+              path="/selector-page"
+              element={
+                <Suspense fallback={null}>
+                  <SelectorExtensionProvider>
+                    <SelectorExtension />
+                  </SelectorExtensionProvider>
+                </Suspense>
+              }
+            />
+          </Routes>
+        </MarketplaceAppProvider>
+      </ErrorBoundary>
+    </div>
   );
 }
 
