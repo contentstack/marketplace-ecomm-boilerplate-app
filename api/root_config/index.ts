@@ -1,5 +1,10 @@
 import { _makeApiCall, getById } from "../handler";
-import { getByCategoryIdUrl, getUrl, extractCategories, getHeaders } from "./utilityFunctions";
+import {
+  getByCategoryIdUrl,
+  getUrl,
+  extractCategories,
+  getHeaders,
+} from "./utilityFunctions";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const root_config: any = {
@@ -14,14 +19,14 @@ const root_config: any = {
     getSeparateProductsAndCategories: true,
   },
 
-  getSingleProduct : async (data: any, body: any) => {
-    const url = getUrl({query: data?.query, id: data?.id}, body);
+  getSingleProduct: async (data: any, body: any) => {
+    const url = getUrl({ query: data?.query, id: data?.id }, body);
     const productResponse = await _makeApiCall({
       url,
       method: "GET",
       headers: getHeaders(body),
     });
-    return productResponse
+    return productResponse;
   },
 
   getSelectedProductsById: async (data: any, body: any) => {
@@ -96,46 +101,46 @@ const root_config: any = {
       : response;
   },
 
-  filterProductsByCategory : async (data: any, key: any) => {
+  filterProductsByCategory: async (data: any, key: any) => {
     return _makeApiCall({
-      url: `${root_config.getUrl({query: data?.query}, key)}?categories:in=${
+      url: `${root_config.getUrl({ query: data?.query }, key)}?categories:in=${
         data["categories:in"]
       }&${root_config.PRODUCT_URL_PARAMS}`,
       method: "GET",
       headers: getHeaders(key),
     });
-  }
+  },
 };
 
 const getSingleProduct = async (data: any, body: any) => {
   const url = getUrl({ query: data.query, id: data.id }, body);
   return await _makeApiCall({
-      url,
-      method: "GET",
-      headers: getHeaders(body),
+    url,
+    method: "GET",
+    headers: getHeaders(body),
   });
 };
 
 const getSelectedProductsById = async (data: any, body: any) => {
   const idsArr = data?.["id:in"]?.split(",").filter((id: any) => id !== "");
   return await Promise.all(
-      idsArr?.map((id: any) => getById({ id, query: data?.query }, body))
+    idsArr?.map((id: any) => getById({ id, query: data?.query }, body))
   );
 };
 
 const getSelectedCategoriesById = async (query: any, body: any) => {
   return Promise.all(
-      body?.selectedIDs?.map(async (category: any) => {
-          const url = getByCategoryIdUrl(body, query.query, category);
-          const categoryResponse = await _makeApiCall({
-              url,
-              method: "GET",
-              headers: getHeaders(body),
-          });
-          categoryResponse.catalogId = category?.catalogId;
-          categoryResponse.catalogVersionId = category?.catalogVersionId;
-          return categoryResponse;
-      })
+    body?.selectedIDs?.map(async (category: any) => {
+      const url = getByCategoryIdUrl(body, query.query, category);
+      const categoryResponse = await _makeApiCall({
+        url,
+        method: "GET",
+        headers: getHeaders(body),
+      });
+      categoryResponse.catalogId = category?.catalogId;
+      categoryResponse.catalogVersionId = category?.catalogVersionId;
+      return categoryResponse;
+    })
   );
 };
 
@@ -143,54 +148,53 @@ const getSelectedProductsandCategories = async (data: any, key: any) => {
   let url: string = root_config.getUrl(key, data?.query);
   const urlHasQueryParams: boolean = url.indexOf("?") > -1;
   url += data["id:in"] ?
-      `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
-      : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
+    `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
+    : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
   if (data?.query === "product") url += root_config.PRODUCT_URL_PARAMS;
   if (data?.limit) url += `&limit=${data?.limit}`;
   return _makeApiCall({
-      url,
-      method: "GET",
-      headers: getHeaders(key),
+    url,
+    method: "GET",
+    headers: getHeaders(key),
   });
 };
 
 const getAllProducts = async (data: any, body: any) => {
   return await _makeApiCall({
-      url: getUrl(data, body),
-      method: "GET",
-      headers: getHeaders(body),
+    url: getUrl(data, body),
+    method: "GET",
+    headers: getHeaders(body),
   });
 };
 
 const getAllCategories = async (data: any, body: any) => {
   const response = await _makeApiCall({
-      url: getUrl(data, body),
-      method: "GET",
-      headers: getHeaders(body),
+    url: getUrl(data, body),
+    method: "GET",
+    headers: getHeaders(body),
   });
   return { catalogs: extractCategories(response) };
 };
 
 const getAllProductsAndCategories = async (data: any, body: any) => {
   const response = await _makeApiCall({
-      url: getUrl(data, body),
-      method: "GET",
-      headers: getHeaders(body),
+    url: getUrl(data, body),
+    method: "GET",
+    headers: getHeaders(body),
   });
   return data?.query === "category" ?
-      { catalogs: root_config.extractCategories(response) }
-      : response;
+    { catalogs: root_config.extractCategories(response) }
+    : response;
 };
 
 const filterProductsByCategory = async (data: any, key: any) => {
   return _makeApiCall({
-      url: `${root_config.getUrl({ query: data?.query }, key)}?categories:in=${
-          data["categories:in"]
-      }&${root_config.PRODUCT_URL_PARAMS}`,
-      method: "GET",
-      headers: getHeaders(key),
+    url: `${root_config.getUrl({ query: data?.query }, key)}?categories:in=${
+      data["categories:in"]
+    }&${root_config.PRODUCT_URL_PARAMS}`,
+    method: "GET",
+    headers: getHeaders(key),
   });
 };
-
 
 export default root_config;

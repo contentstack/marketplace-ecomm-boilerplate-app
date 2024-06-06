@@ -10,7 +10,7 @@ const RenderList: React.FC<Props> = function ({
   childWindow,
   view,
 }) {
-  const { selectedItems ,removeIdFromField } = useProductCustomField()
+  const { selectedItems, removeIdFromField } = useProductCustomField();
   // const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   console.info(selectedItems, "selectedItems in render list");
   const removeItem = (removeId: any) => {
@@ -34,19 +34,10 @@ const RenderList: React.FC<Props> = function ({
         }
         className="grid-area"
       >
-        <DraggableGrid
-          remove={removeItem}
-          type={type}
-        />
+        <DraggableGrid remove={removeItem} type={type} />
       </div>
     );
-  else
-    selectedItemsList = (
-      <ListItem
-        remove={removeItem}
-        type={type}
-      />
-    );
+  else selectedItemsList = <ListItem remove={removeItem} type={type} />;
 
   return (
     <div className={view === "card" ? "card-view" : "list-view"}>

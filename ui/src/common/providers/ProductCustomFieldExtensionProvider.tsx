@@ -1,5 +1,11 @@
 /* eslint-disable */
-import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+} from "react";
 import { isEmpty } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
 import { ProductCustomFieldExtensionContext } from "../contexts/productCustomFieldExtensionContext";
@@ -13,7 +19,7 @@ import localeTexts from "../../common/locale/en-us";
 
 const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   children,
-  type
+  type,
 }: any) {
   const { appConfig, appSdk } = useContext(MarketplaceAppContext);
   const { location } = useAppLocation();
@@ -22,10 +28,10 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const {isInvalidCredentials, setIsInvalidCredentials} = useError();
+  const { isInvalidCredentials, setIsInvalidCredentials } = useError();
 
-  const initialLoad =  async() => {
-    if(location) {
+  const initialLoad = async () => {
+    if (location) {
       const { api_key } = appSdk?.stack?._data ?? {};
       setStackApiKey(api_key);
       window.iframeRef = null;
@@ -54,11 +60,11 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
 
   useEffect(() => {
     initialLoad();
-  }, [location, appConfig])
+  }, [location, appConfig]);
 
   useEffect(() => {
-    console.log(appConfig, "app config")
-  }, [appConfig])
+    console.log(appConfig, "app config");
+  }, [appConfig]);
 
   useEffect(() => {
     // if (!state.appSdkInitialized) return;
@@ -88,7 +94,7 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
       !isEmpty(appConfig),
       selectedIdsArray.length,
       !isInvalidCredentials.error
-    )
+    );
     if (
       Array.isArray(selectedIdsArray) &&
       !isEmpty(appConfig) &&
@@ -107,7 +113,7 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
         } else setSelectedItems(res?.data?.items);
       } else {
         res = await getSelectedIDs(appConfig, type, selectedIdsArray);
-        console.info(res, "res in provider")
+        console.info(res, "res in provider");
         if (res?.error) {
           setIsInvalidCredentials(res);
         } else
@@ -139,21 +145,20 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
         selectedIds?.filter((data: any) => Number(data) !== removeId) // remove Number typecast
       );
     }
-  }
+  };
 
   useEffect(() => {
     console.info(selectedIds, "selectedIds in provider");
-    if(selectedIds.length)
-      fetchData(selectedIds);
-  }, [selectedIds])
+    if (selectedIds.length) fetchData(selectedIds);
+  }, [selectedIds]);
 
   useEffect(() => {
     console.info(selectedItems, "selectedItems IN provider");
-  }, [selectedItems])
+  }, [selectedItems]);
 
   const handleDragEvent = (sortedItems: any) => {
     setSelectedItems([...sortedItems]);
-  }
+  };
 
   const installInfo = useMemo(
     () => ({
@@ -166,18 +171,19 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
       removeIdFromField,
       handleDragEvent,
       loading,
-      stackApiKey
+      stackApiKey,
     }),
     [
-      setFieldData, 
-      loading, 
-      selectedIds, 
-      selectedItems, 
-      setSelectedIds, 
-      setSelectedItems, 
-      removeIdFromField, 
+      setFieldData,
+      loading,
+      selectedIds,
+      selectedItems,
+      setSelectedIds,
+      setSelectedItems,
+      removeIdFromField,
       handleDragEvent,
-      stackApiKey]
+      stackApiKey,
+    ]
   );
 
   return (

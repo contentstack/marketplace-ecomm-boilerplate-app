@@ -12,7 +12,8 @@ import {
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useProductCustomField = () => {
-  const { setFieldData,
+  const {
+    setFieldData,
     selectedIds,
     selectedItems,
     setSelectedIds,
@@ -20,12 +21,13 @@ const useProductCustomField = () => {
     removeIdFromField,
     handleDragEvent,
     loading,
-    stackApiKey } =
-    useContext<ProductCustomFieldExtensionContextType>(
-      ProductCustomFieldExtensionContext
-    );
+    stackApiKey,
+  } = useContext<ProductCustomFieldExtensionContextType>(
+    ProductCustomFieldExtensionContext
+  );
 
-  return { setFieldData,
+  return {
+    setFieldData,
     selectedIds,
     selectedItems,
     setSelectedIds,
@@ -33,6 +35,7 @@ const useProductCustomField = () => {
     removeIdFromField,
     handleDragEvent,
     loading,
-    stackApiKey };
+    stackApiKey,
+  };
 };
 export default useProductCustomField;

@@ -21,6 +21,6 @@ export const MarketplaceAppContext =
         "$",
         rootConfig.ecommerceEnv.APP_ENG_NAME
       ),
-    } ,
+    },
     setIsInvalidCredentials: () => {},
   });

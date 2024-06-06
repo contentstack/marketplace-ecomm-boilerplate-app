@@ -8,25 +8,25 @@ that you can use in the root config.
 export const getHeaders = (key?: any) => ({
   // eslint-disable-next-line @typescript-eslint/naming-convention
   "Content-Type": "application/json",
-})
+});
 
 export const getUrl = (
-    {
-      page,
-      limit,
-      query,
-      searchParam,
-      id,
-      searchCategories,
-    }: {
-      page?: number;
-      limit?: number;
-      query?: any;
-      searchParam?: string;
-      id?: any;
-      searchCategories?: any;
-    },
-    key: any
+  {
+    page,
+    limit,
+    query,
+    searchParam,
+    id,
+    searchCategories,
+  }: {
+    page?: number;
+    limit?: number;
+    query?: any;
+    searchParam?: string;
+    id?: any;
+    searchCategories?: any;
+  },
+  key: any
 ) => {
   let url = `https://${key?.configField2}${key?.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
 
@@ -45,9 +45,9 @@ export const getUrl = (
   }
 
   return url;
-}
+};
 
-export const   extractCategories = (categories: any) => {
+export const extractCategories = (categories: any) => {
   function flat(r: any, a: any) {
     const b: any = {};
     Object.keys(a)?.forEach((k: any) => {
@@ -80,13 +80,9 @@ export const   extractCategories = (categories: any) => {
     });
   });
   return mutated;
-}
+};
 
 export const getByCategoryIdUrl = (key: any, query: any, category: any) => {
-    const url = `https://${key?.config?.configField2}${key?.config?.configField1}/${
-      key?.config?.configField3
-    }/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${
-      category?.catalogVersionId
-    }/categories/${category?.id}`;
-    return url;
-}
+  const url = `https://${key?.config?.configField2}${key?.config?.configField1}/${key?.config?.configField3}/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${category?.catalogVersionId}/categories/${category?.id}`;
+  return url;
+};

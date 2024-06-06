@@ -17,10 +17,7 @@ import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 import useAppConfig from "../../common/hooks/useAppConfig";
 
-const DraggableListItem: React.FC<Props> = function ({
-  product,
-  remove,
-}) {
+const DraggableListItem: React.FC<Props> = function ({ product, remove }) {
   const config = useAppConfig();
   const { id, name, price, image }: TypeProduct =
     rootConfig.returnFormattedProduct(product, config);

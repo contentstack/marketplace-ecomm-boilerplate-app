@@ -37,8 +37,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
     selectedItems,
     setSelectedIds,
     setFieldData,
-    stackApiKey
-  } : any = useProductCustomField();
+    stackApiKey,
+  }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   let childWindow: any;
@@ -163,7 +163,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
   // }, [selectedIds]);
 
   useEffect(() => {
-    if(selectedItems?.length) {
+    if (selectedItems?.length) {
       if (type === "category") {
         setFieldData({
           data: selectedItems,
@@ -193,9 +193,9 @@ const CustomField: React.FC<Props> = function ({ type }) {
             type: `${appName}_${type}`,
           });
         }
-      }  
+      }
     }
-    
+
     setLoading(false);
   }, [selectedItems]);
 
@@ -286,8 +286,8 @@ const CustomField: React.FC<Props> = function ({ type }) {
                 >
                   <Icon
                     icon={
-                      view.value === "card" ?
-                        localeTexts.customField.toolTip.thumbnail
+                      view.value === "card"
+                        ? localeTexts.customField.toolTip.thumbnail
                         : localeTexts.customField.toolTip.list
                     }
                     size="original"
@@ -315,7 +315,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
         the configuration details from the appSdk. */
   return (
     <div className="layout-container">
-      {(
+      {
         <div className="field-extension-wrapper">
           {renderCustomField()}
           <Button
@@ -325,12 +325,12 @@ const CustomField: React.FC<Props> = function ({ type }) {
             disabled={isInvalidCredentials.error || loading}
           >
             {localeTexts.customField.addHere}{" "}
-            {type === "category" ?
-              localeTexts.customField.buttonText.category
+            {type === "category"
+              ? localeTexts.customField.buttonText.category
               : localeTexts.customField.buttonText.product}
           </Button>
         </div>
-      )}
+      }
     </div>
   );
 };

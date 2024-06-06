@@ -55,35 +55,36 @@ export const _makeApiCall: any = async (opts: any) => {
 };
 // get a particular product for sidebar widget
 export const getById: any = async (data: any, key: any) => {
-  let response = await root_config.getSingleProduct(data, key)
+  let response = await root_config.getSingleProduct(data, key);
   return response;
-}
+};
 
 // get all products and categories for selector page
-export const getAllProductsAndCategories: any = async (data: any, body: any) => {
+export const getAllProductsAndCategories: any = async (
+  data: any,
+  body: any
+) => {
   let response = {};
-  if(root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories){
-    if(data?.query === "product")
+  if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
+    if (data?.query === "product")
       response = await root_config.getAllProducts(data, body);
-    else
-      response = await root_config.getAllCategories(data, body);
-  }
-  else
-    response = await root_config.getAllProductsAndCategories(data, body);
+    else response = await root_config.getAllCategories(data, body);
+  } else response = await root_config.getAllProductsAndCategories(data, body);
 
   return response;
 };
 
 // get an array of selected products and categories for custom field
-export const getSelectedProductsAndCategories: any = async (data: any, body: any) => {
+export const getSelectedProductsAndCategories: any = async (
+  data: any,
+  body: any
+) => {
   let response = {};
-  if(root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories){
-    if(data?.query === "product")
+  if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
+    if (data?.query === "product")
       response = await root_config.getSelectedProductsById(data, body);
-    else
-      response = await root_config.getSelectedCategoriesById(data, body);
-  }
-  else
+    else response = await root_config.getSelectedCategoriesById(data, body);
+  } else
     response = await root_config.getSelectedProductsandCategories(data, body);
 
   return { [root_config.URI_ENDPOINTS[data?.query]]: response };
@@ -93,5 +94,4 @@ export const getSelectedProductsAndCategories: any = async (data: any, body: any
 export const filterByCategory: any = async (data: any, key: any) => {
   let response = await root_config.filterProductsByCategory(data, key);
   return response;
-}
-  
+};

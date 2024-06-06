@@ -5,10 +5,7 @@ import {
   getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import { 
-  decrypt, 
-  _isEmpty 
-} from "./utils";
+import { decrypt, _isEmpty } from "./utils";
 import root_config from "./root_config";
 
 const handler: any = async ({ queryStringParameters: query, body }: any) => {

@@ -16,11 +16,8 @@ import rootConfig from "../../root_config";
 import Category from "./Category";
 import useProductCustomField from "../../common/hooks/useProductCustomField";
 
-const DraggableGrid: React.FC<Props> = function ({
-  remove,
-  type,
-}) {
-  const { selectedItems ,handleDragEvent } = useProductCustomField();
+const DraggableGrid: React.FC<Props> = function ({ remove, type }) {
+  const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
