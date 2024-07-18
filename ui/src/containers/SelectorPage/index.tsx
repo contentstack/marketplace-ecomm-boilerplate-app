@@ -76,8 +76,8 @@ const SelectorPage: React.FC = function () {
   }, []);
 
   useEffect(() => {
-    console.info(loading)
-  }, [loading])
+    console.info(loading);
+  }, [loading]);
 
   const fetchInitialData = async (meta: any) => {
     try {
@@ -85,7 +85,12 @@ const SelectorPage: React.FC = function () {
         setItemStatus({
           ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = await request(config, config?.type, meta?.skip, meta?.limit);
+        const response = await request(
+          config,
+          config?.type,
+          meta?.skip,
+          meta?.limit
+        );
         console.info(response, "response");
         if (!response?.error) {
           setList(response?.data?.items);
@@ -112,7 +117,7 @@ const SelectorPage: React.FC = function () {
   };
 
   const fetchData = async (meta: any) => {
-    console.info(meta, "META")
+    console.info(meta, "META");
     setMetaState(meta);
     try {
       if (meta?.searchText && !isEmpty(config)) {
@@ -137,7 +142,7 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } else {
-        console.info("in else")
+        console.info("in else");
         setLoading(true);
         setSearchText("");
         fetchInitialData(meta);
@@ -148,9 +153,9 @@ const SelectorPage: React.FC = function () {
   };
 
   useEffect(() => {
-    console.info("config", config)
+    console.info("config", config);
     setLoading(true);
-    fetchData({searchText, skip: 0, limit: 30});
+    fetchData({ searchText, skip: 0, limit: 30 });
   }, [config]);
 
   // const loadMoreItems = async (meta: any) => {
@@ -262,7 +267,7 @@ const SelectorPage: React.FC = function () {
   };
 
   const updateList = (filteredList: any) => {
-    console.info("filteredList", filteredList)
+    console.info("filteredList", filteredList);
   };
 
   const renderSelectorPage = () => {
@@ -274,7 +279,11 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
-        <FilterComponent config={config} meta={metaState} updateList={updateList} />
+        <FilterComponent
+          config={config}
+          meta={metaState}
+          updateList={updateList}
+        />
         <InfiniteScrollTable
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}

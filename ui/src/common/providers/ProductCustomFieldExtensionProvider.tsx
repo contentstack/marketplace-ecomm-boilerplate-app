@@ -22,13 +22,15 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   children,
   type,
 }: any) {
-  const { appConfig, appSdk } = useContext(MarketplaceAppContext);
+  const { appSdk } = useContext(MarketplaceAppContext);
+  const appConfig = useAppConfig();
   const { location } = useAppLocation();
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   const [stackApiKey, setStackApiKey] = useState<any>("");
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [entryIds, setEntryIds] = useState<any[]>([]);
   const { isInvalidCredentials, setIsInvalidCredentials } = useError();
 
   const initialLoad = async () => {
@@ -44,14 +46,21 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
           categoryConfig.customCategoryStructure === true &&
           type === "category"
         ) {
-          console.log(categoryConfig.generateCustomCategoryData(fieldData), "custom category data")
-          setSelectedIds(
-            categoryConfig.generateCustomCategoryData(fieldData)
+          console.log(
+            categoryConfig.generateCustomCategoryData(fieldData),
+            "custom category data"
           );
-        } else setSelectedIds(fieldData?.data?.map((i: any) => i?.[uniqueKey]));
+          setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
+        } else setEntryIds(fieldData?.data?.map((i: any) => i?.[uniqueKey]));
       }
     }
   };
+
+  useEffect(() => {
+    if(!isEmpty(appConfig)) {
+      setSelectedIds(entryIds);
+    }
+  }, [appConfig, entryIds])
 
   useEffect(() => {
     initialLoad();
@@ -110,15 +119,13 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   };
 
   const removeIdFromField = (removeId: any) => {
-    if (
-      typeof rootConfig.removeItemsFromCustomField === "function"
-    ) {
+    if (typeof rootConfig.removeItemsFromCustomField === "function") {
       const selectedIDs = rootConfig.removeItemsFromCustomField(
         removeId,
         selectedIds,
         type,
         uniqueKey
-      )
+      );
       setSelectedIds(selectedIDs);
     } else {
       setSelectedIds(

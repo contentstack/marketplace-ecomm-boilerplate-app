@@ -68,7 +68,11 @@ const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
     : null;
 
 // runes when categoryConfig.customCategoryStructure is true
-const getCustomCategoryData = async (config: any, type: any, selectedIDs: any) => {
+const getCustomCategoryData = async (
+  config: any,
+  type: any,
+  selectedIDs: any
+) => {
   if (Array.isArray(selectedIDs) && selectedIDs.length) {
     const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
       config,
@@ -99,4 +103,10 @@ const search = (
   return makeAnApiCall(apiUrl, "POST", requestData);
 };
 
-export { getSelectedIDs, request, requestCategories, search, getCustomCategoryData };
+export {
+  getSelectedIDs,
+  request,
+  requestCategories,
+  search,
+  getCustomCategoryData,
+};

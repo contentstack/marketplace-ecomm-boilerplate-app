@@ -19,4 +19,4 @@ const categoryConfig = {
   },
 };
 
-export default categoryConfig
+export default categoryConfig;

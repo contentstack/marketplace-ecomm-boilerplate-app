@@ -165,36 +165,36 @@ const CustomField: React.FC<Props> = function ({ type }) {
 
   useEffect(() => {
     // if (selectedItems?.length) {
-      if (type === "category") {
+    if (type === "category") {
+      setFieldData({
+        data: selectedItems,
+        type: `${appName}_${type}`,
+      });
+    } else {
+      // eslint-disable-next-line
+      if (!config?.is_custom_json)
         setFieldData({
           data: selectedItems,
           type: `${appName}_${type}`,
         });
-      } else {
-        // eslint-disable-next-line
-        if (!config?.is_custom_json)
-          setFieldData({
-            data: selectedItems,
-            type: `${appName}_${type}`,
-          });
-        else {
-          const data: any[] = [];
-          const keys = config?.custom_keys?.map((i: any) => i?.value);
-          if (selectedItems?.length) {
-            selectedItems.forEach((item: any) => {
-              const obj1: any = {};
-              keys?.forEach((key: any) => {
-                obj1[key] = item[key];
-              });
-              data.push(obj1);
+      else {
+        const data: any[] = [];
+        const keys = config?.custom_keys?.map((i: any) => i?.value);
+        if (selectedItems?.length) {
+          selectedItems.forEach((item: any) => {
+            const obj1: any = {};
+            keys?.forEach((key: any) => {
+              obj1[key] = item[key];
             });
-          }
-          setFieldData({
-            data,
-            type: `${appName}_${type}`,
+            data.push(obj1);
           });
         }
+        setFieldData({
+          data,
+          type: `${appName}_${type}`,
+        });
       }
+    }
     // }
     setLoading(false);
   }, [selectedItems]);

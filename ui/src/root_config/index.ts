@@ -5,7 +5,13 @@ import { jwtVerify, importJWK, JWTPayload } from "jose";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
-import { TypeCategory, KeyOption, TypeProduct, SidebarDataObj, EcommerceEnv } from "../types";
+import {
+  TypeCategory,
+  KeyOption,
+  TypeProduct,
+  SidebarDataObj,
+  EcommerceEnv,
+} from "../types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.
@@ -30,8 +36,16 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
       // Import the public key from the JWK format
       const publicKey = await importJWK(publicKeyJWK, "RS256");
       // Verify the token
-      const { payload } = await jwtVerify(app_token, publicKey) as { payload: TokenPayload };
-      const { app_uid, installation_uid, organization_uid, user_uid, stack_api_key } = payload;
+      const { payload } = (await jwtVerify(app_token, publicKey)) as {
+        payload: TokenPayload;
+      };
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      } = payload;
       console.info(
         "app token is valid!",
         app_uid,
@@ -113,7 +127,6 @@ const customKeys: any = [
 ];
 
 // const openSelectorPage = (config: any) => !!config.configField1;
-
 
 // change name for this function
 const returnUrl = (response: any) => ({
@@ -411,7 +424,6 @@ const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
 };
 // const ecomCustomFieldCategoryData: any = true;
 
-
 //change the name of this function
 const generateSearchApiUrlAndData = (
   config: any,
@@ -591,11 +603,17 @@ const removeItemsFromCustomField = (
   type: any,
   uniqueKey: any
 ) => {
-  console.log("removeItemsFromCustomField", removeId, selectedIds, type, uniqueKey);
+  console.log(
+    "removeItemsFromCustomField",
+    removeId,
+    selectedIds,
+    type,
+    uniqueKey
+  );
   if (type === "category")
-    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
+    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
 
-  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
+  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId));
 };
 
 const rootConfig = {

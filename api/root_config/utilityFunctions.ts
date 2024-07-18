@@ -33,7 +33,14 @@ export const getUrl = (
   },
   key: any
 ) => {
-  console.info("getUrl called", { skip, limit, query, searchParam, id, searchCategories });
+  console.info("getUrl called", {
+    skip,
+    limit,
+    query,
+    searchParam,
+    id,
+    searchCategories,
+  });
   let url = `https://${key?.configField2}${key?.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
 
   const page = calculatePage(skip, limit);

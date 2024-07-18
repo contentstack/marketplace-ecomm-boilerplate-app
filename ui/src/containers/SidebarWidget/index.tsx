@@ -50,7 +50,7 @@ const SidebarWidget: React.FC = function () {
         const config = await appSdk?.getConfig();
         if (!config?.is_custom_baseUrl) delete config?.api_route;
         const contentTypeUid =
-          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
+          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid || "";
         const data = appSdk?.location?.SidebarWidget?.entry?.getData();
         const contentTypeDetails = await appSdk?.stack?.getContentType(
           contentTypeUid
