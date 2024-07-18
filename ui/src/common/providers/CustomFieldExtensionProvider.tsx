@@ -15,7 +15,7 @@ const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
       if (isEmpty(customField)) {
         setLoading(true);
         const fieldData = await location?.field?.getData();
-        console.info(fieldData, "field data");
+        // console.info(fieldData, "field data");
         setCustomField(fieldData);
         setLoading(false);
       }

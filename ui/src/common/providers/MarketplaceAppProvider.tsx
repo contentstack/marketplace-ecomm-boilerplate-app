@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
-import Extension from "@contentstack/app-sdk/dist/src/extension";
+// import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
 import { KeyValueObj, TypeWarningtext } from "../types";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
@@ -13,7 +13,7 @@ import rootConfig from "../../root_config";
  */
 const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
-  const [appSdk, setAppSdk] = useState<Extension | null>(null);
+  const [appSdk, setAppSdk] = useState<any | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({

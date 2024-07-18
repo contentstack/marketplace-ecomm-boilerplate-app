@@ -1,7 +1,8 @@
 /* eslint-disable */
 /* @typescript-eslint/naming-convention */
 import axios from "axios";
-import jwt, { JwtPayload } from "jsonwebtoken";
+// import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtVerify, importJWK, JWTPayload } from "jose";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
@@ -12,34 +13,42 @@ import Logo from "../assets/Logo.svg";
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
-// this function is used for app signing, i.e. for verifying app tokens in ui
-const verifyAppSigning = async (app_token: any): Promise<boolean> => {
+interface TokenPayload extends JWTPayload {
+  app_uid: string;
+  installation_uid: string;
+  organization_uid: string;
+  user_uid: string;
+  stack_api_key: string;
+}
+
+const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   if (app_token) {
     try {
       const { data }: { data: any } = await axios.get(
         "https://app.contentstack.com/.well-known/public-keys.json"
       );
-      const publicKey = data["signing-key"];
+      const publicKeyJWK = data["signing-key"];
 
-      const {
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key,
-      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
+      // Import the public key from the JWK format
+      const publicKey = await importJWK(publicKeyJWK, "RS256");
 
-      console.info(
-        "app token is valid!",
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key
-      );
+      // Verify the token
+      const { payload } = await jwtVerify(app_token, publicKey) as { payload: TokenPayload };
+
+      const { app_uid, installation_uid, organization_uid, user_uid, stack_api_key } = payload;
+
+      // console.info(
+      //   "app token is valid!",
+      //   app_uid,
+      //   installation_uid,
+      //   organization_uid,
+      //   user_uid,
+      //   stack_api_key
+      // );
     } catch (e) {
       console.error(
-        "app token is invalid or request is not initiated from Contentstack!"
+        "app token is invalid or request is not initiated from Contentstack!",
+        e
       );
       return false;
     }
@@ -53,10 +62,7 @@ const ecommerceEnv: any = {
   REACT_APP_NAME: "sapcommercecloud",
   SELECTOR_PAGE_LOGO: Logo,
   APP_ENG_NAME: "SAP Commerce Cloud",
-  UNIQUE_KEY: {
-    product: "code",
-    category: "id",
-  },
+  UNIQUE_KEY: "id",
   FETCH_PER_PAGE: 20,
 };
 
@@ -64,43 +70,75 @@ const ecommerceEnv: any = {
 const configureConfigScreen: any = () => ({
   configField1: {
     type: "textInputFields",
-    labelText: "API Route",
+    labelText: "IsMultiConfig(config)",
     helpText:
-      "Your API Route is the endpoint from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
-    placeholderText: "/rest/v2/",
-    instructionText: "Copy and Paste your API Route",
+      "Is MultiConfig True and Save In Config Is True",
+    placeholderText: "Is MultiConfig True and Save In Config Is True",
+    instructionText: "Is MultiConfig True and Save In Config Is True",
     saveInConfig: true,
+    saveInServerConfig: false,
     isSensitive: false,
+    isMultiConfig:true
   },
   configField2: {
     type: "textInputFields",
-    labelText: "API Base URL",
+    labelText: "IsMultiConfig(config)",
     helpText:
-      "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
-    placeholderText: "Enter your API Base URL",
-    instructionText: "Copy and Paste your API Base URL  without https://",
+      "Is MultiConfig True and Save In Config Is True",
+    placeholderText: "Is MultiConfig True and Save In Config Is True",
+    instructionText: "Is MultiConfig True and Save In Config Is True",
     saveInConfig: true,
+    saveInServerConfig: false,
     isSensitive: false,
+    isMultiConfig:true
   },
   configField3: {
     type: "textInputFields",
-    labelText: "Base Site ID",
+    labelText: "IsMultiConfig(serverConfig)",
     helpText:
-      "You can find your Base Site ID in the Base Commerce Section of your SAP Backoffice.",
-    placeholderText: "Enter your Base Site ID",
-    instructionText: "Copy and Paste your Base Site ID",
-    saveInConfig: true,
+      "Is MultiConfig True and Save In ServerConfig Is True",
+    placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
+    instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
+    saveInConfig: false,
+    saveInServerConfig: true,
     isSensitive: false,
+    isMultiConfig:true
   },
   configField4: {
     type: "textInputFields",
-    labelText: "Backoffice URL",
+    labelText: "IsMultiConfig(serverConfig)",
     helpText:
-      "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
-    placeholderText: "Enter your Backoffice URL",
-    instructionText: "Copy and Paste your Backoffice URL",
-    saveInConfig: true,
+      "Is MultiConfig True and Save In ServerConfig Is True",
+    placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
+    instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
+    saveInConfig: false,
+    saveInServerConfig: true,
     isSensitive: false,
+    isMultiConfig:true
+  },
+  configField5: {
+    type: "textInputFields",
+    labelText: "IsMultiConfigFalse(serverConfig)",
+    helpText:
+      "Is MultiConfig False and Save In ServerConfig Is True",
+    placeholderText: "Is MultiConfig False and Save In ServerConfig Is True",
+    instructionText: "Is MultiConfig False and Save In ServerConfig Is True",
+    saveInConfig: false,
+    saveInServerConfig: true,
+    isSensitive: false,
+    isMultiConfig:false
+  },
+  configField6: {
+    type: "textInputFields",
+    labelText: "IsMultiConfigFalse(conffig)",
+    helpText:
+      "Is MultiConfig False and Save In Config True",
+    placeholderText: "Is MultiConfig False and Save In Config True",
+    instructionText: "Is MultiConfig False and Save In Config True",
+    saveInConfig: true,
+    saveInServerConfig: false,
+    isSensitive: false,
+    isMultiConfig:false
   },
 });
 
@@ -425,17 +463,18 @@ const generateSearchApiUrlAndData = (
 };
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) =>
-  <TypeProduct>{
-    id: product?.code || "",
-    name: product?.name || "",
-    description: product?.description || "-",
-    image: product?.images?.[0]?.url
-      ? `https://${config?.configField2}${product?.images?.[0]?.url}`
-      : "",
+const returnFormattedProduct = (product: any, config: any) =>{
+
+
+ return <TypeProduct>{
+    id: product?.id || "",
+     name: product?.masterData?.name?.["en"] ?? product?.masterData?.name?.["en-US"] ?? product?.name,
+    description: product?.cs_metadata?.multi_config_name,
+    image:product?.images?.[0]?.src,
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
   };
+}
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
@@ -574,6 +613,7 @@ const arrangeList = (
       }
     });
   });
+  console.info("data",data)
   return data;
 };
 const removeItemsFromCustomField = (

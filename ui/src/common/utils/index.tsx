@@ -32,14 +32,18 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
 };
 
 const mergeObjects = (target: any, source: any) => {
-  Object.keys(source)?.forEach((key) => {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], mergeObjects(target[key], source[key]));
+  const sourceCopy = JSON.parse(JSON.stringify(source)); // Deep copy of source
+
+  Object.keys(sourceCopy)?.forEach((key) => {
+    if (sourceCopy[key] instanceof Object && key in target) {
+      Object.assign(sourceCopy[key], mergeObjects(target[key], sourceCopy[key]));
     }
   });
-  Object.assign(target || {}, source);
+
+  Object.assign(target || {}, sourceCopy);
   return target;
 };
+
 
 const getCurrencySymbol = (code: string) => {
   switch (code) {

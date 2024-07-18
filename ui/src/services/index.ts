@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
@@ -97,4 +98,25 @@ const search = (
   return makeAnApiCall(apiUrl, "POST", requestData);
 };
 
-export { getSelectedIDs, request, requestCategories, search, filter };
+ // Function to make the API call to fetch product data by ID
+ const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
+  // console.info("apiUrl", apiUrl, "apiKey", apiKey, "id", id);
+  try {
+    const response = await axios({
+      url: `https://api.${apiUrl}/${key}/products/${id}`,
+      method: "GET",
+      mode: "cors",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+        Authorization: `Bearer ${apiKey}`,
+      },
+    } as any);
+    return response;
+  } catch (error: any) {
+    // console.info("error", error);
+    return { error: true, message: error.message,id };
+  }
+};
+
+export { getSelectedIDs, request, requestCategories, search, filter,getProductById };

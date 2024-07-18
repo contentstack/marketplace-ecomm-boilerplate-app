@@ -43,6 +43,7 @@ const Product: React.FC<Props> = function ({ product, remove }) {
 
   const deleteModal = (props: any) => (
     <DeleteModal
+      multi_config_name={product?.cs_metadata?.multi_config_name}
       type="Product"
       remove={remove}
       id={id}

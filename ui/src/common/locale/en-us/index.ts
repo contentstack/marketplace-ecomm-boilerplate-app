@@ -34,6 +34,41 @@ export default {
       placeholder: "Enter the number items you want to fetch per page.",
       instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
     },
+    multiConfig:{
+      buttonLabel: "New Configuration",
+      accordionLabel: "Shopify Configuration",
+      setDefaultText: "Set as Default",
+      deleteButtonText: "Delete",
+      accordionSubLabel: "Configure your shopify credentials",
+      multiConfigCheckBoxLabel: "Set as Default",
+      addConfigurationModal: {
+        modalHeaderLabel: "Add Configuration",
+        modalFooterButtonLabel: "Add",
+        multiConfigNameLabel: "Name",
+        multiConfigNameLabelPlaceHolder: "Enter configuration name",
+      },
+      deleteModal: {
+        deleteMessage: "Configuration deleted successfully",
+        confirMationText: "Are you sure you want to delete ",
+        confirMationYesText:
+          " configuration? If yes, type the name of the configuration and press Delete.",
+          cancelButtonText: "cancel",
+          deleteButtonText: "Delete",
+      },
+
+      ErrorMessage:{
+        validInputMsg: "Please enter atleast one multiconfig",
+    oneDefaultMsg: "Please select at least one default configuration.  ",
+    configDefaultMessgae:
+      "Please ensure that the latest Shopify app includes at least one default configuration setting.",
+    emptyConfigNotifyMsg: "Please enter valid inputs for ",
+        oldV2KeysNameMsg:
+        "Please enter unique configuration label name. 'legacy_config' is not allowed.",
+        duplicateLabelError: {
+          msg: "Configuration label name already exists. Please use a different name and try again.",
+        },
+      }
+    }
   },
   gridViewDropdown: {
     Thumbnail: "Thumbnail",
