@@ -11,8 +11,6 @@ const RenderList: React.FC<Props> = function ({
   view,
 }) {
   const { selectedItems, removeIdFromField } = useProductCustomField();
-  // const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
-  console.info(selectedItems, "selectedItems in render list");
   const removeItem = (removeId: any) => {
     removeIdFromField(removeId);
     if (childWindow) {

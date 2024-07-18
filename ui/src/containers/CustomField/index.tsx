@@ -28,6 +28,7 @@ import localeTexts from "../../common/locale/en-us";
 import rootConfig from "../../root_config";
 import useProductCustomField from "../../common/hooks/useProductCustomField";
 import useAppConfig from "../../common/hooks/useAppConfig";
+import categoryConfig from "../../root_config/categories";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
@@ -163,7 +164,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
   // }, [selectedIds]);
 
   useEffect(() => {
-    if (selectedItems?.length) {
+    // if (selectedItems?.length) {
       if (type === "category") {
         setFieldData({
           data: selectedItems,
@@ -171,7 +172,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
         });
       } else {
         // eslint-disable-next-line
-        if (config?.is_custom_json)
+        if (!config?.is_custom_json)
           setFieldData({
             data: selectedItems,
             type: `${appName}_${type}`,
@@ -194,8 +195,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
           });
         }
       }
-    }
-
+    // }
     setLoading(false);
   }, [selectedItems]);
 
@@ -218,10 +218,10 @@ const CustomField: React.FC<Props> = function ({ type }) {
         );
       } else if (data.message === "add") {
         if (
-          rootConfig.ecomCustomFieldCategoryData === true &&
-          type === "category"
+          type === "category" &&
+          categoryConfig.customCategoryStructure === true
         )
-          setEntryIds(data?.dataArr); // FIXME remove this logic
+          setSelectedIds(data?.dataArr); // FIXME remove this logic
         else setSelectedIds(data?.dataIds);
       } else if (data.message === "close") {
         childWindow = undefined;

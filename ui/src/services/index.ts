@@ -1,6 +1,7 @@
 import axios from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
+import categoryConfig from "../root_config/categories";
 
 // common function for an API call to your backend
 const makeAnApiCall = async (url: any, method: any, data: any) => {
@@ -39,9 +40,9 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 };
 
 // get paginated products and categories
-const request = (config: any, requestType: any, page = 1) =>
+const request = (config: any, requestType: any, skip: any, limit: any) =>
   makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=${requestType}&page=${page}&limit=${config?.page_count}`,
+    `${process.env.REACT_APP_API_URL}?query=${requestType}&skip=${skip}&limit=${limit}`,
     "POST",
     config
   );
@@ -66,10 +67,10 @@ const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
       )
     : null;
 
-// filter products with categories
-const filter = async (config: any, type: any, selectedIDs: any) => {
+// runes when categoryConfig.customCategoryStructure is true
+const getCustomCategoryData = async (config: any, type: any, selectedIDs: any) => {
   if (Array.isArray(selectedIDs) && selectedIDs.length) {
-    const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(
+    const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
       config,
       type,
       selectedIDs
@@ -82,14 +83,15 @@ const filter = async (config: any, type: any, selectedIDs: any) => {
 const search = (
   config: any,
   keyword: any,
-  page: any,
+  skip: any,
   limit: any,
   categories = []
 ) => {
+  console.info("search", config, keyword, skip, limit, categories);
   const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
     config,
     keyword,
-    page,
+    skip,
     limit,
     categories
   );
@@ -97,4 +99,4 @@ const search = (
   return makeAnApiCall(apiUrl, "POST", requestData);
 };
 
-export { getSelectedIDs, request, requestCategories, search, filter };
+export { getSelectedIDs, request, requestCategories, search, getCustomCategoryData };

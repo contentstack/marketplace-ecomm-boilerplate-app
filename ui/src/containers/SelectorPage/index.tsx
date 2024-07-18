@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -17,6 +18,7 @@ import { request, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
+import FilterComponent from "../../root_config/selector/FilterComponent";
 
 const SelectorPage: React.FC = function () {
   const [list, setList] = useState<any[]>([]);
@@ -25,16 +27,14 @@ const SelectorPage: React.FC = function () {
   const [selectedData, setSelectedData] = useState<any>({});
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [totalCounts, setTotalCounts] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [itemStatus, setItemStatus] = useState({});
   const [config, setConfig] = useState<any>({});
-  const [searchActive, setSearchActive] = useState(false);
   const [checkedIds, setCheckedIds] = useState([]);
-  const [searchCurrentPage, setSearchCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [hiddenColumns, setHiddenColumns] = useState<any>(
     config?.type === "category" ? [] : ["id"]
   );
+  const [metaState, setMetaState] = useState<any>({});
   const [isInvalidCredentials, setIsInvalidCredentials] =
     useState<TypeWarningtext>({
       error: false,
@@ -42,6 +42,7 @@ const SelectorPage: React.FC = function () {
     });
 
   const tableRef: any = useRef(null);
+
   const getSelectedData = async (_type: any, data = []) => {
     if (data?.length) {
       data?.forEach((id: any) => {
@@ -74,19 +75,18 @@ const SelectorPage: React.FC = function () {
     }
   }, []);
 
-  const fetchInitialData = async (searchTextParam: any) => {
+  useEffect(() => {
+    console.info(loading)
+  }, [loading])
+
+  const fetchInitialData = async (meta: any) => {
     try {
       if (!isEmpty(config)) {
         setItemStatus({
-          ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
+          ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = searchTextParam ?
-          await search(config, searchTextParam, 1, config?.page_count)
-          : await request(config, config?.type, currentPage + 1);
-        if (searchText) {
-          setSearchActive(true);
-          setSearchCurrentPage(1);
-        }
+        const response = await request(config, config?.type, meta?.skip, meta?.limit);
+        console.info(response, "response");
         if (!response?.error) {
           setList(response?.data?.items);
           if (config?.type === "category")
@@ -102,12 +102,6 @@ const SelectorPage: React.FC = function () {
             ),
           });
           setLoading(false);
-          setCurrentPage(response?.data?.meta?.current_page);
-          if (searchText) {
-            setSearchCurrentPage(response?.data?.meta?.current_page);
-          } else {
-            setCurrentPage(response?.data?.meta?.current_page);
-          }
         } else {
           setIsInvalidCredentials(response);
         }
@@ -117,27 +111,24 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchInitialData(searchText);
-  }, [config]);
-
   const fetchData = async (meta: any) => {
+    console.info(meta, "META")
+    setMetaState(meta);
     try {
       if (meta?.searchText && !isEmpty(config)) {
-        setSearchActive(true);
+        console.info(meta?.searchText, "meta?.searchText in IF");
         setSearchText(meta?.searchText);
         const response = await search(
           config,
           meta?.searchText,
-          1,
-          config?.page_count
+          meta?.skip,
+          meta?.limit
         );
+        console.info(response, "response in fetchData");
         if (!response?.error) {
           setList(response?.data?.items);
           setLoading(false);
           setTotalCounts(response?.data?.meta?.total);
-          setSearchCurrentPage(response?.data?.meta?.current_page);
           const responseDataLength = response?.data?.items?.length;
           setItemStatus({
             ...getItemStatusMap({}, "loaded", 0, responseDataLength),
@@ -146,81 +137,90 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } else {
-        setSearchActive(false);
+        console.info("in else")
+        setLoading(true);
         setSearchText("");
-        fetchInitialData("");
+        fetchInitialData(meta);
       }
     } catch (err) {
       console.error(localeTexts.selectorPage.tableFetchError, err);
     }
   };
 
-  const loadMoreItems = async (meta: any) => {
-    if (searchActive && !isEmpty(config)) {
-      try {
-        setItemStatus({
-          ...getItemStatusMap(
-            { ...itemStatus },
-            "loading",
-            meta?.startIndex,
-            meta?.startIndex ?? 0 + Number(config?.page_count)
-          ),
-        });
-        const response = await request(config, config?.type, currentPage + 1);
-        if (!response?.error) {
-          setCurrentPage(response?.data?.meta?.current_page);
-          setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
-          setLoading(false);
-          setItemStatus({
-            ...getItemStatusMap(
-              { ...itemStatus },
-              "loaded",
-              meta?.startIndex,
-              meta?.startIndex ?? 0 + Number(config?.page_count)
-            ),
-          });
-        } else {
-          setIsInvalidCredentials(response);
-        }
-      } catch (err) {
-        console.error(localeTexts.selectorPage.loadingError, err);
-      }
-    } else {
-      try {
-        setItemStatus({
-          ...getItemStatusMap(
-            { ...itemStatus },
-            "loading",
-            meta?.startIndex,
-            meta?.startIndex ?? 0 + Number(config?.page_count)
-          ),
-        });
-        const response = await search(
-          config,
-          meta?.searchText,
-          searchCurrentPage + 1,
-          config?.page_count
-        );
-        if (!response?.error) {
-          setSearchCurrentPage(response?.data?.meta?.current_page);
-          // eslint-disable-next-line no-unsafe-optional-chaining
-          setList([...list, ...response?.data?.items]);
-          setItemStatus({
-            ...getItemStatusMap(
-              { ...itemStatus },
-              "loaded",
-              meta?.startIndex,
-              meta?.startIndex ?? 0 + Number(config?.page_count)
-            ),
-          });
-        } else {
-          setIsInvalidCredentials(response);
-        }
-      } catch (err) {
-        console.error(localeTexts.selectorPage.errHandling, err);
-      }
-    }
-  };
+  useEffect(() => {
+    console.info("config", config)
+    setLoading(true);
+    fetchData({searchText, skip: 0, limit: 30});
+  }, [config]);
+
+  // const loadMoreItems = async (meta: any) => {
+  //   if (searchActive && !isEmpty(config)) {
+  //     try {
+  //       setItemStatus({
+  //         ...getItemStatusMap(
+  //           { ...itemStatus },
+  //           "loading",
+  //           meta?.startIndex,
+  //           meta?.startIndex ?? 0 + Number(config?.page_count)
+  //         ),
+  //       });
+  //       const response = await request(config, config?.type, meta?.skip);
+  //       if (!response?.error) {
+  //         setCurrentPage(response?.data?.meta?.current_page);
+  //         setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
+  //         setLoading(false);
+  //         setItemStatus({
+  //           ...getItemStatusMap(
+  //             { ...itemStatus },
+  //             "loaded",
+  //             meta?.startIndex,
+  //             meta?.startIndex ?? 0 + Number(config?.page_count)
+  //           ),
+  //         });
+  //       } else {
+  //         setIsInvalidCredentials(response);
+  //       }
+  //     } catch (err) {
+  //       console.error(localeTexts.selectorPage.loadingError, err);
+  //     }
+  //   } else {
+  //     try {
+  //       setItemStatus({
+  //         ...getItemStatusMap(
+  //           { ...itemStatus },
+  //           "loading",
+  //           meta?.startIndex,
+  //           meta?.startIndex ?? 0 + Number(config?.page_count)
+  //         ),
+  //       });
+  //       const response = await search(
+  //         config,
+  //         meta?.searchText,
+  //         searchCurrentPage + 1,
+  //         config?.page_count
+  //       );
+  //       if (!response?.error) {
+  //         setSearchCurrentPage(response?.data?.meta?.current_page);
+  //         // eslint-disable-next-line no-unsafe-optional-chaining
+  //         setList([...list, ...response?.data?.items]);
+  //         setItemStatus({
+  //           ...getItemStatusMap(
+  //             { ...itemStatus },
+  //             "loaded",
+  //             meta?.startIndex,
+  //             meta?.startIndex ?? 0 + Number(config?.page_count)
+  //           ),
+  //         });
+  //       } else {
+  //         setIsInvalidCredentials(response);
+  //       }
+  //     } catch (err) {
+  //       console.error(localeTexts.selectorPage.errHandling, err);
+  //     }
+  //   }
+  // };
+
+  // console.info("hello")
 
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
     const selectedObj: any = [];
@@ -261,6 +261,10 @@ const SelectorPage: React.FC = function () {
     setHiddenColumns(hiddenColumnsTemp);
   };
 
+  const updateList = (filteredList: any) => {
+    console.info("filteredList", filteredList)
+  };
+
   const renderSelectorPage = () => {
     if (isInvalidCredentials?.error)
       return (
@@ -270,6 +274,7 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
+        <FilterComponent config={config} meta={metaState} updateList={updateList} />
         <InfiniteScrollTable
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
@@ -279,6 +284,9 @@ const SelectorPage: React.FC = function () {
           viewSelector
           canRefresh
           canSearch={config?.type !== "category"}
+          v2Features={{
+            pagination: true,
+          }}
           data={
             list?.length ?
               list.map((listData) => ({
@@ -300,11 +308,9 @@ const SelectorPage: React.FC = function () {
           itemStatusMap={itemStatus}
           fetchTableData={fetchData}
           totalCounts={totalCounts}
-          loadMoreItems={loadMoreItems}
+          // loadMoreItems={loadMoreItems}
           fixedlistRef={tableRef}
-          minBatchSizeToFetch={
-            config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
-          }
+          minBatchSizeToFetch={30}
           name={
             config.type === "category" ?
               {

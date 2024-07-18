@@ -14,7 +14,6 @@ export interface EcommerceEnv {
     product: string,
     category: string,
   };
-  FETCH_PER_PAGE?: number;
 }
 
 interface KeyOption {

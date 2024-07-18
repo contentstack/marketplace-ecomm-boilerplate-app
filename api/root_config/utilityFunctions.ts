@@ -10,16 +10,21 @@ export const getHeaders = (key?: any) => ({
   "Content-Type": "application/json",
 });
 
+const calculatePage = (skip: any, limit: any) => {
+  const page = Math.floor(skip / limit);
+  return page;
+};
+
 export const getUrl = (
   {
-    page,
+    skip,
     limit,
     query,
     searchParam,
     id,
     searchCategories,
   }: {
-    page?: number;
+    skip?: number;
     limit?: number;
     query?: any;
     searchParam?: string;
@@ -28,8 +33,10 @@ export const getUrl = (
   },
   key: any
 ) => {
+  console.info("getUrl called", { skip, limit, query, searchParam, id, searchCategories });
   let url = `https://${key?.configField2}${key?.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
 
+  const page = calculatePage(skip, limit);
   if (id) {
     url += `/${id}?${root_config.FIELDS_URL}`;
   } else if (searchParam) {

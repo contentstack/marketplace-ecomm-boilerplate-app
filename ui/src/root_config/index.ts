@@ -1,11 +1,11 @@
 /* eslint-disable */
 /* @typescript-eslint/naming-convention */
 import axios from "axios";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtVerify, importJWK, JWTPayload } from "jose";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
-import { TypeCategory, KeyOption, TypeProduct, SidebarDataObj } from "../types";
+import { TypeCategory, KeyOption, TypeProduct, SidebarDataObj, EcommerceEnv } from "../types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.
@@ -13,22 +13,25 @@ import Logo from "../assets/Logo.svg";
     but please do not change any keys or function names.
 */
 // this function is used for app signing, i.e. for verifying app tokens in ui
-const verifyAppSigning = async (app_token: any): Promise<boolean> => {
+interface TokenPayload extends JWTPayload {
+  app_uid: string;
+  installation_uid: string;
+  organization_uid: string;
+  user_uid: string;
+  stack_api_key: string;
+}
+const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   if (app_token) {
     try {
       const { data }: { data: any } = await axios.get(
         "https://app.contentstack.com/.well-known/public-keys.json"
       );
-      const publicKey = data["signing-key"];
-
-      const {
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key,
-      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
-
+      const publicKeyJWK = data["signing-key"];
+      // Import the public key from the JWK format
+      const publicKey = await importJWK(publicKeyJWK, "RS256");
+      // Verify the token
+      const { payload } = await jwtVerify(app_token, publicKey) as { payload: TokenPayload };
+      const { app_uid, installation_uid, organization_uid, user_uid, stack_api_key } = payload;
       console.info(
         "app token is valid!",
         app_uid,
@@ -39,7 +42,8 @@ const verifyAppSigning = async (app_token: any): Promise<boolean> => {
       );
     } catch (e) {
       console.error(
-        "app token is invalid or request is not initiated from Contentstack!"
+        "app token is invalid or request is not initiated from Contentstack!",
+        e
       );
       return false;
     }
@@ -49,7 +53,7 @@ const verifyAppSigning = async (app_token: any): Promise<boolean> => {
   return false;
 };
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
-const ecommerceEnv: any = {
+const ecommerceEnv: EcommerceEnv = {
   REACT_APP_NAME: "sapcommercecloud",
   SELECTOR_PAGE_LOGO: Logo,
   APP_ENG_NAME: "SAP Commerce Cloud",
@@ -57,7 +61,6 @@ const ecommerceEnv: any = {
     product: "code",
     category: "id",
   },
-  FETCH_PER_PAGE: 20,
 };
 
 // example config fields. you will need to use these values in the config screen accordingly.
@@ -109,8 +112,10 @@ const customKeys: any = [
   { label: "name", value: "name" },
 ];
 
-const openSelectorPage = (config: any) => !!config.configField1;
+// const openSelectorPage = (config: any) => !!config.configField1;
 
+
+// change name for this function
 const returnUrl = (response: any) => ({
   items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
   meta: {
@@ -404,12 +409,14 @@ const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
   };
   return { apiUrl, requestData };
 };
-const ecomCustomFieldCategoryData: any = true;
+// const ecomCustomFieldCategoryData: any = true;
 
+
+//change the name of this function
 const generateSearchApiUrlAndData = (
   config: any,
   keyword: any,
-  page: any,
+  skip: any,
   limit: any,
   categories?: any
 ) => {
@@ -419,7 +426,7 @@ const generateSearchApiUrlAndData = (
 
   const queryType = config.type === "category" ? "category" : "product";
 
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&page=${page}&limit=${limit}${catQuery}`;
+  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}${catQuery}`;
 
   return { apiUrl, requestData: config };
 };
@@ -576,21 +583,19 @@ const arrangeList = (
   });
   return data;
 };
+
+// keep this function if you have to remove product/category from custom field as per your own requirement
 const removeItemsFromCustomField = (
   removeId: any,
   selectedIds: any,
-  setSelectedIds: any,
   type: any,
   uniqueKey: any
 ) => {
+  console.log("removeItemsFromCustomField", removeId, selectedIds, type, uniqueKey);
   if (type === "category")
-    setSelectedIds(
-      selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
-    );
-  else
-    setSelectedIds(
-      selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
-    );
+    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
+
+  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
 };
 
 const rootConfig = {
@@ -598,9 +603,8 @@ const rootConfig = {
   ecommerceEnv,
   configureConfigScreen,
   customKeys,
-  openSelectorPage,
+  // openSelectorPage,
   returnUrl,
-  ecomCustomFieldCategoryData,
   getSelectedCategoriesUrl,
   generateSearchApiUrlAndData,
   returnFormattedProduct,
