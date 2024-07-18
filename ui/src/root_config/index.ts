@@ -33,9 +33,17 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
       const publicKey = await importJWK(publicKeyJWK, "RS256");
 
       // Verify the token
-      const { payload } = await jwtVerify(app_token, publicKey) as { payload: TokenPayload };
+      const { payload } = (await jwtVerify(app_token, publicKey)) as {
+        payload: TokenPayload;
+      };
 
-      const { app_uid, installation_uid, organization_uid, user_uid, stack_api_key } = payload;
+      const {
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key,
+      } = payload;
 
       // console.info(
       //   "app token is valid!",
@@ -71,74 +79,68 @@ const configureConfigScreen: any = () => ({
   configField1: {
     type: "textInputFields",
     labelText: "IsMultiConfig(config)",
-    helpText:
-      "Is MultiConfig True and Save In Config Is True",
+    helpText: "Is MultiConfig True and Save In Config Is True",
     placeholderText: "Is MultiConfig True and Save In Config Is True",
     instructionText: "Is MultiConfig True and Save In Config Is True",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
-    isMultiConfig:true
+    isMultiConfig: true,
   },
   configField2: {
     type: "textInputFields",
     labelText: "IsMultiConfig(config)",
-    helpText:
-      "Is MultiConfig True and Save In Config Is True",
+    helpText: "Is MultiConfig True and Save In Config Is True",
     placeholderText: "Is MultiConfig True and Save In Config Is True",
     instructionText: "Is MultiConfig True and Save In Config Is True",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
-    isMultiConfig:true
+    isMultiConfig: true,
   },
   configField3: {
     type: "textInputFields",
     labelText: "IsMultiConfig(serverConfig)",
-    helpText:
-      "Is MultiConfig True and Save In ServerConfig Is True",
+    helpText: "Is MultiConfig True and Save In ServerConfig Is True",
     placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
     instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
     saveInConfig: false,
     saveInServerConfig: true,
     isSensitive: false,
-    isMultiConfig:true
+    isMultiConfig: true,
   },
   configField4: {
     type: "textInputFields",
     labelText: "IsMultiConfig(serverConfig)",
-    helpText:
-      "Is MultiConfig True and Save In ServerConfig Is True",
+    helpText: "Is MultiConfig True and Save In ServerConfig Is True",
     placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
     instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
     saveInConfig: false,
     saveInServerConfig: true,
     isSensitive: false,
-    isMultiConfig:true
+    isMultiConfig: true,
   },
   configField5: {
     type: "textInputFields",
     labelText: "IsMultiConfigFalse(serverConfig)",
-    helpText:
-      "Is MultiConfig False and Save In ServerConfig Is True",
+    helpText: "Is MultiConfig False and Save In ServerConfig Is True",
     placeholderText: "Is MultiConfig False and Save In ServerConfig Is True",
     instructionText: "Is MultiConfig False and Save In ServerConfig Is True",
     saveInConfig: false,
     saveInServerConfig: true,
     isSensitive: false,
-    isMultiConfig:false
+    isMultiConfig: false,
   },
   configField6: {
     type: "textInputFields",
     labelText: "IsMultiConfigFalse(conffig)",
-    helpText:
-      "Is MultiConfig False and Save In Config True",
+    helpText: "Is MultiConfig False and Save In Config True",
     placeholderText: "Is MultiConfig False and Save In Config True",
     instructionText: "Is MultiConfig False and Save In Config True",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
-    isMultiConfig:false
+    isMultiConfig: false,
   },
 });
 
@@ -463,18 +465,19 @@ const generateSearchApiUrlAndData = (
 };
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) =>{
-
-
- return <TypeProduct>{
+const returnFormattedProduct = (product: any, config: any) => {
+  return <TypeProduct>{
     id: product?.id || "",
-     name: product?.masterData?.name?.["en"] ?? product?.masterData?.name?.["en-US"] ?? product?.name,
+    name:
+      product?.masterData?.name?.["en"] ??
+      product?.masterData?.name?.["en-US"] ??
+      product?.name,
     description: product?.cs_metadata?.multi_config_name,
-    image:product?.images?.[0]?.src,
+    image: product?.images?.[0]?.src,
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
   };
-}
+};
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
@@ -613,7 +616,7 @@ const arrangeList = (
       }
     });
   });
-  console.info("data",data)
+  console.info("data", data);
   return data;
 };
 const removeItemsFromCustomField = (

@@ -10,13 +10,13 @@ const RenderList: React.FC<Props> = function ({
   childWindow,
   view,
 }) {
-// console.info("RenderList",RenderList)
+  // console.info("RenderList",RenderList)
   const { selectedItems, removeIdFromField } = useProductCustomField();
   // const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   // console.info(selectedItems, "selectedItems in render list");
-  const removeItem = (removeId: any,multiConfigName:any) => {
-    console.info("multiConfigName",multiConfigName)
-    removeIdFromField(removeId,multiConfigName);
+  const removeItem = (removeId: any, multiConfigName: any) => {
+    console.info("multiConfigName", multiConfigName);
+    removeIdFromField(removeId, multiConfigName);
     if (childWindow) {
       childWindow.postMessage(
         { message: "remove", removeId },
@@ -30,8 +30,8 @@ const RenderList: React.FC<Props> = function ({
     selectedItemsList = (
       <div
         style={
-          selectedItems?.length > 2 ?
-            { height: "339.5px" }
+          selectedItems?.length > 2
+            ? { height: "339.5px" }
             : { height: "203px" }
         }
         className="grid-area"

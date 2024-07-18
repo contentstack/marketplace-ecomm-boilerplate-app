@@ -25,8 +25,7 @@ const SidebarWidget: React.FC = function () {
   });
   const [loading, setLoading] = useState(true);
   const [productLoading, setProductLoading] = useState(false);
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts?.warnings?.invalidCredentials.replace(
         "$",
@@ -40,8 +39,7 @@ const SidebarWidget: React.FC = function () {
   const [productDropdown, setProductDropdown] = useState<any>([]);
   const [isProduct, setIsProduct] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedDropdownProduct, setselectedDropdownProduct] =
-    useState<any>("");
+  const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
   useEffect(() => {
@@ -49,8 +47,7 @@ const SidebarWidget: React.FC = function () {
       .then(async (appSdk) => {
         const config = await appSdk?.getConfig();
         if (!config?.is_custom_baseUrl) delete config?.api_route;
-        const contentTypeUid:any =
-          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
+        const contentTypeUid: any =          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
         const data = appSdk?.location?.SidebarWidget?.entry?.getData();
         const contentTypeDetails = await appSdk?.stack?.getContentType(
           contentTypeUid
@@ -106,8 +103,8 @@ const SidebarWidget: React.FC = function () {
     if (!state.appSdkInitialized) return;
     const sapProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
-        entryData?.[i]?.type ===
-        `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+        entryData?.[i]?.type
+        === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
     );
     const fieldListTemp: any = [];
     sapProductsField?.forEach((field: string) => {

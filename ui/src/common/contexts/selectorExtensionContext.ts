@@ -5,8 +5,7 @@ export type SelectorExtensionContextType = {
   loading: boolean;
 };
 
-export const SelectorExtensionContext =
-  React.createContext<SelectorExtensionContextType>({
+export const SelectorExtensionContext =  React.createContext<SelectorExtensionContextType>({
     listData: {},
     loading: false,
   });

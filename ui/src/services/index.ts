@@ -57,8 +57,8 @@ const requestCategories = (config: any) =>
 
 // get selected products/categories
 const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
-  Array.isArray(selectedIDs) && selectedIDs?.length ?
-    makeAnApiCall(
+  Array.isArray(selectedIDs) && selectedIDs?.length
+    ? makeAnApiCall(
         `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${
           selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
         }`,
@@ -98,8 +98,8 @@ const search = (
   return makeAnApiCall(apiUrl, "POST", requestData);
 };
 
- // Function to make the API call to fetch product data by ID
- const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
+// Function to make the API call to fetch product data by ID
+const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
   // console.info("apiUrl", apiUrl, "apiKey", apiKey, "id", id);
   try {
     const response = await axios({
@@ -115,8 +115,15 @@ const search = (
     return response;
   } catch (error: any) {
     // console.info("error", error);
-    return { error: true, message: error.message,id };
+    return { error: true, message: error.message, id };
   }
 };
 
-export { getSelectedIDs, request, requestCategories, search, filter,getProductById };
+export {
+  getSelectedIDs,
+  request,
+  requestCategories,
+  search,
+  filter,
+  getProductById,
+};

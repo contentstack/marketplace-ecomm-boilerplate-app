@@ -18,7 +18,7 @@ const DeleteModal: React.FC<Props> = function ({
   name: itemName,
   ...props
 }) {
-  console.info("multi_config_name",multi_config_name)
+  console.info("multi_config_name", multi_config_name);
   return (
     <>
       <ModalHeader
@@ -41,7 +41,7 @@ const DeleteModal: React.FC<Props> = function ({
             buttonType="delete"
             icon="TrashMini"
             onClick={() => {
-              remove(id,multi_config_name);
+              remove(id, multi_config_name);
               props.closeModal();
             }}
           >

@@ -28,18 +28,16 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     isOpen,
     onRequestClose,
   } = props;
-  const [enteredConfigurationName, setEnteredConfigurationName] =
-    useState<any>("");
-  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =
-    useState<boolean>(false);
+  const [enteredConfigurationName, setEnteredConfigurationName] =    useState<any>("");
+  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =    useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onInputChange = (e: any) => {
     const trimmedValue = e?.target?.value?.trim();
     setEnteredConfigurationName(trimmedValue);
 
     if (
-      Object.keys(addMultiConfigurationData)?.length &&
-      trimmedValue !== "shopifystore"
+      Object.keys(addMultiConfigurationData)?.length
+      && trimmedValue !== "shopifystore"
     ) {
       const isDuplicate = Object.keys(addMultiConfigurationData).some(
         (addMultiConfigurationKeys: string) =>
@@ -66,7 +64,8 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
             <div className="ReactModal__Content ReactModal__Content--after-open  ReactModal__Content--medium ">
               <ModalHeader
                 title={
-                  localeTexts.configPage.multiConfig.addConfigurationModal.modalHeaderLabel
+                  localeTexts.configPage.multiConfig.addConfigurationModal
+                    .modalHeaderLabel
                 }
                 closeModal={onRequestClose}
                 closeIconTestId="cs-default-header-close"
@@ -75,7 +74,10 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                 <Field>
                   <FieldLabel required htmlFor="multiconfiglabel">
                     {" "}
-                    {localeTexts.configPage.multiConfig.addConfigurationModal.multiConfigNameLabel}
+                    {
+                      localeTexts.configPage.multiConfig.addConfigurationModal
+                        .multiConfigNameLabel
+                    }
                   </FieldLabel>
                   <TextInput
                     required
@@ -88,12 +90,14 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                     onChange={onInputChange}
                     version="v2"
                   />
-                  {hasDuplicateConfigurationName ||
-                  enteredConfigurationName === "legacy_config" ? (
+                  {hasDuplicateConfigurationName
+                  || enteredConfigurationName === "legacy_config" ? (
                     <span className="errorcontainer">
-                      {enteredConfigurationName === "legacy_config" ?
-                        localeTexts.configPage.multiConfig.ErrorMessage.oldV2KeysNameMsg
-                        : localeTexts.configPage.multiConfig.ErrorMessage.duplicateLabelError.msg}
+                      {enteredConfigurationName === "legacy_config"
+                        ? localeTexts.configPage.multiConfig.ErrorMessage
+                            .oldV2KeysNameMsg
+                        : localeTexts.configPage.multiConfig.ErrorMessage
+                            .duplicateLabelError.msg}
                     </span>
                   ) : (
                     ""
@@ -108,9 +112,9 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                   <Button
                     onClick={onSaveConfiguration}
                     disabled={
-                      !enteredConfigurationName ||
-                      hasDuplicateConfigurationName ||
-                      enteredConfigurationName === "legacy_config"
+                      !enteredConfigurationName
+                      || hasDuplicateConfigurationName
+                      || enteredConfigurationName === "legacy_config"
                     }
                   >
                     {

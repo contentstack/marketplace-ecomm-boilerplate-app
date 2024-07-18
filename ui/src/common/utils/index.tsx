@@ -5,10 +5,10 @@ import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
 
 const isEmpty = (val: any): boolean =>
-  val === undefined ||
-  val === null ||
-  (typeof val === "object" && !Object.keys(val)?.length) ||
-  (typeof val === "string" && !val.trim().length);
+  val === undefined
+  || val === null
+  || (typeof val === "object" && !Object.keys(val)?.length)
+  || (typeof val === "string" && !val.trim().length);
 
 const filterFetchedArray = (array: any[]) => {
   const tempFetchedList = [...array];
@@ -23,11 +23,11 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   return window.open(
     windowDetails.url,
     windowDetails.title,
-    "toolbar=no, location=no, directories=no, " +
-      `status=no, menubar=no, scrollbars=no, resizable=no, ` +
-      `copyhistory=no, width=${windowDetails.w}, ` +
-      `height=${windowDetails.h}, ` +
-      `top=${top}, left=${left}`
+    "toolbar=no, location=no, directories=no, "
+      + `status=no, menubar=no, scrollbars=no, resizable=no, `
+      + `copyhistory=no, width=${windowDetails.w}, `
+      + `height=${windowDetails.h}, `
+      + `top=${top}, left=${left}`
   );
 };
 
@@ -36,14 +36,16 @@ const mergeObjects = (target: any, source: any) => {
 
   Object.keys(sourceCopy)?.forEach((key) => {
     if (sourceCopy[key] instanceof Object && key in target) {
-      Object.assign(sourceCopy[key], mergeObjects(target[key], sourceCopy[key]));
+      Object.assign(
+        sourceCopy[key],
+        mergeObjects(target[key], sourceCopy[key])
+      );
     }
   });
 
   Object.assign(target || {}, sourceCopy);
   return target;
 };
-
 
 const getCurrencySymbol = (code: string) => {
   switch (code) {
@@ -124,8 +126,8 @@ const getImage = (url: string, customField: boolean = false) =>
           src={NoImg}
           alt={localeTexts.selectorPage.noImageAvailable}
           className={
-            customField ?
-              "custom-field-product-image"
+            customField
+              ? "custom-field-product-image"
               : "selector-product-image"
           }
         />
@@ -146,8 +148,8 @@ const productColumns = [
   {
     Header: "Image",
     accessor: (obj: any) =>
-      obj?.images?.[0]?.url ?
-        getImage(
+      obj?.images?.[0]?.url
+        ? getImage(
             `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
           )
         : getImage(obj?.images?.[0]?.url),

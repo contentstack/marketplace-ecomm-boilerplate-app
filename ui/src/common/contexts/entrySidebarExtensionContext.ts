@@ -5,8 +5,7 @@ export type EntrySidebarExtensionContextType = {
   loading: boolean;
 };
 
-export const EntrySidebarExtensionContext =
-  React.createContext<EntrySidebarExtensionContextType>({
+export const EntrySidebarExtensionContext =  React.createContext<EntrySidebarExtensionContextType>({
     entryData: {},
     loading: false,
   });

@@ -35,11 +35,13 @@ export const DeleteModalConfig = React.memo((props: any) => {
   const handleDeleteConfirmation = () => {
     if (!isConfirmationDisabled) {
       if (
-        deleteConfirmationName &&
-        deleteConfirmationName === props.multiConfigLabelName
+        deleteConfirmationName
+        && deleteConfirmationName === props.multiConfigLabelName
       ) {
         props.removeAccordion();
-        toastMessage({ text: localtext.configPage.multiConfig.deleteModal.deleteMessage });
+        toastMessage({
+          text: localtext.configPage.multiConfig.deleteModal.deleteMessage,
+        });
       } else {
         console.error("Validation error: Config Names don't match");
       }

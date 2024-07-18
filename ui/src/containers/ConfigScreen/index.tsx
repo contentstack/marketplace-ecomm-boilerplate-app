@@ -38,7 +38,7 @@ const ConfigScreen: React.FC = function () {
   // config objs to be saved in configuration
   const saveInConfig: any = {};
   // config objs to be saved in serverConfiguration
-  const saveInServerConfig: any = {}
+  const saveInServerConfig: any = {};
 
   Object.keys(configInputFields)?.forEach((field: any) => {
     if (configInputFields?.[field]?.saveInConfig)
@@ -70,7 +70,7 @@ const ConfigScreen: React.FC = function () {
         is_custom_json: false,
         custom_keys: rootConfig.customKeys,
         multi_config_keys: {},
-        default_multi_config_key: ""
+        default_multi_config_key: "",
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
       serverConfiguration: {
@@ -85,12 +85,11 @@ const ConfigScreen: React.FC = function () {
         multi_config_keys: {},
       },
     },
-    setInstallationData: (): any => { },
+    setInstallationData: (): any => {},
     appSdkInitialized: false,
   });
   const [sdkConfigDataState, setSdkConfigDataState] = useState<any>("");
   const [isModalOpen, setModalOpen] = useState(false);
-
 
   const categorizeConfigFields = (configFields: any) => {
     const isMultiConfigAndSaveInServerConfig: any = {};
@@ -137,16 +136,17 @@ const ConfigScreen: React.FC = function () {
           multi_config_keys: {
             ...prevState?.installationData?.configuration?.multi_config_keys,
             [accordionId]: {
-              ...result.isMultiConfigAndSaveInConfig
+              ...result.isMultiConfigAndSaveInConfig,
             },
           },
         },
         serverConfiguration: {
           ...prevState?.installationData?.serverConfiguration,
           multi_config_keys: {
-            ...prevState?.installationData?.serverConfiguration?.multi_config_keys,
+            ...prevState?.installationData?.serverConfiguration
+              ?.multi_config_keys,
             [accordionId]: {
-              ...result.isMultiConfigAndSaveInServerConfig
+              ...result.isMultiConfigAndSaveInServerConfig,
             },
           },
         },
@@ -160,7 +160,7 @@ const ConfigScreen: React.FC = function () {
         multi_config_keys: {
           ...state?.installationData?.configuration?.multi_config_keys,
           [accordionId]: {
-            ...result.isMultiConfigAndSaveInConfig
+            ...result.isMultiConfigAndSaveInConfig,
           },
         },
       },
@@ -169,7 +169,7 @@ const ConfigScreen: React.FC = function () {
         multi_config_keys: {
           ...state?.installationData?.serverConfiguration?.multi_config_keys,
           [accordionId]: {
-            ...result.isMultiConfigAndSaveInServerConfig
+            ...result.isMultiConfigAndSaveInServerConfig,
           },
         },
       },
@@ -216,12 +216,20 @@ const ConfigScreen: React.FC = function () {
       return invalidKeys;
     };
 
-    const configInvalidKeys = checkMultiConfigKeys(configurationData?.multi_config_keys);
-    const serverInvalidKeys = checkMultiConfigKeys(serverConfiguration?.multi_config_keys);
+    const configInvalidKeys = checkMultiConfigKeys(
+      configurationData?.multi_config_keys
+    );
+    const serverInvalidKeys = checkMultiConfigKeys(
+      serverConfiguration?.multi_config_keys
+    );
 
     const invalidKeys: { source: string; keys: string[] }[] = [
-      ...Object.entries(configInvalidKeys).filter(([keys]) => keys.length > 0).map(([source, keys]) => ({ source, keys })),
-      ...Object.entries(serverInvalidKeys).filter(([keys]) => keys.length > 0).map(([source, keys]) => ({ source, keys })),
+      ...Object.entries(configInvalidKeys)
+        .filter(([keys]) => keys.length > 0)
+        .map(([source, keys]) => ({ source, keys })),
+      ...Object.entries(serverInvalidKeys)
+        .filter(([keys]) => keys.length > 0)
+        .map(([source, keys]) => ({ source, keys })),
     ];
 
     const isValid = invalidKeys.length === 0;
@@ -229,80 +237,90 @@ const ConfigScreen: React.FC = function () {
     return { isValid, invalidKeys };
   };
 
-
-
   const checkIsDefaultInitial = (configurationData: any) => {
     const { default_multi_config_key } = configurationData;
     if (default_multi_config_key === "") {
-      return true
+      return true;
     }
-    return false
+    return false;
   };
 
   React.useEffect(() => {
     // console.info("state?.installation?.Data",state?.installationData)
     if (sdkConfigDataState) {
-      const isValid = checkValidity(state?.installationData?.configuration, state?.installationData?.serverConfiguration);
+      const isValid = checkValidity(
+        state?.installationData?.configuration,
+        state?.installationData?.serverConfiguration
+      );
       // console.info("isValid", isValid)
       const isDefaultKeyExist = checkIsDefaultInitial(
         state?.installationData?.configuration
       );
-      const isMultiConfigKeysEmpty = Object.keys(state?.installationData?.configuration.multi_config_keys).length === 0;
-
+      const isMultiConfigKeysEmpty =        Object.keys(state?.installationData?.configuration.multi_config_keys)
+          .length === 0;
 
       if (isMultiConfigKeysEmpty) {
         sdkConfigDataState.setValidity(false, {
-          message: localeTexts.configPage.multiConfig.ErrorMessage.validInputMsg,
+          message:
+            localeTexts.configPage.multiConfig.ErrorMessage.validInputMsg,
         });
-
-      }
-      else if (isDefaultKeyExist === true) {
+      } else if (isDefaultKeyExist === true) {
         sdkConfigDataState.setValidity(false, {
-          message: localeTexts.configPage.multiConfig.ErrorMessage.oneDefaultMsg,
+          message:
+            localeTexts.configPage.multiConfig.ErrorMessage.oneDefaultMsg,
         });
-      }
-      else if (!isValid.isValid) {
+      } else if (!isValid.isValid) {
         // Extract invalid keys and ensure uniqueness using a Set
-        const invalidKeys = Array.from(new Set(isValid.invalidKeys.map(({ source }) => source)));
-      
+        const invalidKeys = Array.from(
+          new Set(isValid.invalidKeys.map(({ source }) => source))
+        );
+
         sdkConfigDataState.setValidity(false, {
-          message: `${localeTexts.configPage.multiConfig.ErrorMessage.emptyConfigNotifyMsg}: ${invalidKeys.join(", ")}`,
+          message: `${
+            localeTexts.configPage.multiConfig.ErrorMessage.emptyConfigNotifyMsg
+          }: ${invalidKeys.join(", ")}`,
         });
-      }
-      else {
+      } else {
         sdkConfigDataState.setValidity(true);
       }
     }
   }, [state?.installationData?.configuration, sdkConfigDataState]);
 
-
-
-
   useEffect(() => {
     ContentstackAppSdk.init()
-      .then(async (appSdk:any) => {
-        console.info("appskd",appSdk)
+      .then(async (appSdk: any) => {
+        console.info("appskd", appSdk);
         const result = categorizeConfigFields(configInputFields);
         const sdkConfigData = appSdk?.location?.AppConfigWidget?.installation;
         setSdkConfigDataState(sdkConfigData);
         if (sdkConfigData) {
-          const installationDataFromSDK =
-            await sdkConfigData?.getInstallationData();
-        //  console.info("installationDataFromSDK",installationDataFromSDK)   
-             // Existing User
-        // console.info("defaultMultiConfigKey",defaultMultiConfigKey)
-        const keysToIncludeOrExclude = ["custom_keys", "multi_config_keys", "default_multi_config_key", "is_custom_json", "page_count"]
-        const newConfigurationObject: any = {
-          legacy_config: {}
-        };
-        const newServerConfigurationObject: any = {
-          legacy_config: {}
-        };
-        const combinedConfigurationKeys = [...keysToIncludeOrExclude, ...Object.keys(result.isNotMultiConfigAndSaveInConfig)];
-        const combinedServerConfigurationKeys = [...Object.keys(result.isNotMultiConfigAndSaveInServerConfig)]
+          const installationDataFromSDK =            await sdkConfigData?.getInstallationData();
+          //  console.info("installationDataFromSDK",installationDataFromSDK)
+          // Existing User
+          // console.info("defaultMultiConfigKey",defaultMultiConfigKey)
+          const keysToIncludeOrExclude = [
+            "custom_keys",
+            "multi_config_keys",
+            "default_multi_config_key",
+            "is_custom_json",
+            "page_count",
+          ];
+          const newConfigurationObject: any = {
+            legacy_config: {},
+          };
+          const newServerConfigurationObject: any = {
+            legacy_config: {},
+          };
+          const combinedConfigurationKeys = [
+            ...keysToIncludeOrExclude,
+            ...Object.keys(result.isNotMultiConfigAndSaveInConfig),
+          ];
+          const combinedServerConfigurationKeys = [
+            ...Object.keys(result.isNotMultiConfigAndSaveInServerConfig),
+          ];
 
-        let updatedConfigurationObject: any = {}
-            // console.info("installationDataFromSDK",installationDataFromSDK)
+          let updatedConfigurationObject: any = {};
+          // console.info("installationDataFromSDK",installationDataFromSDK)
           const setInstallationDataOfSDK = sdkConfigData?.setInstallationData;
 
           const installationDataOfSdk = mergeObjects(
@@ -310,15 +328,21 @@ const ConfigScreen: React.FC = function () {
             installationDataFromSDK
           );
           // console.info("installationDataOfSdk mergeObjects",installationDataOfSdk)
-          const defaultMultiConfigKey =
-          installationDataOfSdk.default_multi_config_key?? "legacy_config"
+          const defaultMultiConfigKey =            installationDataOfSdk.default_multi_config_key ?? "legacy_config";
           if (defaultMultiConfigKey === "legacy_config") {
             // console.info("defaultMultiConfigKey",defaultMultiConfigKey)
             Object.keys(installationDataOfSdk.configuration).forEach((key) => {
               if (!keysToIncludeOrExclude.includes(key)) {
-                if (Object.prototype.hasOwnProperty.call(result.isMultiConfigAndSaveInConfig, key)) {
-                  newConfigurationObject.legacy_config[key] =
-                    installationDataOfSdk.configuration?.multi_config_keys?.legacy_config?.[key] !== undefined ? installationDataOfSdk.configuration.multi_config_keys.legacy_config[key]
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    result.isMultiConfigAndSaveInConfig,
+                    key
+                  )
+                ) {
+                  newConfigurationObject.legacy_config[key] =                    installationDataOfSdk.configuration?.multi_config_keys
+                      ?.legacy_config?.[key] !== undefined
+                      ? installationDataOfSdk.configuration.multi_config_keys
+                          .legacy_config[key]
                       : installationDataOfSdk.configuration[key];
                 }
               }
@@ -326,72 +350,108 @@ const ConfigScreen: React.FC = function () {
 
             // console.info("newConfigurationObject",newConfigurationObject)
 
-            Object.keys(installationDataOfSdk.serverConfiguration).forEach((key) => {
-              if (!keysToIncludeOrExclude.includes(key)) {
-                if (Object.prototype.hasOwnProperty.call(result.isMultiConfigAndSaveInServerConfig, key)) {
-                  newServerConfigurationObject.legacy_config[key] =
-                    installationDataOfSdk.serverConfiguration?.multi_config_keys?.legacy_config?.[key] !== undefined ? installationDataOfSdk.serverConfiguration.multi_config_keys.legacy_config[key]
-                      : installationDataOfSdk.serverConfiguration[key];
+            Object.keys(installationDataOfSdk.serverConfiguration).forEach(
+              (key) => {
+                if (!keysToIncludeOrExclude.includes(key)) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(
+                      result.isMultiConfigAndSaveInServerConfig,
+                      key
+                    )
+                  ) {
+                    newServerConfigurationObject.legacy_config[key] =                      installationDataOfSdk.serverConfiguration
+                        ?.multi_config_keys?.legacy_config?.[key] !== undefined
+                        ? installationDataOfSdk.serverConfiguration
+                            .multi_config_keys.legacy_config[key]
+                        : installationDataOfSdk.serverConfiguration[key];
+                  }
                 }
               }
-            });
+            );
             // console.info("newServerConfigurationObject",newServerConfigurationObject)
 
-
-
             // Filter configuration
-            const filteredConfiguration: any = combinedConfigurationKeys.reduce((acc: any, key: any) => {
-              if (Object.prototype.hasOwnProperty.call(installationDataOfSdk.configuration, key)) {
-                acc[key] = installationDataOfSdk.configuration[key];
-              }
-              return acc;
-            }, {});
+            const filteredConfiguration: any = combinedConfigurationKeys.reduce(
+              (acc: any, key: any) => {
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    installationDataOfSdk.configuration,
+                    key
+                  )
+                ) {
+                  acc[key] = installationDataOfSdk.configuration[key];
+                }
+                return acc;
+              },
+              {}
+            );
 
             // Filter server configuration
-            const filteredServerConfiguration: any = combinedServerConfigurationKeys.reduce((acc: any, key: any) => {
-              if (Object.prototype.hasOwnProperty.call(installationDataOfSdk.serverConfiguration, key)) {
-                acc[key] = installationDataOfSdk.serverConfiguration[key];
-              }
-              return acc;
-            }, {});
+            const filteredServerConfiguration: any =              combinedServerConfigurationKeys.reduce((acc: any, key: any) => {
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    installationDataOfSdk.serverConfiguration,
+                    key
+                  )
+                ) {
+                  acc[key] = installationDataOfSdk.serverConfiguration[key];
+                }
+                return acc;
+              }, {});
 
             const updatedMultiConfigKeys = {
               ...installationDataOfSdk.configuration.multi_config_keys,
-              ...newConfigurationObject
+              ...newConfigurationObject,
             };
             const updatedMultiConfigServerKeys = {
               ...installationDataOfSdk.serverConfiguration.multi_config_keys,
-              ...newServerConfigurationObject
+              ...newServerConfigurationObject,
             };
             updatedConfigurationObject = {
               configuration: filteredConfiguration,
               serverConfiguration: filteredServerConfiguration,
               webhooks: installationDataOfSdk.webhooks,
-              uiLocations: installationDataOfSdk.uiLocations
+              uiLocations: installationDataOfSdk.uiLocations,
             };
-            updatedConfigurationObject.configuration.multi_config_keys = updatedMultiConfigKeys;
-            updatedConfigurationObject.serverConfiguration.multi_config_keys = updatedMultiConfigServerKeys;
+            updatedConfigurationObject.configuration.multi_config_keys =              updatedMultiConfigKeys;
+            updatedConfigurationObject.serverConfiguration.multi_config_keys =              updatedMultiConfigServerKeys;
           }
           // Remove legacy_config if all keys inside are empty
-if (Object.keys(updatedConfigurationObject.configuration.multi_config_keys.legacy_config).every(key => {
-  const value = updatedConfigurationObject.configuration.multi_config_keys.legacy_config[key];
-  return value === undefined || value === null || value === '';
-})) {
-  delete updatedConfigurationObject.configuration.multi_config_keys.legacy_config;
-}
+          if (
+            Object.keys(
+              updatedConfigurationObject.configuration.multi_config_keys
+                .legacy_config
+            ).every((key) => {
+              const value =                updatedConfigurationObject.configuration.multi_config_keys
+                  .legacy_config[key];
+              return value === undefined || value === null || value === "";
+            })
+          ) {
+            delete updatedConfigurationObject.configuration.multi_config_keys
+              .legacy_config;
+          }
 
-if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys.legacy_config).every(key => {
-  const value = updatedConfigurationObject.serverConfiguration.multi_config_keys.legacy_config[key];
-  return value === undefined || value === null || value === '';
-})) {
-  delete updatedConfigurationObject.serverConfiguration.multi_config_keys.legacy_config;
-}
+          if (
+            Object.keys(
+              updatedConfigurationObject.serverConfiguration.multi_config_keys
+                .legacy_config
+            ).every((key) => {
+              const value =                updatedConfigurationObject.serverConfiguration.multi_config_keys
+                  .legacy_config[key];
+              return value === undefined || value === null || value === "";
+            })
+          ) {
+            delete updatedConfigurationObject.serverConfiguration
+              .multi_config_keys.legacy_config;
+          }
 
-        //  console.info("updatedConfigurationObject",updatedConfigurationObject)
-        //  console.info("installationDataOfSdk",installationDataOfSdk)
+          //  console.info("updatedConfigurationObject",updatedConfigurationObject)
+          //  console.info("installationDataOfSdk",installationDataOfSdk)
           setState({
             ...state,
-            installationData: Object.keys(updatedConfigurationObject)?.length ? updatedConfigurationObject : installationDataOfSdk,
+            installationData: Object.keys(updatedConfigurationObject)?.length
+              ? updatedConfigurationObject
+              : installationDataOfSdk,
             setInstallationData: setInstallationDataOfSDK,
             appSdkInitialized: true,
           });
@@ -412,7 +472,7 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
       // console.info("e",e)
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration = state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value.trim() : value;
 
       if (isMultiConfig) {
@@ -433,16 +493,16 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
             multi_config_keys: {
               ...serverConfiguration.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration.multi_config_keys?.[multiConfigID] || {}),
+                ...(serverConfiguration.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
           };
-      // console.info("serverConfiguration",serverConfiguration)
-
+          // console.info("serverConfiguration",serverConfiguration)
         }
       } else {
-        if(fieldName==="is_custom_json"){
+        if (fieldName === "is_custom_json") {
           configuration = {
             ...configuration,
             [fieldName]: fieldValue,
@@ -467,7 +527,7 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
         await state.setInstallationData({
           ...state?.installationData,
           configuration,
-          serverConfiguration
+          serverConfiguration,
         });
 
         setState({
@@ -479,7 +539,7 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
             },
             serverConfiguration: {
               ...state?.installationData?.serverConfiguration,
-              ...serverConfiguration
+              ...serverConfiguration,
             },
           },
         });
@@ -489,9 +549,6 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
     },
     [state.setInstallationData, state.installationData]
   );
-
-
-
 
   const updateTypeObj = useCallback(
     async (list: any[]) => {
@@ -511,13 +568,12 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
 
   const setAsDefaultAccordion = (accordionId: any) => {
     setState((prevState: any) => {
-      const newDefaultMultiConfig = accordionId
+      const newDefaultMultiConfig = accordionId;
       state.setInstallationData({
         ...state?.installationData,
         configuration: {
           ...state?.installationData?.configuration,
-          default_multi_config_key: newDefaultMultiConfig
-
+          default_multi_config_key: newDefaultMultiConfig,
         },
       });
       return {
@@ -526,12 +582,11 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
           ...prevState?.installationData,
           configuration: {
             ...prevState?.installationData?.configuration,
-            default_multi_config_key: newDefaultMultiConfig
+            default_multi_config_key: newDefaultMultiConfig,
           },
         },
       };
     });
-
   };
 
   useEffect(() => {
@@ -546,7 +601,7 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
         ...state?.installationData,
         configuration: {
           ...state?.installationData?.configuration,
-          default_multi_config_key: ""
+          default_multi_config_key: "",
         },
       });
       return {
@@ -555,12 +610,11 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
           ...prevState?.installationData,
           configuration: {
             ...prevState?.installationData?.configuration,
-            default_multi_config_key: ""
+            default_multi_config_key: "",
           },
         },
       };
     });
-
   };
 
   const handleCheckboxChange = (e: any, multiConfigurationID: any) => {
@@ -575,16 +629,20 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
   const removeAccordion = (id: number) => {
     let updatedConfigAccordions: any;
     let updatedServerConfigAccordions: any;
-  
+
     setState((prevState: any) => {
       // Create copies of multi_config_keys to update
-      updatedConfigAccordions = { ...prevState?.installationData?.configuration?.multi_config_keys };
-      updatedServerConfigAccordions = { ...prevState?.installationData?.serverConfiguration?.multi_config_keys };
-  
+      updatedConfigAccordions = {
+        ...prevState?.installationData?.configuration?.multi_config_keys,
+      };
+      updatedServerConfigAccordions = {
+        ...prevState?.installationData?.serverConfiguration?.multi_config_keys,
+      };
+
       // Remove the specified id from both configuration and serverConfiguration
       delete updatedConfigAccordions[id];
       delete updatedServerConfigAccordions[id];
-  
+
       // Update the state
       return {
         ...prevState,
@@ -593,7 +651,7 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
           configuration: {
             ...prevState?.installationData?.configuration,
             multi_config_keys: updatedConfigAccordions,
-            default_multi_config_key: "" // Reset default_multi_config_key if needed
+            default_multi_config_key: "", // Reset default_multi_config_key if needed
           },
           serverConfiguration: {
             ...prevState?.installationData?.serverConfiguration,
@@ -602,14 +660,14 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
         },
       };
     });
-  
+
     // Update state using setInstallationData
     state.setInstallationData({
       ...state?.installationData,
       configuration: {
         ...state?.installationData?.configuration,
         multi_config_keys: updatedConfigAccordions,
-        default_multi_config_key: "" // Reset default_multi_config_key if needed
+        default_multi_config_key: "", // Reset default_multi_config_key if needed
       },
       serverConfiguration: {
         ...state?.installationData?.serverConfiguration,
@@ -617,8 +675,6 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
       },
     });
   };
-  
-  
 
   const handleClickDeleteModal = (multiConfigurationID: any) => {
     cbModal({
@@ -636,190 +692,255 @@ if (Object.keys(updatedConfigurationObject.serverConfiguration.multi_config_keys
   };
   const renderConfig = () => {
     const configScreen = rootConfig.configureConfigScreen();
-    const { multiConfigFields, singleConfigFields } = extractFieldsByConfigType(configScreen);
+    const { multiConfigFields, singleConfigFields } =      extractFieldsByConfigType(configScreen);
     return (
       <>
         {multiConfigFields?.length > 0 && (
-          <><div className="multi-config-wrapper">
-            <Accordion
-              version="v2"
-              title={localeTexts.configPage.multiConfig.accordionLabel}
-              renderExpanded
-              accordionDataCount={Object.keys(
-                state?.installationData?.configuration?.multi_config_keys ||
-                {}
-              ).length}
-            >
-              <p className="multi-config-wrapper__sublabel">
-                {localeTexts.configPage.multiConfig.accordionSubLabel}
-              </p>
-              {Object.keys(state.installationData.configuration.multi_config_keys)?.length > 0 ? (
-                <div className="multi-config-wrapper__subcontainer">
-                  {Object.entries(state.installationData.configuration.multi_config_keys).map(([multiConfigurationID, multiConfigurationData]: any) => (
-                    <div className="multi-config-wrapper__configblock"
-                      key={multiConfigurationID}>
-                      <Accordion
-                        dashedLineVisibility="hover"
-                        errorMessage=""
-                        renderExpanded
-                        isContainerization
-                        version="v2"
-                        title={<Tooltip
-                          content={multiConfigurationID}
-                          position="right"
+          <>
+            <div className="multi-config-wrapper">
+              <Accordion
+                version="v2"
+                title={localeTexts.configPage.multiConfig.accordionLabel}
+                renderExpanded
+                accordionDataCount={
+                  Object.keys(
+                    state?.installationData?.configuration?.multi_config_keys
+                      || {}
+                  ).length
+                }
+              >
+                <p className="multi-config-wrapper__sublabel">
+                  {localeTexts.configPage.multiConfig.accordionSubLabel}
+                </p>
+                {Object.keys(
+                  state.installationData.configuration.multi_config_keys
+                )?.length > 0 ? (
+                  <div className="multi-config-wrapper__subcontainer">
+                    {Object.entries(
+                      state.installationData.configuration.multi_config_keys
+                    ).map(
+                      ([multiConfigurationID, multiConfigurationData]: any) => (
+                        <div
+                          className="multi-config-wrapper__configblock"
+                          key={multiConfigurationID}
                         >
-                          <div>
-                            {multiConfigurationID?.length > 35 ?
-                              `${multiConfigurationID?.substring(0, 35)}...`
-                              : multiConfigurationID}
-                            {state?.installationData?.configuration?.default_multi_config_key === multiConfigurationID && (
-                              <span className="default-label">Default</span>
-                            )}
-                          </div>
-                        </Tooltip>}
-                        actions={[
-                          {
-                            actionClassName: "font-color-tertiary",
-                            component: (
-                              <div className="Dropdown-wrapper">
-                                <Dropdown
-                                  list={[
-                                    {
-                                      label: (
-                                        <>
-                                          <Icon
-                                            icon="Delete"
-                                            size="extraSmall" />
-                                          <div>
-                                            {localeTexts.configPage.multiConfig.deleteButtonText}
-                                          </div>
-                                        </>
-                                      ),
-                                      action: () =>
-                                        handleClickDeleteModal(
-                                          multiConfigurationID
-                                        ),
-                                    },
-                                    {
-                                      label: (
-                                        <>
-                                          <Icon
-                                            icon="CheckCircleDark"
-                                            size="extraSmall"
-                                            version="v2" />
-                                          <div>
-                                            {localeTexts.configPage.multiConfig.setDefaultText}
-                                          </div>
-                                        </>
-                                      ),
-                                      action: () =>
-                                        setAsDefaultAccordion(
-                                          multiConfigurationID
-                                        ),
-                                    },
-                                  ]}
-                                  type="click"
-                                  withIcon
-                                >
-                                  <Icon
-                                    icon="DotsThreeLargeVertical"
-                                    size="medium"
-                                    version="v2" />
-                                </Dropdown>
-                              </div>
-                            ),
-                            onClick: () => { }
-                            // setDropdownVisible(!isDropdownVisible),
-                          },
-                        ]}
-                      >
-                        {Object.entries(configInputFields)?.map(([objKey, objValue, index]: any) => {
-                          if (objValue?.isMultiConfig && objValue?.type === "textInputFields") {
-                            return (
-                              <div key={`${objKey}_${index}`}>
-                                <Field>
-                                  <FieldLabel
-                                    required
-                                    htmlFor={`${objKey}-id`}
-                                    data-testid="text_label"
-                                    className="multi-config-wrapper__FieldLabel"
-                                  >
-                                    {" "}
-                                    {objValue?.labelText}
-                                  </FieldLabel>
-                                  {objValue?.helpText && (
-                                    <Help text={objValue?.helpText} data-testid="text_help" />
+                          <Accordion
+                            dashedLineVisibility="hover"
+                            errorMessage=""
+                            renderExpanded
+                            isContainerization
+                            version="v2"
+                            title={
+                              <Tooltip
+                                content={multiConfigurationID}
+                                position="right"
+                              >
+                                <div>
+                                  {multiConfigurationID?.length > 35
+                                    ? `${multiConfigurationID?.substring(
+                                        0,
+                                        35
+                                      )}...`
+                                    : multiConfigurationID}
+                                  {state?.installationData?.configuration
+                                    ?.default_multi_config_key
+                                    === multiConfigurationID && (
+                                    <span className="default-label">
+                                      Default
+                                    </span>
                                   )}
-                                  <TextInput
-                                    id={`${objKey}-id`}
-                                    type={objValue?.isSensitive === true ? "password" : undefined}
-                                    required
-                                    value={
-                                      objValue?.isMultiConfig
-                                        ? objValue?.saveInConfig
-                                          ? multiConfigurationData[objKey]
-                                          : state?.installationData?.serverConfiguration?.multi_config_keys?.[multiConfigurationID]?.[objKey]
-                                        : ""
-                                    }
-                                    placeholder={objValue?.placeholderText}
-                                    name={objKey}
-                                    onChange={(e: any) => updateConfig(e, multiConfigurationID, objValue.isMultiConfig)}
-                                    data-testid="text_input"
-                                    version="v2"
-                                  />
-                                  <InstructionText data-testid="text_instruction">
-                                    {objValue?.instructionText}
-                                  </InstructionText>
-                                </Field>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })}
+                                </div>
+                              </Tooltip>
+                            }
+                            actions={[
+                              {
+                                actionClassName: "font-color-tertiary",
+                                component: (
+                                  <div className="Dropdown-wrapper">
+                                    <Dropdown
+                                      list={[
+                                        {
+                                          label: (
+                                            <>
+                                              <Icon
+                                                icon="Delete"
+                                                size="extraSmall"
+                                              />
+                                              <div>
+                                                {
+                                                  localeTexts.configPage
+                                                    .multiConfig
+                                                    .deleteButtonText
+                                                }
+                                              </div>
+                                            </>
+                                          ),
+                                          action: () =>
+                                            handleClickDeleteModal(
+                                              multiConfigurationID
+                                            ),
+                                        },
+                                        {
+                                          label: (
+                                            <>
+                                              <Icon
+                                                icon="CheckCircleDark"
+                                                size="extraSmall"
+                                                version="v2"
+                                              />
+                                              <div>
+                                                {
+                                                  localeTexts.configPage
+                                                    .multiConfig.setDefaultText
+                                                }
+                                              </div>
+                                            </>
+                                          ),
+                                          action: () =>
+                                            setAsDefaultAccordion(
+                                              multiConfigurationID
+                                            ),
+                                        },
+                                      ]}
+                                      type="click"
+                                      withIcon
+                                    >
+                                      <Icon
+                                        icon="DotsThreeLargeVertical"
+                                        size="medium"
+                                        version="v2"
+                                      />
+                                    </Dropdown>
+                                  </div>
+                                ),
+                                onClick: () => {},
+                                // setDropdownVisible(!isDropdownVisible),
+                              },
+                            ]}
+                          >
+                            {Object.entries(configInputFields)?.map(
+                              ([objKey, objValue, index]: any) => {
+                                if (
+                                  objValue?.isMultiConfig
+                                  && objValue?.type === "textInputFields"
+                                ) {
+                                  return (
+                                    <div key={`${objKey}_${index}`}>
+                                      <Field>
+                                        <FieldLabel
+                                          required
+                                          htmlFor={`${objKey}-id`}
+                                          data-testid="text_label"
+                                          className="multi-config-wrapper__FieldLabel"
+                                        >
+                                          {" "}
+                                          {objValue?.labelText}
+                                        </FieldLabel>
+                                        {objValue?.helpText && (
+                                          <Help
+                                            text={objValue?.helpText}
+                                            data-testid="text_help"
+                                          />
+                                        )}
+                                        <TextInput
+                                          id={`${objKey}-id`}
+                                          type={
+                                            objValue?.isSensitive === true
+                                              ? "password"
+                                              : undefined
+                                          }
+                                          required
+                                          value={
+                                            objValue?.isMultiConfig
+                                              ? objValue?.saveInConfig
+                                                ? multiConfigurationData[objKey]
+                                                : state?.installationData
+                                                    ?.serverConfiguration
+                                                    ?.multi_config_keys?.[
+                                                    multiConfigurationID
+                                                  ]?.[objKey]
+                                              : ""
+                                          }
+                                          placeholder={
+                                            objValue?.placeholderText
+                                          }
+                                          name={objKey}
+                                          onChange={(e: any) =>
+                                            updateConfig(
+                                              e,
+                                              multiConfigurationID,
+                                              objValue.isMultiConfig
+                                            )
+                                          }
+                                          data-testid="text_input"
+                                          version="v2"
+                                        />
+                                        <InstructionText data-testid="text_instruction">
+                                          {objValue?.instructionText}
+                                        </InstructionText>
+                                      </Field>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              }
+                            )}
 
-                        <div className="multi-config-wrapper__configblock__checkbox">
-                          <Field>
-                            <Checkbox
-                              label={localeTexts.configPage.multiConfig.multiConfigCheckBoxLabel}
-                              checked={state?.installationData?.configuration?.default_multi_config_key === multiConfigurationID}
-                              onClick={(e: any) =>
-                                handleCheckboxChange(e, multiConfigurationID)
-                              } />
-                          </Field>
+                            <div className="multi-config-wrapper__configblock__checkbox">
+                              <Field>
+                                <Checkbox
+                                  label={
+                                    localeTexts.configPage.multiConfig
+                                      .multiConfigCheckBoxLabel
+                                  }
+                                  checked={
+                                    state?.installationData?.configuration
+                                      ?.default_multi_config_key
+                                    === multiConfigurationID
+                                  }
+                                  onClick={(e: any) =>
+                                    handleCheckboxChange(
+                                      e,
+                                      multiConfigurationID
+                                    )
+                                  }
+                                />
+                              </Field>
+                            </div>
+                          </Accordion>
                         </div>
-
-                      </Accordion>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>No multi config keys available</p>
-              )}
-            </Accordion>
-            <Button
-              className="multi-config-button"
-              buttonType="secondary"
-              icon="AddPlusBold"
-              size="medium"
-              onClick={openModal}
-            >
-              {localeTexts.configPage.multiConfig.buttonLabel}
-            </Button>
-          </div>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <p>No multi config keys available</p>
+                )}
+              </Accordion>
+              <Button
+                className="multi-config-button"
+                buttonType="secondary"
+                icon="AddPlusBold"
+                size="medium"
+                onClick={openModal}
+              >
+                {localeTexts.configPage.multiConfig.buttonLabel}
+              </Button>
+            </div>
             <AddMultiConfigurationModal
               isOpen={isModalOpen}
               onRequestClose={closeModal}
               addMultiConfiguration={addMultiConfig}
-              addMultiConfigurationData={state?.installationData?.configuration?.multi_config_keys} /></>
-
+              addMultiConfigurationData={
+                state?.installationData?.configuration?.multi_config_keys
+              }
+            />
+          </>
         )}
 
-        {singleConfigFields?.length > 0 && (
-          ""
-        )}
+        {singleConfigFields?.length > 0 && ""}
       </>
     );
-  }
+  };
 
   /* If need to get any data from API then use,
   getDataFromAPI({queryParams, headers, method, body}) function.

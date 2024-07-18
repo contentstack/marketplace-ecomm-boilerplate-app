@@ -12,8 +12,7 @@ import {
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useCategoryCustomField = () => {
-  const { categoryCustomField, setFieldData, loading } =
-    useContext<CategoryCustomFieldExtensionContextType>(
+  const { categoryCustomField, setFieldData, loading } =    useContext<CategoryCustomFieldExtensionContextType>(
       CategoryCustomFieldExtensionContext
     );
 

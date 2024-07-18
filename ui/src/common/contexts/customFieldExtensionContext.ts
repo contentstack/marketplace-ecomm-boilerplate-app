@@ -7,8 +7,7 @@ export type CustomFieldExtensionContextType = {
   handleClick?: (data: unknown) => void;
 };
 
-export const CustomFieldExtensionContext =
-  React.createContext<CustomFieldExtensionContextType>({
+export const CustomFieldExtensionContext =  React.createContext<CustomFieldExtensionContextType>({
     customField: null,
     setFieldData: () => {},
     loading: false,

@@ -15,8 +15,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<any | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials.replace(
         "$",

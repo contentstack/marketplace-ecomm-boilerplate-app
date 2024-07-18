@@ -54,7 +54,7 @@ module.exports = {
         format: ["PascalCase"],
       },
     ],
-    "no-nested-ternary":"warn",
-    "operator-linebreak":"warn"
+    "no-nested-ternary": "warn",
+    "operator-linebreak": "warn",
   },
 };
