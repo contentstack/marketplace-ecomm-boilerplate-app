@@ -57,10 +57,10 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   };
 
   useEffect(() => {
-    if(!isEmpty(appConfig)) {
+    if (!isEmpty(appConfig)) {
       setSelectedIds(entryIds);
     }
-  }, [appConfig, entryIds])
+  }, [appConfig, entryIds]);
 
   useEffect(() => {
     initialLoad();
