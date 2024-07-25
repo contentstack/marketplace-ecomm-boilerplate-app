@@ -2,7 +2,7 @@ import React from "react";
 import ListItem from "./ListItem";
 import DraggableGrid from "./DraggableGrid";
 import { Props } from "../../common/types";
-import useProductCustomField from "../../common/hooks/useProductCustomField";
+import useProductCustomField from "../../common/hooks/useCustomField";
 
 const RenderList: React.FC<Props> = function ({
   type,

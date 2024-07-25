@@ -30,16 +30,22 @@ function FilterComponent({ config, meta, updateList }: any) {
     updateList(value);
   }, [value]);
   return (
-    <div>
+    <>
       <Select
-        selectLabel="Select a filter"
         options={options}
         value={value}
         onChange={handleValueUpdate}
         placeholder="Select a filter"
         version="v2"
       />
-    </div>
+      <Select
+        options={options}
+        value={value}
+        onChange={handleValueUpdate}
+        placeholder="Select a filter"
+        version="v2"
+      />
+    </>
   );
 }
 

@@ -13,7 +13,7 @@ import {
   getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
-import { TypeWarningtext } from "../../common/types";
+import { CustomFieldType, KeyValueObj, TypeWarningtext } from "../../common/types";
 import { request, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
@@ -28,7 +28,8 @@ const SelectorPage: React.FC = function () {
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [totalCounts, setTotalCounts] = useState(null);
   const [itemStatus, setItemStatus] = useState({});
-  const [config, setConfig] = useState<any>({});
+  const [config, setConfig] = useState<any>({
+  });
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [hiddenColumns, setHiddenColumns] = useState<any>(
@@ -279,15 +280,19 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
-        <FilterComponent
-          config={config}
-          meta={metaState}
-          updateList={updateList}
-        />
+        <div className="filter-container">
+          <FilterComponent
+            config={config}
+            meta={metaState}
+            updateList={updateList}
+          />
+        </div>
+
         <InfiniteScrollTable
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
           onToggleColumnSelector={onToggleColumnSelector}
+          // tableHeight={580}
           isRowSelect
           fullRowSelect
           viewSelector

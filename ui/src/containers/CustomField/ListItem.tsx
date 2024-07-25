@@ -8,15 +8,17 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { Props } from "../../common/types";
 import { findProduct } from "../../common/utils";
 import DraggableListItem from "./DraggableListItem";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
 import DraggableListItemCategory from "./DraggableListItemCategory";
-import useProductCustomField from "../../common/hooks/useProductCustomField";
+import useProductCustomField from "../../common/hooks/useCustomField";
 
-const ListItem: React.FC<Props> = function ({ remove, type }) {
+const ListItem: React.FC<any> = function ({ remove, type }: {
+  remove: any,
+  type: "product" | "category"
+}) {
   const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
 

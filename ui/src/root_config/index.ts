@@ -11,7 +11,8 @@ import {
   TypeProduct,
   SidebarDataObj,
   EcommerceEnv,
-} from "../types";
+  FormattedRespose,
+} from "../common/types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.
@@ -121,15 +122,14 @@ const configureConfigScreen: any = () => ({
   },
 });
 
-const customKeys: any = [
-  { label: "code", value: "code" },
-  { label: "name", value: "name" },
+const mandatoryKeys: KeyOption[] = [
+  { label: "code", value: "code", searchLabel: "code" },
+  { label: "name", value: "name", searchLabel: "name" },
 ];
 
-// const openSelectorPage = (config: any) => !!config.configField1;
 
 // change name for this function
-const returnUrl = (response: any) => ({
+const getFormattedResponse = (response: any) : FormattedRespose => ({
   items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
   meta: {
     total: response?.data?.pagination?.totalResults, // assign this to the key that specifies the total count of the data fetched
@@ -138,8 +138,8 @@ const returnUrl = (response: any) => ({
   },
 });
 
-const getCustomKeys = () =>
-  <KeyOption[]>[
+const getCustomKeys = () : KeyOption[] =>
+  [
     {
       label: "approvalStatus",
       value: "approvalStatus",
@@ -414,38 +414,11 @@ const getCustomKeys = () =>
     },
   ];
 
-const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=categories`;
-  const requestData = {
-    config,
-    selectedIDs,
-  };
-  return { apiUrl, requestData };
-};
 // const ecomCustomFieldCategoryData: any = true;
 
-//change the name of this function
-const generateSearchApiUrlAndData = (
-  config: any,
-  keyword: any,
-  skip: any,
-  limit: any,
-  categories?: any
-) => {
-  const catQuery = categories?.length
-    ? `&searchCategories=${categories?.map((str: any) => str.value).join(",")}`
-    : "";
-
-  const queryType = config.type === "category" ? "category" : "product";
-
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}${catQuery}`;
-
-  return { apiUrl, requestData: config };
-};
-
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) =>
-  <TypeProduct>{
+const returnFormattedProduct = (product: any, config: any) : TypeProduct =>
+  ({
     id: product?.code || "",
     name: product?.name || "",
     description: product?.description || "-",
@@ -454,28 +427,28 @@ const returnFormattedProduct = (product: any, config: any) =>
       : "",
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
-  };
+  })
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
-const returnFormattedCategory = (category: any) =>
-  <TypeCategory>{
+const returnFormattedCategory = (category: any) : TypeCategory =>
+  ({
     id: category?.id || "",
     name: category?.name || "-",
     customUrl: "",
     description: category?.description || "Not Available",
-  };
+  });
 
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getOpenerLink = (id: any, config: any, type: any) => config?.configField4;
+const getOpenerLink = (id: any, config: any, type: any) : string => config?.configField4;
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
     you can add additional values in this function that you want to display
 */
-const getSidebarData = (product: any) =>
-  <SidebarDataObj[]>[
+const getSidebarData = (product: any) : SidebarDataObj[]=>
+  [
     {
       title: "Manufacturer",
       value: product?.manufacturer,
@@ -495,8 +468,8 @@ const getSidebarData = (product: any) =>
   ];
 
 // this defines what and how will the columns will be displayed in your product selector page
-const getProductSelectorColumns = (config: any) =>
-  <ColumnsProp[]>[
+const getProductSelectorColumns = (config: any): ColumnsProp[] =>
+  [
     {
       Header: "ID", // the title of the column
       id: "code",
@@ -550,8 +523,8 @@ const getProductSelectorColumns = (config: any) =>
 
 // this defines what and how will the columns will be displayed in your category selector page
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const categorySelectorColumns = (config?: any) =>
-  <ColumnsProp[]>[
+const categorySelectorColumns = (config?: any) : ColumnsProp[] =>
+  [
     {
       Header: "Category ID",
       id: "code",
@@ -580,22 +553,6 @@ const categorySelectorColumns = (config?: any) =>
     },
   ];
 
-const arrangeList = (
-  sortedIdsArray: any[],
-  dataArray: any[],
-  uniqueKey: string
-) => {
-  const data: any[] = [];
-  sortedIdsArray?.forEach((mItem: any) => {
-    dataArray?.forEach((sItem: any) => {
-      if (sItem && sItem[uniqueKey] === mItem) {
-        data.push(sItem);
-      }
-    });
-  });
-  return data;
-};
-
 // keep this function if you have to remove product/category from custom field as per your own requirement
 const removeItemsFromCustomField = (
   removeId: any,
@@ -620,11 +577,8 @@ const rootConfig = {
   verifyAppSigning,
   ecommerceEnv,
   configureConfigScreen,
-  customKeys,
-  // openSelectorPage,
-  returnUrl,
-  getSelectedCategoriesUrl,
-  generateSearchApiUrlAndData,
+  mandatoryKeys,
+  getFormattedResponse,
   returnFormattedProduct,
   returnFormattedCategory,
   getOpenerLink,
@@ -632,7 +586,6 @@ const rootConfig = {
   categorySelectorColumns,
   getCustomKeys,
   getSidebarData,
-  arrangeList,
   removeItemsFromCustomField,
 };
 

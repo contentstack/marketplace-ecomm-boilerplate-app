@@ -1,6 +1,6 @@
-# Contentstack Marketplace ECOMMERCE App Boilerplate
+# Contentstack Marketplace E-COMMERCE App Boilerplate
 
-This boilerplate provides a template to customize your own marketplace ECOMMERCE app.
+This boilerplate provides a template to create your own Marketplace E-COMMERCE app.
 
 ##  Prerequisite
 
@@ -17,11 +17,14 @@ This boilerplate provides a template to customize your own marketplace ECOMMERCE
 marketplace-ecomm-boilerplate-app
 |-- api
     |-- constants
-    |   |-- index.js
+    |   |-- index.ts
     |-- handler
-    |   |-- index.js
+    |   |-- index.ts
     |-- root_config
-    |   |-- index.js
+    |   |-- index.ts
+    |   |-- utilityFunctions.ts
+    |-- utils
+    |   |-- index.ts
     |-- .eslintrc.js
     |-- index.js
     |-- package-lock.json
@@ -30,14 +33,16 @@ marketplace-ecomm-boilerplate-app
     |-- sapcc
     |  |-- api
     |  |  |-- root_config
-    |  |   |-- index.js
+    |  |   |-- index.ts
+    |  |   |-- utilityFunctions.ts
     |  |-- ui
     |  | |-- root_config
     |  |   |-- index.js
     |-- bigcommerce
     |  |-- api
     |  | |-- root_config
-    |  |   |-- index.js
+    |  |   |-- index.ts
+    |  |   |-- utilityFunctions.ts
     |  |-- ui
     |  | |-- root_config
     |  |   |-- index.js
@@ -49,37 +54,31 @@ marketplace-ecomm-boilerplate-app
     |-- src
     |   |-- assets
     |   |    |-- Logo.svg
+    |   |    |-- NoImg.svg
     |   |-- common
     |   |    |-- constants
     |   |        |-- index.ts
     |   |    |-- contexts
     |   |        |-- appConfigurationExtensionContext.ts
-    |   |        |-- categoryCustomFieldExtensionContext.ts
     |   |        |-- customFieldExtensionContext.ts
     |   |        |-- entrySidebarExtensionContext.ts
     |   |        |-- marketplaceContext.ts
-    |   |        |-- productCustomFieldExtensionContext.ts      
-    |   |        |-- selectorExtensionContext.ts    
     |   |   |-- hooks
     |   |       |-- useAppConfig.ts 
     |   |       |-- useAppLocation.ts
     |   |       |-- useAppSdk.tsx
-    |   |       |-- useCategoryCustomField.tsx
     |   |       |-- useCustomField.tsx
-    |   |       |-- uuseFrame.ts
-    |   |       |-- useInstallationData.tsx    
-    |   |       |-- useProductCustomField.tsx    
+    |   |       |-- useFrame.ts
+    |   |       |-- useInstallationData.tsx 
     |   |       |-- useSdkDataByPath.ts                                                   
-    |   |    |-- locale
-    |   |        |-- index.ts
+    |   |   |-- locale
+    |   |       |-- en-us
+    |   |           |-- index.ts
     |   |   |-- providers
     |   |        |-- AppConfigurationExtensionProvider.tsx
-    |   |        |-- CategoryCustomFieldExtensionProvider.tsx
     |   |        |-- CustomFieldExtensionProvider.tsx
     |   |        |-- EntrySidebarExtensionProvider.tsx
-    |   |        |-- MarketplaceAppProvider.tsx
-    |   |        |-- ProductCustomFieldExtensionProvider.tsx
-    |   |        |-- SelectorExtensionProvider.tsx                                                     
+    |   |        |-- MarketplaceAppProvider.tsx                                                     
     |   |   |-- types
     |   |       |-- index.ts
     |   |   |-- utils
@@ -152,7 +151,7 @@ marketplace-ecomm-boilerplate-app
 
 </details>
 
-* To start the development of a ECOMMERCE app using boilerplate, first Clone ECOMMERCE Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP. 
+* To start the development of an eCommerce app using boilerplate, first Clone eCommerce Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP. 
 * The new app repo source folder will be referred to as APP_DIRECTORY from now on.
 * Open the package.json inside the ui and api folders (`<APP_DIRECTORY>/ui/package.json` & `<APP_DIRECTORY>/api/package.json`) and update the name attribute to your app name. 
 * Open the root html file of the app (available at `<APP_DIRECTORY>/ui/public/index.html`) and update the `<title>` tag value to the name of your app.
@@ -195,30 +194,27 @@ npm i
 npm run dev
 ```
 The API server will start at port 8080.
-All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services.index.tsx` file.
+All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services/index.ts` file.
 
-In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different predefined functions can be utilized for fetching products or categories from various third-party ecommerce systems are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
+In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different pre-defined functions can be utilized for fetching products or categories from various third-party eCommerce systems. These functions are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
 Storing dynamic user data in the root config enables centralization, allowing the handler/index.js to easily access and process this information, promoting consistency and simplifying data management within the API.
 
 ## Provider
 
-- `<MarketplaceAppProvider>`:  This initialize the contentstack SDK make the SDK instance available via hooks to avoid props drilling.
-- `<AppConfigurationExtensionProvider>`: This initialize the configuration screen.
-- `<ProductCustomFieldExtensionProvider>`: This provider is responsible for Product Custom Field.
-- `<CategoryCustomFieldExtensionProvider>`: This provider is responsible for Category Custom Field.
-- `<EntrySidebarExtensionProvider>`: This provider is responsible for Entry Sidebarwidget.
-- `<SelectorExtensionProvider>`: This provider is responsible for Selector Page.
+- `<MarketplaceAppProvider>`:  This initializes the Contentstack SDK , and makes the SDK instance available via hooks to avoid props drilling.
+- `<AppConfigurationExtensionProvider>`: This initializes the configuration screen.
+- `<CustomFieldExtensionProvider>`: This provider is responsible for performing operatins on the  Custom Fields, both Product and Category.
+- `<EntrySidebarExtensionProvider>`: This provider is responsible for providing relevant data to the Entry Sidebar Widget.
 
 ## Hooks
 
-- `useAppConfig`: Getter and setter hook for App config.
+- `useAppConfig`: Returns the app configuration data.
 - `useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
 - `useAppSdk`: Returns the appSdk instance after initialization.
-- `useCategoryCustomField`: Getter and setter hook for category custom field data.
+- `useError`: Getter and setter hook for app errors that occur due to API calls or configuration issues.
 - `useCustomField`: Getter and setter hook for custom field data.
 - `useFrame`: Returns the Iframe instance for the location.
 - `useInstallationData`: Getter & Setter for installation data.
-- `useProductCustomField`: Getter and setter hook for product custom field data.
 - `useSdkDataByPath`: This is a generic hook which can return the value at the given path;
 
 ## Routes
@@ -230,13 +226,26 @@ size.
 
 - Create a new Route component inside route. Use default export
   - Inside `App.tsx`, lazy load the route component.  
-    - eg: `const AppConfigurationExtension = React.lazy(() => import("../ConfigScreen/index"))`
+    - for instance: 
+    ```javascript
+    const AppConfigurationExtension = React.lazy(() => import("../ConfigScreen/index"))
+    ```
   - Add the route wrapped inside `Suspense`. 
-    - Eg: ``` <Route path="/config" element={<Suspense><AppConfigurationExtensionProvider><AppConfigurationExtension /></AppConfigurationExtensionProvider></Suspense>} />```
+    - for instance: 
+    ```javascript
+    <Route path="/config" element={
+      <Suspense>
+        <AppConfigurationExtensionProvider>
+          <AppConfigurationExtension />
+        </AppConfigurationExtensionProvider>
+      </Suspense>} 
+    />
+    ```
 
 ## Styling
 
-- This setup uses basic CSS for styling
+- This setup uses SCSS for styling
+- You can find the style files under `ui/src/containers/<COMPONENT_NAME>/styles.scss`
 
 ## Creating an app in Developer Hub/Marketplace
 

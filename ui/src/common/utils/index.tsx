@@ -295,12 +295,28 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
 
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
-      if (Number(sItem) === Number(mItem)) {
+      if (sItem.toString() === mItem.toString()) {
         data.push(sItem);
       }
     });
   });
   data.push(...dataArray.filter((x: any) => !data.includes(x)));
+  return data;
+};
+
+const arrangeList = (
+  sortedIdsArray: any[],
+  dataArray: any[],
+  uniqueKey: string
+) => {
+  const data: any[] = [];
+  sortedIdsArray?.forEach((mItem: any) => {
+    dataArray?.forEach((sItem: any) => {
+      if (sItem && sItem[uniqueKey] === mItem) {
+        data.push(sItem);
+      }
+    });
+  });
   return data;
 };
 
@@ -323,4 +339,5 @@ export {
   arrangeSelectedIds,
   getItemStatusMap,
   removeHTMLTags,
+  arrangeList
 };

@@ -12,9 +12,34 @@ import {
  * const { customField, setFieldData, loading } = useCustomField();
  */
 const useCustomField = () => {
-  const { customField, setFieldData, loading } =
-    useContext<CustomFieldExtensionContextType>(CustomFieldExtensionContext);
+  const {
+    setFieldData,
+    selectedIds,
+    selectedItems,
+    setSelectedIds,
+    setSelectedItems,
+    removeIdFromField,
+    handleDragEvent,
+    loading,
+    stackApiKey,
+    isInvalidCredentials,
+    appSdkInitialized
+  } = useContext<CustomFieldExtensionContextType>(
+    CustomFieldExtensionContext
+  );
 
-  return { customField, setFieldData, loading };
+  return {
+    setFieldData,
+    selectedIds,
+    selectedItems,
+    setSelectedIds,
+    setSelectedItems,
+    removeIdFromField,
+    handleDragEvent,
+    loading,
+    stackApiKey,
+    isInvalidCredentials,
+    appSdkInitialized
+  };
 };
 export default useCustomField;

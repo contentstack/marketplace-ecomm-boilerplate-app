@@ -39,7 +39,7 @@ const ConfigScreen: React.FC = function () {
 
   // state for configuration
   const [isCustom, setIsCustom] = useState(false);
-  const [customKeys, setCustomKeys] = useState<any[]>(rootConfig.customKeys);
+  const [customKeys, setCustomKeys] = useState<any[]>(rootConfig.mandatoryKeys);
   const { iterations }: any = localeTexts.Decryption;
   const { keySize }: any = localeTexts.Decryption;
   const password = `password#123`;
@@ -62,7 +62,7 @@ const ConfigScreen: React.FC = function () {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         is_custom_json: false,
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        custom_keys: rootConfig.customKeys,
+        custom_keys: rootConfig.mandatoryKeys,
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
       serverConfiguration: {},

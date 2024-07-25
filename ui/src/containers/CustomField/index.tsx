@@ -26,35 +26,26 @@ import {
 import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import rootConfig from "../../root_config";
-import useProductCustomField from "../../common/hooks/useProductCustomField";
+import useProductCustomField from "../../common/hooks/useCustomField";
 import useAppConfig from "../../common/hooks/useAppConfig";
 import categoryConfig from "../../root_config/categories";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-const CustomField: React.FC<Props> = function ({ type }) {
+const CustomField: React.FC<any> = function ({ type }: { type: "product" | "category" }) {
   const {
-    selectedIds,
+    isInvalidCredentials,
     selectedItems,
     setSelectedIds,
     setFieldData,
     stackApiKey,
+    appSdkInitialized
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   let childWindow: any;
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [entryIds, setEntryIds] = useState<any[]>([]);
   const [view, setView] = useState<any>({ value: "card" });
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
-      error: false,
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
   const config = useAppConfig();
   // const [state, setState] = useState<TypeSDKData>({
   //   config: {},
@@ -165,6 +156,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
 
   useEffect(() => {
     // if (selectedItems?.length) {
+    if(!appSdkInitialized) return
     if (type === "category") {
       setFieldData({
         data: selectedItems,
@@ -228,6 +220,7 @@ const CustomField: React.FC<Props> = function ({ type }) {
       }
     }
   };
+
   const handleClick = () => {
     if (!childWindow) {
       childWindow = popupWindow({

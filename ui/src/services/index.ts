@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios, { Method } from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 import categoryConfig from "../root_config/categories";
 
 // common function for an API call to your backend
-const makeAnApiCall = async (url: any, method: any, data: any) => {
+const makeAnApiCall = async (url: string, method: Method, data: any)  => {
   try {
     const response = await axios({
       url,
@@ -18,7 +18,7 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 
     return {
       error: false,
-      data: rootConfig.returnUrl(response),
+      data: rootConfig.getFormattedResponse(response),
     };
   } catch (e: any) {
     console.error(e);
@@ -84,24 +84,12 @@ const getCustomCategoryData = async (
   return null;
 };
 // search products and categories
-const search = (
-  config: any,
-  keyword: any,
-  skip: any,
-  limit: any,
-  categories = []
-) => {
-  console.info("search", config, keyword, skip, limit, categories);
-  const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
-    config,
-    keyword,
-    skip,
-    limit,
-    categories
+const search = (config: any, keyword: any, skip: any, limit: any) =>
+  makeAnApiCall(
+    `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`,
+    "POST",
+    config
   );
-
-  return makeAnApiCall(apiUrl, "POST", requestData);
-};
 
 export {
   getSelectedIDs,

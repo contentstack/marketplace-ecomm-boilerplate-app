@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+
 import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
 
 declare global {
@@ -70,3 +74,75 @@ export declare type ColumnsProp = {
 export interface KeyValueObj {
   [key: string]: any;
 }
+
+export interface CustomFieldType {
+  type: "product" | "category" | "";
+}
+
+export interface EcommerceEnv {
+  REACT_APP_NAME: string;
+  SELECTOR_PAGE_LOGO: string;
+  APP_ENG_NAME: string;
+  UNIQUE_KEY: UniqueKeyOptions | any;
+}
+
+export interface UniqueKeyOptions {
+  product: string | any;
+  category: string | any;
+}
+
+export interface KeyOption {
+  label: string;
+  value: string;
+  searchLabel: string;
+  isDisabled?: boolean;
+}
+
+interface ConfigInfo {
+  label: string;
+  help?: string;
+  placeholder?: string;
+  instruction: string;
+  name: string;
+  isSensitive?: boolean;
+}
+
+export interface FormattedRespose {
+  items: any[];
+  meta: {
+    total: number;
+    current_page: number;
+  };
+}
+
+export interface ConfigFields {
+  [key: string]: ConfigInfo;
+}
+
+export interface TypeProduct {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: string;
+  sku?: string;
+}
+
+export interface TypeCategory {
+  id: string;
+  name: string;
+  customUrl?: string;
+  description: string;
+}
+
+export interface SidebarDataObj {
+  title: string;
+  value: string;
+}
+
+export interface APIResponseType {
+  error: boolean;
+  data: FormattedRespose | string
+  };
+
+
