@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-
 import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
 
 declare global {
@@ -142,7 +141,5 @@ export interface SidebarDataObj {
 
 export interface APIResponseType {
   error: boolean;
-  data: FormattedRespose | string
-  };
-
-
+  data: FormattedRespose | string;
+}

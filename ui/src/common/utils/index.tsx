@@ -339,5 +339,5 @@ export {
   arrangeSelectedIds,
   getItemStatusMap,
   removeHTMLTags,
-  arrangeList
+  arrangeList,
 };

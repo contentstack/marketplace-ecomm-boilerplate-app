@@ -13,7 +13,11 @@ import {
   getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
-import { CustomFieldType, KeyValueObj, TypeWarningtext } from "../../common/types";
+import {
+  CustomFieldType,
+  KeyValueObj,
+  TypeWarningtext,
+} from "../../common/types";
 import { request, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
@@ -28,8 +32,7 @@ const SelectorPage: React.FC = function () {
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [totalCounts, setTotalCounts] = useState(null);
   const [itemStatus, setItemStatus] = useState({});
-  const [config, setConfig] = useState<any>({
-  });
+  const [config, setConfig] = useState<any>({});
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [hiddenColumns, setHiddenColumns] = useState<any>(

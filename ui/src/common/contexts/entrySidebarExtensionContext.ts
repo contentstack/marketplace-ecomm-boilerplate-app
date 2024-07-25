@@ -4,9 +4,9 @@ import { TypeWarningtext } from "../types";
 export type EntrySidebarExtensionContextType = {
   entryData: { [key: string]: any };
   contentTypeSchema: any;
-  isInvalidCredentials: TypeWarningtext,
-  setIsInvalidCredentials: any,
-  appSdkInitialized: boolean,
+  isInvalidCredentials: TypeWarningtext;
+  setIsInvalidCredentials: any;
+  appSdkInitialized: boolean;
 };
 
 export const EntrySidebarExtensionContext =

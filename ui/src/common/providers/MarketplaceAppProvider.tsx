@@ -45,7 +45,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
       appConfig,
       isInvalidCredentials,
       setIsInvalidCredentials,
-      failed
+      failed,
     }),
     [appSdk, appConfig]
   );

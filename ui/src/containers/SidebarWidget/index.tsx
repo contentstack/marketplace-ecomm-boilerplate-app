@@ -22,7 +22,13 @@ import { EntrySidebarExtensionContext } from "../../common/contexts/entrySidebar
 import useAppConfig from "../../common/hooks/useAppConfig";
 
 const SidebarWidget: React.FC = function () {
-  const {entryData, contentTypeSchema, isInvalidCredentials, setIsInvalidCredentials, appSdkInitialized} = useContext(EntrySidebarExtensionContext);
+  const {
+    entryData,
+    contentTypeSchema,
+    isInvalidCredentials,
+    setIsInvalidCredentials,
+    appSdkInitialized,
+  } = useContext(EntrySidebarExtensionContext);
   const appConfig = useAppConfig();
   const [loading, setLoading] = useState(true);
   const [productLoading, setProductLoading] = useState(false);
@@ -60,7 +66,7 @@ const SidebarWidget: React.FC = function () {
   // }, []);
 
   useEffect(() => {
-    if(!appSdkInitialized) return
+    if (!appSdkInitialized) return;
     const eCommerceProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
         entryData?.[i]?.type ===
@@ -77,10 +83,7 @@ const SidebarWidget: React.FC = function () {
       });
     });
     setFieldList(fieldListTemp);
-  }, [entryData,
-    appConfig,
-    appSdkInitialized
-  ]);
+  }, [entryData, appConfig, appSdkInitialized]);
 
   const getCurrentFieldData = async (field: any) => {
     // if (!appSdkInitialized) return;
@@ -110,8 +113,6 @@ const SidebarWidget: React.FC = function () {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       isInvalidCredentials?.data;
   }, [isInvalidCredentials]);
-
-
 
   useEffect(() => {
     if (!appSdkInitialized) return;
@@ -186,9 +187,7 @@ const SidebarWidget: React.FC = function () {
       return (
         <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
       );
-    return (
-      <ProductDescription product={selectedProduct} config={appConfig} />
-    );
+    return <ProductDescription product={selectedProduct} config={appConfig} />;
   };
 
   const getNoOptionsMessage = useCallback(

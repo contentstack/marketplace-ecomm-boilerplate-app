@@ -23,10 +23,8 @@ const useCustomField = () => {
     loading,
     stackApiKey,
     isInvalidCredentials,
-    appSdkInitialized
-  } = useContext<CustomFieldExtensionContextType>(
-    CustomFieldExtensionContext
-  );
+    appSdkInitialized,
+  } = useContext<CustomFieldExtensionContextType>(CustomFieldExtensionContext);
 
   return {
     setFieldData,
@@ -39,7 +37,7 @@ const useCustomField = () => {
     loading,
     stackApiKey,
     isInvalidCredentials,
-    appSdkInitialized
+    appSdkInitialized,
   };
 };
 export default useCustomField;

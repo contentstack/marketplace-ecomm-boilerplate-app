@@ -19,18 +19,17 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
   const appSdk = useAppSdk();
 
   useEffect(() => {
-    if(!isNull(location) && !isEmpty(appConfig)){
+    if (!isNull(location) && !isEmpty(appConfig)) {
       setAppSdkInitialized(true);
     }
-  }, [location, appConfig])
+  }, [location, appConfig]);
 
   useEffect(() => {
     (async () => {
       if (!isEmpty(entryData) || isNull(location)) return;
       // setLoading(true);
       const entry: { [key: string]: any } = await location?.entry?.getData();
-      const contentTypeUid =
-      location?.entry?.content_type?.uid || "";
+      const contentTypeUid = location?.entry?.content_type?.uid || "";
       const contentTypeDetails = await appSdk?.stack?.getContentType(
         contentTypeUid
       );
@@ -58,9 +57,15 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
       contentTypeSchema,
       isInvalidCredentials,
       setIsInvalidCredentials,
-      appSdkInitialized
+      appSdkInitialized,
     }),
-    [entryData, contentTypeSchema, isInvalidCredentials, setIsInvalidCredentials, appSdkInitialized]
+    [
+      entryData,
+      contentTypeSchema,
+      isInvalidCredentials,
+      setIsInvalidCredentials,
+      appSdkInitialized,
+    ]
   );
 
   return (

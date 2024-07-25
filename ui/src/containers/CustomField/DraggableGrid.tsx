@@ -15,7 +15,10 @@ import rootConfig from "../../root_config";
 import Category from "./Category";
 import useProductCustomField from "../../common/hooks/useCustomField";
 
-const DraggableGrid: React.FC<any> = function ({ remove, type }: {
+const DraggableGrid: React.FC<any> = function ({
+  remove,
+  type,
+}: {
   remove: (id: string) => void;
   type: "product" | "category";
 }) {

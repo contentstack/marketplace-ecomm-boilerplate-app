@@ -95,7 +95,7 @@ function App() {
               path="/selector-page"
               element={
                 <Suspense fallback={null}>
-                    <SelectorExtension />
+                  <SelectorExtension />
                 </Suspense>
               }
             />

@@ -15,9 +15,12 @@ import localeTexts from "../../common/locale/en-us";
 import DraggableListItemCategory from "./DraggableListItemCategory";
 import useProductCustomField from "../../common/hooks/useCustomField";
 
-const ListItem: React.FC<any> = function ({ remove, type }: {
-  remove: any,
-  type: "product" | "category"
+const ListItem: React.FC<any> = function ({
+  remove,
+  type,
+}: {
+  remove: any;
+  type: "product" | "category";
 }) {
   const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];

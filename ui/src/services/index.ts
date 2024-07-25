@@ -4,7 +4,7 @@ import rootConfig from "../root_config";
 import categoryConfig from "../root_config/categories";
 
 // common function for an API call to your backend
-const makeAnApiCall = async (url: string, method: Method, data: any)  => {
+const makeAnApiCall = async (url: string, method: Method, data: any) => {
   try {
     const response = await axios({
       url,

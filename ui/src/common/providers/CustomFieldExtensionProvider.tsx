@@ -134,7 +134,9 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       setSelectedIds(selectedIDs);
     } else {
       setSelectedIds(
-        selectedIds?.filter((data: any) => data.toString() !== removeId.toString) // remove Number typecast
+        selectedIds?.filter(
+          (data: any) => data.toString() !== removeId.toString
+        ) // remove Number typecast
       );
     }
   };
@@ -160,7 +162,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       loading,
       stackApiKey,
       isInvalidCredentials,
-      appSdkInitialized
+      appSdkInitialized,
     }),
     [
       setFieldData,
@@ -173,7 +175,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       handleDragEvent,
       stackApiKey,
       isInvalidCredentials,
-      appSdkInitialized
+      appSdkInitialized,
     ]
   );
 

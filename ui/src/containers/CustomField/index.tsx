@@ -32,14 +32,18 @@ import categoryConfig from "../../root_config/categories";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-const CustomField: React.FC<any> = function ({ type }: { type: "product" | "category" }) {
+const CustomField: React.FC<any> = function ({
+  type,
+}: {
+  type: "product" | "category";
+}) {
   const {
     isInvalidCredentials,
     selectedItems,
     setSelectedIds,
     setFieldData,
     stackApiKey,
-    appSdkInitialized
+    appSdkInitialized,
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
@@ -156,7 +160,7 @@ const CustomField: React.FC<any> = function ({ type }: { type: "product" | "cate
 
   useEffect(() => {
     // if (selectedItems?.length) {
-    if(!appSdkInitialized) return
+    if (!appSdkInitialized) return;
     if (type === "category") {
       setFieldData({
         data: selectedItems,
