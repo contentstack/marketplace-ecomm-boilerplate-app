@@ -8,7 +8,6 @@ import {
   SkeletonTile,
   Tooltip,
 } from "@contentstack/venus-components";
-import { Props, TypeWarningtext } from "../../common/types";
 /* Import our modules */
 import RenderList from "./RenderList";
 import WarningMessage from "../../components/WarningMessage";
@@ -24,41 +23,71 @@ import {
 import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import rootConfig from "../../root_config";
-import useProductCustomField from "../../common/hooks/useProductCustomField";
+import useProductCustomField from "../../common/hooks/useCustomField";
 import useAppConfig from "../../common/hooks/useAppConfig";
 import categoryConfig from "../../root_config/categories";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-const CustomField: React.FC<Props> = function ({ type }) {
-  /* eslint-disable */
-  let {
-    selectedIds,
+const CustomField: React.FC<any> = function ({
+  type,
+}: {
+  type: "product" | "category";
+}) {
+  const {
+    isInvalidCredentials,
     selectedItems,
     setSelectedIds,
     setFieldData,
     stackApiKey,
+    appSdkInitialized,
     advancedConfig,
     isOldUser,
+    selectedIds
   }: any = useProductCustomField();
-  /* eslint-enable */
-
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
   let childWindow: any;
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [view, setView] = useState<any>({ value: "card" });
-  // eslint-disable-next-line
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
-      error: false,
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
   const config = useAppConfig();
+ 
+  //   config: {},
+  //   location: {},
+  //   appSdkInitialized: false,
+  // });
+
+  // const fetchData = async (selectedIdsArray: any) => {
+  //   if (
+  //     Array.isArray(selectedIdsArray) &&
+  //     !isEmpty(state?.config) &&
+  //     selectedIdsArray.length &&
+  //     !isInvalidCredentials.error
+  //   ) {
+  //     let res;
+  //     if (
+  //       rootConfig.ecomCustomFieldCategoryData === true &&
+  //       type === "category"
+  //     ) {
+  //       res = await filter(state?.config, type, selectedIdsArray);
+  //       if (res?.error) {
+  //         setIsInvalidCredentials(res);
+  //       } else setSelectedItems(res?.data?.items);
+  //     } else {
+  //       res = await getSelectedIDs(state?.config, type, selectedIdsArray);
+  //       if (res?.error) {
+  //         setIsInvalidCredentials(res);
+  //       } else
+  //         setSelectedItems(
+  //           rootConfig.arrangeList(
+  //             selectedIdsArray,
+  //             res?.data?.data || res?.data?.items,
+  //             uniqueKey
+  //           )
+  //         );
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     window.addEventListener("beforeunload", () => {
@@ -67,41 +96,104 @@ const CustomField: React.FC<Props> = function ({ type }) {
     });
   }, []);
 
+
+  //   ContentstackAppSdk.init()
+  //     .then(async (appSdk) => {
+  //       // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
+  //       const { api_key } = appSdk?.stack?._data || {};
+  //       setStackApiKey(api_key);
+
+  //       const config = await appSdk?.getConfig();
+  //       window.iframeRef = null;
+  //       window.postRobot = appSdk?.postRobot;
+  //       const entryData = appSdk?.location?.CustomField?.field?.getData();
+  //       // console.info("entryData", entryData);
+  //       appSdk?.location?.CustomField?.frame?.enableAutoResizing();
+  //       if (entryData?.data?.length) {
+  //         if (
+  //           rootConfig.ecomCustomFieldCategoryData &&
+  //           rootConfig.ecomCustomFieldCategoryData === true &&
+  //           type === "category"
+  //         ) {
+  //           setEntryIds(
+  //             entryData?.data?.map((i: any) => ({
+  //               [uniqueKey]: i?.[uniqueKey],
+  //               catalogId: i?.catalogId,
+  //               catalogVersionId: i?.catalogVersionId,
+  //             }))
+  //           );
+  //         } else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
+  //       }
+  //       setState({
+  //         config,
+  //         location: appSdk.location,
+  //         appSdkInitialized: true,
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.error("appSdk initialization error", error);
+  //     });
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!state.appSdkInitialized) return;
+  //   setIsInvalidCredentials({
+  //     error: Object.values(state.config || {}).includes(""),
+  //     data: localeTexts.warnings.invalidCredentials.replace(
+  //       "$",
+  //       rootConfig.ecommerceEnv.APP_ENG_NAME
+  //     ),
+  //   });
+  // }, [state.config]);
+
+  // useEffect(() => {
+  //   // if (!state.appSdkInitialized) return;
+  //   // console.info(entryIds, "entryIds");
+  //   setSelectedIds(entryIds);
+  // }, [entryIds]);
+
+  // useEffect(() => {
+  //   // if (!state.appSdkInitialized) return;
+  //   if (selectedIds.length) fetchData(selectedIds);
+  //   else setSelectedItems([]);
+  // }, [selectedIds]);
+
   useEffect(() => {
     if (selectedItems?.length) {
-      if (type === "category") {
+    if (!appSdkInitialized) return;
+    if (type === "category") {
+      setFieldData({
+        data: selectedItems,
+        type: `${appName}_${type}`,
+      });
+    } else {
+      // eslint-disable-next-line
+      if (!config?.is_custom_json)
         setFieldData({
           data: selectedItems,
           type: `${appName}_${type}`,
         });
-      } else {
-        // eslint-disable-next-line
-        if (!config?.is_custom_json)
-          setFieldData({
-            data: selectedItems,
-            type: `${appName}_${type}`,
-          });
-        else {
-          const data: any[] = [];
-          const keys = config?.custom_keys?.map((i: any) => i?.value);
-          if (selectedItems?.length) {
-            selectedItems.forEach((item: any) => {
-              const obj1: any = {};
-              keys?.forEach((key: any) => {
-                obj1[key] = item[key];
-              });
-              data.push(obj1);
+      else {
+        const data: any[] = [];
+        const keys = config?.custom_keys?.map((i: any) => i?.value);
+        if (selectedItems?.length) {
+          selectedItems.forEach((item: any) => {
+            const obj1: any = {};
+            keys?.forEach((key: any) => {
+              obj1[key] = item[key];
             });
-          }
-          setFieldData({
-            data,
-            type: `${appName}_${type}`,
+            data.push(obj1);
           });
         }
+        setFieldData({
+          data,
+          type: `${appName}_${type}`,
+        });
       }
     }
+    }
     setLoading(false);
-  }, [selectedItems, config]);
+  }, [selectedItems]);
 
   const handleMessage = (event: any) => {
     const { data } = event;
@@ -135,6 +227,14 @@ const CustomField: React.FC<Props> = function ({ type }) {
       }
     }
   };
+
+
+
+
+
+
+
+
   const handleClick = () => {
     if (!childWindow) {
       childWindow = popupWindow({
@@ -222,20 +322,22 @@ const CustomField: React.FC<Props> = function ({ type }) {
         the configuration details from the appSdk. */
   return (
     <div className="layout-container">
-      <div className="field-extension-wrapper">
-        {renderCustomField()}
-        <Button
-          onClick={handleClick}
-          className="add-product-btn"
-          buttonType="control"
-          disabled={isInvalidCredentials.error || loading}
-        >
-          {localeTexts.customField.addHere}{" "}
-          {type === "category"
-            ? localeTexts.customField.buttonText.category
-            : localeTexts.customField.buttonText.product}
-        </Button>
-      </div>
+      {
+        <div className="field-extension-wrapper">
+          {renderCustomField()}
+          <Button
+            onClick={handleClick}
+            className="add-product-btn"
+            buttonType="control"
+            disabled={isInvalidCredentials.error || loading}
+          >
+            {localeTexts.customField.addHere}{" "}
+            {type === "category"
+              ? localeTexts.customField.buttonText.category
+              : localeTexts.customField.buttonText.product}
+          </Button>
+        </div>
+      }
     </div>
   );
 };

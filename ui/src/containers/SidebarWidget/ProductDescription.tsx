@@ -1,10 +1,9 @@
 import React from "react";
 import { Tooltip } from "@contentstack/venus-components";
-import { Props } from "../../common/types";
+import { Props, TypeProduct } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import "./styles.scss";
 import rootConfig from "../../root_config";
-import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
 
 const ProductDescription: React.FC<Props> = function ({ product, config }) {

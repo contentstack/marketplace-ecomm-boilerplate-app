@@ -7,13 +7,12 @@ import {
   Tooltip,
   cbModal,
 } from "@contentstack/venus-components";
-import { Props } from "../../common/types";
+import { Props, TypeProduct } from "../../common/types";
 import { removeHTMLTags } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
-import { TypeProduct } from "../../types";
 import useAppConfig from "../../common/hooks/useAppConfig";
 import noImage from "../../assets/NoImg.svg";
 

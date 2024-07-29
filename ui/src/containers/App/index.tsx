@@ -6,9 +6,7 @@ import ErrorBoundary from "../../components/ErrorBoundary";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";
 import AppConfigurationExtensionProvider from "../../common/providers/AppConfigurationExtensionProvider";
-import ProductCustomFieldExtensionProvider from "../../common/providers/ProductCustomFieldExtensionProvider";
-import CategoryCustomFieldExtensionProvider from "../../common/providers/CategoryCustomFieldExtensionProvider";
-import SelectorExtensionProvider from "../../common/providers/SelectorExtensionProvider";
+import CustomFieldExtensionProvider from "../../common/providers/CustomFieldExtensionProvider";
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
 /* Import our CSS */
@@ -66,9 +64,9 @@ function App() {
               path="/product-field"
               element={
                 <Suspense fallback={null}>
-                  <ProductCustomFieldExtensionProvider type="product">
+                  <CustomFieldExtensionProvider type="product">
                     <ProductExtension />
-                  </ProductCustomFieldExtensionProvider>
+                  </CustomFieldExtensionProvider>
                 </Suspense>
               }
             />
@@ -76,9 +74,9 @@ function App() {
               path="/category-field"
               element={
                 <Suspense fallback={null}>
-                  <ProductCustomFieldExtensionProvider type="category">
+                  <CustomFieldExtensionProvider type="category">
                     <CategoryExtension />
-                  </ProductCustomFieldExtensionProvider>
+                  </CustomFieldExtensionProvider>
                 </Suspense>
               }
             />
@@ -97,9 +95,7 @@ function App() {
               path="/selector-page"
               element={
                 <Suspense fallback={null}>
-                  <SelectorExtensionProvider>
-                    <SelectorExtension />
-                  </SelectorExtensionProvider>
+                  <SelectorExtension />
                 </Suspense>
               }
             />

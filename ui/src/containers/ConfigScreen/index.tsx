@@ -57,7 +57,10 @@ const ConfigScreen: React.FC = function () {
 
   /* state for configuration */
   const [isCustom, setIsCustom] = useState(false);
-  const [customKeys, setCustomKeys] = useState<any[]>(rootConfig.customKeys);
+  const [customKeys, setCustomKeys] = useState<any[]>(rootConfig.mandatoryKeys);
+  const { iterations }: any = localeTexts.Decryption;
+  const { keySize }: any = localeTexts.Decryption;
+  const password = `password#123`;
   const [state, setState] = React.useState<TypeAppSdkConfigState>({
     installationData: {
       configuration: {
@@ -73,9 +76,10 @@ const ConfigScreen: React.FC = function () {
           };
         }, {}),
         is_custom_json: false,
-        custom_keys: rootConfig.customKeys,
         multi_config_keys: {},
         default_multi_config_key: "",
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        custom_keys: rootConfig.mandatoryKeys,
       },
       /* Use ServerConfiguration Only When Webhook is Enbaled */
       serverConfiguration: {

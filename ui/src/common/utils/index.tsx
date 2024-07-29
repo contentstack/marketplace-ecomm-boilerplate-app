@@ -301,7 +301,7 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
 
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
-      if (Number(sItem) === Number(mItem)) {
+      if (sItem.toString() === mItem.toString()) {
         data.push(sItem);
       }
     });
@@ -357,6 +357,22 @@ const extractFieldsByConfigType = (configScreen: any) => {
 
   return { multiConfigFields, singleConfigFields };
 };
+const arrangeList = (
+  sortedIdsArray: any[],
+  dataArray: any[],
+  uniqueKey: string
+) => {
+  const data: any[] = [];
+  sortedIdsArray?.forEach((mItem: any) => {
+    dataArray?.forEach((sItem: any) => {
+      if (sItem && sItem[uniqueKey] === mItem) {
+        data.push(sItem);
+      }
+    });
+  });
+  return data;
+};
+
 export {
   isEmpty,
   popupWindow,
@@ -378,4 +394,5 @@ export {
   removeHTMLTags,
   categorizeConfigFields,
   extractFieldsByConfigType,
+  arrangeList,
 };

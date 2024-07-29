@@ -10,7 +10,8 @@ import {
   TypeProduct,
   SidebarDataObj,
   EcommerceEnv,
-} from "../types";
+  FormattedRespose,
+} from "../common/types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.
@@ -135,295 +136,432 @@ const configureConfigScreen: any = () => ({
   },
 });
 
-const customKeys: any = [
-  { label: "id", value: "id" },
-  { label: "key", value: "key" },
+const mandatoryKeys: KeyOption[] = [
+  { label: "code", value: "code", searchLabel: "code" },
+  { label: "name", value: "name", searchLabel: "name" },
 ];
 
-// const openSelectorPage = (config: any) => !!config.configField1;
-
 // change name for this function
-const returnUrl = (response: any) => {
-  console.info("response returnUrl", response);
-  return {
-    items:
-      response?.data?.results
-      || response?.data?.products
-      || response?.data?.catalogs,
-    // assign this to the key that contains your data
-    meta: {
-      total: response?.data?.total, // assign this to the key that specifies the total count of the data fetched
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      current_page: response?.data?.pagination?.currentPage, // assign this to the key that corresponds to the current page
-    },
-  };
-};
+const getFormattedResponse = (response: any): FormattedRespose => ({
+  items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
+  meta: {
+    total: response?.data?.pagination?.totalResults, // assign this to the key that specifies the total count of the data fetched
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    current_page: response?.data?.pagination?.currentPage, // assign this to the key that corresponds to the current page
+  },
+});
 
-const getCustomKeys = () =>
-  <KeyOption[]>[
-    {
-      label: "id",
-      value: "id",
-      searchLabel: "id",
-    },
-    {
-      label: "version",
-      value: "version",
-      searchLabel: "version",
-    },
-    {
-      label: "versionModifiedAt",
-      value: "versionModifiedAt",
-      searchLabel: "versionModifiedAt",
-    },
-    {
-      label: "lastMessageSequenceNumber",
-      value: "lastMessageSequenceNumber",
-      searchLabel: "lastMessageSequenceNumber",
-    },
-    {
-      label: "createdAt",
-      value: "createdAt",
-      searchLabel: "createdAt",
-    },
-    {
-      label: "lastModifiedAt",
-      value: "lastModifiedAt",
-      searchLabel: "lastModifiedAt",
-    },
-    {
-      label: "lastModifiedBy",
-      value: "lastModifiedBy",
-      searchLabel: "lastModifiedBy",
-    },
-    {
-      label: "createdBy",
-      value: "createdBy",
-      searchLabel: "createdBy",
-    },
-    {
-      label: "productType",
-      value: "productType",
-      searchLabel: "productType",
-    },
-    {
-      label: "masterData",
-      value: "masterData",
-      searchLabel: "masterData",
-    },
-    {
-      label: "key",
-      value: "key",
-      searchLabel: "key",
-    },
-    {
-      label: "taxCategory",
-      value: "taxCategory",
-      searchLabel: "taxCategory",
-    },
-    {
-      label: "lastVariantId",
-      value: "lastVariantId",
-      searchLabel: "lastVariantId",
-    },
-    {
-      label: "cs_metadata",
-      value: "cs_metadata",
-      searchLabel: "cs_metadata",
-    },
-  ];
+const getCustomKeys = (): KeyOption[] => [
+  {
+    label: "approvalStatus",
+    value: "approvalStatus",
+    searchLabel: "approvalStatus",
+  },
+  {
+    label: "availableForPickup",
+    value: "availableForPickup",
+    searchLabel: "availableForPickup",
+  },
+  {
+    label: "averageRating",
+    value: "averageRating",
+    searchLabel: "averageRating",
+  },
+  {
+    label: "baseOptions",
+    value: "baseOptions",
+    searchLabel: "baseOptions",
+  },
+  {
+    label: "baseProduct",
+    value: "baseProduct",
+    searchLabel: "baseProduct",
+  },
+  {
+    label: "baseProductName",
+    value: "baseProductName",
+    searchLabel: "baseProductName",
+  },
+  {
+    label: "categories",
+    value: "categories",
+    searchLabel: "categories",
+  },
+  {
+    label: "children",
+    value: "children",
+    searchLabel: "children",
+  },
+  {
+    label: "classifications",
+    value: "classifications",
+    searchLabel: "classifications",
+  },
+  {
+    label: "code",
+    value: "code",
+    searchLabel: "code",
+    isDisabled: true,
+  },
+  {
+    label: "colors",
+    value: "colors",
+    searchLabel: "colors",
+  },
+  {
+    label: "componentId",
+    value: "componentId",
+    searchLabel: "componentId",
+  },
+  {
+    label: "configurable",
+    value: "configurable",
+    searchLabel: "configurable",
+  },
+  {
+    label: "configuratorType",
+    value: "configuratorType",
+    searchLabel: "configuratorType",
+  },
+  {
+    label: "description",
+    value: "description",
+    searchLabel: "description",
+  },
+  {
+    label: "disabledMessage",
+    value: "disabledMessage",
+    searchLabel: "disabledMessage",
+  },
+  {
+    label: "futureStocks",
+    value: "futureStocks",
+    searchLabel: "futureStocks",
+  },
+  {
+    label: "hasParentBpos",
+    value: "hasParentBpos",
+    searchLabel: "hasParentBpos",
+  },
+  {
+    label: "images",
+    value: "images",
+    searchLabel: "images",
+  },
+  {
+    label: "isBundle",
+    value: "isBundle",
+    searchLabel: "isBundle",
+  },
+  {
+    label: "isComponentEditable",
+    value: "isComponentEditable",
+    searchLabel: "isComponentEditable",
+  },
+  {
+    label: "isMaxLimitReachedForBundle",
+    value: "isMaxLimitReachedForBundle",
+    searchLabel: "isMaxLimitReachedForBundle",
+  },
+  {
+    label: "isRemovableEntry",
+    value: "isRemovableEntry",
+    searchLabel: "isRemovableEntry",
+  },
+  {
+    label: "mainSpoPriceInBpo",
+    value: "mainSpoPriceInBpo",
+    searchLabel: "mainSpoPriceInBpo",
+  },
+  {
+    label: "manufacturer",
+    value: "manufacturer",
+    searchLabel: "manufacturer",
+  },
+  {
+    label: "modifiedTime",
+    value: "modifiedTime",
+    searchLabel: "modifiedTime",
+  },
+  {
+    label: "multidimensional",
+    value: "multidimensional",
+    searchLabel: "multidimensional",
+  },
+  {
+    label: "name",
+    value: "name",
+    searchLabel: "name",
+    isDisabled: true,
+  },
+  {
+    label: "numberOfReviews",
+    value: "numberOfReviews",
+    searchLabel: "numberOfReviews",
+  },
+  {
+    label: "offeringGroup",
+    value: "offeringGroup",
+    searchLabel: "offeringGroup",
+  },
+  {
+    label: "parents",
+    value: "parents",
+    searchLabel: "parents",
+  },
+  {
+    label: "potentialPromotions",
+    value: "potentialPromotions",
+    searchLabel: "potentialPromotions",
+  },
+  {
+    label: "preselected",
+    value: "preselected",
+    searchLabel: "preselected",
+  },
+  {
+    label: "price",
+    value: "price",
+    searchLabel: "price",
+  },
+  {
+    label: "priceRange",
+    value: "priceRange",
+    searchLabel: "priceRange",
+  },
+  {
+    label: "productOfferingPrice",
+    value: "productOfferingPrice",
+    searchLabel: "productOfferingPrice",
+  },
+  {
+    label: "productReferences",
+    value: "productReferences",
+    searchLabel: "productReferences",
+  },
+  {
+    label: "productSpecDescription",
+    value: "productSpecDescription",
+    searchLabel: "productSpecDescription",
+  },
+  {
+    label: "productSpecification",
+    value: "productSpecification",
+    searchLabel: "productSpecification",
+  },
+  {
+    label: "purchasable",
+    value: "purchasable",
+    searchLabel: "purchasable",
+  },
+  {
+    label: "reviews",
+    value: "reviews",
+    searchLabel: "reviews",
+  },
+  {
+    label: "soldIndividually",
+    value: "soldIndividually",
+    searchLabel: "soldIndividually",
+  },
+  {
+    label: "stock",
+    value: "stock",
+    searchLabel: "stock",
+  },
+  {
+    label: "storageSize",
+    value: "storageSize",
+    searchLabel: "storageSize",
+  },
+  {
+    label: "parents",
+    value: "parents",
+    searchLabel: "parents",
+  },
+  {
+    label: "summary",
+    value: "summary",
+    searchLabel: "summary",
+  },
+  {
+    label: "tags",
+    value: "tags",
+    searchLabel: "tags",
+  },
+  {
+    label: "url",
+    value: "url",
+    searchLabel: "url",
+  },
+  {
+    label: "validFor",
+    value: "validFor",
+    searchLabel: "validFor",
+  },
+  {
+    label: "variantMatrix",
+    value: "variantMatrix",
+    searchLabel: "variantMatrix",
+  },
+  {
+    label: "variantOptions",
+    value: "variantOptions",
+    searchLabel: "variantOptions",
+  },
+  {
+    label: "variantType",
+    value: "variantType",
+    searchLabel: "variantType",
+  },
+  {
+    label: "volumePrices",
+    value: "volumePrices",
+    searchLabel: "volumePrices",
+  },
+  {
+    label: "volumePricesFlag",
+    value: "volumePricesFlag",
+    searchLabel: "volumePricesFlag",
+  },
+];
 
-const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=categories`;
-  const requestData = {
-    config,
-    selectedIDs,
-  };
-  return { apiUrl, requestData };
-};
-
-// change the name of this function
-const generateSearchApiUrlAndData = (
-  config: any,
-  keyword: any,
-  skip: any,
-  limit: any,
-  categories?: any
-) => {
-  const catQuery = categories?.length
-    ? `&searchCategories=${categories?.map((str: any) => str.value).join(",")}`
-    : "";
-
-  const queryType = config.type === "category" ? "category" : "product";
-
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}${catQuery}`;
-
-  return { apiUrl, requestData: config };
-};
+// const ecomCustomFieldCategoryData: any = true;
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-// eslint-disable-next-line
-const returnFormattedProduct = (product: any, config: any) =>
-  <TypeProduct>{
-    id: product?.id || "",
-    name: product?.key || "",
-    description: product?.id || "",
-    image: product?.images?.[0]?.src || "",
-    price: product?.price?.formattedValue || "-",
-    sku: product?.sku || "",
-    isProductDeleted: product?.cs_metadata?.isconfigdeleted ?? false,
-  };
+const returnFormattedProduct = (product: any, config: any): TypeProduct => ({
+  id: product?.code || "",
+  name: product?.name || "",
+  description: product?.description || "-",
+  image: product?.images?.[0]?.url
+    ? `https://${config?.configField2}${product?.images?.[0]?.url}`
+    : "",
+  price: product?.price?.formattedValue || "-",
+  sku: product?.sku || "",
+  isProductDeleted: product?.cs_metadata?.isconfigdeleted ?? false,
+});
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
-const returnFormattedCategory = (category: any) =>
-  <TypeCategory>{
-    id: category?.id || "",
-    name: category?.name?.["en-US"] || "-",
-    customUrl: "",
-    description: category?.description || "Not Available",
-    isCategoryDeleted: category?.cs_metadata?.isconfigdeleted ?? false,
-  };
+const returnFormattedCategory = (category: any): TypeCategory => ({
+  id: category?.id || "",
+  name: category?.name || "-",
+  customUrl: "",
+  description: category?.description || "Not Available",
+  isCategoryDeleted: category?.cs_metadata?.isconfigdeleted ?? false,
+});
 
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getOpenerLink = (id: any, config: any, type: any) => config?.configField4;
+const getOpenerLink = (id: any, config: any, type: any): string =>
+  config?.configField4;
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
     you can add additional values in this function that you want to display
 */
-const getSidebarData = (product: any) =>
-  <SidebarDataObj[]>[
-    {
-      title: "Manufacturer",
-      value: product?.manufacturer,
-    },
-    {
-      title: "Available For Pickup",
-      value: product?.availableForPickup ? "Yes" : "No",
-    },
-    {
-      title: "Configurable",
-      value: product?.configurable ? "Yes" : "No",
-    },
-    {
-      title: "Url",
-      value: product?.url,
-    },
-  ];
+const getSidebarData = (product: any): SidebarDataObj[] => [
+  {
+    title: "Manufacturer",
+    value: product?.manufacturer,
+  },
+  {
+    title: "Available For Pickup",
+    value: product?.availableForPickup ? "Yes" : "No",
+  },
+  {
+    title: "Configurable",
+    value: product?.configurable ? "Yes" : "No",
+  },
+  {
+    title: "Url",
+    value: product?.url,
+  },
+];
 
 // this defines what and how will the columns will be displayed in your product selector page
-const getProductSelectorColumns = (config: any) =>
-  <ColumnsProp[]>[
-    {
-      Header: "ID", // the title of the column
-      id: "id",
-      accessor: "id", // specifies how you want to display data in the column. can be either string or a function
-      default: true,
-      disableSortBy: true, // disable sorting of the table with this column
-      addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
-      columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
-      // 0.x means smaller than one specified unit by 0.x times
-      // x means bigger that one specified unit by x times
-    },
-    {
-      Header: "Image",
-      accessor: (obj: any) =>
-        obj?.images?.[0]?.url
-          ? getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
-          : getImage(obj?.images?.[0]?.url),
-      default: false,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 0.7,
-    },
-    {
-      Header: "Product Name",
-      id: "name",
-      accessor: (productData: any) =>
-        productData?.masterData?.current?.name?.["en-US"] ?? productData?.key,
-      default: true,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 3,
-    },
-    {
-      Header: "Price",
-      id: "price",
-      accessor: (obj: any) => obj?.price?.formattedValue,
-      default: false,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 1,
-    },
-    {
-      Header: "Description",
-      id: "description",
-      accessor: (obj: any) => wrapWithDiv(obj?.description),
-      default: false,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 2.7,
-    },
-  ];
+const getProductSelectorColumns = (config: any): ColumnsProp[] => [
+  {
+    Header: "ID", // the title of the column
+    id: "code",
+    accessor: "code", // specifies how you want to display data in the column. can be either string or a function
+    default: true,
+    disableSortBy: true, // disable sorting of the table with this column
+    addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
+    columnWidthMultiplier: 0.8, // multiplies this number with one unit of column with.
+    // 0.x means smaller than one specified unit by 0.x times
+    // x means bigger that one specified unit by x times
+  },
+  {
+    Header: "Image",
+    accessor: (obj: any) =>
+      obj?.images?.[0]?.url
+        ? getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
+        : getImage(obj?.images?.[0]?.url),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 0.7,
+  },
+  {
+    Header: "Product Name",
+    id: "name",
+    accessor: (obj: any) => wrapWithDiv(obj?.name),
+    default: true,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 3,
+  },
+  {
+    Header: "Price",
+    id: "price",
+    accessor: (obj: any) => obj?.price?.formattedValue,
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 1,
+  },
+  {
+    Header: "Description",
+    id: "description",
+    accessor: (obj: any) => wrapWithDiv(obj?.description),
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 2.7,
+  },
+];
 
 // this defines what and how will the columns will be displayed in your category selector page
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const categorySelectorColumns = (config?: any) =>
-  <ColumnsProp[]>[
-    {
-      Header: "Category ID",
-      id: "id",
-      accessor: "id",
-      default: true,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 1.5,
-    },
-    {
-      Header: "Category Name",
-      id: "name",
-      accessor: (categoryData: any) =>
-        categoryData?.name?.["en-US"] || categoryData?.key,
-      default: false,
-      disableSortBy: true,
-      addToColumnSelector: true,
-      columnWidthMultiplier: 1.5,
-    },
-    {
-      Header: "Catalog Version",
-      id: "catalogVersionId",
-      accessor: "catalogVersionId",
-      default: false,
-      disableSortBy: true,
-      addToColumnSelector: true,
-    },
-  ];
-/*
-const arrangeList = (
-  sortedIdsArray: any[],
-  dataArray: any[],
-  uniqueKey: string,
-  isOldUser:Boolean
-) => {
-  const data: any[] = [];
-  if(isOldUser===false){
-
-  }
-  else{
-
-  }
-  sortedIdsArray?.forEach((mItem: any) => {
-    dataArray?.forEach((sItem: any) => {
-      if (sItem && sItem[uniqueKey] === mItem) {
-        data.push(sItem);
-      }
-    });
-  });
-  return data;
-};
-*/
+const categorySelectorColumns = (config?: any): ColumnsProp[] => [
+  {
+    Header: "Category ID",
+    id: "code",
+    accessor: "id",
+    default: true,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 1.5,
+  },
+  {
+    Header: "Category Name",
+    id: "name",
+    accessor: (obj: any) => obj?.name || "-",
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+    columnWidthMultiplier: 1.5,
+  },
+  {
+    Header: "Catalog Version",
+    id: "catalogVersionId",
+    accessor: "catalogVersionId",
+    default: false,
+    disableSortBy: true,
+    addToColumnSelector: true,
+  },
+];
 
 // keep this function if you have to remove product/category from custom field as per your own requirement
 const removeItemsFromCustomField = (
@@ -500,11 +638,8 @@ const rootConfig = {
   verifyAppSigning,
   ecommerceEnv,
   configureConfigScreen,
-  customKeys,
-  // openSelectorPage,
-  returnUrl,
-  getSelectedCategoriesUrl,
-  generateSearchApiUrlAndData,
+  mandatoryKeys,
+  getFormattedResponse,
   returnFormattedProduct,
   returnFormattedCategory,
   getOpenerLink,

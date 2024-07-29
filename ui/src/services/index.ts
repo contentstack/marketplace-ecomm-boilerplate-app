@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios, { Method } from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 import categoryConfig from "../root_config/categories";
 
 // common function for an API call to your backend
-const makeAnApiCall = async (url: any, method: any, data: any) => {
+const makeAnApiCall = async (url: string, method: Method, data: any) => {
   try {
     const response = await axios({
       url,
@@ -17,7 +17,7 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 
     return {
       error: false,
-      data: rootConfig.returnUrl(response),
+      data: rootConfig.getFormattedResponse(response),
     };
   } catch (e: any) {
     console.error(e);
@@ -96,48 +96,17 @@ const getCustomCategoryData = async (
   return null;
 };
 // search products and categories
-const search = (
-  config: any,
-  keyword: any,
-  skip: any,
-  limit: any,
-  categories = []
-) => {
-  const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
-    config,
-    keyword,
-    skip,
-    limit,
-    categories
+const search = (config: any, keyword: any, skip: any, limit: any) =>
+  makeAnApiCall(
+    `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`,
+    "POST",
+    config
   );
-
-  return makeAnApiCall(apiUrl, "POST", requestData);
-};
-
-// Function to make the API call to fetch product data by ID
-const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
-  try {
-    const response = await axios({
-      url: `https://api.${apiUrl}/${key}/products/${id}`,
-      method: "GET",
-      mode: "cors",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    } as any);
-    return response;
-  } catch (error: any) {
-    return { error: true, message: error.message, id };
-  }
-};
 
 export {
   getSelectedIDs,
   getProductandCategory,
   requestCategories,
   search,
-  getProductById,
   getCustomCategoryData,
 };

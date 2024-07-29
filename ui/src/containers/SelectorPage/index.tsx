@@ -12,7 +12,11 @@ import {
   getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
-import { TypeWarningtext } from "../../common/types";
+import {
+  CustomFieldType,
+  KeyValueObj,
+  TypeWarningtext,
+} from "../../common/types";
 import { getProductandCategory, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
@@ -267,11 +271,6 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
-        <FilterComponent
-          config={config}
-          meta={metaState}
-          updateList={updateList}
-        />
         {oldUser === false ? (
           <div className="filterDropdown multistoredropown">
             <Dropdown
@@ -288,11 +287,19 @@ const SelectorPage: React.FC = function () {
         ) : (
           ""
         )}
+        <div className="filter-container">
+          <FilterComponent
+            config={config}
+            meta={metaState}
+            updateList={updateList}
+          />
+        </div>
 
         <InfiniteScrollTable
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
           onToggleColumnSelector={onToggleColumnSelector}
+          // tableHeight={580}
           isRowSelect
           fullRowSelect
           viewSelector

@@ -8,14 +8,19 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { Props } from "../../common/types";
 import { findProduct } from "../../common/utils";
 import Product from "./Product";
 import rootConfig from "../../root_config";
 import Category from "./Category";
-import useProductCustomField from "../../common/hooks/useProductCustomField";
+import useProductCustomField from "../../common/hooks/useCustomField";
 
-const DraggableGrid: React.FC<Props> = function ({ remove, type }) {
+const DraggableGrid: React.FC<any> = function ({
+  remove,
+  type,
+}: {
+  remove: (id: string) => void;
+  type: "product" | "category";
+}) {
   const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const [activeId, setActiveId] = useState<string | null>(null);
