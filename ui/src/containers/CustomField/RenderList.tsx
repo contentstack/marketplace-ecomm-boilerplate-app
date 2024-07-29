@@ -4,11 +4,7 @@ import DraggableGrid from "./DraggableGrid";
 import { Props } from "../../common/types";
 import useProductCustomField from "../../common/hooks/useCustomField";
 
-const RenderList: React.FC<Props> = function ({
-  type,
-  childWindow,
-  view,
-}) {
+const RenderList: React.FC<Props> = function ({ type, childWindow, view }) {
   const { selectedItems, removeIdFromField } = useProductCustomField();
   const removeItem = (removeId: any, multiConfigName: any) => {
     console.info("multiConfigName", multiConfigName);

@@ -52,7 +52,6 @@ const CustomField: React.FC<any> = function ({
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
 
-  
   //   location: {},
   //   appSdkInitialized: false,
   // });
@@ -96,7 +95,6 @@ const CustomField: React.FC<any> = function ({
     });
   }, []);
 
-  
   //     .then(async (appSdk) => {
   //       // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
   //       const { api_key } = appSdk?.stack?._data || {};
