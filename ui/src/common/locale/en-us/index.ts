@@ -36,10 +36,10 @@ export default {
     },
     multiConfig: {
       buttonLabel: "New Configuration",
-      accordionLabel: "Shopify Configuration",
+      accordionLabel: "$ Configuration",
       setDefaultText: "Set as Default",
       deleteButtonText: "Delete",
-      accordionSubLabel: "Configure your shopify credentials",
+      accordionSubLabel: "Configure your $ credentials",
       multiConfigCheckBoxLabel: "Set as Default",
       addConfigurationModal: {
         modalHeaderLabel: "Add Configuration",
@@ -82,6 +82,12 @@ export default {
     help: "help center",
   },
   customField: {
+    noConfig: "This Product's config is either deleted or updated",
+    noImage: {
+      text: "No image available",
+    },
+    configDeletedImg:
+      "We are unable to access the image url. The link could be broken, the asset might be deleted or you do not have access to it.",
     idLbl: "ID",
     add: "Add ",
     noItems: "No $ have been Added",

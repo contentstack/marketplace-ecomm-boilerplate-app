@@ -1,7 +1,6 @@
 import React from "react";
 
 export type ProductCustomFieldExtensionContextType = {
-  // productCustomField: unknown;
   setFieldData: (data: any) => void;
   selectedIds: any[];
   selectedItems: any[];
@@ -11,10 +10,11 @@ export type ProductCustomFieldExtensionContextType = {
   handleDragEvent: (data: any) => void;
   loading: boolean;
   stackApiKey: string;
+  advancedConfig: any[];
+  isOldUser: Boolean;
 };
 
 export const ProductCustomFieldExtensionContext =  React.createContext<ProductCustomFieldExtensionContextType>({
-    // productCustomField: null,
     setFieldData: () => {},
     loading: false,
     stackApiKey: "",
@@ -24,4 +24,6 @@ export const ProductCustomFieldExtensionContext =  React.createContext<ProductCu
     setSelectedItems: () => {},
     handleDragEvent: () => {},
     removeIdFromField: () => {},
+    advancedConfig: [],
+    isOldUser: false,
   });

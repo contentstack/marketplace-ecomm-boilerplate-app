@@ -22,6 +22,8 @@ const useProductCustomField = () => {
     handleDragEvent,
     loading,
     stackApiKey,
+    advancedConfig,
+    isOldUser,
   } = useContext<ProductCustomFieldExtensionContextType>(
     ProductCustomFieldExtensionContext
   );
@@ -36,6 +38,8 @@ const useProductCustomField = () => {
     handleDragEvent,
     loading,
     stackApiKey,
+    advancedConfig,
+    isOldUser,
   };
 };
 export default useProductCustomField;

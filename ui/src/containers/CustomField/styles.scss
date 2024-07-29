@@ -436,3 +436,14 @@ ol,
 ul {
   margin-bottom: 0;
 }
+
+.config-deleted-message {
+  border-radius: 4px;
+  border-left: 4px solid var(--Brand-Colors-Brand-Orange, #eb5646);
+  background-color: #fff8eb;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100%;
+  margin-top: 4px;
+}

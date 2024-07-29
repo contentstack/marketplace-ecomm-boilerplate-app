@@ -14,7 +14,6 @@ export interface EcommerceEnv {
     product: string,
     category: string,
   };
-  FETCH_PER_PAGE?: number;
 }
 
 interface KeyOption {
@@ -44,6 +43,7 @@ export interface TypeProduct {
   image: string;
   price: string;
   sku?: string;
+  isProductDeleted: Boolean;
 }
 
 export interface TypeCategory {
@@ -51,6 +51,7 @@ export interface TypeCategory {
   name: string;
   customUrl?: string;
   description: string;
+  isCategoryDeleted: Boolean;
 }
 
 export interface SidebarDataObj {

@@ -56,5 +56,7 @@ module.exports = {
     ],
     "no-nested-ternary": "warn",
     "operator-linebreak": "warn",
+    "@typescript-eslint/naming-convention": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
   },
 };

@@ -1,7 +1,7 @@
-/* eslint-disable */
 import axios from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
+import categoryConfig from "../root_config/categories";
 
 // common function for an API call to your backend
 const makeAnApiCall = async (url: any, method: any, data: any) => {
@@ -11,7 +11,6 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
       method,
       data,
       headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         "Access-Control-Allow-Origin": "*",
       },
     });
@@ -40,11 +39,18 @@ const makeAnApiCall = async (url: any, method: any, data: any) => {
 };
 
 // get paginated products and categories
-const request = (config: any, requestType: any, page = 1) =>
+const getProductandCategory = (
+  config: any,
+  requestType: any,
+  skip: any,
+  limit: any,
+  isOldUser: any,
+  multiConfigDropDown: any
+) =>
   makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=${requestType}&page=${page}&limit=${config?.page_count}`,
+    `${process.env.REACT_APP_API_URL}?query=${requestType}&skip=${skip}&limit=${limit}`,
     "POST",
-    config
+    { config, isOldUser, multiConfigDropDown }
   );
 
 // get all available categories
@@ -56,24 +62,34 @@ const requestCategories = (config: any) =>
   );
 
 // get selected products/categories
-const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
-  Array.isArray(selectedIDs) && selectedIDs?.length
-    ? makeAnApiCall(
-        `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${
-          selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
-        }`,
-        "POST",
-        config
-      )
-    : null;
+const getSelectedIDs = async (
+  config: any,
+  type: any,
+  selectedIDs: any,
+  isOldUser: any
+) => {
+  const ids =    isOldUser === true ? selectedIDs.join(",") : JSON.stringify(selectedIDs);
+  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${ids}&isOldUser=${isOldUser}`;
+  return makeAnApiCall(apiUrl, "POST", config);
+};
 
-// filter products with categories
-const filter = async (config: any, type: any, selectedIDs: any) => {
-  if (Array.isArray(selectedIDs) && selectedIDs.length) {
-    const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(
+// runes when categoryConfig.customCategoryStructure is true
+const getCustomCategoryData = async (
+  config: any,
+  type: any,
+  selectedIDs: any,
+  isOldUser: any
+) => {
+  if (
+    isOldUser
+      ? Array.isArray(selectedIDs) && selectedIDs.length
+      : Object.keys(selectedIDs)?.length
+  ) {
+    const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
       config,
       type,
-      selectedIDs
+      selectedIDs,
+      isOldUser
     );
     return makeAnApiCall(apiUrl, "POST", requestData);
   }
@@ -83,14 +99,14 @@ const filter = async (config: any, type: any, selectedIDs: any) => {
 const search = (
   config: any,
   keyword: any,
-  page: any,
+  skip: any,
   limit: any,
   categories = []
 ) => {
   const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
     config,
     keyword,
-    page,
+    skip,
     limit,
     categories
   );
@@ -100,7 +116,6 @@ const search = (
 
 // Function to make the API call to fetch product data by ID
 const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
-  // console.info("apiUrl", apiUrl, "apiKey", apiKey, "id", id);
   try {
     const response = await axios({
       url: `https://api.${apiUrl}/${key}/products/${id}`,
@@ -114,16 +129,15 @@ const getProductById = async (apiUrl: any, key: any, apiKey: any, id: any) => {
     } as any);
     return response;
   } catch (error: any) {
-    // console.info("error", error);
     return { error: true, message: error.message, id };
   }
 };
 
 export {
   getSelectedIDs,
-  request,
+  getProductandCategory,
   requestCategories,
   search,
-  filter,
   getProductById,
+  getCustomCategoryData,
 };

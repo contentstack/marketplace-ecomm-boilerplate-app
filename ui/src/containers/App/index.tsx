@@ -76,9 +76,9 @@ function App() {
               path="/category-field"
               element={
                 <Suspense fallback={null}>
-                  <CategoryCustomFieldExtensionProvider>
+                  <ProductCustomFieldExtensionProvider type="category">
                     <CategoryExtension />
-                  </CategoryCustomFieldExtensionProvider>
+                  </ProductCustomFieldExtensionProvider>
                 </Suspense>
               }
             />

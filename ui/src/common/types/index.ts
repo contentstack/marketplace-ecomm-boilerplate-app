@@ -70,3 +70,12 @@ export declare type ColumnsProp = {
 export interface KeyValueObj {
   [key: string]: any;
 }
+
+export type Result = {
+  [key: string]: {
+    multiConfiguniqueKey: (string | object)[];
+  };
+};
+
+// Define the state type
+export type EntryIdsType = {} | any[];

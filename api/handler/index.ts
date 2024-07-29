@@ -1,40 +1,20 @@
-/* you can make changes in this file and the functions as per your api requirements */
-
 import axios from "axios";
 import constants from "../constants";
 import root_config from "../root_config";
 
-//   {
-//     page,
-//     limit,
-//     query,
-//     searchParam,
-//     id,
-//     searchCategories,
-//   }: {
-//     page?: number;
-//     limit?: number;
-//     query?: any;
-//     searchParam?: string;
-//     id?: any;
-//     searchCategories?: any;
-//   },
-//   key: any
-// ) => {
-//   const url: string = `${root_config.getUrl(
-//     key,
-//     query,
-//     searchParam,
-//     searchCategories,
-//     id,
-//     page,
-//     limit
-//   )}`;
-//   return { url, method: "GET", headers: root_config.getHeaders(key) };
-// };
-
-// common function for making third party API calls
-// you can modify it as per your third party service response
+/**
+ * Makes a third-party API call with the provided options.
+ *
+ * @param {Object} opts - Options for the API call, including URL, method, and headers.
+ * @returns {Promise<Object>} - The response data from the API call.
+ * @throws {Error} - Throws an error if the API call fails.
+ *
+ * This function uses `axios` to perform the HTTP request. Customize this function
+ * according to your specific API's requirements and response structure.
+ *
+ * It handles errors by returning a default response for `404 Not Found` errors
+ * and throws an error for other types of failures.
+ */
 export const _makeApiCall: any = async (opts: any) => {
   try {
     const res: any = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
@@ -53,44 +33,98 @@ export const _makeApiCall: any = async (opts: any) => {
     throw e;
   }
 };
-// get a particular product for sidebar widget
-export const getById: any = async (data: any, key: any) => {
-  let response = await root_config.getSingleProduct(data, key);
+
+/**
+ * Retrieves a particular product using its ID.
+ *
+ * @param {Object} productQuery - Query parameters for the product request.
+ * @param {Object} productPayload - Payload containing additional data for the request.
+ * @returns {Promise<Object>} - The product data.
+ */
+export const getProductByID: any = async (
+  productQuery: any,
+  productPayload: any
+) => {
+  let response = await root_config.getSingleProduct(
+    productQuery,
+    productPayload
+  );
   return response;
 };
 
-// get all products and categories for selector page
+/**
+ * Fetches all products and categories based on the provided parameters.
+ *
+ * @param {Object} productCategoryQuery - Query parameters for the request.
+ * @param {string} productCategoryQuery.query - The type of query (e.g., 'product', 'category').
+ * @param {string} productCategoryQuery.skip - Number of items to skip for pagination.
+ * @param {string} productCategoryQuery.limit - Number of items to return for pagination.
+ * @param {Object} productCategoryPayload - Payload containing additional data for the request.
+ * @returns {Promise<Object>} - The products and categories data.
+ */
 export const getAllProductsAndCategories: any = async (
-  data: any,
-  body: any
+  productCategoryQuery: any,
+  productCategoryPayload: any
 ) => {
   let response = {};
   if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
-    if (data?.query === "product")
-      response = await root_config.getAllProducts(data, body);
-    else response = await root_config.getAllCategories(data, body);
-  } else response = await root_config.getAllProductsAndCategories(data, body);
-
+    if (productCategoryQuery?.query === "product") {
+      response = await root_config.getAllProducts(
+        productCategoryQuery,
+        productCategoryPayload
+      );
+    } else {
+      response = await root_config.getAllCategories(
+        productCategoryQuery,
+        productCategoryPayload
+      );
+    }
+  } else {
+    response = await root_config.getAllProductsAndCategories(
+      productCategoryQuery,
+      productCategoryPayload
+    );
+  }
   return response;
 };
 
-// get an array of selected products and categories for custom field
+/**
+ * Retrieves selected products and categories based on the provided parameters.
+ *
+ * @param {Object} productCategoryQuery - Query parameters for the request.
+ * @param {string} productCategoryQuery.query - The type of query (e.g., 'product', 'category').
+ * @param {Object} productCategoryPayload - Payload containing additional data for the request.
+ * @returns {Promise<Object>} - The selected products and categories data.
+ */
 export const getSelectedProductsAndCategories: any = async (
-  data: any,
-  body: any
+  productCategoryQuery: any,
+  productCategoryPayload: any
 ) => {
   let response = {};
   if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
-    if (data?.query === "product")
-      response = await root_config.getSelectedProductsById(data, body);
-    else response = await root_config.getSelectedCategoriesById(data, body);
-  } else
-    response = await root_config.getSelectedProductsandCategories(data, body);
-
-  return { [root_config.URI_ENDPOINTS[data?.query]]: response };
+    if (productCategoryQuery?.query === "product") {
+      response = await root_config.getSelectedProductsById(
+        productCategoryQuery,
+        productCategoryPayload
+      );
+    } else {
+      response = await root_config.getSelectedCategoriesById(
+        productCategoryQuery,
+        productCategoryPayload
+      );
+    }
+  } else {
+    response = await root_config.getSelectedProductsandCategories(
+      productCategoryQuery,
+      productCategoryPayload
+    );
+  }
+  return { [root_config.URI_ENDPOINTS[productCategoryQuery?.query]]: response };
 };
 
-// filter products as per categories in the selector page
+/**
+ * Filters products based on the provided categories.
+ */
 export const filterByCategory: any = async (data: any, key: any) => {
   let response = await root_config.filterProductsByCategory(data, key);
   return response;

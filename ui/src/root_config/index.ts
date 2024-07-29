@@ -1,18 +1,23 @@
-/* eslint-disable */
 /* @typescript-eslint/naming-convention */
 import axios from "axios";
-// import jwt, { JwtPayload } from "jsonwebtoken";
 import { jwtVerify, importJWK, JWTPayload } from "jose";
-import { ColumnsProp } from "../common/types";
+import { ColumnsProp, Result } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
-import { TypeCategory, KeyOption, TypeProduct, SidebarDataObj } from "../types";
+import {
+  TypeCategory,
+  KeyOption,
+  TypeProduct,
+  SidebarDataObj,
+  EcommerceEnv,
+} from "../types";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.
     You can modify its values and implementation,
     but please do not change any keys or function names.
 */
+// this function is used for app signing, i.e. for verifying app tokens in ui
 interface TokenPayload extends JWTPayload {
   app_uid: string;
   installation_uid: string;
@@ -20,7 +25,6 @@ interface TokenPayload extends JWTPayload {
   user_uid: string;
   stack_api_key: string;
 }
-
 const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   if (app_token) {
     try {
@@ -28,15 +32,12 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
         "https://app.contentstack.com/.well-known/public-keys.json"
       );
       const publicKeyJWK = data["signing-key"];
-
       // Import the public key from the JWK format
       const publicKey = await importJWK(publicKeyJWK, "RS256");
-
       // Verify the token
       const { payload } = (await jwtVerify(app_token, publicKey)) as {
         payload: TokenPayload;
       };
-
       const {
         app_uid,
         installation_uid,
@@ -44,15 +45,14 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
         user_uid,
         stack_api_key,
       } = payload;
-
-      // console.info(
-      //   "app token is valid!",
-      //   app_uid,
-      //   installation_uid,
-      //   organization_uid,
-      //   user_uid,
-      //   stack_api_key
-      // );
+      console.info(
+        "app token is valid!",
+        app_uid,
+        installation_uid,
+        organization_uid,
+        user_uid,
+        stack_api_key
+      );
     } catch (e) {
       console.error(
         "app token is invalid or request is not initiated from Contentstack!",
@@ -66,373 +66,170 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   return false;
 };
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
-const ecommerceEnv: any = {
-  REACT_APP_NAME: "sapcommercecloud",
+const ecommerceEnv: EcommerceEnv = {
+  REACT_APP_NAME: "CommerceTools",
   SELECTOR_PAGE_LOGO: Logo,
-  APP_ENG_NAME: "SAP Commerce Cloud",
-  UNIQUE_KEY: "id",
-  FETCH_PER_PAGE: 20,
+  APP_ENG_NAME: "CommerceTools",
+  UNIQUE_KEY: {
+    product: "id",
+    category: "id",
+  },
 };
 
 // example config fields. you will need to use these values in the config screen accordingly.
 const configureConfigScreen: any = () => ({
-  configField1: {
-    type: "textInputFields",
-    labelText: "IsMultiConfig(config)",
-    helpText: "Is MultiConfig True and Save In Config Is True",
-    placeholderText: "Is MultiConfig True and Save In Config Is True",
-    instructionText: "Is MultiConfig True and Save In Config Is True",
+  region_url: {
+    type: "selectInputFields",
+    labelText: "Select Your commercetools Region",
+    helpText: "Select Your commercetools Region",
+    placeholderText: "Select Your commercetools Region",
+    instructionText: "Select Your commercetools Region",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
     isMultiConfig: true,
   },
-  configField2: {
+  project_key: {
     type: "textInputFields",
-    labelText: "IsMultiConfig(config)",
-    helpText: "Is MultiConfig True and Save In Config Is True",
-    placeholderText: "Is MultiConfig True and Save In Config Is True",
-    instructionText: "Is MultiConfig True and Save In Config Is True",
+    labelText: "Project Key",
+    helpText: "Project Key",
+    placeholderText: "Project Key",
+    instructionText: "Project Key",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
     isMultiConfig: true,
   },
-  configField3: {
+  client_id: {
     type: "textInputFields",
-    labelText: "IsMultiConfig(serverConfig)",
-    helpText: "Is MultiConfig True and Save In ServerConfig Is True",
-    placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
-    instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
+    labelText: "Client ID",
+    helpText: "Client ID",
+    placeholderText: "Client ID",
+    instructionText: "Client ID",
     saveInConfig: false,
     saveInServerConfig: true,
     isSensitive: false,
     isMultiConfig: true,
   },
-  configField4: {
+  client_secret: {
     type: "textInputFields",
-    labelText: "IsMultiConfig(serverConfig)",
-    helpText: "Is MultiConfig True and Save In ServerConfig Is True",
-    placeholderText: "Is MultiConfig True and Save In ServerConfig Is True",
-    instructionText: "Is MultiConfig True and Save In ServerConfig Is True",
+    labelText: "Client Secret",
+    helpText: "Client Secret",
+    placeholderText: "Client Secret",
+    instructionText: "Client Secret",
     saveInConfig: false,
     saveInServerConfig: true,
     isSensitive: false,
     isMultiConfig: true,
   },
-  configField5: {
+  access_token: {
     type: "textInputFields",
-    labelText: "IsMultiConfigFalse(serverConfig)",
-    helpText: "Is MultiConfig False and Save In ServerConfig Is True",
-    placeholderText: "Is MultiConfig False and Save In ServerConfig Is True",
-    instructionText: "Is MultiConfig False and Save In ServerConfig Is True",
-    saveInConfig: false,
-    saveInServerConfig: true,
-    isSensitive: false,
-    isMultiConfig: false,
-  },
-  configField6: {
-    type: "textInputFields",
-    labelText: "IsMultiConfigFalse(conffig)",
-    helpText: "Is MultiConfig False and Save In Config True",
-    placeholderText: "Is MultiConfig False and Save In Config True",
-    instructionText: "Is MultiConfig False and Save In Config True",
+    labelText: "Access Token",
+    helpText: "Access Token",
+    placeholderText: "Access Token",
+    instructionText: "Access Token",
     saveInConfig: true,
     saveInServerConfig: false,
     isSensitive: false,
-    isMultiConfig: false,
+    isMultiConfig: true,
   },
 });
 
 const customKeys: any = [
-  { label: "code", value: "code" },
-  { label: "name", value: "name" },
+  { label: "id", value: "id" },
+  { label: "key", value: "key" },
 ];
 
-const openSelectorPage = (config: any) => !!config.configField1;
+// const openSelectorPage = (config: any) => !!config.configField1;
 
-const returnUrl = (response: any) => ({
-  items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
-  meta: {
-    total: response?.data?.pagination?.totalResults, // assign this to the key that specifies the total count of the data fetched
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    current_page: response?.data?.pagination?.currentPage, // assign this to the key that corresponds to the current page
-  },
-});
+// change name for this function
+const returnUrl = (response: any) => {
+  console.info("response returnUrl", response);
+  return {
+    items:
+      response?.data?.results
+      || response?.data?.products
+      || response?.data?.catalogs,
+    // assign this to the key that contains your data
+    meta: {
+      total: response?.data?.total, // assign this to the key that specifies the total count of the data fetched
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      current_page: response?.data?.pagination?.currentPage, // assign this to the key that corresponds to the current page
+    },
+  };
+};
 
 const getCustomKeys = () =>
   <KeyOption[]>[
     {
-      label: "approvalStatus",
-      value: "approvalStatus",
-      searchLabel: "approvalStatus",
+      label: "id",
+      value: "id",
+      searchLabel: "id",
     },
     {
-      label: "availableForPickup",
-      value: "availableForPickup",
-      searchLabel: "availableForPickup",
+      label: "version",
+      value: "version",
+      searchLabel: "version",
     },
     {
-      label: "averageRating",
-      value: "averageRating",
-      searchLabel: "averageRating",
+      label: "versionModifiedAt",
+      value: "versionModifiedAt",
+      searchLabel: "versionModifiedAt",
     },
     {
-      label: "baseOptions",
-      value: "baseOptions",
-      searchLabel: "baseOptions",
+      label: "lastMessageSequenceNumber",
+      value: "lastMessageSequenceNumber",
+      searchLabel: "lastMessageSequenceNumber",
     },
     {
-      label: "baseProduct",
-      value: "baseProduct",
-      searchLabel: "baseProduct",
+      label: "createdAt",
+      value: "createdAt",
+      searchLabel: "createdAt",
     },
     {
-      label: "baseProductName",
-      value: "baseProductName",
-      searchLabel: "baseProductName",
+      label: "lastModifiedAt",
+      value: "lastModifiedAt",
+      searchLabel: "lastModifiedAt",
     },
     {
-      label: "categories",
-      value: "categories",
-      searchLabel: "categories",
+      label: "lastModifiedBy",
+      value: "lastModifiedBy",
+      searchLabel: "lastModifiedBy",
     },
     {
-      label: "children",
-      value: "children",
-      searchLabel: "children",
+      label: "createdBy",
+      value: "createdBy",
+      searchLabel: "createdBy",
     },
     {
-      label: "classifications",
-      value: "classifications",
-      searchLabel: "classifications",
+      label: "productType",
+      value: "productType",
+      searchLabel: "productType",
     },
     {
-      label: "code",
-      value: "code",
-      searchLabel: "code",
-      isDisabled: true,
+      label: "masterData",
+      value: "masterData",
+      searchLabel: "masterData",
     },
     {
-      label: "colors",
-      value: "colors",
-      searchLabel: "colors",
+      label: "key",
+      value: "key",
+      searchLabel: "key",
     },
     {
-      label: "componentId",
-      value: "componentId",
-      searchLabel: "componentId",
+      label: "taxCategory",
+      value: "taxCategory",
+      searchLabel: "taxCategory",
     },
     {
-      label: "configurable",
-      value: "configurable",
-      searchLabel: "configurable",
+      label: "lastVariantId",
+      value: "lastVariantId",
+      searchLabel: "lastVariantId",
     },
     {
-      label: "configuratorType",
-      value: "configuratorType",
-      searchLabel: "configuratorType",
-    },
-    {
-      label: "description",
-      value: "description",
-      searchLabel: "description",
-    },
-    {
-      label: "disabledMessage",
-      value: "disabledMessage",
-      searchLabel: "disabledMessage",
-    },
-    {
-      label: "futureStocks",
-      value: "futureStocks",
-      searchLabel: "futureStocks",
-    },
-    {
-      label: "hasParentBpos",
-      value: "hasParentBpos",
-      searchLabel: "hasParentBpos",
-    },
-    {
-      label: "images",
-      value: "images",
-      searchLabel: "images",
-    },
-    {
-      label: "isBundle",
-      value: "isBundle",
-      searchLabel: "isBundle",
-    },
-    {
-      label: "isComponentEditable",
-      value: "isComponentEditable",
-      searchLabel: "isComponentEditable",
-    },
-    {
-      label: "isMaxLimitReachedForBundle",
-      value: "isMaxLimitReachedForBundle",
-      searchLabel: "isMaxLimitReachedForBundle",
-    },
-    {
-      label: "isRemovableEntry",
-      value: "isRemovableEntry",
-      searchLabel: "isRemovableEntry",
-    },
-    {
-      label: "mainSpoPriceInBpo",
-      value: "mainSpoPriceInBpo",
-      searchLabel: "mainSpoPriceInBpo",
-    },
-    {
-      label: "manufacturer",
-      value: "manufacturer",
-      searchLabel: "manufacturer",
-    },
-    {
-      label: "modifiedTime",
-      value: "modifiedTime",
-      searchLabel: "modifiedTime",
-    },
-    {
-      label: "multidimensional",
-      value: "multidimensional",
-      searchLabel: "multidimensional",
-    },
-    {
-      label: "name",
-      value: "name",
-      searchLabel: "name",
-      isDisabled: true,
-    },
-    {
-      label: "numberOfReviews",
-      value: "numberOfReviews",
-      searchLabel: "numberOfReviews",
-    },
-    {
-      label: "offeringGroup",
-      value: "offeringGroup",
-      searchLabel: "offeringGroup",
-    },
-    {
-      label: "parents",
-      value: "parents",
-      searchLabel: "parents",
-    },
-    {
-      label: "potentialPromotions",
-      value: "potentialPromotions",
-      searchLabel: "potentialPromotions",
-    },
-    {
-      label: "preselected",
-      value: "preselected",
-      searchLabel: "preselected",
-    },
-    {
-      label: "price",
-      value: "price",
-      searchLabel: "price",
-    },
-    {
-      label: "priceRange",
-      value: "priceRange",
-      searchLabel: "priceRange",
-    },
-    {
-      label: "productOfferingPrice",
-      value: "productOfferingPrice",
-      searchLabel: "productOfferingPrice",
-    },
-    {
-      label: "productReferences",
-      value: "productReferences",
-      searchLabel: "productReferences",
-    },
-    {
-      label: "productSpecDescription",
-      value: "productSpecDescription",
-      searchLabel: "productSpecDescription",
-    },
-    {
-      label: "productSpecification",
-      value: "productSpecification",
-      searchLabel: "productSpecification",
-    },
-    {
-      label: "purchasable",
-      value: "purchasable",
-      searchLabel: "purchasable",
-    },
-    {
-      label: "reviews",
-      value: "reviews",
-      searchLabel: "reviews",
-    },
-    {
-      label: "soldIndividually",
-      value: "soldIndividually",
-      searchLabel: "soldIndividually",
-    },
-    {
-      label: "stock",
-      value: "stock",
-      searchLabel: "stock",
-    },
-    {
-      label: "storageSize",
-      value: "storageSize",
-      searchLabel: "storageSize",
-    },
-    {
-      label: "parents",
-      value: "parents",
-      searchLabel: "parents",
-    },
-    {
-      label: "summary",
-      value: "summary",
-      searchLabel: "summary",
-    },
-    {
-      label: "tags",
-      value: "tags",
-      searchLabel: "tags",
-    },
-    {
-      label: "url",
-      value: "url",
-      searchLabel: "url",
-    },
-    {
-      label: "validFor",
-      value: "validFor",
-      searchLabel: "validFor",
-    },
-    {
-      label: "variantMatrix",
-      value: "variantMatrix",
-      searchLabel: "variantMatrix",
-    },
-    {
-      label: "variantOptions",
-      value: "variantOptions",
-      searchLabel: "variantOptions",
-    },
-    {
-      label: "variantType",
-      value: "variantType",
-      searchLabel: "variantType",
-    },
-    {
-      label: "volumePrices",
-      value: "volumePrices",
-      searchLabel: "volumePrices",
-    },
-    {
-      label: "volumePricesFlag",
-      value: "volumePricesFlag",
-      searchLabel: "volumePricesFlag",
+      label: "cs_metadata",
+      value: "cs_metadata",
+      searchLabel: "cs_metadata",
     },
   ];
 
@@ -444,12 +241,12 @@ const getSelectedCategoriesUrl = (config: any, type: any, selectedIDs: any) => {
   };
   return { apiUrl, requestData };
 };
-const ecomCustomFieldCategoryData: any = true;
 
+// change the name of this function
 const generateSearchApiUrlAndData = (
   config: any,
   keyword: any,
-  page: any,
+  skip: any,
   limit: any,
   categories?: any
 ) => {
@@ -459,33 +256,32 @@ const generateSearchApiUrlAndData = (
 
   const queryType = config.type === "category" ? "category" : "product";
 
-  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&page=${page}&limit=${limit}${catQuery}`;
+  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${queryType}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}${catQuery}`;
 
   return { apiUrl, requestData: config };
 };
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
-const returnFormattedProduct = (product: any, config: any) => {
-  return <TypeProduct>{
+// eslint-disable-next-line
+const returnFormattedProduct = (product: any, config: any) =>
+  <TypeProduct>{
     id: product?.id || "",
-    name:
-      product?.masterData?.name?.["en"] ??
-      product?.masterData?.name?.["en-US"] ??
-      product?.name,
-    description: product?.cs_metadata?.multi_config_name,
-    image: product?.images?.[0]?.src,
+    name: product?.key || "",
+    description: product?.id || "",
+    image: product?.images?.[0]?.src || "",
     price: product?.price?.formattedValue || "-",
     sku: product?.sku || "",
+    isProductDeleted: product?.cs_metadata?.isconfigdeleted ?? false,
   };
-};
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
 const returnFormattedCategory = (category: any) =>
   <TypeCategory>{
     id: category?.id || "",
-    name: category?.name || "-",
+    name: category?.name?.["en-US"] || "-",
     customUrl: "",
     description: category?.description || "Not Available",
+    isCategoryDeleted: category?.cs_metadata?.isconfigdeleted ?? false,
   };
 
 // this function returns the link to open the product or category in the third party app
@@ -522,8 +318,8 @@ const getProductSelectorColumns = (config: any) =>
   <ColumnsProp[]>[
     {
       Header: "ID", // the title of the column
-      id: "code",
-      accessor: "code", // specifies how you want to display data in the column. can be either string or a function
+      id: "id",
+      accessor: "id", // specifies how you want to display data in the column. can be either string or a function
       default: true,
       disableSortBy: true, // disable sorting of the table with this column
       addToColumnSelector: true, // specifies whether you want to add this column to column selector in the table
@@ -545,7 +341,8 @@ const getProductSelectorColumns = (config: any) =>
     {
       Header: "Product Name",
       id: "name",
-      accessor: (obj: any) => wrapWithDiv(obj?.name),
+      accessor: (productData: any) =>
+        productData?.masterData?.current?.name?.["en-US"] ?? productData?.key,
       default: true,
       disableSortBy: true,
       addToColumnSelector: true,
@@ -577,7 +374,7 @@ const categorySelectorColumns = (config?: any) =>
   <ColumnsProp[]>[
     {
       Header: "Category ID",
-      id: "code",
+      id: "id",
       accessor: "id",
       default: true,
       disableSortBy: true,
@@ -587,7 +384,8 @@ const categorySelectorColumns = (config?: any) =>
     {
       Header: "Category Name",
       id: "name",
-      accessor: (obj: any) => obj?.name || "-",
+      accessor: (categoryData: any) =>
+        categoryData?.name?.["en-US"] || categoryData?.key,
       default: false,
       disableSortBy: true,
       addToColumnSelector: true,
@@ -602,13 +400,20 @@ const categorySelectorColumns = (config?: any) =>
       addToColumnSelector: true,
     },
   ];
-
+/*
 const arrangeList = (
   sortedIdsArray: any[],
   dataArray: any[],
-  uniqueKey: string
+  uniqueKey: string,
+  isOldUser:Boolean
 ) => {
   const data: any[] = [];
+  if(isOldUser===false){
+
+  }
+  else{
+
+  }
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
       if (sItem && sItem[uniqueKey] === mItem) {
@@ -616,24 +421,79 @@ const arrangeList = (
       }
     });
   });
-  console.info("data", data);
   return data;
 };
+*/
+
+// keep this function if you have to remove product/category from custom field as per your own requirement
 const removeItemsFromCustomField = (
   removeId: any,
   selectedIds: any,
-  setSelectedIds: any,
   type: any,
-  uniqueKey: any
+  uniqueKey: any,
+  isOldUser: Boolean,
+  multiConfigName: any
 ) => {
-  if (type === "category")
-    setSelectedIds(
-      selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId)
+  if (isOldUser === true) {
+    if (type === "category")
+      return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
+
+    return selectedIds?.filter(
+      (data: any) => Number(data) !== Number(removeId)
     );
-  else
-    setSelectedIds(
-      selectedIds?.filter((data: any) => Number(data) !== Number(removeId))
-    );
+  }
+  let updatedRootConfig = { ...selectedIds };
+  const config = selectedIds?.[multiConfigName];
+  const updatedIds = config.multiConfiguniqueKey.filter(
+    (id: any) => id !== removeId
+  );
+  const updatedConfig = {
+    ...config,
+    multiConfiguniqueKey: updatedIds,
+  };
+
+  updatedRootConfig = {
+    ...updatedRootConfig,
+    [multiConfigName]: updatedConfig,
+  };
+  return updatedRootConfig;
+};
+
+const returnFormattedProductIDSForMultiConfig = (productData: any): Result => {
+  console.info("productData", productData);
+  let result: Result = {};
+  if (productData?.length) {
+    const uniqueKey = "multiConfiguniqueKey";
+    result = productData.reduce((acc: any, item: any) => {
+      const multiConfigName = item?.cs_metadata?.multi_config_name;
+      // console.info("multiConfigName",multiConfigName)
+      if (!acc[multiConfigName]) {
+        acc[multiConfigName] = { [uniqueKey]: [] };
+      }
+      acc[multiConfigName][uniqueKey].push(item.id);
+      return acc;
+    }, {});
+  }
+  return result;
+};
+
+const returnFormattedCategoryIDSForMultiConfig = (
+  categoryData: any
+): Result => {
+  let result: Result = {};
+  if (categoryData?.length) {
+    const uniqueKey = "multiConfiguniqueKey";
+    result = categoryData.reduce((acc: any, item: any) => {
+      const multiConfigName = item?.cs_metadata?.multi_config_name;
+      console.info("");
+      if (!acc[multiConfigName]) {
+        acc[multiConfigName] = { [uniqueKey]: [] };
+      }
+      acc[multiConfigName][uniqueKey].push(item.id);
+      return acc;
+    }, {});
+  }
+  return result;
 };
 
 const rootConfig = {
@@ -641,9 +501,8 @@ const rootConfig = {
   ecommerceEnv,
   configureConfigScreen,
   customKeys,
-  openSelectorPage,
+  // openSelectorPage,
   returnUrl,
-  ecomCustomFieldCategoryData,
   getSelectedCategoriesUrl,
   generateSearchApiUrlAndData,
   returnFormattedProduct,
@@ -653,8 +512,10 @@ const rootConfig = {
   categorySelectorColumns,
   getCustomKeys,
   getSidebarData,
-  arrangeList,
+  // arrangeList,
   removeItemsFromCustomField,
+  returnFormattedProductIDSForMultiConfig,
+  returnFormattedCategoryIDSForMultiConfig,
 };
 
 export default rootConfig;

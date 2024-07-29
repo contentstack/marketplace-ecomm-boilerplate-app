@@ -160,8 +160,8 @@ const productColumns = [
   },
   {
     Header: "Product Name",
-    id: "name",
-    accessor: "name",
+    id: "key",
+    accessor: (productData: any) => productData?.key,
     default: true,
     disableSortBy: true,
     addToColumnSelector: true,
@@ -310,6 +310,53 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
   return data;
 };
 
+const categorizeConfigFields = (configFields: any) => {
+  const isMultiConfigAndSaveInServerConfig: any = {};
+  const isMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInServerConfig: any = {};
+
+  Object.keys(configFields).forEach((key) => {
+    const field = configFields?.[key];
+    if (field?.isMultiConfig) {
+      if (field?.saveInServerConfig) {
+        isMultiConfigAndSaveInServerConfig[key] = "";
+      }
+      if (field?.saveInConfig) {
+        isMultiConfigAndSaveInConfig[key] = "";
+      }
+    } else {
+      if (field?.saveInConfig) {
+        isNotMultiConfigAndSaveInConfig[key] = "";
+      }
+      if (field?.saveInServerConfig) {
+        isNotMultiConfigAndSaveInServerConfig[key] = "";
+      }
+    }
+  });
+
+  return {
+    isMultiConfigAndSaveInServerConfig,
+    isMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInServerConfig,
+  };
+};
+
+const extractFieldsByConfigType = (configScreen: any) => {
+  const multiConfigFields: string[] = [];
+  const singleConfigFields: string[] = [];
+
+  Object.entries(configScreen).forEach(([key, value]: any) => {
+    if (value?.isMultiConfig) {
+      multiConfigFields.push(key);
+    } else {
+      singleConfigFields.push(key);
+    }
+  });
+
+  return { multiConfigFields, singleConfigFields };
+};
 export {
   isEmpty,
   popupWindow,
@@ -329,4 +376,6 @@ export {
   arrangeSelectedIds,
   getItemStatusMap,
   removeHTMLTags,
+  categorizeConfigFields,
+  extractFieldsByConfigType,
 };
