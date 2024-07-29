@@ -1,10 +1,7 @@
 /* @typescript-eslint/naming-convention */
 import axios from "axios";
 import { jwtVerify, importJWK, JWTPayload } from "jose";
-import { ColumnsProp, Result } from "../common/types";
-// eslint-disable-next-line import/no-cycle
-import { wrapWithDiv, getImage } from "../common/utils";
-import {
+import { ColumnsProp, Result ,
   TypeCategory,
   KeyOption,
   TypeProduct,
@@ -12,6 +9,8 @@ import {
   EcommerceEnv,
   FormattedRespose,
 } from "../common/types";
+// eslint-disable-next-line import/no-cycle
+import { wrapWithDiv, getImage } from "../common/utils";
 import Logo from "../assets/Logo.svg";
 
 /* all values in this file are an example.

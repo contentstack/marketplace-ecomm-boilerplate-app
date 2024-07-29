@@ -43,7 +43,7 @@ const CustomField: React.FC<any> = function ({
     appSdkInitialized,
     advancedConfig,
     isOldUser,
-    selectedIds
+    selectedIds,
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
@@ -51,7 +51,7 @@ const CustomField: React.FC<any> = function ({
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
- 
+
   //   config: {},
   //   location: {},
   //   appSdkInitialized: false,
@@ -95,7 +95,6 @@ const CustomField: React.FC<any> = function ({
       childWindow = undefined;
     });
   }, []);
-
 
   //   ContentstackAppSdk.init()
   //     .then(async (appSdk) => {
@@ -160,37 +159,37 @@ const CustomField: React.FC<any> = function ({
 
   useEffect(() => {
     if (selectedItems?.length) {
-    if (!appSdkInitialized) return;
-    if (type === "category") {
-      setFieldData({
-        data: selectedItems,
-        type: `${appName}_${type}`,
-      });
-    } else {
-      // eslint-disable-next-line
-      if (!config?.is_custom_json)
+      if (!appSdkInitialized) return;
+      if (type === "category") {
         setFieldData({
           data: selectedItems,
           type: `${appName}_${type}`,
         });
-      else {
-        const data: any[] = [];
-        const keys = config?.custom_keys?.map((i: any) => i?.value);
-        if (selectedItems?.length) {
-          selectedItems.forEach((item: any) => {
-            const obj1: any = {};
-            keys?.forEach((key: any) => {
-              obj1[key] = item[key];
+      } else {
+        // eslint-disable-next-line
+        if (!config?.is_custom_json)
+          setFieldData({
+            data: selectedItems,
+            type: `${appName}_${type}`,
+          });
+        else {
+          const data: any[] = [];
+          const keys = config?.custom_keys?.map((i: any) => i?.value);
+          if (selectedItems?.length) {
+            selectedItems.forEach((item: any) => {
+              const obj1: any = {};
+              keys?.forEach((key: any) => {
+                obj1[key] = item[key];
+              });
+              data.push(obj1);
             });
-            data.push(obj1);
+          }
+          setFieldData({
+            data,
+            type: `${appName}_${type}`,
           });
         }
-        setFieldData({
-          data,
-          type: `${appName}_${type}`,
-        });
       }
-    }
     }
     setLoading(false);
   }, [selectedItems]);
@@ -227,13 +226,6 @@ const CustomField: React.FC<any> = function ({
       }
     }
   };
-
-
-
-
-
-
-
 
   const handleClick = () => {
     if (!childWindow) {
@@ -322,8 +314,7 @@ const CustomField: React.FC<any> = function ({
         the configuration details from the appSdk. */
   return (
     <div className="layout-container">
-      {
-        <div className="field-extension-wrapper">
+      <div className="field-extension-wrapper">
           {renderCustomField()}
           <Button
             onClick={handleClick}
@@ -337,7 +328,6 @@ const CustomField: React.FC<any> = function ({
               : localeTexts.customField.buttonText.product}
           </Button>
         </div>
-      }
     </div>
   );
 };

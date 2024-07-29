@@ -39,7 +39,7 @@ const SidebarWidget: React.FC = function () {
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
-  const [selectedField, setSelectedField] = useState<any>("")
+  const [selectedField, setSelectedField] = useState<any>("");
 
   useEffect(() => {
     if (!appSdkInitialized) return;
@@ -75,7 +75,7 @@ const SidebarWidget: React.FC = function () {
   }, [fieldList]);
 
   const fetchSelectedIdData = async (data: any) => {
-    const product = await getSelectedIDs(appConfig, "product", [data],false);
+    const product = await getSelectedIDs(appConfig, "product", [data], false);
     if (product?.error) {
       setIsInvalidCredentials(product);
     } else return product?.data?.items?.[0];

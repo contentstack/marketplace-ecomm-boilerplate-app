@@ -18,8 +18,7 @@ export type CustomFieldExtensionContextType = {
   isOldUser: Boolean;
 };
 
-export const CustomFieldExtensionContext =
-  React.createContext<CustomFieldExtensionContextType>({
+export const CustomFieldExtensionContext =  React.createContext<CustomFieldExtensionContextType>({
     // productCustomField: null,
     setFieldData: () => {},
     loading: false,
@@ -36,5 +35,5 @@ export const CustomFieldExtensionContext =
     },
     appSdkInitialized: false,
     advancedConfig: [],
-    isOldUser: false
+    isOldUser: false,
   });

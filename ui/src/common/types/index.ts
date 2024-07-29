@@ -132,8 +132,7 @@ export interface TypeProduct {
   image: string;
   price: string;
   sku?: string;
-  isProductDeleted:Boolean
-  
+  isProductDeleted: Boolean;
 }
 
 export interface TypeCategory {
@@ -141,8 +140,7 @@ export interface TypeCategory {
   name: string;
   customUrl?: string;
   description: string;
-  isCategoryDeleted:Boolean;
-
+  isCategoryDeleted: Boolean;
 }
 
 export interface SidebarDataObj {
