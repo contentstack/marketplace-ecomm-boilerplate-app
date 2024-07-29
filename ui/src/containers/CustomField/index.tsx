@@ -315,19 +315,19 @@ const CustomField: React.FC<any> = function ({
   return (
     <div className="layout-container">
       <div className="field-extension-wrapper">
-          {renderCustomField()}
-          <Button
-            onClick={handleClick}
-            className="add-product-btn"
-            buttonType="control"
-            disabled={isInvalidCredentials.error || loading}
-          >
-            {localeTexts.customField.addHere}{" "}
-            {type === "category"
-              ? localeTexts.customField.buttonText.category
-              : localeTexts.customField.buttonText.product}
-          </Button>
-        </div>
+        {renderCustomField()}
+        <Button
+          onClick={handleClick}
+          className="add-product-btn"
+          buttonType="control"
+          disabled={isInvalidCredentials.error || loading}
+        >
+          {localeTexts.customField.addHere}{" "}
+          {type === "category"
+            ? localeTexts.customField.buttonText.category
+            : localeTexts.customField.buttonText.product}
+        </Button>
+      </div>
     </div>
   );
 };

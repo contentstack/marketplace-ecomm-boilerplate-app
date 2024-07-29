@@ -1,7 +1,9 @@
 /* @typescript-eslint/naming-convention */
 import axios from "axios";
 import { jwtVerify, importJWK, JWTPayload } from "jose";
-import { ColumnsProp, Result ,
+import {
+  ColumnsProp,
+  Result,
   TypeCategory,
   KeyOption,
   TypeProduct,
