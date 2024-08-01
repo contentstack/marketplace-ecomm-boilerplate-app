@@ -499,7 +499,6 @@ const getFormattedResponse = (response: any): FormattedRespose => ({
 const getOpenerLink = (id: any, config: any, type: any): string =>
   config?.configField4;
 
-
 // keep this function if you have to remove product/category from custom field as per your own requirement
 const removeItemsFromCustomField = (
   removeId: any,
