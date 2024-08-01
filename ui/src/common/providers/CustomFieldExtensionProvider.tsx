@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { isEmpty } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
-import { ProductCustomFieldExtensionContext } from "../contexts/productCustomFieldExtensionContext";
+import { CustomFieldExtensionContext } from "../contexts/customFieldExtensionContext";
 import rootConfig from "../../root_config";
 import useError from "../hooks/useError";
 import { EntryIdsType } from "../types";
@@ -36,6 +36,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   const { isInvalidCredentials, setIsInvalidCredentials } = useError();
   const [isOldUser, setIsOldUser] = useState<Boolean>(false);
   const [advancedConfig, setAdvancedConfig] = useState<any>([]);
+  const [appSdkInitialized, setAppSdkInitialized] = useState<boolean>(false);
 
   const getFieldConfigValue = (
     currentLocale: any,
@@ -167,6 +168,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           }
         }
       }
+      setAppSdkInitialized(true);
     }
   };
 
@@ -275,6 +277,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       stackApiKey,
       advancedConfig,
       isOldUser,
+      isInvalidCredentials,
+      appSdkInitialized
     }),
     [
       setFieldData,
@@ -288,13 +292,15 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       stackApiKey,
       advancedConfig,
       isOldUser,
+      isInvalidCredentials,
+      appSdkInitialized
     ]
   );
 
   return (
-    <ProductCustomFieldExtensionContext.Provider value={installInfo}>
+    <CustomFieldExtensionContext.Provider value={installInfo}>
       {children}
-    </ProductCustomFieldExtensionContext.Provider>
+    </CustomFieldExtensionContext.Provider>
   );
 };
 export default CustomFieldExtensionProvider;

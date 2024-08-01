@@ -526,12 +526,33 @@ const removeItemsFromCustomField = (
   removeId: any,
   selectedIds: any,
   type: any,
-  uniqueKey: any
+  uniqueKey: any,
+  isOldUser: Boolean,
+  multiConfigName: any
 ) => {
-  if (type === "category")
-    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
+  if (isOldUser === true) {
+    if (type === "category")
+      return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
 
-  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId));
+    return selectedIds?.filter(
+      (data: any) => Number(data) !== Number(removeId)
+    );
+  }
+  let updatedRootConfig = { ...selectedIds };
+  const config = selectedIds?.[multiConfigName];
+  const updatedIds = config?.multiConfiguniqueKey?.filter(
+    (id: any) => id !== removeId
+  );
+  const updatedConfig = {
+    ...config,
+    multiConfiguniqueKey: updatedIds,
+  };
+
+  updatedRootConfig = {
+    ...updatedRootConfig,
+    [multiConfigName]: updatedConfig,
+  };
+  return updatedRootConfig;
 };
 
 // this function is used for app signing, i.e. for verifying app tokens in ui
@@ -574,14 +595,6 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
         user_uid,
         stack_api_key,
       } = payload;
-      console.info(
-        "app token is valid!",
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key
-      );
     } catch (e) {
       console.error(
         "app token is invalid or request is not initiated from Contentstack!",

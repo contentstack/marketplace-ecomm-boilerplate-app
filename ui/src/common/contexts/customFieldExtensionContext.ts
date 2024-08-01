@@ -8,7 +8,7 @@ export type CustomFieldExtensionContextType = {
   selectedItems: any[];
   setSelectedIds: (data: any) => void;
   setSelectedItems: (data: any) => void;
-  removeIdFromField: (data: any) => void;
+  removeIdFromField: (...args : any[]) => void;
   handleDragEvent: (data: any) => void;
   loading: boolean;
   stackApiKey: string;
