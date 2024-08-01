@@ -18,16 +18,41 @@ interface ApiResponseWithMetadata {
 type ApiResponseWithoutMetadata = any;
 type ApiResponse = ApiResponseWithMetadata | ApiResponseWithoutMetadata;
 
+/* eslint-disable @typescript-eslint/naming-convention */
+
+/* The `root_config` object in the provided TypeScript code is serving as a configuration object for
+making API calls related to a commerce application. It contains various properties and methods that
+define how to interact with the API endpoints. */
+
 const root_config: any = {
   API_BASE_URL: "https://my.example.com/$/v3/", // Add the URL of your commerce app API where $ is a value added through Users response
   URI_ENDPOINTS: {
     product: "products",
     category: "catalogs",
   },
-  PRODUCT_URL_PARAMS: "/search",
+/* The `SEARCH_URL_PARAMS` property can be used to append a search parameter to the API endpoint URL when making specific API
+calls related to searching for products or categories. By adding `SEARCH_URL_PARAMS` to the URL
+construction logic in the functions, it allows for consistent inclusion of the
+search parameter in the API requests where needed. */
+  SEARCH_URL_PARAMS: "/search",
   FIELDS_URL: "fields=FULL",
   SENSITIVE_CONFIG_KEYS: ["base_site_id", "backoffice_url", "base_url"],
   ENDPOINTS_CONFIG: {
+
+/* The `getSeparateProductsAndCategories: true` property in the `root_config` object is serving as a
+configuration setting that indicates whether the API should handle and retrieve products and
+categories separately when making API calls. 
+
+When set to `true`, you must implement the following:
+1. getAllProducts()
+2. getAllCategories()
+3. getSelectedProductsById()
+4. getSelectedCategoriesById()
+
+If set to false, you need to implement the following:
+1. getAllProductsAndCategories()
+2. getSelectedProductsandCategories()
+ */
     getSeparateProductsAndCategories: true,
   },
 
@@ -143,8 +168,7 @@ const root_config: any = {
     url += data["id:in"] ?
       `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
       : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
-
-    if (data?.query === "product") url += root_config.PRODUCT_URL_PARAMS;
+    if (data?.query === "product") url += root_config.SEARCH_URL_PARAMS;
     if (data?.limit) url += `&limit=${data?.limit}`;
 
     return _makeApiCall({
@@ -246,11 +270,10 @@ const root_config: any = {
     return _makeApiCall({
       url: `${root_config.getUrl({ query: data?.query }, key)}?categories:in=${
         data["categories:in"]
-      }&${root_config.PRODUCT_URL_PARAMS}`,
+      }&${root_config.SEARCH_URL_PARAMS}`,
       method: "GET",
       headers: getHeaders(key),
     });
   },
 };
-
 export default root_config;

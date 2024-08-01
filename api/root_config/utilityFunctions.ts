@@ -2,6 +2,7 @@ import root_config from ".";
 /* 
 You can use this file to write your custom code, 
 that you can use in the root config.
+This file is optional. If not required, you can delete this.
 */
 
 export const getHeaders = (key?: any) => {
@@ -44,7 +45,9 @@ export const getUrl = (
       page ? `&currentPage=${page}` : ""
     }${limit ? `&pageSize=${limit}` : ""}`;
   } else if (query === "product") {
-    url += `?offset=${skip}&limit=${limit}`;
+    url += `${root_config.SEARCH_URL_PARAMS}?${root_config.FIELDS_URL}${
+      page ? `&currentPage=${page}` : ""
+    }${limit ? `&pageSize=${limit}` : ""}`;
   } else {
     url += `?offset=${skip}&limit=${limit}`;
   }

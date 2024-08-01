@@ -34,6 +34,7 @@ const Product: React.FC<Props> = function ({ product, remove }) {
     transition,
     border: isDragging ? constants.droppingDOMBorder : undefined,
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
+    height: isDragging ? constants.droppingAreaHeight : 'inherit', 
     borderRadius: 12,
   };
   /* eslint-disable */
@@ -97,7 +98,11 @@ const Product: React.FC<Props> = function ({ product, remove }) {
         ""
       ) : (
         <ActionTooltip list={toolTipActions}>
-          <div className="product" key={id} data-testid="render-card-item">
+          <div
+            className="product"
+            key={id}
+            data-testid="render-card-item"
+          >
             {!error ? (
               <>
                 {isProductDeleted ? (
