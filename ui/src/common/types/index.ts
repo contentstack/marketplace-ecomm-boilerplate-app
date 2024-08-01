@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
 
@@ -74,6 +73,14 @@ export interface KeyValueObj {
   [key: string]: any;
 }
 
+export type Result = {
+  [key: string]: {
+    multiConfiguniqueKey: (string | object)[];
+  };
+};
+
+// Define the state type
+export type EntryIdsType = {} | any[];
 export interface CustomFieldType {
   type: "product" | "category" | "";
 }
@@ -125,6 +132,7 @@ export interface TypeProduct {
   image: string;
   price: string;
   sku?: string;
+  isProductDeleted: Boolean;
 }
 
 export interface TypeCategory {
@@ -132,6 +140,7 @@ export interface TypeCategory {
   name: string;
   customUrl?: string;
   description: string;
+  isCategoryDeleted: Boolean;
 }
 
 export interface SidebarDataObj {
@@ -142,4 +151,21 @@ export interface SidebarDataObj {
 export interface APIResponseType {
   error: boolean;
   data: FormattedRespose | string;
+}
+
+interface InvalidKey {
+  source: string;
+  keys: string[];
+}
+
+export interface ValidationResult {
+  invalidKeys: InvalidKey[];
+}
+
+// Define the props for the customMultiConfigComponent function
+export interface CustomMultiConfigComponentProps {
+  multiConfigId: string;
+  configurationData: any;
+  serverConfiguration: any;
+  onChangeCallback: any;
 }

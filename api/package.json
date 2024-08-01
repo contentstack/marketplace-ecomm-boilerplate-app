@@ -5,9 +5,9 @@
   "main": "index.ts",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "axios": "^0.24.0",
-    "crypto-js": "^4.1.1",
+    "express": "^4.19.2",
+    "axios": "^1.6.3",
+    "crypto-js": "^4.2.0",
     "jsonwebtoken": "9.0.0",
     "node-fetch": "^3.2.3",
     "typescript": "^5.1.6"

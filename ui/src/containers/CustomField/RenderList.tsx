@@ -4,12 +4,7 @@ import DraggableGrid from "./DraggableGrid";
 import { Props } from "../../common/types";
 import useProductCustomField from "../../common/hooks/useCustomField";
 
-const RenderList: React.FC<Props> = function ({
-  type,
-  // selectedItems = [],
-  childWindow,
-  view,
-}) {
+const RenderList: React.FC<Props> = function ({ type, childWindow, view }) {
   const { selectedItems, removeIdFromField } = useProductCustomField();
   const removeItem = (removeId: any) => {
     removeIdFromField(removeId);
@@ -26,8 +21,8 @@ const RenderList: React.FC<Props> = function ({
     selectedItemsList = (
       <div
         style={
-          selectedItems?.length > 2 ?
-            { height: "339.5px" }
+          selectedItems?.length > 2
+            ? { height: "339.5px" }
             : { height: "203px" }
         }
         className="grid-area"

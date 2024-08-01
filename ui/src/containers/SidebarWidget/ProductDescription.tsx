@@ -7,10 +7,8 @@ import rootConfig from "../../root_config";
 import NoImg from "../../assets/NoImg.svg";
 
 const ProductDescription: React.FC<Props> = function ({ product, config }) {
-  const { id, name, description, price, sku, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product, config);
-  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
-    localeTexts.sidebarWidget.labels;
+  const { id, name, description, price, sku, image }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
+  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =    localeTexts.sidebarWidget.labels;
 
   return (
     <div>

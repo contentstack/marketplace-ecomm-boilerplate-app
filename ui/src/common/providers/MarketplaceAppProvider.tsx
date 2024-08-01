@@ -15,8 +15,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials.replace(
         "$",
@@ -30,7 +29,6 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
       .then(async (appSdkinit) => {
         setAppSdk(appSdkinit);
         const appConfiguration = await appSdkinit?.getConfig();
-        console.info("app configuration", appConfiguration);
         setConfig(appConfiguration);
         setFailed(false);
       })

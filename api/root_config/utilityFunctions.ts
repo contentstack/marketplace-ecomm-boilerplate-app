@@ -1,14 +1,16 @@
 import root_config from ".";
-
 /* 
 You can use this file to write your custom code, 
 that you can use in the root config.
 */
 
-export const getHeaders = (key?: any) => ({
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  "Content-Type": "application/json",
-});
+export const getHeaders = (key?: any) => {
+  return {
+    // eslint-disable-next-line
+    "Content-Type": "application/json",
+    Authorization: `Bearer `,
+  };
+};
 
 const calculatePage = (skip: any, limit: any) => {
   const page = Math.floor(skip / limit);
@@ -31,31 +33,20 @@ export const getUrl = (
     id?: any;
     searchCategories?: any;
   },
-  key: any
+  productPayload: any
 ) => {
-  console.info("getUrl called", {
-    skip,
-    limit,
-    query,
-    searchParam,
-    id,
-    searchCategories,
-  });
-  let url = `https://${key?.configField2}${key?.configField1}/${key?.configField3}/${root_config.URI_ENDPOINTS[query]}`;
-
+  let url = `https://`;
   const page = calculatePage(skip, limit);
   if (id) {
-    url += `/${id}?${root_config.FIELDS_URL}`;
+    url += `/${id}`;
   } else if (searchParam) {
     url += `/search?query=${searchParam}&${root_config.FIELDS_URL}${
       page ? `&currentPage=${page}` : ""
     }${limit ? `&pageSize=${limit}` : ""}`;
   } else if (query === "product") {
-    url += `${root_config.PRODUCT_URL_PARAMS}?${root_config.FIELDS_URL}${
-      page ? `&currentPage=${page}` : ""
-    }${limit ? `&pageSize=${limit}` : ""}`;
+    url += `?offset=${skip}&limit=${limit}`;
   } else {
-    url += `?${root_config.FIELDS_URL}`;
+    url += `?offset=${skip}&limit=${limit}`;
   }
 
   return url;
@@ -96,7 +87,11 @@ export const extractCategories = (categories: any) => {
   return mutated;
 };
 
-export const getByCategoryIdUrl = (key: any, query: any, category: any) => {
-  const url = `https://${key?.config?.configField2}${key?.config?.configField1}/${key?.config?.configField3}/${root_config.URI_ENDPOINTS[query]}/${category?.catalogId}/${category?.catalogVersionId}/categories/${category?.id}`;
+export const getByCategoryIdUrl = (
+  categoryPayLoad: any,
+  query: any,
+  category: any
+) => {
+  const url = `https://`;
   return url;
 };

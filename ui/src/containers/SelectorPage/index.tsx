@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   ButtonGroup,
   Icon,
   InfiniteScrollTable,
+  Dropdown,
 } from "@contentstack/venus-components";
 import {
   isEmpty,
-  arrangeSelectedIds,
   EmptyObjForSearchCase,
   getItemStatusMap,
 } from "../../common/utils";
@@ -18,7 +17,7 @@ import {
   KeyValueObj,
   TypeWarningtext,
 } from "../../common/types";
-import { request, search } from "../../services/index";
+import { getProductandCategory, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
@@ -39,11 +38,13 @@ const SelectorPage: React.FC = function () {
     config?.type === "category" ? [] : ["id"]
   );
   const [metaState, setMetaState] = useState<any>({});
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials,
     });
+  const [multiConfigDropDown, setMultiConfigDropDown] = useState<any>([]);
+  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =    useState<any>();
+  const [oldUser, setOldUser] = useState<any>(false);
 
   const tableRef: any = useRef(null);
 
@@ -64,6 +65,46 @@ const SelectorPage: React.FC = function () {
       if (data?.message === "init") {
         getSelectedData(data?.type, data?.selectedItems);
         setConfig({ ...data?.config, type: data?.type });
+        setOldUser(data?.isOldUser);
+        setSelectedIds(data?.selectedIds);
+        if (data?.isOldUser === false && data?.config) {
+          if (data?.advancedConfig?.length) {
+            const multiConfigKeys: any = [];
+            data?.advancedConfig?.forEach((keys: any) => {
+              const obj = {
+                label: keys,
+                value: keys,
+                default: keys === data?.advancedConfig?.[0],
+              };
+              multiConfigKeys.push(obj);
+              setMultiConfigDropDown([...multiConfigKeys]);
+              if (multiConfigKeys?.length) {
+                multiConfigKeys[0].default = true;
+                setSelectedMultiConfigValue(multiConfigKeys[0]);
+              }
+            });
+          } else if (data?.config?.multi_config_keys) {
+            const multiConfigKeys: any = [];
+            Object.keys(data?.config?.multi_config_keys)?.forEach(
+              (keys: any) => {
+                const obj = {
+                  label: keys,
+                  value: keys,
+                  default: true,
+                };
+                multiConfigKeys.push(obj);
+                const defaultObject = multiConfigKeys?.filter(
+                  (objkey: any) =>
+                    objkey?.value === data?.config?.default_multi_config_key
+                );
+                if (defaultObject?.length) {
+                  setMultiConfigDropDown(defaultObject);
+                  setSelectedMultiConfigValue(defaultObject[0]);
+                }
+              }
+            );
+          }
+        }
       }
     }
   };
@@ -79,23 +120,20 @@ const SelectorPage: React.FC = function () {
     }
   }, []);
 
-  useEffect(() => {
-    console.info(loading);
-  }, [loading]);
-
   const fetchInitialData = async (meta: any) => {
     try {
       if (!isEmpty(config)) {
         setItemStatus({
           ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = await request(
+        const response = await getProductandCategory(
           config,
           config?.type,
           meta?.skip,
-          meta?.limit
+          meta?.limit,
+          oldUser,
+          selectedMultiConfigValue
         );
-        console.info(response, "response");
         if (!response?.error) {
           setList(response?.data?.items);
           if (config?.type === "category")
@@ -121,19 +159,18 @@ const SelectorPage: React.FC = function () {
   };
 
   const fetchData = async (meta: any) => {
-    console.info(meta, "META");
     setMetaState(meta);
     try {
       if (meta?.searchText && !isEmpty(config)) {
-        console.info(meta?.searchText, "meta?.searchText in IF");
         setSearchText(meta?.searchText);
         const response = await search(
           config,
           meta?.searchText,
           meta?.skip,
-          meta?.limit
+          meta?.limit,
+          oldUser,
+          selectedMultiConfigValue
         );
-        console.info(response, "response in fetchData");
         if (!response?.error) {
           setList(response?.data?.items);
           setLoading(false);
@@ -146,7 +183,6 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } else {
-        console.info("in else");
         setLoading(true);
         setSearchText("");
         fetchInitialData(meta);
@@ -157,97 +193,34 @@ const SelectorPage: React.FC = function () {
   };
 
   useEffect(() => {
-    console.info("config", config);
     setLoading(true);
     fetchData({ searchText, skip: 0, limit: 30 });
   }, [config]);
-
-  // const loadMoreItems = async (meta: any) => {
-  //   if (searchActive && !isEmpty(config)) {
-  //     try {
-  //       setItemStatus({
-  //         ...getItemStatusMap(
-  //           { ...itemStatus },
-  //           "loading",
-  //           meta?.startIndex,
-  //           meta?.startIndex ?? 0 + Number(config?.page_count)
-  //         ),
-  //       });
-  //       const response = await request(config, config?.type, meta?.skip);
-  //       if (!response?.error) {
-  //         setCurrentPage(response?.data?.meta?.current_page);
-  //         setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
-  //         setLoading(false);
-  //         setItemStatus({
-  //           ...getItemStatusMap(
-  //             { ...itemStatus },
-  //             "loaded",
-  //             meta?.startIndex,
-  //             meta?.startIndex ?? 0 + Number(config?.page_count)
-  //           ),
-  //         });
-  //       } else {
-  //         setIsInvalidCredentials(response);
-  //       }
-  //     } catch (err) {
-  //       console.error(localeTexts.selectorPage.loadingError, err);
-  //     }
-  //   } else {
-  //     try {
-  //       setItemStatus({
-  //         ...getItemStatusMap(
-  //           { ...itemStatus },
-  //           "loading",
-  //           meta?.startIndex,
-  //           meta?.startIndex ?? 0 + Number(config?.page_count)
-  //         ),
-  //       });
-  //       const response = await search(
-  //         config,
-  //         meta?.searchText,
-  //         searchCurrentPage + 1,
-  //         config?.page_count
-  //       );
-  //       if (!response?.error) {
-  //         setSearchCurrentPage(response?.data?.meta?.current_page);
-  //         // eslint-disable-next-line no-unsafe-optional-chaining
-  //         setList([...list, ...response?.data?.items]);
-  //         setItemStatus({
-  //           ...getItemStatusMap(
-  //             { ...itemStatus },
-  //             "loaded",
-  //             meta?.startIndex,
-  //             meta?.startIndex ?? 0 + Number(config?.page_count)
-  //           ),
-  //         });
-  //       } else {
-  //         setIsInvalidCredentials(response);
-  //       }
-  //     } catch (err) {
-  //       console.error(localeTexts.selectorPage.errHandling, err);
-  //     }
-  //   }
-  // };
-
-  // console.info("hello")
 
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
     const selectedObj: any = [];
     singleSelectedRowIds?.forEach((assetUid: any) => {
       selectedObj[assetUid] = true;
     });
+    if (oldUser === false) {
+      const cpyOfSelectedIDS = { ...selectedIds };
+      const multiConfigFormatIDS =        rootConfig.mapProductIdsByMultiConfig(selected);
+      const updatedSelectedIDS = {
+        ...cpyOfSelectedIDS,
+        ...multiConfigFormatIDS,
+      };
+      setSelectedIds(updatedSelectedIDS);
+    }
+
     setSelectedRows({ ...selectedObj });
     setSelectedData(selected);
     setCheckedIds(singleSelectedRowIds);
   };
 
-  useEffect(() => {
-    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
-  }, [checkedIds]);
-
   const returnSelectedData = () => {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
+
     if (window?.opener) {
       window.opener.postMessage(
         { message: "add", dataArr, dataIds },
@@ -269,9 +242,26 @@ const SelectorPage: React.FC = function () {
     });
     setHiddenColumns(hiddenColumnsTemp);
   };
+  useEffect(() => {
+    if (isEmpty(config)) return;
+    const fetchShopifyData = async () => {
+      fetchData({ searchText, skip: 0, limit: 30 });
+    };
+    if (selectedMultiConfigValue?.value) {
+      fetchShopifyData();
+    }
+  }, [selectedMultiConfigValue]);
 
   const updateList = (filteredList: any) => {
     console.info("filteredList", filteredList);
+  };
+
+  const handleMultiConfigData = (event: any) => {
+    if (event !== selectedMultiConfigValue) {
+      setList([]);
+    }
+    setIsInvalidCredentials("" as any);
+    setSelectedMultiConfigValue(event);
   };
 
   const renderSelectorPage = () => {
@@ -283,6 +273,22 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
+        {oldUser === false ? (
+          <div className="filterDropdown multistoredropown">
+            <Dropdown
+              type="select"
+              dropDownPosition="bottom"
+              list={multiConfigDropDown}
+              onChange={handleMultiConfigData}
+              withArrow
+              withSearch
+              closeAfterSelect
+              highlightActive
+            />
+          </div>
+        ) : (
+          ""
+        )}
         <div className="filter-container">
           <FilterComponent
             config={config}
@@ -305,8 +311,8 @@ const SelectorPage: React.FC = function () {
             pagination: true,
           }}
           data={
-            list?.length ?
-              list.map((listData) => ({
+            list?.length
+              ? list.map((listData) => ({
                   ...listData,
                   [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
                     listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
@@ -315,8 +321,8 @@ const SelectorPage: React.FC = function () {
               : []
           }
           columns={
-            config?.type === "category" ?
-              rootConfig.categorySelectorColumns(config)
+            config?.type === "category"
+              ? rootConfig.categorySelectorColumns(config)
               : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
@@ -329,8 +335,8 @@ const SelectorPage: React.FC = function () {
           fixedlistRef={tableRef}
           minBatchSizeToFetch={30}
           name={
-            config.type === "category" ?
-              {
+            config.type === "category"
+              ? {
                   singular: localeTexts.selectorPage.searchPlaceholder.category,
                   plural: localeTexts.selectorPage.searchPlaceholder.categories,
                 }
@@ -342,8 +348,8 @@ const SelectorPage: React.FC = function () {
           searchPlaceholder={`${
             localeTexts.selectorPage.searchPlaceholder.caption
           } ${
-            config?.type === "category" ?
-              localeTexts.selectorPage.searchPlaceholder.categories
+            config?.type === "category"
+              ? localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
@@ -377,10 +383,12 @@ const SelectorPage: React.FC = function () {
             <Icon icon="AddPlus" />
             {localeTexts.selectorPage.add.replace(
               "#",
-              selectedIds?.length.toString()
+              oldUser === false
+                ? checkedIds?.length?.toString()
+                : selectedIds?.length?.toString()
             )}{" "}
-            {config?.type === "category" ?
-              `${localeTexts.buttonLabels.category}`
+            {config?.type === "category"
+              ? `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
           </Button>
         </ButtonGroup>
