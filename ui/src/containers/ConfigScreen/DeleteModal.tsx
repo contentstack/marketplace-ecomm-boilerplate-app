@@ -42,8 +42,6 @@ export const DeleteModalConfig = React.memo((props: any) => {
         toastMessage({
           text: localtext.configPage.multiConfig.deleteModal.deleteMessage,
         });
-      } else {
-        console.error("Validation error: Config Names don't match");
       }
 
       props.closeModal();

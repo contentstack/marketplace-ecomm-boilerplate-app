@@ -20,7 +20,6 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
       data: rootConfig.getFormattedResponse(response),
     };
   } catch (e: any) {
-    console.error(e);
     const { status, data: resData } = e?.response || {};
     if (status === 500) {
       return {

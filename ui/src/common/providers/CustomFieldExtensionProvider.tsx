@@ -138,7 +138,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           categoryConfig.customCategoryStructure === true
           && type === "category"
         ) {
-          console.info("in The  case");
           if (oldUser === true) {
             setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
           } else {
@@ -158,7 +157,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
               setEntryIds(returnProductFormatedData);
             }
           } else {
-            console.info("in The else case");
             // eslint-disable-next-line
             if (oldUser === true) {
               setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
