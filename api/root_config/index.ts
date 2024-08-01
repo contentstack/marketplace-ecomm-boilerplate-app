@@ -12,6 +12,7 @@ interface CsMetadata {
 }
 // eslint-disable-next-line
 interface ApiResponseWithMetadata {
+  // eslint-disable-next-line
   cs_metadata: CsMetadata;
 }
 type ApiResponseWithoutMetadata = any;
