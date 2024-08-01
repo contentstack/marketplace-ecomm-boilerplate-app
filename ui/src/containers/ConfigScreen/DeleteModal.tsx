@@ -45,12 +45,10 @@ export const DeleteModalConfig = React.memo((props: any) => {
       }
 
       props.closeModal();
-    }
-    else{
+    } else {
       toastMessage({
         text: localtext.configPage.multiConfig.deleteModalNameNotPresent,
       });
-
     }
   };
 
