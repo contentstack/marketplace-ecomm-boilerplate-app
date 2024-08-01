@@ -278,7 +278,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       advancedConfig,
       isOldUser,
       isInvalidCredentials,
-      appSdkInitialized
+      appSdkInitialized,
     }),
     [
       setFieldData,
@@ -293,7 +293,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       advancedConfig,
       isOldUser,
       isInvalidCredentials,
-      appSdkInitialized
+      appSdkInitialized,
     ]
   );
 
