@@ -5,10 +5,10 @@ import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
 
 const isEmpty = (val: any): boolean =>
-  val === undefined ||
-  val === null ||
-  (typeof val === "object" && !Object.keys(val)?.length) ||
-  (typeof val === "string" && !val.trim().length);
+  val === undefined
+  || val === null
+  || (typeof val === "object" && !Object.keys(val)?.length)
+  || (typeof val === "string" && !val?.trim()?.length);
 
 const filterFetchedArray = (array: any[]) => {
   const tempFetchedList = [...array];
@@ -23,21 +23,27 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   return window.open(
     windowDetails.url,
     windowDetails.title,
-    "toolbar=no, location=no, directories=no, " +
-      `status=no, menubar=no, scrollbars=no, resizable=no, ` +
-      `copyhistory=no, width=${windowDetails.w}, ` +
-      `height=${windowDetails.h}, ` +
-      `top=${top}, left=${left}`
+    "toolbar=no, location=no, directories=no, "
+      + `status=no, menubar=no, scrollbars=no, resizable=no, `
+      + `copyhistory=no, width=${windowDetails.w}, `
+      + `height=${windowDetails.h}, `
+      + `top=${top}, left=${left}`
   );
 };
 
 const mergeObjects = (target: any, source: any) => {
-  Object.keys(source)?.forEach((key) => {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], mergeObjects(target[key], source[key]));
+  const sourceCopy = JSON.parse(JSON.stringify(source)); // Deep copy of source
+
+  Object.keys(sourceCopy)?.forEach((key) => {
+    if (sourceCopy?.[key] instanceof Object && key in target) {
+      Object.assign(
+        sourceCopy?.[key],
+        mergeObjects(target?.[key], sourceCopy?.[key])
+      );
     }
   });
-  Object.assign(target || {}, source);
+
+  Object.assign(target || {}, sourceCopy);
   return target;
 };
 
@@ -120,8 +126,8 @@ const getImage = (url: string, customField: boolean = false) =>
           src={NoImg}
           alt={localeTexts.selectorPage.noImageAvailable}
           className={
-            customField ?
-              "custom-field-product-image"
+            customField
+              ? "custom-field-product-image"
               : "selector-product-image"
           }
         />
@@ -142,8 +148,8 @@ const productColumns = [
   {
     Header: "Image",
     accessor: (obj: any) =>
-      obj?.images?.[0]?.url ?
-        getImage(
+      obj?.images?.[0]?.url
+        ? getImage(
             `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
           )
         : getImage(obj?.images?.[0]?.url),
@@ -154,8 +160,8 @@ const productColumns = [
   },
   {
     Header: "Product Name",
-    id: "name",
-    accessor: "name",
+    id: "key",
+    accessor: (productData: any) => productData?.key,
     default: true,
     disableSortBy: true,
     addToColumnSelector: true,
@@ -304,6 +310,53 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
   return data;
 };
 
+const categorizeConfigFields = (configFields: any) => {
+  const isMultiConfigAndSaveInServerConfig: any = {};
+  const isMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInServerConfig: any = {};
+
+  Object.keys(configFields).forEach((key) => {
+    const field = configFields?.[key];
+    if (field?.isMultiConfig) {
+      if (field?.saveInServerConfig) {
+        isMultiConfigAndSaveInServerConfig[key] = "";
+      }
+      if (field?.saveInConfig) {
+        isMultiConfigAndSaveInConfig[key] = "";
+      }
+    } else {
+      if (field?.saveInConfig) {
+        isNotMultiConfigAndSaveInConfig[key] = "";
+      }
+      if (field?.saveInServerConfig) {
+        isNotMultiConfigAndSaveInServerConfig[key] = "";
+      }
+    }
+  });
+
+  return {
+    isMultiConfigAndSaveInServerConfig,
+    isMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInServerConfig,
+  };
+};
+
+const extractFieldsByConfigType = (configScreen: any) => {
+  const multiConfigFields: string[] = [];
+  const singleConfigFields: string[] = [];
+
+  Object.entries(configScreen).forEach(([key, value]: any) => {
+    if (value?.isMultiConfig) {
+      multiConfigFields.push(key);
+    } else {
+      singleConfigFields.push(key);
+    }
+  });
+
+  return { multiConfigFields, singleConfigFields };
+};
 const arrangeList = (
   sortedIdsArray: any[],
   dataArray: any[],
@@ -339,5 +392,7 @@ export {
   arrangeSelectedIds,
   getItemStatusMap,
   removeHTMLTags,
+  categorizeConfigFields,
+  extractFieldsByConfigType,
   arrangeList,
 };

@@ -11,6 +11,7 @@ import localeTexts from "../../common/locale/en-us";
 import { Props } from "../../common/types";
 
 const DeleteModal: React.FC<Props> = function ({
+  multiConfigName,
   type,
   remove,
   id,
@@ -39,7 +40,7 @@ const DeleteModal: React.FC<Props> = function ({
             buttonType="delete"
             icon="TrashMini"
             onClick={() => {
-              remove(id);
+              remove(id, multiConfigName);
               props.closeModal();
             }}
           >

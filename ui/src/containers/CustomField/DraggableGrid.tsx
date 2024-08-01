@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -77,6 +76,7 @@ const DraggableGrid: React.FC<any> = function ({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
+      // eslint-disable-next-line
       onDragCancel={handleDragCancel}
       onDragStart={handleDragStart}
     >

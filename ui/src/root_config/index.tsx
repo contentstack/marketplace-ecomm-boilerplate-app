@@ -1,19 +1,26 @@
-/* eslint-disable */
 /* @typescript-eslint/naming-convention */
+import React from "react";
 import axios from "axios";
 import { jwtVerify, importJWK, JWTPayload } from "jose";
-import { ColumnsProp } from "../common/types";
-// eslint-disable-next-line import/no-cycle
-import { wrapWithDiv, getImage } from "../common/utils";
 import {
+  ColumnsProp,
+  Result,
   TypeCategory,
   KeyOption,
   TypeProduct,
   SidebarDataObj,
   EcommerceEnv,
   FormattedRespose,
+  ValidationResult,
 } from "../common/types";
+// eslint-disable-next-line import/no-cycle
+import { wrapWithDiv, getImage } from "../common/utils";
 import Logo from "../assets/Logo.svg";
+import MultiConfigCustomComponent from "../containers/ConfigScreen/MultiConfigCustomComponent";
+import NonMultiConfigCustomComponent from "../containers/ConfigScreen/NonMultiConfigCustomComponent";
+/* eslint-disable */
+import categoryConfig from "./categories";
+/* eslint-enable */
 
 /* all values in this file are an example.
     You can modify its values and implementation,
@@ -32,51 +39,64 @@ const ecommerceEnv: EcommerceEnv = {
 };
 
 // example config fields. you will need to use these values in the config screen accordingly.
-// TODO: add a option field functionality
 const configureConfigScreen: any = () => ({
-  configField1: {
-    type: "textInputFields",
-    labelText: "API Route",
-    helpText:
-      "Your API Route is the endpoint from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
-    placeholderText: "/rest/v2/",
-    instructionText: "Copy and Paste your API Route",
+  region_url: {
+    type: "selectInputFields",
+    labelText: "Select Your commercetools Region",
+    helpText: "Select Your commercetools Region",
+    placeholderText: "Select Your commercetools Region",
+    instructionText: "Select Your commercetools Region",
     saveInConfig: true,
+    saveInServerConfig: false,
     isSensitive: false,
+    isMultiConfig: true,
   },
-  configField2: {
+  project_key: {
     type: "textInputFields",
-    labelText: "API Base URL",
-    helpText:
-      "Your API Base URL is the URL from which your data will be fetched. Ideally starts with 'api'. You can get it from your SAP Commerce Cloud Portal",
-    placeholderText: "Enter your API Base URL",
-    instructionText: "Copy and Paste your API Base URL  without https://",
+    labelText: "Project Key",
+    helpText: "Project Key",
+    placeholderText: "Project Key",
+    instructionText: "Project Key",
     saveInConfig: true,
+    saveInServerConfig: false,
     isSensitive: false,
+    isMultiConfig: true,
   },
-  configField3: {
+  client_id: {
     type: "textInputFields",
-    labelText: "Base Site ID",
-    helpText:
-      "You can find your Base Site ID in the Base Commerce Section of your SAP Backoffice.",
-    placeholderText: "Enter your Base Site ID",
-    instructionText: "Copy and Paste your Base Site ID",
-    saveInConfig: true,
+    labelText: "Client ID",
+    helpText: "Client ID",
+    placeholderText: "Client ID",
+    instructionText: "Client ID",
+    saveInConfig: false,
+    saveInServerConfig: true,
     isSensitive: false,
+    isMultiConfig: true,
   },
-  configField4: {
+  client_secret: {
     type: "textInputFields",
-    labelText: "Backoffice URL",
-    helpText:
-      "You can get your Backoffice URL from the SAP Commerce Cloud Portal.",
-    placeholderText: "Enter your Backoffice URL",
-    instructionText: "Copy and Paste your Backoffice URL",
-    saveInConfig: true,
+    labelText: "Client Secret",
+    helpText: "Client Secret",
+    placeholderText: "Client Secret",
+    instructionText: "Client Secret",
+    saveInConfig: false,
+    saveInServerConfig: true,
     isSensitive: false,
+    isMultiConfig: true,
+  },
+  access_token: {
+    type: "textInputFields",
+    labelText: "Access Token",
+    helpText: "Access Token",
+    placeholderText: "Access Token",
+    instructionText: "Access Token",
+    saveInConfig: true,
+    saveInServerConfig: false,
+    isSensitive: false,
+    isMultiConfig: true,
   },
 });
 
-// TODO: change the placement of this function to reduce clutter
 const getCustomKeys = (): KeyOption[] => [
   {
     label: "approvalStatus",
@@ -367,6 +387,7 @@ const returnFormattedProduct = (product: any, config: any): TypeProduct => ({
     : "",
   price: product?.price?.formattedValue || "-",
   sku: product?.sku || "",
+  isProductDeleted: product?.cs_metadata?.isConfigDeleted ?? false,
 });
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
@@ -375,6 +396,7 @@ const returnFormattedCategory = (category: any): TypeCategory => ({
   name: category?.name || "-",
   customUrl: "",
   description: category?.description || "Not Available",
+  isCategoryDeleted: category?.cs_metadata?.isConfigDeleted ?? false,
 });
 
 /* this function returns the titles and data that are to be displayed in the sidebar
@@ -506,13 +528,6 @@ const removeItemsFromCustomField = (
   type: any,
   uniqueKey: any
 ) => {
-  console.log(
-    "removeItemsFromCustomField",
-    removeId,
-    selectedIds,
-    type,
-    uniqueKey
-  );
   if (type === "category")
     return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
 
@@ -580,6 +595,266 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   return false;
 };
 
+/**
+ * Groups and formats product IDs by multi-config settings.
+ *
+ * When multi-config is enabled, this function returns a result object where keys are multi-config names
+ * and values are objects containing arrays of product IDs. The structure of the returned result is as follows:
+ * {
+ *   [multiConfigName]: {
+ *     multiConfiguniqueKey: [] // Array of strings or objects representing product IDs
+ *   }
+ * }
+ *
+ * @param {any} productData - The array of product data objects to be formatted.
+ * @returns {Result} - The formatted result object containing grouped product IDs.
+ */
+const mapProductIdsByMultiConfig = (productData: any): Result => {
+  let result: Result = {};
+  if (productData?.length) {
+    const uniqueKey = "multiConfiguniqueKey";
+    result = productData?.reduce((acc: any, item: any) => {
+      const multiConfigName = item?.cs_metadata?.multiConfigName;
+      if (!acc[multiConfigName]) {
+        acc[multiConfigName] = { [uniqueKey]: [] };
+      }
+      acc?.[multiConfigName]?.[uniqueKey]?.push(item?.[uniqueKey]);
+      return acc;
+    }, {});
+  }
+  return result;
+};
+
+/**
+ * Groups category IDs by multi-config names when multi-config is enabled.
+ *
+ * This function processes an array of category data and returns an object where:
+ * - Each key is a multi-config name derived from `cs_metadata.multiConfigName`.
+ * - Each value is an object containing an array of category IDs associated with that multi-config name.
+ *
+ * The structure of the result is as follows:
+ * {
+ *   [multiConfigName]: {
+ *     multiConfiguniqueKey: []  // Array of category IDs, which can be either strings or objects.
+ *   }
+ * }
+ *
+ * @param {any} categoryData - Array of category data objects, each expected to include `cs_metadata` and `uniqueKey`.
+ * @returns {Result} - An object grouping category IDs by multi-config names.
+ */
+const mapCategoryIdsByMultiConfig = (categoryData: any): Result => {
+  let result: Result = {};
+  const uniqueKey = "multiConfiguniqueKey";
+
+  // Check if category data is present and has length
+  if (categoryData?.length) {
+    // If customCategoryStructure is true, return empty result
+    if (categoryConfig.customCategoryStructure === true) {
+      return result;
+    }
+
+    // Reduce categoryData to an object grouped by multi-config names
+    result = categoryData?.reduce((acc: any, item: any) => {
+      const multiConfigName = item?.cs_metadata?.multiConfigName;
+      if (!acc[multiConfigName]) {
+        acc[multiConfigName] = { [uniqueKey]: [] };
+      }
+      acc?.[multiConfigName]?.[uniqueKey]?.push(item?.[uniqueKey]);
+      return acc;
+    }, {});
+  }
+
+  return result;
+};
+
+/**
+ * Checks the validity of configuration data and performs optional API validation.
+ *
+ * @param {Object} configurationData - The configuration data saved in `state?.installationData?.configuration`.
+ * @param {Object} serverConfiguration - The server configuration data saved in `state?.installationData?.serverConfiguration`.
+ * @param {boolean} validateMultiConfigKeysByApi - Set to `true` to enable API validation for multi-config keys, otherwise `false`.
+ * @param {boolean} validateOtherKeysByApi - Set to `true` to enable API validation for non-multi-config keys, otherwise `false`.
+ * @returns {Promise<{ isValid: boolean, invalidKeys: { source: string, keys: any[] }[] }>} - Returns an object with `isValid` indicating if all keys are valid and `invalidKeys` listing the invalid keys.
+ */
+const checkValidity = async (
+  configurationData: { [x: string]: any; multi_config_keys?: any },
+  serverConfiguration: { [x: string]: any; multi_config_keys?: any },
+  validateMultiConfigKeysByApi: boolean,
+  validateOtherKeysByApi: boolean
+) => {
+  const checkMultiConfigKeys = (multiConfigKeys: any) => {
+    const invalidKeys: any = {};
+
+    Object.entries(multiConfigKeys || {})?.forEach(([configKey, config]) => {
+      Object.entries(config || {})?.forEach(([key, value]) => {
+        if (typeof value === "string" && value?.trim() === "") {
+          if (!invalidKeys?.[configKey]) {
+            invalidKeys[configKey] = [];
+          }
+          invalidKeys?.[configKey]?.push(key);
+        }
+      });
+    });
+
+    return invalidKeys;
+  };
+
+  const checkOtherKeys = (keys: any) => {
+    const invalidKeys: string[] = [];
+
+    Object.entries(keys || {})?.forEach(([key, value]) => {
+      if (typeof value === "string" && value?.trim() === "") {
+        invalidKeys?.push(key);
+      }
+    });
+
+    return invalidKeys;
+  };
+
+  let normalInvalidKeys = {};
+  let serverNormalInvalidKeys = {};
+
+  if (!validateMultiConfigKeysByApi) {
+    normalInvalidKeys = checkMultiConfigKeys(
+      configurationData?.multi_config_keys
+    );
+    serverNormalInvalidKeys = checkMultiConfigKeys(
+      serverConfiguration?.multi_config_keys
+    );
+  }
+
+  const normalInvalidKeysList = [
+    ...Object.entries(normalInvalidKeys)
+      .filter(([keys]) => keys?.length)
+      .map(([source, keys]) => ({ source, keys })),
+    ...Object.entries(serverNormalInvalidKeys)
+      .filter(([keys]) => keys?.length)
+      .map(([source, keys]) => ({ source, keys })),
+  ];
+
+  let otherInvalidKeysList: { source: string; keys: any[] }[] = [];
+  if (!validateOtherKeysByApi) {
+    const otherInvalidKeys = checkOtherKeys(configurationData);
+    const serverOtherInvalidKeys = checkOtherKeys(serverConfiguration);
+
+    otherInvalidKeysList = [
+      ...otherInvalidKeys.map((key) => ({
+        source: "configurationData",
+        keys: [key],
+      })),
+      ...serverOtherInvalidKeys.map((key) => ({
+        source: "serverConfiguration",
+        keys: [key],
+      })),
+    ];
+  }
+
+  if (validateMultiConfigKeysByApi || validateOtherKeysByApi) {
+    /**
+     * Returns the validation result with invalid keys.
+     *
+     * The result should be returned in the following format:
+     * {
+     *   invalidKeys: [
+     *     { source: "string", keys: ["string"] },
+     *     ...
+     *   ]
+     * }
+     */
+    const validateConfigFilesByApi = async (): Promise<ValidationResult> => ({
+      invalidKeys: [{ source: "demos-95", keys: ["configField8"] }],
+    });
+
+    const apiValidationResults = await validateConfigFilesByApi();
+
+    const apiInvalidKeysList = apiValidationResults.invalidKeys;
+
+    const allInvalidKeys = [
+      ...normalInvalidKeysList,
+      ...otherInvalidKeysList,
+      ...apiInvalidKeysList,
+    ];
+
+    const isValid = allInvalidKeys?.length === 0;
+
+    return { isValid, invalidKeys: allInvalidKeys };
+  }
+  // eslint-disable-next-line
+  else {
+    const allInvalidKeys = [...normalInvalidKeysList, ...otherInvalidKeysList];
+    const isValid = allInvalidKeys?.length === 0;
+
+    return { isValid, invalidKeys: allInvalidKeys };
+  }
+};
+
+/**
+ * Renders a custom multi-config component for handling multi-config fields that are not text input fields.
+ *
+ * @param multiConfigId - The name of the multi-config field, e.g., "legacy_config".
+ * @param configurationData - The data saved in the configuration.
+ * @param serverConfiguration - The data saved in the server configuration.
+ * @param onChangeCallback - The function to call when a change occurs in the custom component.
+ *
+ *   - Handles changes for the custom component.
+ *   - @param {Object} event - The event object containing the `name` and `value`.
+ *     - `name`: The name of the changed field.
+ *     - `value`: The new value of the changed field.
+ *   - @param {any} multiConfigID - The ID of the multi-configuration, should be present if multi-config is true.
+ *   - @param {boolean} isMultiConfig - Indicates whether multi-config is enabled or not.
+ *
+ * @returns A JSX element rendering the MultiConfigCustomComponent.
+ */
+const customMultiConfigComponent = (
+  multiConfigId: string,
+  configurationData: any,
+  serverConfiguration: any,
+  onChangeCallback: (
+    event: { name: string; value: any },
+    multiConfigID: any,
+    isMultiConfig: boolean
+  ) => void
+) => (
+  <MultiConfigCustomComponent
+    multiConfigurationData={multiConfigId}
+    configurationObject={configurationData}
+    serverConfigurationObject={serverConfiguration}
+    customComponentOnChange={onChangeCallback}
+  />
+);
+
+/**
+ * Renders a custom Non multi-config component for handling Non multi-config fields that are not text input fields.
+ *
+ * @param configurationData - The data saved in the configuration.
+ * @param serverConfiguration - The data saved in the server configuration.
+ * @param onChangeCallback - The function to call when a change occurs in the custom component.
+ *
+ *   - Handles changes for the custom component.
+ *   - @param {Object} event - The event object containing the `name` and `value`.
+ *     - `name`: The name of the changed field.
+ *     - `value`: The new value of the changed field.
+ *   - @param {any} multiConfigID - The ID of the multi-configuration, should be present if multi-config is true.
+ *   - @param {boolean} isMultiConfig - Indicates whether multi-config is enabled or not.
+ *
+ * @returns A JSX element rendering the MultiConfigCustomComponent.
+ */
+const customNonMultiConfigComponet = (
+  configurationData: any,
+  serverConfiguration: any,
+  onChangeCallback: (
+    event: { name: string; value: any },
+    multiConfigID: any,
+    isMultiConfig: boolean
+  ) => void
+) => (
+  <NonMultiConfigCustomComponent
+    configurationObject={configurationData}
+    serverConfigurationObject={serverConfiguration}
+    customComponentOnChange={onChangeCallback}
+  />
+);
+
 const rootConfig = {
   verifyAppSigning,
   ecommerceEnv,
@@ -594,6 +869,11 @@ const rootConfig = {
   getCustomKeys,
   getSidebarData,
   removeItemsFromCustomField,
+  mapProductIdsByMultiConfig,
+  mapCategoryIdsByMultiConfig,
+  checkValidity,
+  customMultiConfigComponent,
+  customNonMultiConfigComponet,
 };
 
 export default rootConfig;

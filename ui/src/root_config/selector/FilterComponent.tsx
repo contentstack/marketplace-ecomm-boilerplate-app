@@ -21,10 +21,7 @@ function FilterComponent({ config, meta, updateList }: any) {
   const handleValueUpdate = (data: any) => {
     setValue(data);
   };
-  useEffect(() => {
-    console.info("config", config);
-    console.info("meta", meta);
-  }, [config, meta]);
+  useEffect(() => {}, [config, meta]);
 
   useEffect(() => {
     updateList(value);

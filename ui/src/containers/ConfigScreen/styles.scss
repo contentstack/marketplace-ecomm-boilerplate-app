@@ -7,12 +7,12 @@
     width: 100%;
 
     .Field {
-      margin-left: 30px;
       width: 90%;
     }
 
     .Field .InstructionText {
       visibility: visible;
+      margin-top: 8px;
     }
 
     .custom-keys {
@@ -26,6 +26,7 @@
 
   .Radio-wrapper {
     padding-top: 20px;
+    margin-left: 5px;
   }
 
   .custom-styles {
@@ -69,4 +70,56 @@
   display: flex;
   flex-direction: row;
   margin-top: 40px;
+}
+
+.multi-config-wrapper {
+  margin-left: 30px;
+  margin-right: 30px;
+
+  .multi-config-button {
+    margin-left: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: none !important;
+  }
+}
+.multi-config-wrapper__configblock {
+  margin-top: 15px;
+}
+.single-config-wrapper {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.multi-config-wrapper__sublabel {
+  font-size: 14px;
+  line-height: 25.9px;
+  margin-top: 5px;
+}
+
+.multi-config-wrapper__configblock__checkbox {
+  margin-left: 10px;
+}
+
+.errorcontainer {
+  margin-left: 8px;
+  color: red;
+  font-family: Inter, Serif, Sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+.default-label {
+  border: 1px solid #a9b6cb;
+  border-radius: 8px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #647696;
+  margin-left: 1.25rem;
+  padding: 0.1875rem 0.25rem;
+}
+.json-field {
+  margin-left: 40px;
+}
+.page_count {
+  margin-left: 40px;
 }

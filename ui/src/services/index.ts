@@ -11,7 +11,6 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
       method,
       data,
       headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         "Access-Control-Allow-Origin": "*",
       },
     });
@@ -21,7 +20,6 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
       data: rootConfig.getFormattedResponse(response),
     };
   } catch (e: any) {
-    console.error(e);
     const { status, data: resData } = e?.response || {};
     if (status === 500) {
       return {
@@ -40,11 +38,18 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
 };
 
 // get paginated products and categories
-const request = (config: any, requestType: any, skip: any, limit: any) =>
+const getProductandCategory = (
+  config: any,
+  requestType: any,
+  skip: any,
+  limit: any,
+  isOldUser: any,
+  multiConfigDropDown: any
+) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${requestType}&skip=${skip}&limit=${limit}`,
     "POST",
-    config
+    { config, isOldUser, multiConfigDropDown }
   );
 
 // get all available categories
@@ -56,44 +61,57 @@ const requestCategories = (config: any) =>
   );
 
 // get selected products/categories
-const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
-  Array.isArray(selectedIDs) && selectedIDs?.length ?
-    makeAnApiCall(
-        `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${
-          selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
-        }`,
-        "POST",
-        config
-      )
-    : null;
+const getSelectedIDs = async (
+  config: any,
+  type: any,
+  selectedIDs: any,
+  isOldUser: any
+) => {
+  const ids =    isOldUser === true ? selectedIDs?.join(",") : JSON.stringify(selectedIDs);
+  const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${ids}&isOldUser=${isOldUser}`;
+  return makeAnApiCall(apiUrl, "POST", config);
+};
 
 // runes when categoryConfig.customCategoryStructure is true
 const getCustomCategoryData = async (
   config: any,
   type: any,
-  selectedIDs: any
+  selectedIDs: any,
+  isOldUser: any
 ) => {
-  if (Array.isArray(selectedIDs) && selectedIDs.length) {
+  if (
+    isOldUser
+      ? Array.isArray(selectedIDs) && selectedIDs?.length
+      : Object.keys(selectedIDs)?.length
+  ) {
     const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
       config,
       type,
-      selectedIDs
+      selectedIDs,
+      isOldUser
     );
     return makeAnApiCall(apiUrl, "POST", requestData);
   }
   return null;
 };
 // search products and categories
-const search = (config: any, keyword: any, skip: any, limit: any) =>
+const search = (
+  config: any,
+  keyword: any,
+  skip: any,
+  limit: any,
+  oldUser: Boolean,
+  selectedMultiConfigValue: any
+) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`,
     "POST",
-    config
+    { config, oldUser, selectedMultiConfigValue }
   );
 
 export {
   getSelectedIDs,
-  request,
+  getProductandCategory,
   requestCategories,
   search,
   getCustomCategoryData,

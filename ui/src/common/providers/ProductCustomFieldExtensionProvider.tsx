@@ -17,13 +17,10 @@ import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 import localeTexts from "../locale/en-us";
 import categoryConfig from "../../root_config/categories";
 
-const CustomFieldExtensionProvider: React.FC<any> = function ({
+const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
   children,
   type,
-}: {
-  children: React.ReactNode;
-  type: "product" | "category";
-}) {
+}: any) {
   const { appSdk } = useContext(MarketplaceAppContext);
   const appConfig = useAppConfig();
   const { location } = useAppLocation();
@@ -36,7 +33,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   const { isInvalidCredentials, setIsInvalidCredentials } = useError();
   const [isOldUser, setIsOldUser] = useState<Boolean>(false);
   const [advancedConfig, setAdvancedConfig] = useState<any>([]);
-
   const getFieldConfigValue = (
     currentLocale: any,
     fieldConfigData: any,
@@ -70,7 +66,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
     }
     return [];
   };
-
   const initialLoad = async () => {
     if (location) {
       // eslint-disable-next-line
@@ -146,24 +141,11 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           }
         } else {
           // eslint-disable-next-line
-          if (
-            type === "category"
-            && categoryConfig.customCategoryStructure === false
-          ) {
-            if (oldUser === true) {
-              setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
-            } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
-              setEntryIds(returnProductFormatedData);
-            }
+          if (oldUser === true) {
+            setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
           } else {
-            // eslint-disable-next-line
-            if (oldUser === true) {
-              setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
-            } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
-              setEntryIds(returnProductFormatedData);
-            }
+            const returnProductFormatedData: any =              rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
+            setEntryIds(returnProductFormatedData);
           }
         }
       }
@@ -297,4 +279,4 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
     </ProductCustomFieldExtensionContext.Provider>
   );
 };
-export default CustomFieldExtensionProvider;
+export default ProductCustomFieldExtensionProvider;

@@ -1,8 +1,6 @@
-/* eslint-disable */
 /* Import React modules */
 import React, { useCallback, useEffect, useState } from "react";
 /* Import other node modules */
-import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
   Button,
   Dropdown,
@@ -10,7 +8,6 @@ import {
   SkeletonTile,
   Tooltip,
 } from "@contentstack/venus-components";
-import { Props, TypeSDKData, TypeWarningtext } from "../../common/types";
 /* Import our modules */
 import RenderList from "./RenderList";
 import WarningMessage from "../../components/WarningMessage";
@@ -44,6 +41,9 @@ const CustomField: React.FC<any> = function ({
     setFieldData,
     stackApiKey,
     appSdkInitialized,
+    advancedConfig,
+    isOldUser,
+    selectedIds,
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
@@ -51,8 +51,7 @@ const CustomField: React.FC<any> = function ({
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
-  // const [state, setState] = useState<TypeSDKData>({
-  //   config: {},
+
   //   location: {},
   //   appSdkInitialized: false,
   // });
@@ -95,103 +94,40 @@ const CustomField: React.FC<any> = function ({
       childWindow = undefined;
     });
   }, []);
-
-  // useEffect(() => {
-  //   ContentstackAppSdk.init()
-  //     .then(async (appSdk) => {
-  //       // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
-  //       const { api_key } = appSdk?.stack?._data || {};
-  //       setStackApiKey(api_key);
-
-  //       const config = await appSdk?.getConfig();
-  //       window.iframeRef = null;
-  //       window.postRobot = appSdk?.postRobot;
-  //       const entryData = appSdk?.location?.CustomField?.field?.getData();
-  //       // console.info("entryData", entryData);
-  //       appSdk?.location?.CustomField?.frame?.enableAutoResizing();
-  //       if (entryData?.data?.length) {
-  //         if (
-  //           rootConfig.ecomCustomFieldCategoryData &&
-  //           rootConfig.ecomCustomFieldCategoryData === true &&
-  //           type === "category"
-  //         ) {
-  //           setEntryIds(
-  //             entryData?.data?.map((i: any) => ({
-  //               [uniqueKey]: i?.[uniqueKey],
-  //               catalogId: i?.catalogId,
-  //               catalogVersionId: i?.catalogVersionId,
-  //             }))
-  //           );
-  //         } else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
-  //       }
-  //       setState({
-  //         config,
-  //         location: appSdk.location,
-  //         appSdkInitialized: true,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error("appSdk initialization error", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!state.appSdkInitialized) return;
-  //   setIsInvalidCredentials({
-  //     error: Object.values(state.config || {}).includes(""),
-  //     data: localeTexts.warnings.invalidCredentials.replace(
-  //       "$",
-  //       rootConfig.ecommerceEnv.APP_ENG_NAME
-  //     ),
-  //   });
-  // }, [state.config]);
-
-  // useEffect(() => {
-  //   // if (!state.appSdkInitialized) return;
-  //   // console.info(entryIds, "entryIds");
-  //   setSelectedIds(entryIds);
-  // }, [entryIds]);
-
-  // useEffect(() => {
-  //   // if (!state.appSdkInitialized) return;
-  //   if (selectedIds.length) fetchData(selectedIds);
-  //   else setSelectedItems([]);
-  // }, [selectedIds]);
-
   useEffect(() => {
-    // if (selectedItems?.length) {
-    if (!appSdkInitialized) return;
-    if (type === "category") {
-      setFieldData({
-        data: selectedItems,
-        type: `${appName}_${type}`,
-      });
-    } else {
-      // eslint-disable-next-line
-      if (!config?.is_custom_json)
+    if (selectedItems?.length) {
+      if (!appSdkInitialized) return;
+      if (type === "category") {
         setFieldData({
           data: selectedItems,
           type: `${appName}_${type}`,
         });
-      else {
-        const data: any[] = [];
-        const keys = config?.custom_keys?.map((i: any) => i?.value);
-        if (selectedItems?.length) {
-          selectedItems.forEach((item: any) => {
-            const obj1: any = {};
-            keys?.forEach((key: any) => {
-              obj1[key] = item[key];
+      } else {
+        // eslint-disable-next-line
+        if (!config?.is_custom_json)
+          setFieldData({
+            data: selectedItems,
+            type: `${appName}_${type}`,
+          });
+        else {
+          const data: any[] = [];
+          const keys = config?.custom_keys?.map((i: any) => i?.value);
+          if (selectedItems?.length) {
+            selectedItems.forEach((item: any) => {
+              const obj1: any = {};
+              keys?.forEach((key: any) => {
+                obj1[key] = item[key];
+              });
+              data.push(obj1);
             });
-            data.push(obj1);
+          }
+          setFieldData({
+            data,
+            type: `${appName}_${type}`,
           });
         }
-        setFieldData({
-          data,
-          type: `${appName}_${type}`,
-        });
       }
     }
-    // }
     setLoading(false);
   }, [selectedItems]);
 
@@ -206,18 +142,21 @@ const CustomField: React.FC<any> = function ({
           {
             message: "init",
             config,
+            advancedConfig,
             selectedItems: dataArr,
+            selectedIds,
             type,
             stackApiKey,
+            isOldUser,
           },
           window.location.origin
         );
       } else if (data.message === "add") {
         if (
-          type === "category" &&
-          categoryConfig.customCategoryStructure === true
+          type === "category"
+          && categoryConfig.customCategoryStructure === true
         )
-          setSelectedIds(data?.dataArr); // FIXME remove this logic
+          setSelectedIds(data?.dataIds); // FIXME remove this logic
         else setSelectedIds(data?.dataIds);
       } else if (data.message === "close") {
         childWindow = undefined;
@@ -312,22 +251,20 @@ const CustomField: React.FC<any> = function ({
         the configuration details from the appSdk. */
   return (
     <div className="layout-container">
-      {
-        <div className="field-extension-wrapper">
-          {renderCustomField()}
-          <Button
-            onClick={handleClick}
-            className="add-product-btn"
-            buttonType="control"
-            disabled={isInvalidCredentials.error || loading}
-          >
-            {localeTexts.customField.addHere}{" "}
-            {type === "category"
-              ? localeTexts.customField.buttonText.category
-              : localeTexts.customField.buttonText.product}
-          </Button>
-        </div>
-      }
+      <div className="field-extension-wrapper">
+        {renderCustomField()}
+        <Button
+          onClick={handleClick}
+          className="add-product-btn"
+          buttonType="control"
+          disabled={isInvalidCredentials.error || loading}
+        >
+          {localeTexts.customField.addHere}{" "}
+          {type === "category"
+            ? localeTexts.customField.buttonText.category
+            : localeTexts.customField.buttonText.product}
+        </Button>
+      </div>
     </div>
   );
 };

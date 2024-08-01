@@ -37,40 +37,16 @@ const SidebarWidget: React.FC = function () {
   const [productDropdown, setProductDropdown] = useState<any>([]);
   const [isProduct, setIsProduct] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedDropdownProduct, setselectedDropdownProduct] =
-    useState<any>("");
+  const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
-  // useEffect(() => {
-  //   ContentstackAppSdk.init()
-  //     .then(async (appSdk) => {
-  //       const config = await appSdk?.getConfig();
-  //       if (!config?.is_custom_baseUrl) delete config?.api_route;
-  //       const contentTypeUid =
-  //         appSdk?.location?.SidebarWidget?.entry?.content_type?.uid || "";
-  //       const data = appSdk?.location?.SidebarWidget?.entry?.getData();
-  //       const contentTypeDetails = await appSdk?.stack?.getContentType(
-  //         contentTypeUid
-  //       );
-  //       setEntryData(data);
-  //       setContentTypeSchema(contentTypeDetails?.content_type?.schema);
-  //       setState({
-  //         config,
-  //         location: appSdk?.location,
-  //         appSdkInitialized: true,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error(localeTexts.sidebarWidget.appSdkErr, error);
-  //     });
-  // }, []);
 
   useEffect(() => {
     if (!appSdkInitialized) return;
     const eCommerceProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
-        entryData?.[i]?.type ===
-        `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+        entryData?.[i]?.type
+        === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
     );
     const fieldListTemp: any = [];
     eCommerceProductsField?.forEach((field: string) => {
@@ -86,7 +62,6 @@ const SidebarWidget: React.FC = function () {
   }, [entryData, appConfig, appSdkInitialized]);
 
   const getCurrentFieldData = async (field: any) => {
-    // if (!appSdkInitialized) return;
     if (entryData?.[field?.value]?.data?.length) {
       setProductList(entryData?.[field?.value]?.data);
     } else {
@@ -100,7 +75,7 @@ const SidebarWidget: React.FC = function () {
   }, [fieldList]);
 
   const fetchSelectedIdData = async (data: any) => {
-    const product = await getSelectedIDs(appConfig, "product", [data]);
+    const product = await getSelectedIDs(appConfig, "product", [data], false);
     if (product?.error) {
       setIsInvalidCredentials(product);
     } else return product?.data?.items?.[0];

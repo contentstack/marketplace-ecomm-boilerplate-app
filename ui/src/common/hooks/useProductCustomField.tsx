@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import {
-  CustomFieldExtensionContext,
-  CustomFieldExtensionContextType,
-} from "../contexts/customFieldExtensionContext";
+  ProductCustomFieldExtensionContext,
+  ProductCustomFieldExtensionContextType,
+} from "../contexts/productCustomFieldExtensionContext";
 
 /**
  * Getter and setter hook for custom field data
@@ -11,7 +11,7 @@ import {
  * Eg:
  * const { customField, setFieldData, loading } = useCustomField();
  */
-const useCustomField = () => {
+const useProductCustomField = () => {
   const {
     setFieldData,
     selectedIds,
@@ -22,11 +22,11 @@ const useCustomField = () => {
     handleDragEvent,
     loading,
     stackApiKey,
-    isInvalidCredentials,
-    appSdkInitialized,
     advancedConfig,
     isOldUser,
-  } = useContext<CustomFieldExtensionContextType>(CustomFieldExtensionContext);
+  } = useContext<ProductCustomFieldExtensionContextType>(
+    ProductCustomFieldExtensionContext
+  );
 
   return {
     setFieldData,
@@ -38,10 +38,8 @@ const useCustomField = () => {
     handleDragEvent,
     loading,
     stackApiKey,
-    isInvalidCredentials,
-    appSdkInitialized,
     advancedConfig,
     isOldUser,
   };
 };
-export default useCustomField;
+export default useProductCustomField;
