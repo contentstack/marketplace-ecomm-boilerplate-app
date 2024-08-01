@@ -35,6 +35,7 @@ export default {
       instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
     },
     multiConfig: {
+      deleteModalNameNotPresent:"Validation error: Config Names don't match",
       buttonLabel: "New Configuration",
       accordionLabel: "$ Configuration",
       setDefaultText: "Set as Default",
