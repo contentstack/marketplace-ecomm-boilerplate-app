@@ -252,9 +252,7 @@ const SelectorPage: React.FC = function () {
     }
   }, [selectedMultiConfigValue]);
 
-  const updateList = (filteredList: any) => {
-    return filteredList
-  };
+  const updateList = (filteredList: any) => filteredList;
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {
