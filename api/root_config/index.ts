@@ -30,7 +30,7 @@ const root_config: any = {
     product: "products",
     category: "catalogs",
   },
-/* The `SEARCH_URL_PARAMS` property can be used to append a search parameter to the API endpoint URL when making specific API
+  /* The `SEARCH_URL_PARAMS` property can be used to append a search parameter to the API endpoint URL when making specific API
 calls related to searching for products or categories. By adding `SEARCH_URL_PARAMS` to the URL
 construction logic in the functions, it allows for consistent inclusion of the
 search parameter in the API requests where needed. */
@@ -38,8 +38,7 @@ search parameter in the API requests where needed. */
   FIELDS_URL: "fields=FULL",
   SENSITIVE_CONFIG_KEYS: ["base_site_id", "backoffice_url", "base_url"],
   ENDPOINTS_CONFIG: {
-
-/* The `getSeparateProductsAndCategories: true` property in the `root_config` object is serving as a
+    /* The `getSeparateProductsAndCategories: true` property in the `root_config` object is serving as a
 configuration setting that indicates whether the API should handle and retrieve products and
 categories separately when making API calls. 
 

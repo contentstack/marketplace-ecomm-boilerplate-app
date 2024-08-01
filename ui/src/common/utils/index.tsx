@@ -84,7 +84,6 @@ const getCurrencySymbol = (code: string) => {
   }
 };
 
-
 // TODO: change the dangerouslySetInnerHTML to a safer alternative for SRE
 const wrapWithDiv = (description: string) =>
   description ? (
