@@ -54,24 +54,16 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
         user_uid,
         stack_api_key,
       } = payload;
-      console.info(
-        "app token is valid!",
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key
-      );
     } catch (e) {
       console.error(
-        "app token is invalid or request is not initiated from Contentstack!",
+        "Token is invalid or request is not initiated from Contentstack!",
         e
       );
       return false;
     }
     return true;
   }
-  console.error("app token is missing!");
+  console.error("Token is missing!");
   return false;
 };
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.

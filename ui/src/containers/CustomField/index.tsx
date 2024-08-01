@@ -94,67 +94,6 @@ const CustomField: React.FC<any> = function ({
       childWindow = undefined;
     });
   }, []);
-
-  //     .then(async (appSdk) => {
-  //       // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
-  //       const { api_key } = appSdk?.stack?._data || {};
-  //       setStackApiKey(api_key);
-
-  //       const config = await appSdk?.getConfig();
-  //       window.iframeRef = null;
-  //       window.postRobot = appSdk?.postRobot;
-  //       const entryData = appSdk?.location?.CustomField?.field?.getData();
-  //       // console.info("entryData", entryData);
-  //       appSdk?.location?.CustomField?.frame?.enableAutoResizing();
-  //       if (entryData?.data?.length) {
-  //         if (
-  //           rootConfig.ecomCustomFieldCategoryData &&
-  //           rootConfig.ecomCustomFieldCategoryData === true &&
-  //           type === "category"
-  //         ) {
-  //           setEntryIds(
-  //             entryData?.data?.map((i: any) => ({
-  //               [uniqueKey]: i?.[uniqueKey],
-  //               catalogId: i?.catalogId,
-  //               catalogVersionId: i?.catalogVersionId,
-  //             }))
-  //           );
-  //         } else setEntryIds(entryData?.data?.map((i: any) => i?.[uniqueKey]));
-  //       }
-  //       setState({
-  //         config,
-  //         location: appSdk.location,
-  //         appSdkInitialized: true,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error("appSdk initialization error", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!state.appSdkInitialized) return;
-  //   setIsInvalidCredentials({
-  //     error: Object.values(state.config || {}).includes(""),
-  //     data: localeTexts.warnings.invalidCredentials.replace(
-  //       "$",
-  //       rootConfig.ecommerceEnv.APP_ENG_NAME
-  //     ),
-  //   });
-  // }, [state.config]);
-
-  // useEffect(() => {
-  //   // if (!state.appSdkInitialized) return;
-  //   // console.info(entryIds, "entryIds");
-  //   setSelectedIds(entryIds);
-  // }, [entryIds]);
-
-  // useEffect(() => {
-  //   // if (!state.appSdkInitialized) return;
-  //   if (selectedIds.length) fetchData(selectedIds);
-  //   else setSelectedItems([]);
-  // }, [selectedIds]);
-
   useEffect(() => {
     if (selectedItems?.length) {
       if (!appSdkInitialized) return;

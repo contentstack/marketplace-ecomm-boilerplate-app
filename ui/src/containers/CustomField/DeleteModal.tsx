@@ -18,7 +18,6 @@ const DeleteModal: React.FC<Props> = function ({
   name: itemName,
   ...props
 }) {
-  console.info("multiConfigName", multiConfigName);
   return (
     <>
       <ModalHeader

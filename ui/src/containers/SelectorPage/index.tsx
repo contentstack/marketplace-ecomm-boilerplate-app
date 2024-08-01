@@ -80,7 +80,7 @@ const SelectorPage: React.FC = function () {
               setMultiConfigDropDown([...multiConfigKeys]);
               if (multiConfigKeys?.length) {
                 multiConfigKeys[0].default = true;
-                setSelectedMultiConfigValue(multiConfigKeys[0]);
+                setSelectedMultiConfigValue(multiConfigKeys?.[0]);
               }
             });
           } else if (data?.config?.multi_config_keys) {
@@ -252,9 +252,7 @@ const SelectorPage: React.FC = function () {
     }
   }, [selectedMultiConfigValue]);
 
-  const updateList = (filteredList: any) => {
-    console.info("filteredList", filteredList);
-  };
+  const updateList = (filteredList: any) => filteredList;
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {
