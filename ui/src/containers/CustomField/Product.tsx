@@ -39,7 +39,7 @@ const Product: React.FC<Props> = function ({ product, remove }) {
   /* eslint-disable */
   const deleteModal = (props: any) => (
     <DeleteModal
-      multi_config_name={product?.cs_metadata?.multi_config_name}
+      multiConfigName={product?.cs_metadata?.multiConfigName}
       type="Product"
       remove={remove}
       id={id}
@@ -83,7 +83,11 @@ const Product: React.FC<Props> = function ({ product, remove }) {
       className: "ActionListItem--warning",
     },
   ]?.filter(
-    (action) => !(isProductDeleted && action?.label?.props?.icon === "NewTab")
+    (action) =>
+      !(
+        isProductDeleted
+        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
+      )
   );
 
   /* eslint-disable */

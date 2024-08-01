@@ -78,7 +78,7 @@ const SelectorPage: React.FC = function () {
               };
               multiConfigKeys.push(obj);
               setMultiConfigDropDown([...multiConfigKeys]);
-              if (multiConfigKeys.length) {
+              if (multiConfigKeys?.length) {
                 multiConfigKeys[0].default = true;
                 setSelectedMultiConfigValue(multiConfigKeys[0]);
               }
@@ -167,7 +167,9 @@ const SelectorPage: React.FC = function () {
           config,
           meta?.searchText,
           meta?.skip,
-          meta?.limit
+          meta?.limit,
+          oldUser,
+          selectedMultiConfigValue
         );
         if (!response?.error) {
           setList(response?.data?.items);
@@ -202,7 +204,7 @@ const SelectorPage: React.FC = function () {
     });
     if (oldUser === false) {
       const cpyOfSelectedIDS = { ...selectedIds };
-      const multiConfigFormatIDS =        rootConfig.returnFormattedProductIDSForMultiConfig(selected);
+      const multiConfigFormatIDS =        rootConfig.mapProductIdsByMultiConfig(selected);
       const updatedSelectedIDS = {
         ...cpyOfSelectedIDS,
         ...multiConfigFormatIDS,

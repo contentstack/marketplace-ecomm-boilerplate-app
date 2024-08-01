@@ -72,7 +72,7 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
   /* eslint-disable */
   const getDeleteModal = (props: any) => (
     <DeleteModal
-      multi_config_name={categories?.cs_metadata?.multi_config_name}
+      multiConfigName={categories?.cs_metadata?.multiConfigName}
       type="Category"
       remove={remove}
       id={categories?.id}
@@ -114,8 +114,12 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
         }),
       className: "ActionListItem--warning",
     },
-  ].filter(
-    (action) => !(isCategoryDeleted && action.label.props.icon === "NewTab")
+  ]?.filter(
+    (action) =>
+      !(
+        isCategoryDeleted
+        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
+      )
   );
 
   /* eslint-disable */

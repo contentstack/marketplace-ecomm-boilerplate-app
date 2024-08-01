@@ -68,7 +68,7 @@ const getSelectedIDs = async (
   selectedIDs: any,
   isOldUser: any
 ) => {
-  const ids =    isOldUser === true ? selectedIDs.join(",") : JSON.stringify(selectedIDs);
+  const ids =    isOldUser === true ? selectedIDs?.join(",") : JSON.stringify(selectedIDs);
   const apiUrl = `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${ids}&isOldUser=${isOldUser}`;
   return makeAnApiCall(apiUrl, "POST", config);
 };
@@ -82,7 +82,7 @@ const getCustomCategoryData = async (
 ) => {
   if (
     isOldUser
-      ? Array.isArray(selectedIDs) && selectedIDs.length
+      ? Array.isArray(selectedIDs) && selectedIDs?.length
       : Object.keys(selectedIDs)?.length
   ) {
     const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
@@ -96,11 +96,18 @@ const getCustomCategoryData = async (
   return null;
 };
 // search products and categories
-const search = (config: any, keyword: any, skip: any, limit: any) =>
+const search = (
+  config: any,
+  keyword: any,
+  skip: any,
+  limit: any,
+  oldUser: Boolean,
+  selectedMultiConfigValue: any
+) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`,
     "POST",
-    config
+    { config, oldUser, selectedMultiConfigValue }
   );
 
 export {

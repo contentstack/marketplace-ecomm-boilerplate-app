@@ -58,5 +58,6 @@ module.exports = {
     "operator-linebreak": "warn",
     "@typescript-eslint/naming-convention": "warn",
     "@typescript-eslint/no-unused-vars": "warn",
+    "import/no-cycle": "warn",
   },
 };

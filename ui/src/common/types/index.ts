@@ -152,3 +152,20 @@ export interface APIResponseType {
   error: boolean;
   data: FormattedRespose | string;
 }
+
+interface InvalidKey {
+  source: string;
+  keys: string[];
+}
+
+export interface ValidationResult {
+  invalidKeys: InvalidKey[];
+}
+
+// Define the props for the customMultiConfigComponent function
+export interface CustomMultiConfigComponentProps {
+  multiConfigId: string;
+  configurationData: any;
+  serverConfiguration: any;
+  onChangeCallback: any;
+}

@@ -101,8 +101,8 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
         updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => ({
           ...fieldDataSet,
           cs_metadata: {
-            multi_config_name: "legacy_config",
-            isconfigdeleted: false,
+            multiConfigName: "legacy_config",
+            isConfigDeleted: false,
           },
         }));
       }
@@ -111,14 +111,14 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
         updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => {
           if (
             !fieldDataSet?.cs_metadata
-            && fieldDataSet?.cs_metadata?.multi_config_name !== "legacy_config"
-            && fieldDataSet?.cs_metadata?.isconfigdeleted !== false
+            && fieldDataSet?.cs_metadata?.multiConfigName !== "legacy_config"
+            && fieldDataSet?.cs_metadata?.isConfigDeleted !== false
           ) {
             return {
               ...fieldDataSet,
               cs_metadata: {
-                multi_config_name: "legacy_config",
-                isconfigdeleted: false,
+                multiConfigName: "legacy_config",
+                isConfigDeleted: false,
               },
             };
           }
@@ -136,9 +136,7 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
           if (oldUser === true) {
             setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
           } else {
-            const returnProductFormatedData: any =              rootConfig.returnFormattedCategoryIDSForMultiConfig(
-                updatedFieldData
-              );
+            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData);
             setEntryIds(returnProductFormatedData);
           }
         } else {
@@ -146,9 +144,7 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
           if (oldUser === true) {
             setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
           } else {
-            const returnProductFormatedData: any =              rootConfig.returnFormattedProductIDSForMultiConfig(
-                updatedFieldData
-              );
+            const returnProductFormatedData: any =              rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
             setEntryIds(returnProductFormatedData);
           }
         }
@@ -192,7 +188,7 @@ const ProductCustomFieldExtensionProvider: React.FC<any> = function ({
         : Object.keys(selectedIdsArray)?.length
           && !isEmpty(appConfig)
           && isOldUser
-        ? selectedIdsArray.length
+        ? selectedIdsArray?.length
         : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error
     ) {
       let res;

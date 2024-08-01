@@ -5,6 +5,17 @@ import {
   extractCategories,
   getHeaders,
 } from "./utilityFunctions";
+// Define the types for cs_metadata and the response object
+interface CsMetadata {
+  multiConfigName: string;
+  isConfigDeleted: boolean;
+}
+// eslint-disable-next-line
+interface ApiResponseWithMetadata {
+  cs_metadata: CsMetadata;
+}
+type ApiResponseWithoutMetadata = any;
+type ApiResponse = ApiResponseWithMetadata | ApiResponseWithoutMetadata;
 
 const root_config: any = {
   API_BASE_URL: "https://my.example.com/$/v3/", // Add the URL of your commerce app API where $ is a value added through Users response
@@ -36,8 +47,7 @@ const root_config: any = {
   },
 
   getSelectedProductsById: async (productQuery: any, productPayload: any) => {
-    let response;
-
+    let response: ApiResponse[] = [];
     if (productQuery?.isOldUser === "false") {
       // Just for example purpose
       // If the user is not an old user, perform the API call as per multi-config requirements
@@ -47,7 +57,7 @@ const root_config: any = {
         const responseData = {
           ...response,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: false, // Indicates that the configuration is not deleted
           }
         };
@@ -57,7 +67,7 @@ const root_config: any = {
         return {
           id: productID,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: true, // Indicates that the configuration is deleted
           }
         };
@@ -68,20 +78,19 @@ const root_config: any = {
         productPayload?.["id:in"]?.split(",").filter((id: any) => id !== "") ||
         [];
       response = await Promise.all(
-        extractedProductID.map((id: any) =>
+        extractedProductID?.map((id: any) =>
           getProductByID({ id, query: productPayload?.query }, productPayload)
         )
       );
-      return response;
+      return response as ApiResponse[];
     }
-
-    return response;
   },
 
   getSelectedCategoriesById: async (
     categoryQuery: any,
     categoryPayLoad: any
   ) => {
+    let response: ApiResponse[] = [];
     if (categoryPayLoad?.isOldUser === false) {
       // Just for example purpose
       // If the user is not an old user, perform the API call as per multi-config requirements
@@ -91,7 +100,7 @@ const root_config: any = {
         const responseData = {
           ...response,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: false, // Indicates that the configuration is not deleted
           }
         };
@@ -101,7 +110,7 @@ const root_config: any = {
         return {
           id: productID,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: true, // Indicates that the configuration is deleted
           }
         };
@@ -120,7 +129,7 @@ const root_config: any = {
             method: "GET",
             headers: getHeaders(categoryPayLoad),
           });
-          return categoryResponse;
+          return categoryResponse as any;
         })
       );
     }
@@ -128,7 +137,7 @@ const root_config: any = {
 
   getSelectedProductsandCategories: (data: any, key: any) => {
     let url: string = root_config.getUrl(key, data?.query);
-    const urlHasQueryParams: boolean = url.includes("?");
+    const urlHasQueryParams: boolean = url?.includes("?");
 
     url += data["id:in"] ?
       `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
@@ -145,7 +154,7 @@ const root_config: any = {
   },
 
   getAllProducts: async (productQuery: any, productPayload: any) => {
-    let response: any;
+    let response: ApiResponse[] = [];
 
     if (productPayload?.isOldUser === false) {
       // Just for example purpose
@@ -156,7 +165,7 @@ const root_config: any = {
         const responseData = {
           ...response,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: false, // Indicates that the configuration is not deleted
           }
         };
@@ -166,7 +175,7 @@ const root_config: any = {
         return {
           id: productID,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: true, // Indicates that the configuration is deleted
           }
         };
@@ -178,12 +187,12 @@ const root_config: any = {
         method: "GET",
         headers: getHeaders(productPayload),
       });
-      return response;
+      return response as any;
     }
   },
 
   getAllCategories: async (categoryQuery: any, categoryPayLoad: any) => {
-    let response: any;
+    let response: ApiResponse[] = [];
 
     if (categoryPayLoad?.isOldUser === false) {
       // Just for example purpose
@@ -194,7 +203,7 @@ const root_config: any = {
         const responseData = {
           ...response,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: false, // Indicates that the configuration is not deleted
           }
         };
@@ -204,7 +213,7 @@ const root_config: any = {
         return {
           id: productID,
           cs_metadata: {
-            multi_config_name: configKey, // The name of the multi-config used
+            multiConfigName: configKey, // The name of the multi-config used
             isconfigdeleted: true, // Indicates that the configuration is deleted
           }
         };
@@ -216,7 +225,7 @@ const root_config: any = {
         method: "GET",
         headers: getHeaders(categoryPayLoad),
       });
-      return response;
+      return response as any;
     }
   },
 

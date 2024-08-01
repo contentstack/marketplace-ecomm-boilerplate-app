@@ -142,123 +142,6 @@ const ConfigScreen: React.FC = function () {
     }
     return false;
   };
-  /**
-   * Checks the validity of configuration data and performs optional API validation.
-   *
-   * @param {Object} configurationData - The configuration data saved in `state?.installationData?.configuration`.
-   * @param {Object} serverConfiguration - The server configuration data saved in `state?.installationData?.serverConfiguration`.
-   * @param {boolean} validateMultiConfigKeysByApi - Set to `true` to enable API validation for multi-config keys, otherwise `false`.
-   * @param {boolean} validateOtherKeysByApi - Set to `true` to enable API validation for non-multi-config keys, otherwise `false`.
-   * @returns {Promise<{ isValid: boolean, invalidKeys: { source: string, keys: any[] }[] }>} - Returns an object with `isValid` indicating if all keys are valid and `invalidKeys` listing the invalid keys.
-   */
-  const checkValidity = async (
-    configurationData: { [x: string]: any; multi_config_keys?: any },
-    serverConfiguration: { [x: string]: any; multi_config_keys?: any },
-    validateMultiConfigKeysByApi: boolean,
-    validateOtherKeysByApi: boolean
-  ) => {
-    const checkMultiConfigKeys = (multiConfigKeys: any) => {
-      const invalidKeys: any = {};
-
-      Object.entries(multiConfigKeys || {}).forEach(([configKey, config]) => {
-        Object.entries(config || {}).forEach(([key, value]) => {
-          if (typeof value === "string" && value.trim() === "") {
-            if (!invalidKeys?.[configKey]) {
-              invalidKeys[configKey] = [];
-            }
-            invalidKeys?.[configKey].push(key);
-          }
-        });
-      });
-
-      return invalidKeys;
-    };
-
-    const checkOtherKeys = (keys: any) => {
-      const invalidKeys: string[] = [];
-
-      Object.entries(keys || {}).forEach(([key, value]) => {
-        if (typeof value === "string" && value.trim() === "") {
-          invalidKeys.push(key);
-        }
-      });
-
-      return invalidKeys;
-    };
-
-    let normalInvalidKeys = {};
-    let serverNormalInvalidKeys = {};
-
-    if (!validateMultiConfigKeysByApi) {
-      normalInvalidKeys = checkMultiConfigKeys(
-        configurationData?.multi_config_keys
-      );
-      serverNormalInvalidKeys = checkMultiConfigKeys(
-        serverConfiguration?.multi_config_keys
-      );
-    }
-
-    const normalInvalidKeysList = [
-      ...Object.entries(normalInvalidKeys)
-        .filter(([keys]) => keys?.length)
-        .map(([source, keys]) => ({ source, keys })),
-      ...Object.entries(serverNormalInvalidKeys)
-        .filter(([keys]) => keys?.length)
-        .map(([source, keys]) => ({ source, keys })),
-    ];
-
-    let otherInvalidKeysList: { source: string; keys: any[] }[] = [];
-    if (!validateOtherKeysByApi) {
-      const otherInvalidKeys = checkOtherKeys(configurationData);
-      const serverOtherInvalidKeys = checkOtherKeys(serverConfiguration);
-
-      otherInvalidKeysList = [
-        ...otherInvalidKeys.map((key) => ({
-          source: "configurationData",
-          keys: [key],
-        })),
-        ...serverOtherInvalidKeys.map((key) => ({
-          source: "serverConfiguration",
-          keys: [key],
-        })),
-      ];
-    }
-
-    if (validateMultiConfigKeysByApi || validateOtherKeysByApi) {
-      const staticCustomValidationFunction = async () => ({
-        invalidKeys: [
-          { source: "demos-95", keys: ["configField8"] },
-          { source: "ecom-project", keys: ["configField3"] },
-          { source: "configurationData", keys: ["page_count", "configField6"] },
-          { source: "serverConfiguration", keys: ["configField5"] },
-        ],
-      });
-
-      const apiValidationResults = await staticCustomValidationFunction();
-
-      const apiInvalidKeysList = apiValidationResults.invalidKeys;
-
-      const allInvalidKeys = [
-        ...normalInvalidKeysList,
-        ...otherInvalidKeysList,
-        ...apiInvalidKeysList,
-      ];
-
-      const isValid = allInvalidKeys.length === 0;
-
-      return { isValid, invalidKeys: allInvalidKeys };
-    }
-    // eslint-disable-next-line
-    else {
-      const allInvalidKeys = [
-        ...normalInvalidKeysList,
-        ...otherInvalidKeysList,
-      ];
-      const isValid = allInvalidKeys?.length === 0;
-
-      return { isValid, invalidKeys: allInvalidKeys };
-    }
-  };
 
   React.useEffect(() => {
     if (sdkConfigDataState) {
@@ -266,10 +149,10 @@ const ConfigScreen: React.FC = function () {
       const { multiConfigFields } = extractFieldsByConfigType(configScreen);
       // eslint-disable-next-line
       const validate = async () => {
-        const { isValid, invalidKeys } = await checkValidity(
+        const { isValid, invalidKeys } = await rootConfig.checkValidity(
           state?.installationData?.configuration,
           state?.installationData?.serverConfiguration,
-          false,
+          true,
           false
         );
 
@@ -307,8 +190,7 @@ const ConfigScreen: React.FC = function () {
           sdkConfigDataState.setValidity(false);
         }
       };
-
-      // validate();
+      validate();
     }
   }, [state?.installationData?.configuration, sdkConfigDataState]);
 
@@ -366,7 +248,7 @@ const ConfigScreen: React.FC = function () {
               }
             );
 
-            Object.keys(installationDataOfSdk?.serverConfiguration).forEach(
+            Object.keys(installationDataOfSdk?.serverConfiguration)?.forEach(
               (key) => {
                 if (!keysToIncludeOrExclude.includes(key)) {
                   if (
@@ -396,7 +278,7 @@ const ConfigScreen: React.FC = function () {
                 if (
                   Object.hasOwn(installationDataOfSdk?.serverConfiguration, key)
                 ) {
-                  acc[key] = installationDataOfSdk?.serverConfiguration[key];
+                  acc[key] = installationDataOfSdk?.serverConfiguration?.[key];
                 }
                 return acc;
               }, {});
@@ -638,8 +520,8 @@ const ConfigScreen: React.FC = function () {
         ...prevState?.installationData?.serverConfiguration?.multi_config_keys,
       };
 
-      delete updatedConfigAccordions[id];
-      delete updatedServerConfigAccordions[id];
+      delete updatedConfigAccordions?.[id];
+      delete updatedServerConfigAccordions?.[id];
 
       return {
         ...prevState,
@@ -702,15 +584,6 @@ const ConfigScreen: React.FC = function () {
     updateConfig(event, multiConfigID, isMultiConfig);
   };
 
-  const customMultiConfigComponent = (multiConfigurationData: any) => (
-    <MultiConfigCustomComponent
-      configurationObject={state?.installationData?.configuration}
-      serverConfigurationObject={state?.installationData?.serverConfiguration}
-      customComponentOnChange={customComponentOnChange}
-      multiConfigurationData={multiConfigurationData}
-    />
-  );
-
   const customComponent = () => (
     <NonMultiConfigCustomComponent
       configurationObject={state?.installationData?.configuration}
@@ -738,7 +611,7 @@ const ConfigScreen: React.FC = function () {
                   Object.keys(
                     state?.installationData?.configuration?.multi_config_keys
                       || {}
-                  ).length
+                  )?.length
                 }
               >
                 <p className="multi-config-wrapper__sublabel">
@@ -854,7 +727,7 @@ const ConfigScreen: React.FC = function () {
                               },
                             ]}
                           >
-                            {Object.entries(configInputFields).map(
+                            {Object.entries(configInputFields)?.map(
                               ([objKey, objValue]: any) => {
                                 if (
                                   objValue?.isMultiConfig
@@ -925,8 +798,11 @@ const ConfigScreen: React.FC = function () {
                                 && objValue?.type !== "textInputFields"
                             ) && (
                               <Field key="customComponentField">
-                                {customMultiConfigComponent(
-                                  multiConfigurationID
+                                {rootConfig.customMultiConfigComponent(
+                                  multiConfigurationID,
+                                  state?.installationData?.configuration,
+                                  state?.installationData?.serverConfiguration,
+                                  customComponentOnChange
                                 )}
                               </Field>
                             )}
@@ -1036,7 +912,15 @@ const ConfigScreen: React.FC = function () {
                       </div>
                     );
                   }
-                  return <div key={objKey}>{customComponent()}</div>;
+                  return (
+                    <div key={objKey}>
+                      {rootConfig.customNonMultiConfigComponet(
+                        state?.installationData?.configuration,
+                        state?.installationData?.serverConfiguration,
+                        customComponentOnChange
+                      )}
+                    </div>
+                  );
                 }
                 return null;
               }

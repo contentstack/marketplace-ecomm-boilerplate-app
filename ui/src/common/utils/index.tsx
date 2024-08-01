@@ -8,7 +8,7 @@ const isEmpty = (val: any): boolean =>
   val === undefined
   || val === null
   || (typeof val === "object" && !Object.keys(val)?.length)
-  || (typeof val === "string" && !val.trim().length);
+  || (typeof val === "string" && !val?.trim()?.length);
 
 const filterFetchedArray = (array: any[]) => {
   const tempFetchedList = [...array];
@@ -35,10 +35,10 @@ const mergeObjects = (target: any, source: any) => {
   const sourceCopy = JSON.parse(JSON.stringify(source)); // Deep copy of source
 
   Object.keys(sourceCopy)?.forEach((key) => {
-    if (sourceCopy[key] instanceof Object && key in target) {
+    if (sourceCopy?.[key] instanceof Object && key in target) {
       Object.assign(
-        sourceCopy[key],
-        mergeObjects(target[key], sourceCopy[key])
+        sourceCopy?.[key],
+        mergeObjects(target?.[key], sourceCopy?.[key])
       );
     }
   });

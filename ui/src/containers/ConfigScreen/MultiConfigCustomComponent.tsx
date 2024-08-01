@@ -17,15 +17,6 @@ const MultiConfigCustomComponent: React.FC<CustomComponentProps> = function ({
   customComponentOnChange,
   multiConfigurationData,
 }) {
-  // eslint-disable-next-line
-  const onSelectChange = (event: any) => {
-    const e: any = {};
-    e.target = {
-      name: "",
-      value: event,
-    };
-    customComponentOnChange(e, multiConfigurationData, true);
-  };
   return <p>MultiConfigCustomComponent</p>;
 };
 

@@ -106,6 +106,7 @@ export default {
       content: "Change View",
       thumbnail: "Thumbnail",
       list: "List",
+      newTab: "NewTab",
     },
     addHere: "Add",
     buttonText: {

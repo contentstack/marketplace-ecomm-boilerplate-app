@@ -112,7 +112,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         overflow-y: auto;
-        // overflow-x: hidden;
 
         & > :nth-child(odd) {
           margin-right: 20px;

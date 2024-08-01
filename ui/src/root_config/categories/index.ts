@@ -1,14 +1,10 @@
 import rootConfig from "..";
 
 const categoryConfig = {
-  customCategoryStructure: true,
+  customCategoryStructure: false,
   generateCustomCategoryData: (fieldData: any) =>
     fieldData?.data?.map(
-      (i: any) =>
-        // [rootConfig.ecommerceEnv.UNIQUE_KEY.category]:
-        i?.[rootConfig.ecommerceEnv.UNIQUE_KEY.category]
-      // catalogId: i?.catalogId,
-      // catalogVersionId: i?.catalogVersionId,
+      (i: any) => i?.[rootConfig.ecommerceEnv.UNIQUE_KEY.category]
     ),
   fetchCustomCategoryData: (
     config: any,
