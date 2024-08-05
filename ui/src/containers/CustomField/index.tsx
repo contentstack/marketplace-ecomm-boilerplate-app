@@ -51,43 +51,6 @@ const CustomField: React.FC<any> = function ({
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
-
-  //   location: {},
-  //   appSdkInitialized: false,
-  // });
-
-  // const fetchData = async (selectedIdsArray: any) => {
-  //   if (
-  //     Array.isArray(selectedIdsArray) &&
-  //     !isEmpty(state?.config) &&
-  //     selectedIdsArray.length &&
-  //     !isInvalidCredentials.error
-  //   ) {
-  //     let res;
-  //     if (
-  //       rootConfig.ecomCustomFieldCategoryData === true &&
-  //       type === "category"
-  //     ) {
-  //       res = await filter(state?.config, type, selectedIdsArray);
-  //       if (res?.error) {
-  //         setIsInvalidCredentials(res);
-  //       } else setSelectedItems(res?.data?.items);
-  //     } else {
-  //       res = await getSelectedIDs(state?.config, type, selectedIdsArray);
-  //       if (res?.error) {
-  //         setIsInvalidCredentials(res);
-  //       } else
-  //         setSelectedItems(
-  //           rootConfig.arrangeList(
-  //             selectedIdsArray,
-  //             res?.data?.data || res?.data?.items,
-  //             uniqueKey
-  //           )
-  //         );
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
     window.addEventListener("beforeunload", () => {
       if (childWindow) childWindow.close();
@@ -135,9 +98,11 @@ const CustomField: React.FC<any> = function ({
     const { data } = event;
     if (childWindow) {
       if (data === "openedReady" && !isEmpty(config)) {
-        const dataArr = JSON.parse(
-          JSON.stringify(selectedItems?.map((i: any) => i?.[uniqueKey]))
-        );
+        const dataArr = selectedItems?.length
+          ? JSON.parse(
+              JSON.stringify(selectedItems?.map((i: any) => i?.[uniqueKey]))
+            )
+          : "";
         childWindow.postMessage(
           {
             message: "init",
@@ -167,7 +132,7 @@ const CustomField: React.FC<any> = function ({
   const handleClick = () => {
     if (!childWindow) {
       childWindow = popupWindow({
-        url: `${process.env.REACT_APP_UI_URL}/selector-page`,
+        url: `${process.env.REACT_APP_UI_URL}/selector-page?type=${type}`,
         title: `${rootConfig.ecommerceEnv.APP_ENG_NAME}Client`,
         w: 1440,
         h: 844,

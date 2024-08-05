@@ -20,7 +20,7 @@ import {
   Button,
   cbModal,
 } from "@contentstack/venus-components";
-
+import CryptoJS from "crypto-js";
 /* Import our modules */
 import rootConfig from "../../root_config";
 import {
@@ -34,8 +34,6 @@ import { DeleteModalConfig } from "./DeleteModal";
 /* Import our CSS */
 import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
-import NonMultiConfigCustomComponent from "./NonMultiConfigCustomComponent";
-import MultiConfigCustomComponent from "./MultiConfigCustomComponent";
 
 const ConfigScreen: React.FC = function () {
   /* entire configuration object returned from configureConfigScreen */
@@ -58,9 +56,7 @@ const ConfigScreen: React.FC = function () {
   /* state for configuration */
   const [isCustom, setIsCustom] = useState(false);
   const [customKeys, setCustomKeys] = useState<any[]>(rootConfig.mandatoryKeys);
-  const { iterations }: any = localeTexts.Decryption;
-  const { keySize }: any = localeTexts.Decryption;
-  const password = `password#123`;
+  const encryptionKey: any = process.env.ENCRYPTION_KEY;
   const [state, setState] = React.useState<TypeAppSdkConfigState>({
     installationData: {
       configuration: {
@@ -135,64 +131,93 @@ const ConfigScreen: React.FC = function () {
   const closeModal = () => {
     setModalOpen(false);
   };
-  const checkIsDefaultInitial = (configurationData: any) => {
-    const { default_multi_config_key } = configurationData;
-    if (default_multi_config_key === "") {
-      return true;
-    }
-    return false;
-  };
-
   React.useEffect(() => {
     if (sdkConfigDataState) {
-      const configScreen = rootConfig.configureConfigScreen();
-      const { multiConfigFields } = extractFieldsByConfigType(configScreen);
-      // eslint-disable-next-line
-      const validate = async () => {
-        const { isValid, invalidKeys } = await rootConfig.checkValidity(
-          state?.installationData?.configuration,
-          state?.installationData?.serverConfiguration,
-          true,
-          false
-        );
-
-        const isDefaultKeyExist = multiConfigFields?.length
-          ? checkIsDefaultInitial(state?.installationData?.configuration)
-          : false;
-        const isMultiConfigKeysEmpty = multiConfigFields?.length
-          ? Object.keys(
-              state?.installationData?.configuration.multi_config_keys
-            ).length === 0
-          : false;
-
-        if (isMultiConfigKeysEmpty) {
-          sdkConfigDataState.setValidity(false, {
-            message:
-              localeTexts.configPage.multiConfig.ErrorMessage.validInputMsg,
-          });
-        } else if (isDefaultKeyExist === true) {
-          sdkConfigDataState.setValidity(false, {
-            message:
-              localeTexts.configPage.multiConfig.ErrorMessage.oneDefaultMsg,
-          });
-        } else if (!isValid) {
-          const invalidkeys = Array.from(
-            new Set(invalidKeys.map(({ source }) => source))
-          );
-
-          sdkConfigDataState.setValidity(false, {
-            message: `${
-              localeTexts.configPage.multiConfig.ErrorMessage
-                .emptyConfigNotifyMsg
-            }: ${invalidkeys.join(", ")}`,
-          });
-        } else {
-          sdkConfigDataState.setValidity(false);
-        }
-      };
-      validate();
+      // rootConfig.validateConfig(sdkConfigDataState, state, rootConfig, localeTexts);
     }
   }, [state?.installationData?.configuration, sdkConfigDataState]);
+  const encrypt = (value: string): string => {
+    try {
+      return (
+        CryptoJS?.AES?.encrypt(value, encryptionKey ?? "").toString() ?? value
+      );
+    } catch (e) {
+      return value;
+    }
+  };
+
+  const decrypt = (value: string): string => {
+    try {
+      const bytes = CryptoJS?.AES?.decrypt(value, encryptionKey ?? "");
+
+      const decryptedValue = bytes?.toString(CryptoJS.enc.Utf8) ?? value;
+      return decryptedValue;
+    } catch (e) {
+      return value;
+    }
+  };
+
+  const encryptObject = (obj: any, config: any): any => {
+    if (typeof obj === "object" && obj !== null) {
+      if (Array.isArray(obj)) {
+        return obj.map((item) => encryptObject(item, config));
+        // eslint-disable-next-line
+      } else {
+        const encryptedObj: any = {};
+        Object.keys(obj).forEach((key) => {
+          const keyConfig = config?.[key];
+
+          if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
+            if (typeof obj[key] === "object" && obj[key] !== null) {
+              encryptedObj[key] = encrypt(JSON.stringify(obj[key]));
+            } else {
+              encryptedObj[key] = encrypt(obj[key]);
+            }
+          } else if (typeof obj[key] === "object" && obj[key] !== null) {
+            encryptedObj[key] = encryptObject(obj[key], config);
+          } else {
+            encryptedObj[key] = obj[key];
+          }
+        });
+        return encryptedObj;
+      }
+    }
+    return obj;
+  };
+
+  const decryptObject = (obj: any, config: any): any => {
+    if (typeof obj === "object" && obj !== null) {
+      if (Array.isArray(obj)) {
+        return obj.map((item) => decryptObject(item, config));
+        // eslint-disable-next-line
+      } else {
+        const decryptedObj: any = {};
+        Object.keys(obj).forEach((key) => {
+          const keyConfig = config?.[key];
+
+          if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
+            if (typeof obj[key] === "string") {
+              let decryptedValue = decrypt(obj[key]);
+              try {
+                decryptedValue = JSON.parse(decryptedValue);
+              } catch (e) {
+                console.error("error in decryptObject", e);
+              }
+              decryptedObj[key] = decryptedValue;
+            } else {
+              decryptedObj[key] = decryptObject(obj[key], config);
+            }
+          } else if (typeof obj[key] === "object" && obj[key] !== null) {
+            decryptedObj[key] = decryptObject(obj[key], config);
+          } else {
+            decryptedObj[key] = obj[key];
+          }
+        });
+        return decryptedObj;
+      }
+    }
+    return obj;
+  };
 
   useEffect(() => {
     ContentstackAppSdk.init()
@@ -327,6 +352,19 @@ const ConfigScreen: React.FC = function () {
             delete updatedConfigurationObject?.serverConfiguration
               ?.multi_config_keys?.legacy_config;
           }
+          if (Object.keys(updatedConfigurationObject)?.length) {
+            const decryptedConfiguration = decryptObject(
+              updatedConfigurationObject?.configuration || {},
+              rootConfig?.configureConfigScreen()
+            );
+            const decryptedServerConfiguration = decryptObject(
+              updatedConfigurationObject?.serverConfiguration || {},
+              rootConfig?.configureConfigScreen()
+            );
+            updatedConfigurationObject.configuration = decryptedConfiguration;
+            updatedConfigurationObject.serverConfiguration =              decryptedServerConfiguration;
+          }
+
           setState({
             ...state,
             installationData: Object.keys(updatedConfigurationObject)?.length
@@ -339,8 +377,8 @@ const ConfigScreen: React.FC = function () {
           setCustomKeys(state?.installationData?.configuration?.custom_keys);
         }
       })
-      .catch(() => {
-        console.error(localeTexts.configPage.errorInADK);
+      .catch((error: any) => {
+        console.error(localeTexts.configPage.errorInADK, error);
       });
   }, []);
 
@@ -405,26 +443,35 @@ const ConfigScreen: React.FC = function () {
         }
       }
 
+      // Encrypt values before setting them in appsdk
+      const encryptedConfiguration = encryptObject(
+        configuration,
+        rootConfig.configureConfigScreen()
+      );
+      const encryptedServerConfiguration = encryptObject(
+        serverConfiguration,
+        rootConfig.configureConfigScreen()
+      );
+
       if (state?.setInstallationData) {
         await state?.setInstallationData({
           ...state?.installationData,
-          configuration,
-          serverConfiguration,
+          configuration: encryptedConfiguration,
+          serverConfiguration: encryptedServerConfiguration,
         });
-
-        setState({
-          ...state,
+        setState((prevState) => ({
+          ...prevState,
           installationData: {
-            configuration: {
-              ...state?.installationData?.configuration,
-              ...configuration,
-            },
-            serverConfiguration: {
-              ...state?.installationData?.serverConfiguration,
-              ...serverConfiguration,
-            },
+            configuration: decryptObject(
+              encryptedConfiguration,
+              rootConfig.configureConfigScreen()
+            ), // Use decrypted values for display
+            serverConfiguration: decryptObject(
+              encryptedServerConfiguration,
+              rootConfig.configureConfigScreen()
+            ), // Use decrypted values for display
           },
-        });
+        }));
       }
 
       return true;
@@ -584,14 +631,6 @@ const ConfigScreen: React.FC = function () {
     updateConfig(event, multiConfigID, isMultiConfig);
   };
 
-  const customComponent = () => (
-    <NonMultiConfigCustomComponent
-      configurationObject={state?.installationData?.configuration}
-      serverConfigurationObject={state?.installationData?.serverConfiguration}
-      customComponentOnChange={customComponentOnChange}
-    />
-  );
-
   const renderConfig = () => {
     const configScreen = rootConfig?.configureConfigScreen();
     const { multiConfigFields, singleConfigFields } =      extractFieldsByConfigType(configScreen);
@@ -617,12 +656,12 @@ const ConfigScreen: React.FC = function () {
                 <p className="multi-config-wrapper__sublabel">
                   {localeTexts.configPage.multiConfig.accordionSubLabel?.replace(
                     "$",
-                    rootConfig.ecommerceEnv.APP_ENG_NAME
+                    rootConfig?.ecommerceEnv.APP_ENG_NAME
                   )}
                 </p>
                 {Boolean(
                   Object.keys(
-                    state.installationData.configuration.multi_config_keys
+                    state?.installationData?.configuration?.multi_config_keys
                   )?.length
                 ) && (
                   <div className="multi-config-wrapper__subcontainer">

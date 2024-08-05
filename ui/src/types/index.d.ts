@@ -69,3 +69,20 @@ export interface APIResponseType {
     };
   };
 }
+
+export interface ConfigField {
+  type: any;
+  labelText: string;
+  helpText: string;
+  placeholderText: string;
+  instructionText: string;
+  saveInConfig: boolean;
+  saveInServerConfig: boolean;
+  isSensitive: boolean;
+  isMultiConfig: boolean;
+  isConfidential: boolean;
+}
+
+export interface ConfigureConfigScreen {
+  [key: string]: ConfigField;
+}
