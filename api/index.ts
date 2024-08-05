@@ -5,7 +5,7 @@ import {
   getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import { processRequestBody,_isEmpty } from "./utils";
+import { processRequestBody, _isEmpty } from "./utils";
 
 /**
  * Main handler function for processing requests.
