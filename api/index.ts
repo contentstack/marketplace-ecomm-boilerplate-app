@@ -5,8 +5,7 @@ import {
   getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import { _isEmpty } from "./utils";
-import root_config from "./root_config";
+import { processRequestBody, _isEmpty } from "./utils";
 
 /**
  * Main handler function for processing requests.
@@ -16,7 +15,7 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let message: any;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
   // eslint-disable-next-line no-param-reassign
-  body = root_config.processRequestBody(body);
+  body = processRequestBody(body);
 
   try {
     console.info(constants.LOGS.REQ_BODY, body);
