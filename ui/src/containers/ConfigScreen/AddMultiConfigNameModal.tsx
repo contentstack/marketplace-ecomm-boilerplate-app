@@ -39,7 +39,7 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
       Object.keys(addMultiConfigurationData)?.length
       && trimmedValue !== "shopifystore"
     ) {
-      const isDuplicate = Object.keys(addMultiConfigurationData).some(
+      const isDuplicate = Object.keys(addMultiConfigurationData)?.some(
         (addMultiConfigurationKeys: string) =>
           addMultiConfigurationKeys === trimmedValue
       );

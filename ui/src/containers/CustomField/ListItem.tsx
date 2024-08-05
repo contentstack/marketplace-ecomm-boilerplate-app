@@ -129,9 +129,9 @@ const ListItem: React.FC<any> = function ({
                       ))
                     : selectedItems?.map((product: any) => (
                         <DraggableListItem
-                          key={product?.[uniqueKey] || product?.code}
+                          key={product?.[uniqueKey]}
                           product={product}
-                          id={product?.[uniqueKey] || product?.code}
+                          id={product?.[uniqueKey]}
                           remove={remove}
                           type={type}
                         />

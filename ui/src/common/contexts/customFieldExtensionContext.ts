@@ -2,13 +2,12 @@ import React from "react";
 import { TypeWarningtext } from "../types";
 
 export type CustomFieldExtensionContextType = {
-  // productCustomField: unknown;
   setFieldData: (data: any) => void;
   selectedIds: any[];
   selectedItems: any[];
   setSelectedIds: (data: any) => void;
   setSelectedItems: (data: any) => void;
-  removeIdFromField: (data: any) => void;
+  removeIdFromField: (...args: any[]) => void;
   handleDragEvent: (data: any) => void;
   loading: boolean;
   stackApiKey: string;
@@ -19,7 +18,6 @@ export type CustomFieldExtensionContextType = {
 };
 
 export const CustomFieldExtensionContext =  React.createContext<CustomFieldExtensionContextType>({
-    // productCustomField: null,
     setFieldData: () => {},
     loading: false,
     stackApiKey: "",

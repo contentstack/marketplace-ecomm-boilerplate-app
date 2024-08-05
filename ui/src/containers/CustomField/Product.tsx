@@ -34,6 +34,7 @@ const Product: React.FC<Props> = function ({ product, remove }) {
     transition,
     border: isDragging ? constants.droppingDOMBorder : undefined,
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
+    height: isDragging ? constants.droppingAreaHeight : "inherit",
     borderRadius: 12,
   };
   /* eslint-disable */

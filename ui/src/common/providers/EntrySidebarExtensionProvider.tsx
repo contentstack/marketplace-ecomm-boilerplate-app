@@ -11,7 +11,6 @@ import useAppConfig from "../hooks/useAppConfig";
 const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
   const [entryData, setEntry] = useState<{ [key: string]: any }>({});
   const [contentTypeSchema, setContentTypeSchema] = useState<any>({});
-  // const [loading, setLoading] = useState<boolean>(false);
   const [appSdkInitialized, setAppSdkInitialized] = useState<boolean>(false);
   const { location } = useAppLocation();
   const { isInvalidCredentials, setIsInvalidCredentials } = useError();
@@ -27,7 +26,6 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
   useEffect(() => {
     (async () => {
       if (!isEmpty(entryData) || isNull(location)) return;
-      // setLoading(true);
       const entry: { [key: string]: any } = await location?.entry?.getData();
       const contentTypeUid = location?.entry?.content_type?.uid || "";
       const contentTypeDetails = await appSdk?.stack?.getContentType(
@@ -35,13 +33,10 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
       );
       setEntry(entry);
       setContentTypeSchema(contentTypeDetails?.content_type?.schema);
-      // setLoading(false);
-      // setAppSdkInitialized(true);
     })();
   }, [entryData, location, setEntry]);
 
   useEffect(() => {
-    // if (!state.appSdkInitialized) return;
     setIsInvalidCredentials({
       error: Object.values(appConfig ?? {}).includes(""),
       data: localeTexts.warnings.invalidCredentials.replace(

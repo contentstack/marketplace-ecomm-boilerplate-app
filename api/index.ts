@@ -5,8 +5,7 @@ import {
   getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import { decrypt, _isEmpty } from "./utils";
-import root_config from "./root_config";
+import { processRequestBody, _isEmpty } from "./utils";
 
 /**
  * Main handler function for processing requests.
@@ -15,14 +14,8 @@ import root_config from "./root_config";
 const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let message: any;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-
-  // Decrypt sensitive config keys if present in the request body
-  const configKeys: string[] = Object.keys(body);
-  configKeys.forEach((key: any) => {
-    if (root_config.SENSITIVE_CONFIG_KEYS.includes(key)) {
-      body[key] = decrypt(body[key], constants.DECRYPTION.password);
-    }
-  });
+  // eslint-disable-next-line no-param-reassign
+  body = processRequestBody(body);
 
   try {
     console.info(constants.LOGS.REQ_BODY, body);
@@ -37,10 +30,10 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     }
 
     // Determine request type and process accordingly
-    if (query["sku:in"] || query["id:in"]) {
+    if (query?.["sku:in"] || query?.["id:in"]) {
       // Request for selected products or categories
       message = await getSelectedProductsAndCategories(query, body);
-    } else if (query["categories:in"]) {
+    } else if (query?.["categories:in"]) {
       // Filter products by categories
       message = await filterByCategory(query, body);
     } else if (query?.id) {

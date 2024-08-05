@@ -1,8 +1,8 @@
-# Marketplace Ecommerce App Boilerplate Template Documentation
+# Marketplace eCommerce App Boilerplate Template Documentation
 
-## * Front End
+## Front End
 
-## UI Locations
+### UI Locations
 - `Config Screen`
 - `Product Custom Field`
     - `Product Selector Page`
@@ -10,27 +10,41 @@
     - `Category Selector Page`
 - `Sidebar Widget`
 
-## ECommerce Root Configuration
+## eCommerce Root Configuration
 The root configuration is the file you need to make the most changes to. You need to define and specify how the UI elements of your app will be handled here.
 
 ## Environment Variables
+
+Type: 
+
+```
+{
+  REACT_APP_NAME: string;
+  SELECTOR_PAGE_LOGO: SVG;
+  APP_ENG_NAME: string;
+  UNIQUE_KEY: {
+    product: string;
+    category: string;
+  }
+}
+```
+
 
 |Key                    | Type            | Description
 |-----------------------|-----------------|---------------------------------------------|
 |REACT_APP_NAME*       |String     |This defines the name of the app |
 |SELECTOR_PAGE_LOGO*   |Svg code of Logo  |Svg code of Logo for Selector page |
 |APP_ENG_NAME*   |String |This value is used to display the app name in error messages |
-|UNIQUE_KEY* |String  |Unique Identifier for the object returned from the API Eg. ‘id’, ‘key’ |
-|FETCH_PER_PAGE    |Integer   |The number of objects you want to fetch per page in the selector page. Default: 20 |
+|UNIQUE_KEY* |Object  |Unique Identifier for the product and category object returned from the API Eg. `{product: 'id', category: 'id'}` |
 
 ## Configuration Screen
 
 ### Root Config 
-Navigate to the root_config file (ui/src/root_config/index.ts)
+Navigate to the root_config file `(ui/src/root_config/index.ts)`.
 In this file, you need to make two changes. 
 
-1. `configureConfigScreen` function
-* configureConfigScreen is a function that will contain objects of Config Screen keys along with their corresponding field key names. An example can be found in the codebase.
+1. `configureConfigScreen()` function
+* This function will return objects of Config Screen keys along with their corresponding field key names and functionality. An example can be found in the codebase.
 ```
 configField1: {
     type: "textInputFields",
@@ -46,7 +60,7 @@ configField1: {
 
 |Key                    | Type            | Description
 |-----------------------|-----------------|---------------------------------------------|
-|type            |string    | type of field, here textfield is handled |
+|type*            |string    | type of field, here textfield is handled |
 |labelText*      |string    |The label of the field. |
 |helpText  |string |Help text for the field. Appears as a tooltip beside the label. |
 |placeholderText |string |Placeholder for the input field. |
@@ -58,7 +72,7 @@ You can use this object in the configuration page code.
 
 2. `getCustomKeys()` Function
 (ui/src/root_config/index.ts)
-* The getCustomKeys() function gets called to populate the Custom Keys select options in the configuration page. This allows you to select what keys you want to save in the entry whenever Custom JSON is selected.
+* The getCustomKeys() function gets called to populate the Custom Keys select options in the configuration page. This feature allows the user to select what keys they want to save in the entry whenever Custom JSON is selected.
 * It should return an array of objects of the following type:
 
 ```
@@ -73,14 +87,14 @@ You can use this object in the configuration page code.
 
 ## Product Custom Field
 
-In the Product Custom Field, you only need to implement the `returnFormattedProduct()` function. 
+In the Product Custom Field, you need to implement the `returnFormattedProduct()` function. 
 
 ### Definition
 
 `returnFormattedProduct()`: Function
-* This function performs the required data formatting to be displayed in the product custom field.
+* This function assigns and returns the required data formatting to be displayed in the product custom field.
 
-* Parameters
+* Parameter
 `product` - this variable contains the product returned from your commerce API. You need to restructure it into the following format and return it.
 ```
 {
@@ -101,9 +115,9 @@ For the Category Custom Field to work, you need to implement the `returnFormatte
 ### Definition
 
 `returnFormattedCategory()`: Function
-* This function performs required data formatting to be displayed in the category custom field.
+* This function assigns and returns required data formatting to be displayed in the category custom field.
 
-* Parameters
+* Parameter
 `category` - this variable contains the category returned from your commerce API. You need to restructure it into the following format and return it. 
 ```
 {
@@ -128,7 +142,9 @@ Here, the `title` corresponds to the label that you want to display, and the `va
 
 ## Selector Page
 
-At the selector page, you need to define a separate array of objects that defines columns for the product selector page and category selector page. You can specify the array of columns as follows:
+At the selector page, you need to define the columns that will be displayed in the table. You can do this by calling the `getProductSelectorColumns()` and `getCategorySelectorColumns()` functions.
+You get access to the `config` object as the parameter in these functions.
+These functions return a separate array of objects that defines columns for the product selector page and category selector page. You can specify the array of columns as follows:
 ```
 {
     Header: string;
@@ -145,7 +161,7 @@ At the selector page, you need to define a separate array of objects that define
 |Key                    | Type            | Description
 |-----------------------|-----------------|-------------------------------------------|
 |Header*      |String     |The Title of the Column |
-|id  |string |This is the unique ID for the column. It is used by reference in things like sorting, grouping, filtering, etc. |
+|id*  |string |This is the unique ID for the column. It is used by reference in things like sorting, grouping, filtering, etc. |
 |accessor* |String, Function |* builds the data model for your column. If a string is passed, the column's value will be looked up on the original row via that key, eg. If your column's accessor is ‘name’ then its value would be read from row['name']. You can also specify deeply nested values with accessors like ‘row.name.eng’ or even ‘names[0].value’ If a function is passed, the column's value will be looked up on the original row using this accessor function, eg. If your column's accessor is row => row.firstName, then its value would be determined by passing the row to this function and using the resulting value. |
 |default |boolean  |   |
 |disableSortBy   |boolean   |Determines whether you want that column to be sortable. |
@@ -156,67 +172,50 @@ At the selector page, you need to define a separate array of objects that define
 
 ## Other Functions In Root Config
 
-1. `getOpenerLink()`
+#### 1. `getFormattedResponse()`
 Parameters:
-Id : product or category id
-config: configuration object
-type: product/category
-
-2. `verifyAppSigning()`
-This function is used for app signing, i.e. for verifying app tokens in ui
-Parameters:
-app_token
-
-3. `customKeys` 
-It is variable which stores the custom JSON default keys.
-
-4. `openSelectorPage()`
-This function is used in selector page to open your application if any extra configuration to be needed. It used `config` as its parameter.
-
-5. `returnUrl()`
-returnUrl() function modifies the response of the UI api file i.e. `ui/services/index.ts`. It require `response` as the parameter inorder to modify.
-
-6. `getSelectedCategoriesUrl`
-This function creates the URL to fetch the categories in the custom field UI location.
-It fetches `config`, `type`, `selectedID: array` as its parameter.
-
-7. `generateSearchApiUrlAndData()`
-`generateSearchApiUrlAndData()` used parameter as `config`, `keyword`, `page`, `limit`
-, `categories`. This function is generally used to search the products or category on selector page.
-
-8. `getProductSelectorColumns()`
-This function defines what and how will the columns be displayed on the product selector page.
-
-9. `categorySelectorColumns()`
-This function defines what and how will the columns be displayed on the category selector page.
-
-10. `arrangeList`
-This function is use to arrange the product list on the custom field
-
-## Other Functions in the Services
-`makeAnApiCall()`
-(ui/src/services/index.ts)
-
-In this function, only at the successful API call, you will need to structure the data returned from your backend. It should be of the following format:
+response: response from the commerce API
+Returns the formatted response as follows:
 ```
 {
-    error: boolean,
-    data: {
-        items: [],
-        meta: {
-            total: number,
-            current_page: number
-        }
+    items: Array<any>,
+    meta: {
+        total: number,
+        current_page: number,
     }
 }
 ```
-Please observe the data key. 
-* In the `items` key, you need to provide the corresponding key that contains the array of products/categories from the response object.
-* In the meta`` key, you need to assign the corresponding values of `total` and `current_page` from the response object. The `total` key indicates the number of items in the array, and `current_page` key indicates the page number, for pagination.
+You may assign the corresponding values to the specified keys from the `response` objects.
+
+#### 2. `getOpenerLink()`
+Parameters:
+id : product or category id
+config: configuration object
+type: product/category
+
+This must return a `string` that corresponds to the particular product or category in your Commerce Application. This will be used in the Selector Page and in the Custom Field.
+
+#### 3. `verifyAppSigning()`
+Parameters:
+app_token: string
+
+This function is used for app signing, i.e. for verifying app tokens in the UI
+
+#### 4. `removeItemsFromCustomField()`
+Parameters:
+```
+removeId: string
+selectedIds: Array<objects>
+type: "product" | "category"
+unikeyKey: string
+```
+
+If you have a requirement wherein you need to perform multiple checks or validations on the items selected in the custom field, you can use this function to remove the items from the custom field. You must return an array of products/categories ater removing your desired object.
 
 
 
-## * Back End
+
+## Back End
 The backend implementation for this app will be present in the /api folder at the root level. 
 
 Here, you need to make changes in one files.
@@ -228,32 +227,75 @@ Here, you need to make changes in one files.
 * The Root Config will contain all important information about making API calls to the third-party service. You can use this config in the handler file while fetching the data.
 
 Currently, we have the following configurations:
-```
-{
-    API_BASE_URL: string,
-    URI_ENDPOINTS: {
-        product: string,
-        category: string,
-    },
-    PRODUCT_URL_PARAMS: string,
-    SENSITIVE_CONFIG_KEYS: "",
-    getHeaders : () => ({
-        Here, we will have the app specific headers 
-    }),
 
-    getAuthToken: () =>{
-        If you need AuthToken to authenticate your app, you can add the keys here.
-    },
+### Keys
 
-    getUrl: () => {
-        App specific url and endpoints can be added here.
-    },
+- `API_BASE_URL`: This will be the base URL for your Commerce API calls
 
-    getSelectedProductandCatUrl: () => {
-        Add the url for fetching the data from selector page to the custom field here
-    },
-}
-```
+- `URI_ENDPOINTS`: This maps the separate endpoints for product and category fetching.
+- `SEARCH_URL_PARAMS`: If you have a separate endpoint for your Commerce's search API, you can add it here
+- `SENSITIVE_CONFIG_KEYS`: These are the keys that are sent encrypted from the UI, and are decrypted in the backend. You may enter the keys which you marked as `isSensitive: true` in the Config Screen Configuration.
+- `getSeparateProductsAndCategories`: This serves as a
+configuration setting that indicates whether the API should handle and retrieve products and categories separately when making API calls. If you have very disctinct configurations to make API calls for fetching products and categories, and you want to separate them, you can set this property to `true`
+
+    When set to `true`, you must implement the following:
+    ```
+    1. getAllProducts()
+    2. getAllCategories()
+    3. getSelectedProductsById()
+    4. getSelectedCategoriesById()
+    ```
+
+    If set to false, you need to implement the following:
+    ```
+    1. getAllProductsAndCategories()
+    2. getSelectedProductsandCategories()
+    ```
+    This setting helps in organizing and managing the data retrieval process more efficiently based on the specific requirements related to products and categories within the commerce application.
+
+### Functions
+
+All these functions have two parameters: `data` and `body`. 
+
+`data` has everything that is sent as a query string parameter
+`body` has the configuration data
+
+#### Required Functions:
+
+- `getSingleProduct()`
+
+this function should fetch and return a single product.
+
+#### Required Functions, if `getSeparateProductsAndCategories: true`:
+
+- `getSelectedProductsById()`
+
+this function fetches multiple products and returns an array of products. 
+
+- `getSelectedCategoriesById()`
+
+this function fetches multiple categories and returns an array of categories. 
+
+- `getAllProducts()`
+
+this functions fetches all products, and returns an array of products along with pagination related data
+
+- `getAllCategories()`
+
+this functions fetches all categories, and returns an array of categories along with pagination related data
+
+#### Required Functions, if `getSeparateProductsAndCategories: false`:
+
+If your functions for fetching products and catgories are fairly similar, you can use a common function to get them.
+
+- `getSelectedProductsandCategories()`
+
+this function fetches both product and categories and returns an array containing these.
+
+- `getAllProductsAndCategories()`
+
+this function returns either all products or all categories to be displayed in the selector page.
+
 Additionally, if you have your app specific details or function, you can add them in the root_config and manage it accordingly in the handler file. These URLs are being used to make API calls in the handler file. You can modify these existing ones, and even add more, based on your usage.
 
 
