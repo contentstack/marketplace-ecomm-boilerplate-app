@@ -44,8 +44,7 @@ const SidebarWidget: React.FC = function () {
     if (!appSdkInitialized) return;
     const eCommerceProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
-        entryData?.[i]?.type
-        === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+        entryData?.[i]?.type === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
     );
     const fieldListTemp: any = [];
     eCommerceProductsField?.forEach((field: string) => {
