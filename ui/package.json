@@ -1,6 +1,6 @@
 {
   "name": "marketplace-ecommerce-boilerplate-app-ui",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
     "@contentstack/app-sdk": "^2.0.1",

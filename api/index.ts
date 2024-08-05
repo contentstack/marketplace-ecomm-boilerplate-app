@@ -30,10 +30,10 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     }
 
     // Determine request type and process accordingly
-    if (query["sku:in"] || query["id:in"]) {
+    if (query?.["sku:in"] || query?.["id:in"]) {
       // Request for selected products or categories
       message = await getSelectedProductsAndCategories(query, body);
-    } else if (query["categories:in"]) {
+    } else if (query?.["categories:in"]) {
       // Filter products by categories
       message = await filterByCategory(query, body);
     } else if (query?.id) {

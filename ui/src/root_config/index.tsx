@@ -34,9 +34,9 @@ import categoryConfig from "./categories";
 
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: EcommerceEnv = {
-  REACT_APP_NAME: "sapcommercecloud",
+  REACT_APP_NAME: "ecommerce-app-name",
   SELECTOR_PAGE_LOGO: Logo,
-  APP_ENG_NAME: "SAP Commerce Cloud",
+  APP_ENG_NAME: "E-Commerce App Name",
   UNIQUE_KEY: {
     product: "id",
     category: "id",

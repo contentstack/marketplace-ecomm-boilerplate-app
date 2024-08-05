@@ -2,7 +2,6 @@ import React from "react";
 import { TypeWarningtext } from "../types";
 
 export type CustomFieldExtensionContextType = {
-  // productCustomField: unknown;
   setFieldData: (data: any) => void;
   selectedIds: any[];
   selectedItems: any[];
@@ -19,7 +18,6 @@ export type CustomFieldExtensionContextType = {
 };
 
 export const CustomFieldExtensionContext =  React.createContext<CustomFieldExtensionContextType>({
-    // productCustomField: null,
     setFieldData: () => {},
     loading: false,
     stackApiKey: "",

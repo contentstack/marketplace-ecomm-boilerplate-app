@@ -13,7 +13,6 @@ import {
 
 import ProductDescription from "./ProductDescription";
 import WarningMessage from "../../components/WarningMessage";
-// import { TypeSDKData, TypeWarningtext } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import { getSelectedIDs } from "../../services";

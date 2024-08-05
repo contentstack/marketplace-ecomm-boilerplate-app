@@ -302,7 +302,7 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
 
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
-      if (sItem.toString() === mItem.toString()) {
+      if (sItem?.toString() === mItem?.toString()) {
         data.push(sItem);
       }
     });
@@ -348,7 +348,7 @@ const extractFieldsByConfigType = (configScreen: any) => {
   const multiConfigFields: string[] = [];
   const singleConfigFields: string[] = [];
 
-  Object.entries(configScreen).forEach(([key, value]: any) => {
+  Object.entries(configScreen)?.forEach(([key, value]: any) => {
     if (value?.isMultiConfig) {
       multiConfigFields.push(key);
     } else {
@@ -366,7 +366,7 @@ const arrangeList = (
   const data: any[] = [];
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
-      if (sItem && sItem[uniqueKey] === mItem) {
+      if (sItem && sItem?.[uniqueKey] === mItem) {
         data.push(sItem);
       }
     });

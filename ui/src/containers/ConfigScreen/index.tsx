@@ -103,19 +103,19 @@ const ConfigScreen: React.FC = function () {
     const updateInstallationData = (prevState: any) => ({
       ...prevState,
       installationData: {
-        ...prevState.installationData,
+        ...prevState?.installationData,
         configuration: {
-          ...prevState.installationData.configuration,
+          ...prevState?.installationData?.configuration,
           multi_config_keys: {
-            ...prevState.installationData.configuration.multi_config_keys,
-            [accordionId]: result.isMultiConfigAndSaveInConfig,
+            ...prevState?.installationData?.configuration?.multi_config_keys,
+            [accordionId]: result?.isMultiConfigAndSaveInConfig,
           },
         },
         serverConfiguration: {
-          ...prevState.installationData.serverConfiguration,
+          ...prevState?.installationData?.serverConfiguration,
           multi_config_keys: {
-            ...prevState.installationData.serverConfiguration.multi_config_keys,
-            [accordionId]: result.isMultiConfigAndSaveInServerConfig,
+            ...prevState?.installationData?.serverConfiguration?.multi_config_keys,
+            [accordionId]: result?.isMultiConfigAndSaveInServerConfig,
           },
         },
       },

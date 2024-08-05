@@ -5,7 +5,7 @@ export const _isEmpty: any = (val: any) =>
   val === undefined ||
   val === null ||
   (typeof val === "object" && !Object.keys(val)?.length) ||
-  (typeof val === "string" && !val.trim().length);
+  (typeof val === "string" && !val.trim()?.length);
 
 export const decrypt = (value: any) => {
   try {
@@ -27,11 +27,11 @@ export const processRequestBody = (requestBody: any): any => {
         const result: any = {};
         Object.keys(obj).forEach((key) => {
           if (root_config?.SENSITIVE_CONFIG_KEYS?.includes(key)) {
-            result[key] = decrypt(obj[key]);
-          } else if (typeof obj[key] === "object") {
-            result[key] = decryptSensitiveKeys(obj[key]);
+            result[key] = decrypt(obj?.[key]);
+          } else if (typeof obj?.[key] === "object") {
+            result[key] = decryptSensitiveKeys(obj?.[key]);
           } else {
-            result[key] = obj[key];
+            result[key] = obj?.[key];
           }
         });
         return result;

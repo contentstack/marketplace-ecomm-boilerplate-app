@@ -222,7 +222,7 @@ const CustomField: React.FC<any> = function ({
           onClick={handleClick}
           className="add-product-btn"
           buttonType="control"
-          disabled={isInvalidCredentials.error || loading}
+          disabled={isInvalidCredentials?.error || loading}
         >
           {localeTexts.customField.addHere}{" "}
           {type === "category"
