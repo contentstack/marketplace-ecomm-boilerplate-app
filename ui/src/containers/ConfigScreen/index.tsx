@@ -132,11 +132,13 @@ const ConfigScreen: React.FC = function () {
   const closeModal = () => {
     setModalOpen(false);
   };
+
   React.useEffect(() => {
     if (sdkConfigDataState) {
-      // rootConfig.validateConfig(sdkConfigDataState, state, rootConfig, localeTexts);
+      rootConfig.validateConfig(sdkConfigDataState, state, rootConfig, localeTexts);
     }
   }, [state?.installationData?.configuration, sdkConfigDataState]);
+  
   const encrypt = (value: string): string => {
     try {
       return (

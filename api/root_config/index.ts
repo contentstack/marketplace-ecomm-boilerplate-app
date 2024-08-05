@@ -100,7 +100,7 @@ If set to false, you need to implement the following:
       */
     } else {
       const extractedProductID =
-        productQuery?.["id:in"]?.split(",").filter((id: any) => id !== "") ||
+        productQuery?.["id:in"]?.split(",")?.filter((id: any) => id !== "") ||
         [];
       response = await Promise.all(
         extractedProductID?.map((id: any) =>

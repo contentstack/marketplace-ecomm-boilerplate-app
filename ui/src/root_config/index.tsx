@@ -629,14 +629,14 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
       } = payload;
     } catch (e) {
       console.error(
-        "app token is invalid or request is not initiated from Contentstack!",
+        "Token is invalid or request is not initiated from Contentstack!",
         e
       );
       return false;
     }
     return true;
   }
-  console.error("app token is missing!");
+  console.error("Token is missing!");
   return false;
 };
 
@@ -954,7 +954,7 @@ const validateConfig = async (
     ? checkIsDefaultInitial(state?.installationData?.configuration)
     : false;
   const isMultiConfigKeysEmpty = multiConfigFields?.length
-    ? Object.keys(state?.installationData?.configuration.multi_config_keys)
+    ? Object.keys(state?.installationData?.configuration?.multi_config_keys)
         .length === 0
     : false;
 
@@ -968,13 +968,13 @@ const validateConfig = async (
     });
   } else if (!isValid) {
     const invalidkeys = Array.from(
-      new Set(invalidKeys.map(({ source }: any) => source))
+      new Set(invalidKeys?.map(({ source }: any) => source))
     );
 
     sdkConfigDataState.setValidity(false, {
       message: `${
         localeTexts.configPage.multiConfig.ErrorMessage.emptyConfigNotifyMsg
-      }: ${invalidkeys.join(", ")}`,
+      }: ${invalidkeys?.join(", ")}`,
     });
   } else {
     sdkConfigDataState.setValidity(true);
