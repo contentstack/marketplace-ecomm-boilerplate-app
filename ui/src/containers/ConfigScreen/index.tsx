@@ -114,7 +114,8 @@ const ConfigScreen: React.FC = function () {
         serverConfiguration: {
           ...prevState?.installationData?.serverConfiguration,
           multi_config_keys: {
-            ...prevState?.installationData?.serverConfiguration?.multi_config_keys,
+            ...prevState?.installationData?.serverConfiguration
+              ?.multi_config_keys,
             [accordionId]: result?.isMultiConfigAndSaveInServerConfig,
           },
         },
