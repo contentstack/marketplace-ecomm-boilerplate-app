@@ -142,7 +142,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           if (oldUser === true) {
             setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
           } else {
-            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData);
+            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
         } else {
@@ -154,7 +154,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
             if (oldUser === true) {
               setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
             } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
+              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
               setEntryIds(returnProductFormatedData);
             }
           } else {
@@ -162,7 +162,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
             if (oldUser === true) {
               setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
             } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData);
+              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
               setEntryIds(returnProductFormatedData);
             }
           }
@@ -226,16 +226,32 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           setIsInvalidCredentials(res);
         } else setSelectedItems(res?.data?.items);
       } else {
-        res = await getSelectedIDs(
-          appConfig,
-          type,
-          selectedIdsArray,
-          isOldUser
-        );
-        if (res?.error) {
-          setIsInvalidCredentials(res);
+        // eslint-disable-next-line
+        if (
+          categoryConfig.customCategoryStructure === false
+          && type === "category"
+        ) {
+          res = await getCustomCategoryData(
+            appConfig,
+            type,
+            selectedIdsArray,
+            isOldUser
+          );
+          if (res?.error) {
+            setIsInvalidCredentials(res);
+          } else setSelectedItems(res?.data?.items);
         } else {
-          setSelectedItems(res?.data?.items);
+          res = await getSelectedIDs(
+            appConfig,
+            type,
+            selectedIdsArray,
+            isOldUser
+          );
+          if (res?.error) {
+            setIsInvalidCredentials(res);
+          } else {
+            setSelectedItems(res?.data?.items);
+          }
         }
       }
     }
@@ -251,8 +267,36 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         isOldUser,
         multiConfigName
       );
+
       setEntryIds(selectedIDs);
+    } else {
+      // eslint-disable-next-line
+      if (isOldUser === true) {
+        if (type === "category") {
+          setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
+        } else {
+          setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
+        }
+      } else {
+        let updatedRootConfig = { ...selectedIds };
+        const config = selectedIds?.[multiConfigName];
+        const updatedIds = config?.multiConfiguniqueKey?.filter(
+          (id: any) => id !== removeId
+        );
+        const updatedConfig = {
+          ...config,
+          multiConfiguniqueKey: updatedIds,
+        };
+
+        updatedRootConfig = {
+          ...updatedRootConfig,
+          [multiConfigName]: updatedConfig,
+        };
+        setEntryIds(updatedRootConfig);
+      }
     }
+
+    return "";
   };
 
   useEffect(() => {

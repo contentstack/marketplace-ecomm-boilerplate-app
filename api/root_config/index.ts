@@ -36,7 +36,7 @@ construction logic in the functions, it allows for consistent inclusion of the
 search parameter in the API requests where needed. */
   SEARCH_URL_PARAMS: "/search",
   FIELDS_URL: "fields=FULL",
-  SENSITIVE_CONFIG_KEYS: ["base_site_id", "backoffice_url", "base_url"],
+  SENSITIVE_CONFIG_KEYS: ["access_token", "project_key"],
   ENDPOINTS_CONFIG: {
     /* The `getSeparateProductsAndCategories: true` property in the `root_config` object is serving as a
 configuration setting that indicates whether the API should handle and retrieve products and
@@ -100,7 +100,7 @@ If set to false, you need to implement the following:
       */
     } else {
       const extractedProductID =
-        productPayload?.["id:in"]?.split(",").filter((id: any) => id !== "") ||
+        productQuery?.["id:in"]?.split(",").filter((id: any) => id !== "") ||
         [];
       response = await Promise.all(
         extractedProductID?.map((id: any) =>

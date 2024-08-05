@@ -1,5 +1,3 @@
-import React from "react";
-
 interface CustomComponentProps {
   configurationObject: { [key: string]: any };
   serverConfigurationObject: { [key: string]: any };
@@ -10,22 +8,13 @@ interface CustomComponentProps {
   ) => void;
 }
 
-// eslint-disable-next-line
+/*eslint-disable */
 const NonMultiConfigCustomComponent: React.FC<CustomComponentProps> =
   function ({
     configurationObject,
     serverConfigurationObject,
     customComponentOnChange,
   }) {
-    // eslint-disable-next-line
-    const onSelectChange = (event: any) => {
-      const e: any = {};
-      e.target = {
-        name: "",
-        value: event?.id,
-      };
-      customComponentOnChange(e, "", false);
-    };
     return <p>NonMultiConfigCustomComponent</p>;
   };
 

@@ -202,14 +202,23 @@ const SelectorPage: React.FC = function () {
     singleSelectedRowIds?.forEach((assetUid: any) => {
       selectedObj[assetUid] = true;
     });
-    if (oldUser === false) {
+    if (oldUser === false && config) {
       const cpyOfSelectedIDS = { ...selectedIds };
-      const multiConfigFormatIDS =        rootConfig.mapProductIdsByMultiConfig(selected);
+      const url = window?.location?.href;
+      const urlObj = new URL(url);
+      const params = new URLSearchParams(urlObj.search);
+      const type = params?.get("type");
+      const multiConfigFormatIDS = rootConfig.mapProductIdsByMultiConfig(
+        selected,
+        type
+      );
       const updatedSelectedIDS = {
         ...cpyOfSelectedIDS,
         ...multiConfigFormatIDS,
       };
       setSelectedIds(updatedSelectedIDS);
+    } else {
+      setSelectedIds(singleSelectedRowIds);
     }
 
     setSelectedRows({ ...selectedObj });
@@ -271,23 +280,23 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
-        {oldUser === false ? (
-          <div className="filterDropdown multistoredropown">
-            <Dropdown
-              type="select"
-              dropDownPosition="bottom"
-              list={multiConfigDropDown}
-              onChange={handleMultiConfigData}
-              withArrow
-              withSearch
-              closeAfterSelect
-              highlightActive
-            />
-          </div>
-        ) : (
-          ""
-        )}
         <div className="filter-container">
+          {oldUser === false ? (
+            <div className="filterDropdown multistoredropown">
+              <Dropdown
+                type="select"
+                dropDownPosition="bottom"
+                list={multiConfigDropDown}
+                onChange={handleMultiConfigData}
+                withArrow
+                withSearch
+                closeAfterSelect
+                highlightActive
+              />
+            </div>
+          ) : (
+            ""
+          )}
           <FilterComponent
             config={config}
             meta={metaState}
@@ -299,7 +308,6 @@ const SelectorPage: React.FC = function () {
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
           onToggleColumnSelector={onToggleColumnSelector}
-          // tableHeight={580}
           isRowSelect
           fullRowSelect
           viewSelector
@@ -329,7 +337,6 @@ const SelectorPage: React.FC = function () {
           itemStatusMap={itemStatus}
           fetchTableData={fetchData}
           totalCounts={totalCounts}
-          // loadMoreItems={loadMoreItems}
           fixedlistRef={tableRef}
           minBatchSizeToFetch={30}
           name={

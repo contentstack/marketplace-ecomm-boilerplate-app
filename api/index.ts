@@ -5,7 +5,7 @@ import {
   getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import { decrypt, _isEmpty } from "./utils";
+import { _isEmpty } from "./utils";
 import root_config from "./root_config";
 
 /**
@@ -15,14 +15,8 @@ import root_config from "./root_config";
 const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let message: any;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-
-  // Decrypt sensitive config keys if present in the request body
-  const configKeys: string[] = Object.keys(body);
-  configKeys.forEach((key: any) => {
-    if (root_config.SENSITIVE_CONFIG_KEYS.includes(key)) {
-      body[key] = decrypt(body[key], constants.DECRYPTION.password);
-    }
-  });
+  // eslint-disable-next-line no-param-reassign
+  body = root_config.processRequestBody(body);
 
   try {
     console.info(constants.LOGS.REQ_BODY, body);

@@ -12,12 +12,17 @@ import {
   EcommerceEnv,
   FormattedRespose,
   ValidationResult,
-} from "../common/types";
+} from "../common/types/index";
+import { ConfigureConfigScreen } from "../types/index";
 // eslint-disable-next-line import/no-cycle
-import { wrapWithDiv, getImage } from "../common/utils";
+import {
+  wrapWithDiv,
+  getImage,
+  extractFieldsByConfigType,
+} from "../common/utils";
 import Logo from "../assets/Logo.svg";
-import MultiConfigCustomComponent from "../containers/ConfigScreen/MultiConfigCustomComponent";
-import NonMultiConfigCustomComponent from "../containers/ConfigScreen/NonMultiConfigCustomComponent";
+import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponent";
+import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
 /* eslint-disable */
 import categoryConfig from "./categories";
 /* eslint-enable */
@@ -33,13 +38,30 @@ const ecommerceEnv: EcommerceEnv = {
   SELECTOR_PAGE_LOGO: Logo,
   APP_ENG_NAME: "SAP Commerce Cloud",
   UNIQUE_KEY: {
-    product: "code",
+    product: "id",
     category: "id",
   },
 };
 
-// example config fields. you will need to use these values in the config screen accordingly.
-const configureConfigScreen: any = () => ({
+/**
+ * The function `configureConfigScreen` provides configuration details for various fields used in the application.
+ * Each field in the configuration specifies its type, label, help text, placeholder text, instruction text, and
+ * various attributes related to storage and sensitivity.
+ *
+ * @returns {ConfigureConfigScreen} The function returns an object where each key corresponds to a field in the
+ * configuration screen. The configuration includes:
+ * - `type`: Specifies the input field type, such as "textInputFields" or "selectInputFields".
+ * - `labelText`: A label describing the input field.
+ * - `helpText`: Text providing additional help or information for the input field.
+ * - `placeholderText`: Placeholder text displayed in the input field when it is empty.
+ * - `instructionText`: Instructions or guidance for the input field.
+ * - `saveInConfig`: A boolean indicating if the key should be stored in the configuration object.
+ * - `saveInServerConfig`: A boolean indicating if the key should be stored in the server configuration object.
+ * - `isSensitive`: A boolean indicating if the input field contains sensitive data (e.g., passwords).
+ * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
+ * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
+ */
+const configureConfigScreen: () => ConfigureConfigScreen = () => ({
   region_url: {
     type: "selectInputFields",
     labelText: "Select Your commercetools Region",
@@ -48,8 +70,9 @@ const configureConfigScreen: any = () => ({
     instructionText: "Select Your commercetools Region",
     saveInConfig: true,
     saveInServerConfig: false,
-    isSensitive: false,
+    isSensitive: true,
     isMultiConfig: true,
+    isConfidential: true,
   },
   project_key: {
     type: "textInputFields",
@@ -59,8 +82,9 @@ const configureConfigScreen: any = () => ({
     instructionText: "Project Key",
     saveInConfig: true,
     saveInServerConfig: false,
-    isSensitive: false,
+    isSensitive: true,
     isMultiConfig: true,
+    isConfidential: true,
   },
   client_id: {
     type: "textInputFields",
@@ -68,10 +92,11 @@ const configureConfigScreen: any = () => ({
     helpText: "Client ID",
     placeholderText: "Client ID",
     instructionText: "Client ID",
-    saveInConfig: false,
-    saveInServerConfig: true,
-    isSensitive: false,
+    saveInConfig: true,
+    saveInServerConfig: false,
+    isSensitive: true,
     isMultiConfig: true,
+    isConfidential: true,
   },
   client_secret: {
     type: "textInputFields",
@@ -79,10 +104,11 @@ const configureConfigScreen: any = () => ({
     helpText: "Client Secret",
     placeholderText: "Client Secret",
     instructionText: "Client Secret",
-    saveInConfig: false,
-    saveInServerConfig: true,
-    isSensitive: false,
+    saveInConfig: true,
+    saveInServerConfig: false,
+    isSensitive: true,
     isMultiConfig: true,
+    isConfidential: true,
   },
   access_token: {
     type: "textInputFields",
@@ -92,8 +118,21 @@ const configureConfigScreen: any = () => ({
     instructionText: "Access Token",
     saveInConfig: true,
     saveInServerConfig: false,
-    isSensitive: false,
+    isSensitive: true,
     isMultiConfig: true,
+    isConfidential: true,
+  },
+  test_url: {
+    type: "selectInputFields",
+    labelText: "Access Token",
+    helpText: "Access Token",
+    placeholderText: "Access Token",
+    instructionText: "Access Token",
+    saveInConfig: true,
+    saveInServerConfig: false,
+    isSensitive: true,
+    isMultiConfig: true,
+    isConfidential: true,
   },
 });
 
@@ -521,7 +560,16 @@ const getFormattedResponse = (response: any): FormattedRespose => ({
 const getOpenerLink = (id: any, config: any, type: any): string =>
   config?.configField4;
 
-// keep this function if you have to remove product/category from custom field as per your own requirement
+/**
+ * Removes an item from the selected IDs based on the specified criteria.
+ * @param {any} removeId - The ID of the item to be removed.
+ * @param {any} selectedIds - The array of selected IDs from the e-commerce app, which can include products or categories.
+ * @param {any} type - Specifies the type of item being removed, either "product" or "category".
+ * @param {any} uniqueKey - The key used to identify items in the selected IDs. This is relevant when the `type` is "category".
+ * @param {boolean} isOldUser - Indicates whether the user had previous data before enabling multi-configuration. This affects how data is processed.
+ * @param {any} multiConfigName - Used to handle different ID formats when removing items. Required for scenarios involving multi-configuration.
+ * @returns {any[]} - The filtered array of selected IDs with the specified item removed.
+ */
 const removeItemsFromCustomField = (
   removeId: any,
   selectedIds: any,
@@ -530,29 +578,13 @@ const removeItemsFromCustomField = (
   isOldUser: Boolean,
   multiConfigName: any
 ) => {
-  if (isOldUser === true) {
-    if (type === "category")
-      return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
-
-    return selectedIds?.filter(
-      (data: any) => Number(data) !== Number(removeId)
-    );
+  if (type === "category") {
+    // Remove item based on a unique key if the type is 'category'
+    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
   }
-  let updatedRootConfig = { ...selectedIds };
-  const config = selectedIds?.[multiConfigName];
-  const updatedIds = config?.multiConfiguniqueKey?.filter(
-    (id: any) => id !== removeId
-  );
-  const updatedConfig = {
-    ...config,
-    multiConfiguniqueKey: updatedIds,
-  };
 
-  updatedRootConfig = {
-    ...updatedRootConfig,
-    [multiConfigName]: updatedConfig,
-  };
-  return updatedRootConfig;
+  // Remove item based on a direct ID match for other types
+  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId));
 };
 
 // this function is used for app signing, i.e. for verifying app tokens in ui
@@ -622,16 +654,17 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
  * @param {any} productData - The array of product data objects to be formatted.
  * @returns {Result} - The formatted result object containing grouped product IDs.
  */
-const mapProductIdsByMultiConfig = (productData: any): Result => {
+const mapProductIdsByMultiConfig = (productData: any, type: any): Result => {
+  const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
   if (productData?.length) {
-    const uniqueKey = "multiConfiguniqueKey";
+    const multiConfigUniqueKey = "multiConfiguniqueKey";
     result = productData?.reduce((acc: any, item: any) => {
       const multiConfigName = item?.cs_metadata?.multiConfigName;
       if (!acc[multiConfigName]) {
-        acc[multiConfigName] = { [uniqueKey]: [] };
+        acc[multiConfigName] = { [multiConfigUniqueKey]: [] };
       }
-      acc?.[multiConfigName]?.[uniqueKey]?.push(item?.[uniqueKey]);
+      acc?.[multiConfigName]?.[multiConfigUniqueKey]?.push(item?.[uniqueKey]);
       return acc;
     }, {});
   }
@@ -655,13 +688,29 @@ const mapProductIdsByMultiConfig = (productData: any): Result => {
  * @param {any} categoryData - Array of category data objects, each expected to include `cs_metadata` and `uniqueKey`.
  * @returns {Result} - An object grouping category IDs by multi-config names.
  */
-const mapCategoryIdsByMultiConfig = (categoryData: any): Result => {
+const mapCategoryIdsByMultiConfig = (categoryData: any, type: any): Result => {
+  const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
-  const uniqueKey = "multiConfiguniqueKey";
+  const multiConfigUniqueKey = "multiConfiguniqueKey";
 
   // Check if category data is present and has length
   if (categoryData?.length) {
-    // If customCategoryStructure is true, return empty result
+    /**
+     * If `customCategoryStructure` is true, return the data in the specified format.
+     * The returned format will be an object with the following structure:
+     *
+     * {
+     *   [multiConfigName]: {
+     *     multiConfiguniqueKey: []  // Array of category IDs, which can be either strings or objects.
+     *   }
+     * }
+     *
+     * - `customCategoryStructure`: A boolean indicating whether to use a custom category structure.
+     * - `multiConfigName`: A dynamic key for the outer object, which is used to identify different multi-configuration setups.
+     * - `multiConfiguniqueKey`: A key within the `multiConfigName` object that holds an array of category IDs.
+     * - The array associated with `multiConfiguniqueKey` can contain category IDs as strings or objects, depending on the implementation.
+     */
+
     if (categoryConfig.customCategoryStructure === true) {
       return result;
     }
@@ -670,9 +719,9 @@ const mapCategoryIdsByMultiConfig = (categoryData: any): Result => {
     result = categoryData?.reduce((acc: any, item: any) => {
       const multiConfigName = item?.cs_metadata?.multiConfigName;
       if (!acc[multiConfigName]) {
-        acc[multiConfigName] = { [uniqueKey]: [] };
+        acc[multiConfigName] = { [multiConfigUniqueKey]: [] };
       }
-      acc?.[multiConfigName]?.[uniqueKey]?.push(item?.[uniqueKey]);
+      acc?.[multiConfigName]?.[multiConfigUniqueKey]?.push(item?.[uniqueKey]);
       return acc;
     }, {});
   }
@@ -829,7 +878,7 @@ const customMultiConfigComponent = (
   ) => void
 ) => (
   <MultiConfigCustomComponent
-    multiConfigurationData={multiConfigId}
+    multiConfigurationDataID={multiConfigId}
     configurationObject={configurationData}
     serverConfigurationObject={serverConfiguration}
     customComponentOnChange={onChangeCallback}
@@ -868,7 +917,72 @@ const customNonMultiConfigComponet = (
   />
 );
 
+const checkIsDefaultInitial = (configurationData: any) => {
+  const { default_multi_config_key } = configurationData;
+  if (default_multi_config_key === "") {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Checks the validity of configuration data and performs optional API validation.
+ *
+ * @param {Object} configurationData - The configuration data saved in `state?.installationData?.configuration`.
+ * @param {Object} serverConfiguration - The server configuration data saved in `state?.installationData?.serverConfiguration`.
+ * @param {boolean} validateMultiConfigKeysByApi - Set to `true` to enable API validation for multi-config keys, otherwise `false`.
+ * @param {boolean} validateOtherKeysByApi - Set to `true` to enable API validation for non-multi-config keys, otherwise `false`.
+ * @returns {Promise<{ isValid: boolean, invalidKeys: { source: string, keys: any[] }[] }>} - Returns an object with `isValid` indicating if all keys are valid and `invalidKeys` listing the invalid keys.
+ */
+const validateConfig = async (
+  sdkConfigDataState: any,
+  state: any,
+  rootConfig: any,
+  localeTexts: any
+) => {
+  const configScreen = configureConfigScreen();
+  const { multiConfigFields } = extractFieldsByConfigType(configScreen);
+
+  const { isValid, invalidKeys } = await checkValidity(
+    state?.installationData?.configuration,
+    state?.installationData?.serverConfiguration,
+    false,
+    false
+  );
+
+  const isDefaultKeyExist = multiConfigFields?.length
+    ? checkIsDefaultInitial(state?.installationData?.configuration)
+    : false;
+  const isMultiConfigKeysEmpty = multiConfigFields?.length
+    ? Object.keys(state?.installationData?.configuration.multi_config_keys)
+        .length === 0
+    : false;
+
+  if (isMultiConfigKeysEmpty) {
+    sdkConfigDataState.setValidity(false, {
+      message: localeTexts.configPage.multiConfig.ErrorMessage.validInputMsg,
+    });
+  } else if (isDefaultKeyExist === true) {
+    sdkConfigDataState.setValidity(false, {
+      message: localeTexts.configPage.multiConfig.ErrorMessage.oneDefaultMsg,
+    });
+  } else if (!isValid) {
+    const invalidkeys = Array.from(
+      new Set(invalidKeys.map(({ source }: any) => source))
+    );
+
+    sdkConfigDataState.setValidity(false, {
+      message: `${
+        localeTexts.configPage.multiConfig.ErrorMessage.emptyConfigNotifyMsg
+      }: ${invalidkeys.join(", ")}`,
+    });
+  } else {
+    sdkConfigDataState.setValidity(true);
+  }
+};
+
 const rootConfig = {
+  validateConfig,
   verifyAppSigning,
   ecommerceEnv,
   configureConfigScreen,
