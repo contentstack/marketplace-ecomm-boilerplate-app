@@ -8,7 +8,7 @@ import {
   cbModal,
 } from "@contentstack/venus-components";
 import { Props, TypeProduct } from "../../common/types";
-import { removeHTMLTags } from "../../common/utils";
+import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
@@ -148,12 +148,9 @@ const Product: React.FC<Props> = function ({ product, remove }) {
                           {localeTexts.customField.listViewTable.price}:{price}
                         </span>
                       )}
-                      <span
-                        className="product-desc"
-                        dangerouslySetInnerHTML={{
-                          __html: `${removeHTMLTags(description)}`,
-                        }}
-                      />
+                      <span className="product-desc">
+                        {getSanitizedHTML(removeHTMLTags(description))}
+                      </span>
                     </>
                   )}
                   {isProductDeleted && (
