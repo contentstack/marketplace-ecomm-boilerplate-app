@@ -374,7 +374,24 @@ const arrangeList = (
   return data;
 };
 
+const extractKeysForCustomApiValidation = (config: Record<string, any>) => (
+   Object.entries(config)?.reduce((acc, [key, value]) => {
+    if (value?.isApiValidationEnabled) {
+      if (value?.isMultiConfig) {
+        acc?.multiConfigTrueAndApiValidationEnabled?.push(key);
+      } else {
+        acc?.multiConfigFalseAndApiValidationEnabled?.push(key);
+      }
+    }
+    return acc;
+  }, {
+    multiConfigTrueAndApiValidationEnabled: [] as string[],
+    multiConfigFalseAndApiValidationEnabled: [] as string[],
+  })
+)
+
 export {
+  extractKeysForCustomApiValidation,
   isEmpty,
   popupWindow,
   filterFetchedArray,
