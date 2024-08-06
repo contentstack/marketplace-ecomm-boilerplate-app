@@ -258,8 +258,8 @@ const ConfigScreen: React.FC = function () {
         const { isValid, invalidKeys } = await checkValidity(
           state?.installationData?.configuration,
           state?.installationData?.serverConfiguration,
-          multiConfigTrueAndApiValidationEnabled.length > 0,
-          multiConfigFalseAndApiValidationEnabled.length > 0
+          multiConfigTrueAndApiValidationEnabled?.length > 0,
+          multiConfigFalseAndApiValidationEnabled?.length > 0
         );
 
         const isDefaultKeyExist = multiConfigFields?.length
@@ -268,7 +268,7 @@ const ConfigScreen: React.FC = function () {
         const isMultiConfigKeysEmpty = multiConfigFields?.length
           ? Object.keys(
               state?.installationData?.configuration?.multi_config_keys
-            ).length === 0
+            )?.length === 0
           : false;
 
         if (isMultiConfigKeysEmpty) {
