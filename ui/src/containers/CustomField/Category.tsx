@@ -14,7 +14,7 @@ import localeTexts from "../../common/locale/en-us";
 import NoImg from "../../assets/NoImg.svg";
 import constants from "../../common/constants";
 import useAppConfig from "../../common/hooks/useAppConfig";
-import { removeHTMLTags } from "../../common/utils";
+import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
 
 const Category: React.FC<Props> = function ({ categories, remove }) {
   const {
@@ -153,14 +153,9 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
                   <span className="product-name">{name}</span>
 
                   {!isCategoryDeleted && (
-                    <span
-                      className="product-desc"
-                      // eslint-disable-next-line react/no-danger
-                      dangerouslySetInnerHTML={{
-                        // eslint-disable-next-line
-                        __html: `${removeHTMLTags(description)}`,
-                      }}
-                    />
+                    <span className="product-desc">
+                      {getSanitizedHTML(removeHTMLTags(description))}
+                    </span>
                   )}
                   {isCategoryDeleted && (
                     <div className="config-deleted-message">
