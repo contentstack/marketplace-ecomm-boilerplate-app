@@ -81,7 +81,7 @@ export interface ConfigField {
   isSensitive: boolean;
   isMultiConfig: boolean;
   isConfidential: boolean;
-  isApiValidationEnabled:boolean
+  isApiValidationEnabled: boolean;
 }
 
 export interface ConfigureConfigScreen {

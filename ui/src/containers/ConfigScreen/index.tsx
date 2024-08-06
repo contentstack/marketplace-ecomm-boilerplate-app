@@ -391,8 +391,7 @@ const ConfigScreen: React.FC = function () {
         const sdkConfigData = appSdk?.location?.AppConfigWidget?.installation;
         setSdkConfigDataState(sdkConfigData);
         if (sdkConfigData) {
-          const installationDataFromSDK =
-            await sdkConfigData?.getInstallationData();
+          const installationDataFromSDK =            await sdkConfigData?.getInstallationData();
           const keysToIncludeOrExclude = [
             "custom_keys",
             "multi_config_keys",
@@ -421,8 +420,7 @@ const ConfigScreen: React.FC = function () {
             state?.installationData,
             installationDataFromSDK
           );
-          const defaultMultiConfigKey =
-            installationDataOfSdk?.default_multi_config_key ?? "legacy_config";
+          const defaultMultiConfigKey =            installationDataOfSdk?.default_multi_config_key ?? "legacy_config";
           if (defaultMultiConfigKey === "legacy_config") {
             Object.keys(installationDataOfSdk?.configuration)?.forEach(
               (key) => {
@@ -430,8 +428,7 @@ const ConfigScreen: React.FC = function () {
                   if (
                     Object.hasOwn(result?.isMultiConfigAndSaveInConfig, key)
                   ) {
-                    newConfigurationObject.legacy_config[key] =
-                      installationDataOfSdk?.configuration?.multi_config_keys
+                    newConfigurationObject.legacy_config[key] =                      installationDataOfSdk?.configuration?.multi_config_keys
                         ?.legacy_config?.[key] !== undefined
                         ? installationDataOfSdk?.configuration
                             ?.multi_config_keys?.legacy_config?.[key]
@@ -450,8 +447,7 @@ const ConfigScreen: React.FC = function () {
                       key
                     )
                   ) {
-                    newServerConfigurationObject.legacy_config[key] =
-                      installationDataOfSdk?.serverConfiguration
+                    newServerConfigurationObject.legacy_config[key] =                      installationDataOfSdk?.serverConfiguration
                         ?.multi_config_keys?.legacy_config?.[key] !== undefined
                         ? installationDataOfSdk?.serverConfiguration
                             ?.multi_config_keys?.legacy_config?.[key]
@@ -461,16 +457,14 @@ const ConfigScreen: React.FC = function () {
               }
             );
 
-            const filteredConfiguration: any =
-              combinedConfigurationKeys?.reduce((acc: any, key: any) => {
+            const filteredConfiguration: any =              combinedConfigurationKeys?.reduce((acc: any, key: any) => {
                 if (Object.hasOwn(installationDataOfSdk?.configuration, key)) {
                   acc[key] = installationDataOfSdk?.configuration?.[key];
                 }
                 return acc;
               }, {});
 
-            const filteredServerConfiguration: any =
-              combinedServerConfigurationKeys?.reduce((acc: any, key: any) => {
+            const filteredServerConfiguration: any =              combinedServerConfigurationKeys?.reduce((acc: any, key: any) => {
                 if (
                   Object.hasOwn(installationDataOfSdk?.serverConfiguration, key)
                 ) {
@@ -493,18 +487,15 @@ const ConfigScreen: React.FC = function () {
               webhooks: installationDataOfSdk?.webhooks,
               uiLocations: installationDataOfSdk?.uiLocations,
             };
-            updatedConfigurationObject.configuration.multi_config_keys =
-              updatedMultiConfigKeys;
-            updatedConfigurationObject.serverConfiguration.multi_config_keys =
-              updatedMultiConfigServerKeys;
+            updatedConfigurationObject.configuration.multi_config_keys =              updatedMultiConfigKeys;
+            updatedConfigurationObject.serverConfiguration.multi_config_keys =              updatedMultiConfigServerKeys;
           }
           if (
             Object.keys(
               updatedConfigurationObject?.configuration?.multi_config_keys
                 ?.legacy_config
             ).every((key) => {
-              const value =
-                updatedConfigurationObject?.configuration?.multi_config_keys
+              const value =                updatedConfigurationObject?.configuration?.multi_config_keys
                   ?.legacy_config?.[key];
               return value === undefined || value === null || value === "";
             })
@@ -518,8 +509,7 @@ const ConfigScreen: React.FC = function () {
               updatedConfigurationObject?.serverConfiguration?.multi_config_keys
                 ?.legacy_config
             ).every((key) => {
-              const value =
-                updatedConfigurationObject?.serverConfiguration
+              const value =                updatedConfigurationObject?.serverConfiguration
                   ?.multi_config_keys?.legacy_config[key];
               return value === undefined || value === null || value === "";
             })
@@ -537,8 +527,7 @@ const ConfigScreen: React.FC = function () {
               rootConfig?.configureConfigScreen()
             );
             updatedConfigurationObject.configuration = decryptedConfiguration;
-            updatedConfigurationObject.serverConfiguration =
-              decryptedServerConfiguration;
+            updatedConfigurationObject.serverConfiguration =              decryptedServerConfiguration;
           }
 
           setState({
@@ -570,8 +559,7 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =
-        state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value.trim() : value;
 
       if (isMultiConfig) {
@@ -592,8 +580,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
-                  {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -810,8 +798,7 @@ const ConfigScreen: React.FC = function () {
 
   const renderConfig = () => {
     const configScreen = rootConfig?.configureConfigScreen();
-    const { multiConfigFields, singleConfigFields } =
-      extractFieldsByConfigType(configScreen);
+    const { multiConfigFields, singleConfigFields } =      extractFieldsByConfigType(configScreen);
     return (
       <>
         {Boolean(multiConfigFields?.length) && (
@@ -826,8 +813,8 @@ const ConfigScreen: React.FC = function () {
                 renderExpanded
                 accordionDataCount={
                   Object.keys(
-                    state?.installationData?.configuration?.multi_config_keys ||
-                      {}
+                    state?.installationData?.configuration?.multi_config_keys
+                      || {}
                   )?.length
                 }
               >
@@ -870,8 +857,8 @@ const ConfigScreen: React.FC = function () {
                                       )}...`
                                     : multiConfigurationID}
                                   {state?.installationData?.configuration
-                                    ?.default_multi_config_key ===
-                                    multiConfigurationID && (
+                                    ?.default_multi_config_key
+                                    === multiConfigurationID && (
                                     <span className="default-label">
                                       Default
                                     </span>
@@ -947,8 +934,8 @@ const ConfigScreen: React.FC = function () {
                             {Object.entries(configInputFields)?.map(
                               ([objKey, objValue]: any) => {
                                 if (
-                                  objValue?.isMultiConfig &&
-                                  objValue?.type === "textInputFields"
+                                  objValue?.isMultiConfig
+                                  && objValue?.type === "textInputFields"
                                 ) {
                                   return (
                                     <div key={`${objKey}`}>
@@ -1011,8 +998,8 @@ const ConfigScreen: React.FC = function () {
 
                             {Object.values(configInputFields)?.some(
                               (objValue: any) =>
-                                objValue?.isMultiConfig &&
-                                objValue?.type !== "textInputFields"
+                                objValue?.isMultiConfig
+                                && objValue?.type !== "textInputFields"
                             ) && (
                               <Field key="customComponentField">
                                 {rootConfig.customMultiConfigComponent(
@@ -1033,8 +1020,8 @@ const ConfigScreen: React.FC = function () {
                                   }
                                   checked={
                                     state?.installationData?.configuration
-                                      ?.default_multi_config_key ===
-                                    multiConfigurationID
+                                      ?.default_multi_config_key
+                                    === multiConfigurationID
                                   }
                                   onClick={(e: any) =>
                                     handleCheckboxChange(
