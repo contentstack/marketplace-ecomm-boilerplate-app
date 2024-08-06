@@ -51,11 +51,7 @@ const ProductDescription: React.FC<Props> = function ({ product, config }) {
           )}
           <div className="detail-group">
             <div className="label">{descriptionLbl}</div>
-            <div
-              className="value"
-            >
-              {getSanitizedHTML(description)}
-            </div>
+            <div className="value">{getSanitizedHTML(description)}</div>
           </div>
           <div className="detail-group">
             <div className="label">{priceLbl}</div>

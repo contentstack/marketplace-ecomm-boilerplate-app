@@ -142,7 +142,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           if (oldUser === true) {
             setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
           } else {
-            const returnProductFormatedData: any = rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
+            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
         } else {
