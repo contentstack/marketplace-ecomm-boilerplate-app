@@ -1,4 +1,6 @@
 import React from "react";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 import { Icon, Tooltip, Link } from "@contentstack/venus-components";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us/index";
@@ -47,54 +49,8 @@ const mergeObjects = (target: any, source: any) => {
   return target;
 };
 
-const getCurrencySymbol = (code: string) => {
-  switch (code) {
-    case "USD":
-      return "$"; // US Dollar
-    case "EUR":
-      return "€"; // Euro
-    case "CRC":
-      return "₡"; // Costa Rican Colón
-    case "GBP":
-      return "£"; // British Pound Sterling
-    case "ILS":
-      return "₪"; // Israeli New Sheqel
-    case "INR":
-      return "₹"; // Indian Rupee
-    case "JPY":
-      return "¥"; // Japanese Yen
-    case "KRW":
-      return "₩"; // South Korean Won
-    case "NGN":
-      return "₦"; // Nigerian Naira
-    case "PHP":
-      return "₱"; // Philippine Peso
-    case "PLN":
-      return "zł"; // Polish Zloty
-    case "PYG":
-      return "₲"; // Paraguayan Guarani
-    case "THB":
-      return "฿"; // Thai Baht
-    case "UAH":
-      return "₴"; // Ukrainian Hryvnia
-    case "VND":
-      return "₫"; // Vietnamese Dong
-    default:
-      return "";
-  }
-};
+const getSanitizedHTML = (content: any) => parse(DOMPurify.sanitize(content));
 
-// TODO: change the dangerouslySetInnerHTML to a safer alternative for SRE
-const wrapWithDiv = (description: string) =>
-  description ? (
-    <div
-      className="product-desc"
-      // eslint-disable-next-line react/no-danger, @typescript-eslint/no-use-before-define, @typescript-eslint/naming-convention
-      dangerouslySetInnerHTML={{ __html: removeHTMLTags(description) }}
-    />
-  ) : (
-    ""
-  );
 const findProduct = (products: any, id: any, uniqueKey: any) =>
   products?.find((p: any) => p?.[uniqueKey] === id) || {};
 
@@ -136,90 +92,6 @@ const getImage = (url: string, customField: boolean = false) =>
     </div>
   );
 
-const productColumns = [
-  {
-    Header: "Product Id",
-    id: "code",
-    accessor: "code",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) =>
-      obj?.images?.[0]?.url
-        ? getImage(
-            `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
-          )
-        : getImage(obj?.images?.[0]?.url),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.7,
-  },
-  {
-    Header: "Product Name",
-    id: "key",
-    accessor: (productData: any) => productData?.key,
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3,
-  },
-  {
-    Header: "Price",
-    accessor: (obj: any) => obj?.price?.formattedValue,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3.5,
-  },
-];
-const categoryColumns = [
-  {
-    Header: "ID",
-    id: "id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: "name",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Custom URL",
-    accessor: (obj: any) => obj?.custom_url?.url || obj?.url,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 4,
-  },
-];
-
 const gridViewDropdown = [
   {
     label: (
@@ -244,6 +116,15 @@ const gridViewDropdown = [
 
 const removeHTMLTags = (description: string) =>
   description ? description.replace(/(<([^>]+)>)/gi, " ") : "";
+
+const wrapWithDiv = (description: string) =>
+  description ? (
+    <div className="product-desc">
+      {getSanitizedHTML(removeHTMLTags(description))}
+    </div>
+  ) : (
+    ""
+  );
 
 const getTypeLabel = (type: string, length: number) => {
   if (type === "category") {
@@ -398,12 +279,10 @@ export {
   popupWindow,
   filterFetchedArray,
   mergeObjects,
-  productColumns,
-  categoryColumns,
   gridViewDropdown,
+  getSanitizedHTML,
   wrapWithDiv,
   getTypeLabel,
-  getCurrencySymbol,
   findProduct,
   findProductIndex,
   getImage,
