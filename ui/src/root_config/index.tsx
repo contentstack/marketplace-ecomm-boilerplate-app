@@ -15,11 +15,7 @@ import {
 } from "../common/types/index";
 import { ConfigureConfigScreen } from "../types/index";
 // eslint-disable-next-line import/no-cycle
-import {
-  wrapWithDiv,
-  getImage,
-  extractFieldsByConfigType,
-} from "../common/utils";
+import { wrapWithDiv, getImage } from "../common/utils";
 import Logo from "../assets/Logo.svg";
 import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponent";
 import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
@@ -60,81 +56,9 @@ const ecommerceEnv: EcommerceEnv = {
  * - `isSensitive`: A boolean indicating if the input field contains sensitive data (e.g., passwords).
  * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
  * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
+ *  - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
  */
-const configureConfigScreen: () => ConfigureConfigScreen = () => ({
-  region_url: {
-    type: "selectInputFields",
-    labelText: "Select Your commercetools Region",
-    helpText: "Select Your commercetools Region",
-    placeholderText: "Select Your commercetools Region",
-    instructionText: "Select Your commercetools Region",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-  project_key: {
-    type: "textInputFields",
-    labelText: "Project Key",
-    helpText: "Project Key",
-    placeholderText: "Project Key",
-    instructionText: "Project Key",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-  client_id: {
-    type: "textInputFields",
-    labelText: "Client ID",
-    helpText: "Client ID",
-    placeholderText: "Client ID",
-    instructionText: "Client ID",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-  client_secret: {
-    type: "textInputFields",
-    labelText: "Client Secret",
-    helpText: "Client Secret",
-    placeholderText: "Client Secret",
-    instructionText: "Client Secret",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-  access_token: {
-    type: "textInputFields",
-    labelText: "Access Token",
-    helpText: "Access Token",
-    placeholderText: "Access Token",
-    instructionText: "Access Token",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-  test_url: {
-    type: "selectInputFields",
-    labelText: "Access Token",
-    helpText: "Access Token",
-    placeholderText: "Access Token",
-    instructionText: "Access Token",
-    saveInConfig: true,
-    saveInServerConfig: false,
-    isSensitive: true,
-    isMultiConfig: true,
-    isConfidential: true,
-  },
-});
+const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
 const getCustomKeys = (): KeyOption[] => [
   {
@@ -730,127 +654,6 @@ const mapCategoryIdsByMultiConfig = (categoryData: any, type: any): Result => {
 };
 
 /**
- * Checks the validity of configuration data and performs optional API validation.
- *
- * @param {Object} configurationData - The configuration data saved in `state?.installationData?.configuration`.
- * @param {Object} serverConfiguration - The server configuration data saved in `state?.installationData?.serverConfiguration`.
- * @param {boolean} validateMultiConfigKeysByApi - Set to `true` to enable API validation for multi-config keys, otherwise `false`.
- * @param {boolean} validateOtherKeysByApi - Set to `true` to enable API validation for non-multi-config keys, otherwise `false`.
- * @returns {Promise<{ isValid: boolean, invalidKeys: { source: string, keys: any[] }[] }>} - Returns an object with `isValid` indicating if all keys are valid and `invalidKeys` listing the invalid keys.
- */
-const checkValidity = async (
-  configurationData: { [x: string]: any; multi_config_keys?: any },
-  serverConfiguration: { [x: string]: any; multi_config_keys?: any },
-  validateMultiConfigKeysByApi: boolean,
-  validateOtherKeysByApi: boolean
-) => {
-  const checkMultiConfigKeys = (multiConfigKeys: any) => {
-    const invalidKeys: any = {};
-
-    Object.entries(multiConfigKeys || {})?.forEach(([configKey, config]) => {
-      Object.entries(config || {})?.forEach(([key, value]) => {
-        if (typeof value === "string" && value?.trim() === "") {
-          if (!invalidKeys?.[configKey]) {
-            invalidKeys[configKey] = [];
-          }
-          invalidKeys?.[configKey]?.push(key);
-        }
-      });
-    });
-
-    return invalidKeys;
-  };
-
-  const checkOtherKeys = (keys: any) => {
-    const invalidKeys: string[] = [];
-
-    Object.entries(keys || {})?.forEach(([key, value]) => {
-      if (typeof value === "string" && value?.trim() === "") {
-        invalidKeys?.push(key);
-      }
-    });
-
-    return invalidKeys;
-  };
-
-  let normalInvalidKeys = {};
-  let serverNormalInvalidKeys = {};
-
-  if (!validateMultiConfigKeysByApi) {
-    normalInvalidKeys = checkMultiConfigKeys(
-      configurationData?.multi_config_keys
-    );
-    serverNormalInvalidKeys = checkMultiConfigKeys(
-      serverConfiguration?.multi_config_keys
-    );
-  }
-
-  const normalInvalidKeysList = [
-    ...Object.entries(normalInvalidKeys)
-      .filter(([keys]) => keys?.length)
-      .map(([source, keys]) => ({ source, keys })),
-    ...Object.entries(serverNormalInvalidKeys)
-      .filter(([keys]) => keys?.length)
-      .map(([source, keys]) => ({ source, keys })),
-  ];
-
-  let otherInvalidKeysList: { source: string; keys: any[] }[] = [];
-  if (!validateOtherKeysByApi) {
-    const otherInvalidKeys = checkOtherKeys(configurationData);
-    const serverOtherInvalidKeys = checkOtherKeys(serverConfiguration);
-
-    otherInvalidKeysList = [
-      ...otherInvalidKeys.map((key) => ({
-        source: "configurationData",
-        keys: [key],
-      })),
-      ...serverOtherInvalidKeys.map((key) => ({
-        source: "serverConfiguration",
-        keys: [key],
-      })),
-    ];
-  }
-
-  if (validateMultiConfigKeysByApi || validateOtherKeysByApi) {
-    /**
-     * Returns the validation result with invalid keys.
-     *
-     * The result should be returned in the following format:
-     * {
-     *   invalidKeys: [
-     *     { source: "string", keys: ["string"] },
-     *     ...
-     *   ]
-     * }
-     */
-    const validateConfigFilesByApi = async (): Promise<ValidationResult> => ({
-      invalidKeys: [{ source: "demos-95", keys: ["configField8"] }],
-    });
-
-    const apiValidationResults = await validateConfigFilesByApi();
-
-    const apiInvalidKeysList = apiValidationResults.invalidKeys;
-
-    const allInvalidKeys = [
-      ...normalInvalidKeysList,
-      ...otherInvalidKeysList,
-      ...apiInvalidKeysList,
-    ];
-
-    const isValid = allInvalidKeys?.length === 0;
-
-    return { isValid, invalidKeys: allInvalidKeys };
-  }
-  // eslint-disable-next-line
-  else {
-    const allInvalidKeys = [...normalInvalidKeysList, ...otherInvalidKeysList];
-    const isValid = allInvalidKeys?.length === 0;
-
-    return { isValid, invalidKeys: allInvalidKeys };
-  }
-};
-
-/**
  * Renders a custom multi-config component for handling multi-config fields that are not text input fields.
  *
  * @param multiConfigId - The name of the multi-config field, e.g., "legacy_config".
@@ -901,7 +704,7 @@ const customMultiConfigComponent = (
  *
  * @returns A JSX element rendering the MultiConfigCustomComponent.
  */
-const customNonMultiConfigComponet = (
+const customNonMultiConfigComponent = (
   configurationData: any,
   serverConfiguration: any,
   onChangeCallback: (
@@ -917,72 +720,34 @@ const customNonMultiConfigComponet = (
   />
 );
 
-const checkIsDefaultInitial = (configurationData: any) => {
-  const { default_multi_config_key } = configurationData;
-  if (default_multi_config_key === "") {
-    return true;
-  }
-  return false;
-};
-
 /**
- * Checks the validity of configuration data and performs optional API validation.
+ * Custom API validation function for configuration files.
  *
- * @param {Object} configurationData - The configuration data saved in `state?.installationData?.configuration`.
- * @param {Object} serverConfiguration - The server configuration data saved in `state?.installationData?.serverConfiguration`.
- * @param {boolean} validateMultiConfigKeysByApi - Set to `true` to enable API validation for multi-config keys, otherwise `false`.
- * @param {boolean} validateOtherKeysByApi - Set to `true` to enable API validation for non-multi-config keys, otherwise `false`.
- * @returns {Promise<{ isValid: boolean, invalidKeys: { source: string, keys: any[] }[] }>} - Returns an object with `isValid` indicating if all keys are valid and `invalidKeys` listing the invalid keys.
+ * @param configurationObject - Data stored in the configuration of the application (appsdk). This includes configuration settings that need to be validated.
+ * @param serverConfiguration - Data stored in the server configuration of the application (appsdk). This includes server-side settings that need to be validated.
+ * @param multiConfigTrueAndApiValidationEnabled - Array of keys where API validation is enabled and `isMultiConfig` is `true`. These are the configuration fields that should be validated using the API.
+ * @param multiConfigFalseAndApiValidationEnabled - Array of keys where API validation is enabled and `isMultiConfig` is `false`. These are the configuration fields that should be validated using the API.
+ * @returns A promise that resolves to a `ValidationResult` object containing the validation results.
+ *
+ * The function should return an object with `invalidKeys`, which is an array of objects where each object represents a configuration issue:
+ * - If `multiConfigTrueAndApiValidationEnabled` contains the invalid configuration, the `source` should be the multi-config name (e.g., "demos-95") and `keys` should include the field names that are invalid.
+ * - If the configuration is not multi-config, the `source` should be "configuration" or "serverConfiguration", and `keys` should include the names of the invalid fields.
  */
-const validateConfig = async (
-  sdkConfigDataState: any,
-  state: any,
-  rootConfig: any,
-  localeTexts: any
-) => {
-  const configScreen = configureConfigScreen();
-  const { multiConfigFields } = extractFieldsByConfigType(configScreen);
-
-  const { isValid, invalidKeys } = await checkValidity(
-    state?.installationData?.configuration,
-    state?.installationData?.serverConfiguration,
-    false,
-    false
-  );
-
-  const isDefaultKeyExist = multiConfigFields?.length
-    ? checkIsDefaultInitial(state?.installationData?.configuration)
-    : false;
-  const isMultiConfigKeysEmpty = multiConfigFields?.length
-    ? Object.keys(state?.installationData?.configuration?.multi_config_keys)
-        .length === 0
-    : false;
-
-  if (isMultiConfigKeysEmpty) {
-    sdkConfigDataState.setValidity(false, {
-      message: localeTexts.configPage.multiConfig.ErrorMessage.validInputMsg,
-    });
-  } else if (isDefaultKeyExist === true) {
-    sdkConfigDataState.setValidity(false, {
-      message: localeTexts.configPage.multiConfig.ErrorMessage.oneDefaultMsg,
-    });
-  } else if (!isValid) {
-    const invalidkeys = Array.from(
-      new Set(invalidKeys?.map(({ source }: any) => source))
-    );
-
-    sdkConfigDataState.setValidity(false, {
-      message: `${
-        localeTexts.configPage.multiConfig.ErrorMessage.emptyConfigNotifyMsg
-      }: ${invalidkeys?.join(", ")}`,
-    });
-  } else {
-    sdkConfigDataState.setValidity(true);
-  }
-};
+const validateConfigFilesByApi = async (
+  configurationObject: any, // Data stored in the configuration of the app (appsdk)
+  serverConfiguration: any, // Data stored in the server configuration of the app (appsdk)
+  multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
+  multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
+): Promise<ValidationResult> => ({
+  invalidKeys: [
+    {
+      source: "demos-95", // Example of multi-config name
+      keys: ["configField8"], // Example of invalid field name
+    },
+  ],
+});
 
 const rootConfig = {
-  validateConfig,
   verifyAppSigning,
   ecommerceEnv,
   configureConfigScreen,
@@ -998,9 +763,9 @@ const rootConfig = {
   removeItemsFromCustomField,
   mapProductIdsByMultiConfig,
   mapCategoryIdsByMultiConfig,
-  checkValidity,
   customMultiConfigComponent,
-  customNonMultiConfigComponet,
+  customNonMultiConfigComponent,
+  validateConfigFilesByApi,
 };
 
 export default rootConfig;
