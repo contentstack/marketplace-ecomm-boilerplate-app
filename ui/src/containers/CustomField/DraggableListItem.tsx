@@ -8,21 +8,17 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import currency from "currency.js";
-import { Props } from "../../common/types";
+import { Props, TypeProduct } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
-import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
+import useAppConfig from "../../common/hooks/useAppConfig";
 
-const DraggableListItem: React.FC<Props> = function ({
-  product,
-  remove,
-  config,
-}) {
-  const { id, name, price, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product, config);
+const DraggableListItem: React.FC<Props> = function ({ product, remove }) {
+  const config = useAppConfig();
+  const { id, name, price, image }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
 
   const {
     attributes,
@@ -31,7 +27,7 @@ const DraggableListItem: React.FC<Props> = function ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product?.id || product?.code });
+  } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -44,7 +40,7 @@ const DraggableListItem: React.FC<Props> = function ({
     <DeleteModal
       type={"Product" || "Category"}
       remove={remove}
-      id={id || product?.code}
+      id={id}
       name={name}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}

@@ -4,7 +4,6 @@
   background: #ffffff;
   box-sizing: border-box;
   box-shadow: 0 8px 20px rgb(34 34 34 / 10%);
-  //   border: 1px solid red;
   display: flex;
   flex-direction: column;
 
@@ -47,6 +46,21 @@
     }
   }
 
+  .filter-container {
+    position: absolute;
+    top: 7.2vh;
+    z-index: 999;
+    display: flex;
+    column-gap: 10px;
+    right: 120px;
+    min-width: inherit;
+    max-width: inherit;
+
+    @media (min-height: 900px) {
+      top: 2.5vh;
+    }
+  }
+
   .selector-product-image {
     width: 40px;
     height: 40px;
@@ -63,30 +77,17 @@
     }
   }
 
-  .filterDropdown {
-    position: absolute;
-    top: 7.3vh;
-    right: 230px;
-    z-index: 999;
-    min-width: inherit;
-    max-width: inherit;
-
-    @media (min-height: 900px) {
-      top: 6.5vh;
-    }
-  }
-
   .Table {
-    height: 79vh;
+    height: 72vh;
     @media (min-height: 900px) {
       height: 82vh;
     }
   }
 
   .Table__body {
-    height: calc(100vh - 147px);
-    max-height: calc(100vh - 147px);
-    min-height: calc(100vh - 147px);
+    height: calc(100vh - 205px);
+    max-height: calc(100vh - 205px);
+    min-height: calc(100vh - 205px);
     padding-bottom: 70px;
 
     .Table__body__column {
@@ -141,8 +142,6 @@
 
   .buttonGroup {
     position: sticky;
-    // bottom: 0;
-    // right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -153,4 +152,8 @@
       margin: 0 0.5rem;
     }
   }
+}
+.multistoredropown {
+  width: 115px;
+  margin-top: 10px;
 }

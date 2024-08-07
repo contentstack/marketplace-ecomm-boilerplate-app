@@ -4,19 +4,24 @@ import {
   ButtonGroup,
   Icon,
   InfiniteScrollTable,
+  Dropdown,
 } from "@contentstack/venus-components";
 import {
   isEmpty,
-  arrangeSelectedIds,
   EmptyObjForSearchCase,
   getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
-import { TypeWarningtext } from "../../common/types";
-import { request, search } from "../../services/index";
+import {
+  CustomFieldType,
+  KeyValueObj,
+  TypeWarningtext,
+} from "../../common/types";
+import { getProductandCategory, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
+import FilterComponent from "../../root_config/selector/FilterComponent";
 
 const SelectorPage: React.FC = function () {
   const [list, setList] = useState<any[]>([]);
@@ -25,23 +30,24 @@ const SelectorPage: React.FC = function () {
   const [selectedData, setSelectedData] = useState<any>({});
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
   const [totalCounts, setTotalCounts] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [itemStatus, setItemStatus] = useState({});
   const [config, setConfig] = useState<any>({});
-  const [searchActive, setSearchActive] = useState(false);
   const [checkedIds, setCheckedIds] = useState([]);
-  const [searchCurrentPage, setSearchCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [hiddenColumns, setHiddenColumns] = useState<any>(
     config?.type === "category" ? [] : ["id"]
   );
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [metaState, setMetaState] = useState<any>({});
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials,
     });
+  const [multiConfigDropDown, setMultiConfigDropDown] = useState<any>([]);
+  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =    useState<any>();
+  const [oldUser, setOldUser] = useState<any>(false);
 
   const tableRef: any = useRef(null);
+
   const getSelectedData = async (_type: any, data = []) => {
     if (data?.length) {
       data?.forEach((id: any) => {
@@ -59,6 +65,46 @@ const SelectorPage: React.FC = function () {
       if (data?.message === "init") {
         getSelectedData(data?.type, data?.selectedItems);
         setConfig({ ...data?.config, type: data?.type });
+        setOldUser(data?.isOldUser);
+        setSelectedIds(data?.selectedIds);
+        if (data?.isOldUser === false && data?.config) {
+          if (data?.advancedConfig?.length) {
+            const multiConfigKeys: any = [];
+            data?.advancedConfig?.forEach((keys: any) => {
+              const obj = {
+                label: keys,
+                value: keys,
+                default: keys === data?.advancedConfig?.[0],
+              };
+              multiConfigKeys.push(obj);
+              setMultiConfigDropDown([...multiConfigKeys]);
+              if (multiConfigKeys?.length) {
+                multiConfigKeys[0].default = true;
+                setSelectedMultiConfigValue(multiConfigKeys?.[0]);
+              }
+            });
+          } else if (data?.config?.multi_config_keys) {
+            const multiConfigKeys: any = [];
+            Object.keys(data?.config?.multi_config_keys)?.forEach(
+              (keys: any) => {
+                const obj = {
+                  label: keys,
+                  value: keys,
+                  default: true,
+                };
+                multiConfigKeys.push(obj);
+                const defaultObject = multiConfigKeys?.filter(
+                  (objkey: any) =>
+                    objkey?.value === data?.config?.default_multi_config_key
+                );
+                if (defaultObject?.length) {
+                  setMultiConfigDropDown(defaultObject);
+                  setSelectedMultiConfigValue(defaultObject[0]);
+                }
+              }
+            );
+          }
+        }
       }
     }
   };
@@ -74,19 +120,20 @@ const SelectorPage: React.FC = function () {
     }
   }, []);
 
-  const fetchInitialData = async (searchTextParam: any) => {
+  const fetchInitialData = async (meta: any) => {
     try {
       if (!isEmpty(config)) {
         setItemStatus({
-          ...getItemStatusMap({}, "loading", 0, Number(config?.page_count)),
+          ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = searchTextParam ?
-          await search(config, searchTextParam, 1, config?.page_count)
-          : await request(config, config?.type, currentPage + 1);
-        if (searchText) {
-          setSearchActive(true);
-          setSearchCurrentPage(1);
-        }
+        const response = await getProductandCategory(
+          config,
+          config?.type,
+          meta?.skip,
+          meta?.limit,
+          oldUser,
+          selectedMultiConfigValue
+        );
         if (!response?.error) {
           setList(response?.data?.items);
           if (config?.type === "category")
@@ -102,12 +149,6 @@ const SelectorPage: React.FC = function () {
             ),
           });
           setLoading(false);
-          setCurrentPage(response?.data?.meta?.current_page);
-          if (searchText) {
-            setSearchCurrentPage(response?.data?.meta?.current_page);
-          } else {
-            setCurrentPage(response?.data?.meta?.current_page);
-          }
         } else {
           setIsInvalidCredentials(response);
         }
@@ -117,27 +158,23 @@ const SelectorPage: React.FC = function () {
     }
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchInitialData(searchText);
-  }, [config]);
-
   const fetchData = async (meta: any) => {
+    setMetaState(meta);
     try {
       if (meta?.searchText && !isEmpty(config)) {
-        setSearchActive(true);
         setSearchText(meta?.searchText);
         const response = await search(
           config,
           meta?.searchText,
-          1,
-          config?.page_count
+          meta?.skip,
+          meta?.limit,
+          oldUser,
+          selectedMultiConfigValue
         );
         if (!response?.error) {
           setList(response?.data?.items);
           setLoading(false);
           setTotalCounts(response?.data?.meta?.total);
-          setSearchCurrentPage(response?.data?.meta?.current_page);
           const responseDataLength = response?.data?.items?.length;
           setItemStatus({
             ...getItemStatusMap({}, "loaded", 0, responseDataLength),
@@ -146,99 +183,53 @@ const SelectorPage: React.FC = function () {
           setIsInvalidCredentials(response);
         }
       } else {
-        setSearchActive(false);
+        setLoading(true);
         setSearchText("");
-        fetchInitialData("");
+        fetchInitialData(meta);
       }
     } catch (err) {
       console.error(localeTexts.selectorPage.tableFetchError, err);
     }
   };
 
-  const loadMoreItems = async (meta: any) => {
-    if (searchActive && !isEmpty(config)) {
-      try {
-        setItemStatus({
-          ...getItemStatusMap(
-            { ...itemStatus },
-            "loading",
-            meta?.startIndex,
-            meta?.startIndex ?? 0 + Number(config?.page_count)
-          ),
-        });
-        const response = await request(config, config?.type, currentPage + 1);
-        if (!response?.error) {
-          setCurrentPage(response?.data?.meta?.current_page);
-          setList((prev: any) => [...prev, ...(response?.data?.items || [])]);
-          setLoading(false);
-          setItemStatus({
-            ...getItemStatusMap(
-              { ...itemStatus },
-              "loaded",
-              meta?.startIndex,
-              meta?.startIndex ?? 0 + Number(config?.page_count)
-            ),
-          });
-        } else {
-          setIsInvalidCredentials(response);
-        }
-      } catch (err) {
-        console.error(localeTexts.selectorPage.loadingError, err);
-      }
-    } else {
-      try {
-        setItemStatus({
-          ...getItemStatusMap(
-            { ...itemStatus },
-            "loading",
-            meta?.startIndex,
-            meta?.startIndex ?? 0 + Number(config?.page_count)
-          ),
-        });
-        const response = await search(
-          config,
-          meta?.searchText,
-          searchCurrentPage + 1,
-          config?.page_count
-        );
-        if (!response?.error) {
-          setSearchCurrentPage(response?.data?.meta?.current_page);
-          // eslint-disable-next-line no-unsafe-optional-chaining
-          setList([...list, ...response?.data?.items]);
-          setItemStatus({
-            ...getItemStatusMap(
-              { ...itemStatus },
-              "loaded",
-              meta?.startIndex,
-              meta?.startIndex ?? 0 + Number(config?.page_count)
-            ),
-          });
-        } else {
-          setIsInvalidCredentials(response);
-        }
-      } catch (err) {
-        console.error(localeTexts.selectorPage.errHandling, err);
-      }
-    }
-  };
+  useEffect(() => {
+    setLoading(true);
+    fetchData({ searchText, skip: 0, limit: 30 });
+  }, [config]);
 
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
     const selectedObj: any = [];
     singleSelectedRowIds?.forEach((assetUid: any) => {
       selectedObj[assetUid] = true;
     });
+    if (oldUser === false && config) {
+      const cpyOfSelectedIDS = { ...selectedIds };
+      const url = window?.location?.href;
+      const urlObj = new URL(url);
+      const params = new URLSearchParams(urlObj.search);
+      const type = params?.get("type");
+      const multiConfigFormatIDS = rootConfig.mapProductIdsByMultiConfig(
+        selected,
+        type
+      );
+      const updatedSelectedIDS = {
+        ...cpyOfSelectedIDS,
+        ...multiConfigFormatIDS,
+      };
+      setSelectedIds(updatedSelectedIDS);
+    } else {
+      setSelectedIds(singleSelectedRowIds);
+    }
+
     setSelectedRows({ ...selectedObj });
     setSelectedData(selected);
     setCheckedIds(singleSelectedRowIds);
   };
 
-  useEffect(() => {
-    setSelectedIds(arrangeSelectedIds(selectedIds, checkedIds));
-  }, [checkedIds]);
-
   const returnSelectedData = () => {
     const dataArr = JSON.parse(JSON.stringify(selectedData));
     const dataIds = JSON.parse(JSON.stringify(selectedIds));
+
     if (window?.opener) {
       window.opener.postMessage(
         { message: "add", dataArr, dataIds },
@@ -260,6 +251,25 @@ const SelectorPage: React.FC = function () {
     });
     setHiddenColumns(hiddenColumnsTemp);
   };
+  useEffect(() => {
+    if (isEmpty(config)) return;
+    const fetchShopifyData = async () => {
+      fetchData({ searchText, skip: 0, limit: 30 });
+    };
+    if (selectedMultiConfigValue?.value) {
+      fetchShopifyData();
+    }
+  }, [selectedMultiConfigValue]);
+
+  const updateList = (filteredList: any) => filteredList;
+
+  const handleMultiConfigData = (event: any) => {
+    if (event !== selectedMultiConfigValue) {
+      setList([]);
+    }
+    setIsInvalidCredentials("" as any);
+    setSelectedMultiConfigValue(event);
+  };
 
   const renderSelectorPage = () => {
     if (isInvalidCredentials?.error)
@@ -270,6 +280,30 @@ const SelectorPage: React.FC = function () {
       );
     return (
       <>
+        <div className="filter-container">
+          {oldUser === false ? (
+            <div className="filterDropdown multistoredropown">
+              <Dropdown
+                type="select"
+                dropDownPosition="bottom"
+                list={multiConfigDropDown}
+                onChange={handleMultiConfigData}
+                withArrow
+                withSearch
+                closeAfterSelect
+                highlightActive
+              />
+            </div>
+          ) : (
+            ""
+          )}
+          <FilterComponent
+            config={config}
+            meta={metaState}
+            updateList={updateList}
+          />
+        </div>
+
         <InfiniteScrollTable
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
@@ -279,9 +313,12 @@ const SelectorPage: React.FC = function () {
           viewSelector
           canRefresh
           canSearch={config?.type !== "category"}
+          v2Features={{
+            pagination: true,
+          }}
           data={
-            list?.length ?
-              list.map((listData) => ({
+            list?.length
+              ? list.map((listData) => ({
                   ...listData,
                   [rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]: `${
                     listData[rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]]
@@ -290,8 +327,8 @@ const SelectorPage: React.FC = function () {
               : []
           }
           columns={
-            config?.type === "category" ?
-              rootConfig.categorySelectorColumns(config)
+            config?.type === "category"
+              ? rootConfig.categorySelectorColumns(config)
               : rootConfig.getProductSelectorColumns(config)
           }
           loading={loading}
@@ -300,14 +337,11 @@ const SelectorPage: React.FC = function () {
           itemStatusMap={itemStatus}
           fetchTableData={fetchData}
           totalCounts={totalCounts}
-          loadMoreItems={loadMoreItems}
           fixedlistRef={tableRef}
-          minBatchSizeToFetch={
-            config?.page_count || rootConfig.ecommerceEnv.FETCH_PER_PAGE
-          }
+          minBatchSizeToFetch={30}
           name={
-            config.type === "category" ?
-              {
+            config.type === "category"
+              ? {
                   singular: localeTexts.selectorPage.searchPlaceholder.category,
                   plural: localeTexts.selectorPage.searchPlaceholder.categories,
                 }
@@ -319,8 +353,8 @@ const SelectorPage: React.FC = function () {
           searchPlaceholder={`${
             localeTexts.selectorPage.searchPlaceholder.caption
           } ${
-            config?.type === "category" ?
-              localeTexts.selectorPage.searchPlaceholder.categories
+            config?.type === "category"
+              ? localeTexts.selectorPage.searchPlaceholder.categories
               : localeTexts.selectorPage.searchPlaceholder.products
           }`}
           emptyObj={EmptyObjForSearchCase}
@@ -354,10 +388,12 @@ const SelectorPage: React.FC = function () {
             <Icon icon="AddPlus" />
             {localeTexts.selectorPage.add.replace(
               "#",
-              selectedIds?.length.toString()
+              oldUser === false
+                ? checkedIds?.length?.toString()
+                : selectedIds?.length?.toString()
             )}{" "}
-            {config?.type === "category" ?
-              `${localeTexts.buttonLabels.category}`
+            {config?.type === "category"
+              ? `${localeTexts.buttonLabels.category}`
               : `${localeTexts.buttonLabels.product}`}
           </Button>
         </ButtonGroup>

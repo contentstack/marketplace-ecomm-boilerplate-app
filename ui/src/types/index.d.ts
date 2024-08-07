@@ -14,7 +14,6 @@ export interface EcommerceEnv {
     product: string,
     category: string,
   };
-  FETCH_PER_PAGE?: number;
 }
 
 interface KeyOption {
@@ -44,6 +43,7 @@ export interface TypeProduct {
   image: string;
   price: string;
   sku?: string;
+  isProductDeleted: Boolean;
 }
 
 export interface TypeCategory {
@@ -51,6 +51,7 @@ export interface TypeCategory {
   name: string;
   customUrl?: string;
   description: string;
+  isCategoryDeleted: Boolean;
 }
 
 export interface SidebarDataObj {
@@ -67,4 +68,22 @@ export interface APIResponseType {
       current_page: number;
     };
   };
+}
+
+export interface ConfigField {
+  type: any;
+  labelText: string;
+  helpText: string;
+  placeholderText: string;
+  instructionText: string;
+  saveInConfig: boolean;
+  saveInServerConfig: boolean;
+  isSensitive: boolean;
+  isMultiConfig: boolean;
+  isConfidential: boolean;
+  isApiValidationEnabled: boolean;
+}
+
+export interface ConfigureConfigScreen {
+  [key: string]: ConfigField;
 }

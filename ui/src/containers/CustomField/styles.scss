@@ -110,9 +110,7 @@
         width: 100%;
         padding: 10px 10px 0 10px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
         overflow-y: auto;
-        overflow-x: hidden;
 
         & > :nth-child(odd) {
           margin-right: 20px;
@@ -139,7 +137,7 @@
         flex-direction: column;
         align-items: flex-start;
         padding: 20px;
-        width: 203px;
+        width: 403px;
         height: 173px;
 
         .product-name {
@@ -194,7 +192,7 @@
 
       .ActionTooltip {
         height: 173px;
-        width: 360px;
+        width: 514px;
         margin-bottom: 20px;
         cursor: -webkit-grabbing;
         cursor: grabbing;
@@ -274,7 +272,7 @@
       }
 
       .Table__head__row .Table__head__column:first-child {
-        width: 100px;
+        width: 124px;
       }
 
       .Table__body__row .Table__body__column:first-child {
@@ -435,4 +433,15 @@ dl,
 ol,
 ul {
   margin-bottom: 0;
+}
+
+.config-deleted-message {
+  border-radius: 4px;
+  border-left: 4px solid var(--Brand-Colors-Brand-Orange, #eb5646);
+  background-color: #fff8eb;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100%;
+  margin-top: 4px;
 }

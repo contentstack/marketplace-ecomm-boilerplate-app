@@ -1,14 +1,16 @@
 import React from "react";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 import { Icon, Tooltip, Link } from "@contentstack/venus-components";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
 
 const isEmpty = (val: any): boolean =>
-  val === undefined ||
-  val === null ||
-  (typeof val === "object" && !Object.keys(val)?.length) ||
-  (typeof val === "string" && !val.trim().length);
+  val === undefined
+  || val === null
+  || (typeof val === "object" && !Object.keys(val)?.length)
+  || (typeof val === "string" && !val?.trim()?.length);
 
 const filterFetchedArray = (array: any[]) => {
   const tempFetchedList = [...array];
@@ -23,74 +25,34 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   return window.open(
     windowDetails.url,
     windowDetails.title,
-    "toolbar=no, location=no, directories=no, " +
-      `status=no, menubar=no, scrollbars=no, resizable=no, ` +
-      `copyhistory=no, width=${windowDetails.w}, ` +
-      `height=${windowDetails.h}, ` +
-      `top=${top}, left=${left}`
+    "toolbar=no, location=no, directories=no, "
+      + `status=no, menubar=no, scrollbars=no, resizable=no, `
+      + `copyhistory=no, width=${windowDetails.w}, `
+      + `height=${windowDetails.h}, `
+      + `top=${top}, left=${left}`
   );
 };
 
 const mergeObjects = (target: any, source: any) => {
-  Object.keys(source)?.forEach((key) => {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], mergeObjects(target[key], source[key]));
+  const sourceCopy = JSON.parse(JSON.stringify(source)); // Deep copy of source
+
+  Object.keys(sourceCopy)?.forEach((key) => {
+    if (sourceCopy?.[key] instanceof Object && key in target) {
+      Object.assign(
+        sourceCopy?.[key],
+        mergeObjects(target?.[key], sourceCopy?.[key])
+      );
     }
   });
-  Object.assign(target || {}, source);
+
+  Object.assign(target || {}, sourceCopy);
   return target;
 };
 
-const getCurrencySymbol = (code: string) => {
-  switch (code) {
-    case "USD":
-      return "$"; // US Dollar
-    case "EUR":
-      return "€"; // Euro
-    case "CRC":
-      return "₡"; // Costa Rican Colón
-    case "GBP":
-      return "£"; // British Pound Sterling
-    case "ILS":
-      return "₪"; // Israeli New Sheqel
-    case "INR":
-      return "₹"; // Indian Rupee
-    case "JPY":
-      return "¥"; // Japanese Yen
-    case "KRW":
-      return "₩"; // South Korean Won
-    case "NGN":
-      return "₦"; // Nigerian Naira
-    case "PHP":
-      return "₱"; // Philippine Peso
-    case "PLN":
-      return "zł"; // Polish Zloty
-    case "PYG":
-      return "₲"; // Paraguayan Guarani
-    case "THB":
-      return "฿"; // Thai Baht
-    case "UAH":
-      return "₴"; // Ukrainian Hryvnia
-    case "VND":
-      return "₫"; // Vietnamese Dong
-    default:
-      return "";
-  }
-};
+const getSanitizedHTML = (content: any) => parse(DOMPurify.sanitize(content));
 
-const wrapWithDiv = (description: string) =>
-  description ? (
-    <div
-      className="product-desc"
-      // eslint-disable-next-line react/no-danger, @typescript-eslint/no-use-before-define, @typescript-eslint/naming-convention
-      dangerouslySetInnerHTML={{ __html: removeHTMLTags(description) }}
-    />
-  ) : (
-    ""
-  );
-
-const findProduct = (products: any, id: any) =>
-  products?.find((p: any) => p?.id === id) || {};
+const findProduct = (products: any, id: any, uniqueKey: any) =>
+  products?.find((p: any) => p?.[uniqueKey] === id) || {};
 
 const findProductIndex = (products: any, id: any) =>
   products?.findIndex((p: any) => p?.id === id);
@@ -121,98 +83,14 @@ const getImage = (url: string, customField: boolean = false) =>
           src={NoImg}
           alt={localeTexts.selectorPage.noImageAvailable}
           className={
-            customField ?
-              "custom-field-product-image"
+            customField
+              ? "custom-field-product-image"
               : "selector-product-image"
           }
         />
       </Tooltip>
     </div>
   );
-
-const productColumns = [
-  {
-    Header: "Product Id",
-    id: "code",
-    accessor: "code",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) =>
-      obj?.images?.[0]?.url ?
-        getImage(
-            `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
-          )
-        : getImage(obj?.images?.[0]?.url),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.7,
-  },
-  {
-    Header: "Product Name",
-    id: "name",
-    accessor: "name",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3,
-  },
-  {
-    Header: "Price",
-    accessor: (obj: any) => obj?.price?.formattedValue,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3.5,
-  },
-];
-const categoryColumns = [
-  {
-    Header: "ID",
-    id: "id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: "name",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Custom URL",
-    accessor: (obj: any) => obj?.custom_url?.url || obj?.url,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 4,
-  },
-];
 
 const gridViewDropdown = [
   {
@@ -238,6 +116,15 @@ const gridViewDropdown = [
 
 const removeHTMLTags = (description: string) =>
   description ? description.replace(/(<([^>]+)>)/gi, " ") : "";
+
+const wrapWithDiv = (description: string) =>
+  description ? (
+    <div className="product-desc">
+      {getSanitizedHTML(removeHTMLTags(description))}
+    </div>
+  ) : (
+    ""
+  );
 
 const getTypeLabel = (type: string, length: number) => {
   if (type === "category") {
@@ -296,7 +183,7 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
 
   sortedIdsArray?.forEach((mItem: any) => {
     dataArray?.forEach((sItem: any) => {
-      if (Number(sItem) === Number(mItem)) {
+      if (sItem?.toString() === mItem?.toString()) {
         data.push(sItem);
       }
     });
@@ -305,17 +192,97 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
   return data;
 };
 
+const categorizeConfigFields = (configFields: any) => {
+  const isMultiConfigAndSaveInServerConfig: any = {};
+  const isMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInConfig: any = {};
+  const isNotMultiConfigAndSaveInServerConfig: any = {};
+
+  Object.keys(configFields).forEach((key) => {
+    const field = configFields?.[key];
+    if (field?.isMultiConfig) {
+      if (field?.saveInServerConfig) {
+        isMultiConfigAndSaveInServerConfig[key] = "";
+      }
+      if (field?.saveInConfig) {
+        isMultiConfigAndSaveInConfig[key] = "";
+      }
+    } else {
+      if (field?.saveInConfig) {
+        isNotMultiConfigAndSaveInConfig[key] = "";
+      }
+      if (field?.saveInServerConfig) {
+        isNotMultiConfigAndSaveInServerConfig[key] = "";
+      }
+    }
+  });
+
+  return {
+    isMultiConfigAndSaveInServerConfig,
+    isMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInConfig,
+    isNotMultiConfigAndSaveInServerConfig,
+  };
+};
+
+const extractFieldsByConfigType = (configScreen: any) => {
+  const multiConfigFields: string[] = [];
+  const singleConfigFields: string[] = [];
+
+  Object.entries(configScreen)?.forEach(([key, value]: any) => {
+    if (value?.isMultiConfig) {
+      multiConfigFields.push(key);
+    } else {
+      singleConfigFields.push(key);
+    }
+  });
+
+  return { multiConfigFields, singleConfigFields };
+};
+const arrangeList = (
+  sortedIdsArray: any[],
+  dataArray: any[],
+  uniqueKey: string
+) => {
+  const data: any[] = [];
+  sortedIdsArray?.forEach((mItem: any) => {
+    dataArray?.forEach((sItem: any) => {
+      if (sItem && sItem?.[uniqueKey] === mItem) {
+        data.push(sItem);
+      }
+    });
+  });
+  return data;
+};
+
+const extractKeysForCustomApiValidation = (config: Record<string, any>) =>
+  Object.entries(config)?.reduce(
+    (acc, [key, value]) => {
+      if (value?.isApiValidationEnabled) {
+        if (value?.isMultiConfig) {
+          acc?.multiConfigTrueAndApiValidationEnabled?.push(key);
+        } else {
+          acc?.multiConfigFalseAndApiValidationEnabled?.push(key);
+        }
+      }
+      return acc;
+    },
+    {
+      multiConfigTrueAndApiValidationEnabled: [] as string[],
+      multiConfigFalseAndApiValidationEnabled: [] as string[],
+    }
+  );
+
 export {
+  extractKeysForCustomApiValidation,
   isEmpty,
   popupWindow,
   filterFetchedArray,
   mergeObjects,
-  productColumns,
-  categoryColumns,
   gridViewDropdown,
+  getSanitizedHTML,
   wrapWithDiv,
   getTypeLabel,
-  getCurrencySymbol,
   findProduct,
   findProductIndex,
   getImage,
@@ -324,4 +291,7 @@ export {
   arrangeSelectedIds,
   getItemStatusMap,
   removeHTMLTags,
+  categorizeConfigFields,
+  extractFieldsByConfigType,
+  arrangeList,
 };

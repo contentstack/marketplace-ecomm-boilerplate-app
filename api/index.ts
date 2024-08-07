@@ -1,88 +1,58 @@
-import CryptoJS from "crypto-js";
 import constants from "./constants";
 import {
-  getProductAndCategory,
-  getById,
-  getSelectedProdsAndCats,
+  getAllProductsAndCategories,
+  getProductByID,
+  getSelectedProductsAndCategories,
   filterByCategory,
 } from "./handler";
-import root_config from "./root_config";
+import { processRequestBody, _isEmpty } from "./utils";
 
-const _isEmpty: any = (val: any) =>
-  val === undefined ||
-  val === null ||
-  (typeof val === "object" && !Object.keys(val)?.length) ||
-  (typeof val === "string" && !val.trim().length);
-
-const decrypt: any = (transitmessage: any, pass: any) => {
-  const salt = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(0, 32));
-  const iv = CryptoJS?.enc?.Hex?.parse(transitmessage?.substr(32, 32));
-  const encrypted = transitmessage?.substring(64);
-
-  const key = CryptoJS?.PBKDF2(pass, salt, {
-    keySize: constants.DECRYPTION.keySize / 32,
-    iterations: constants.DECRYPTION.iterations,
-  });
-
-  const decrypted = CryptoJS?.AES?.decrypt(encrypted, key, {
-    iv,
-    padding: CryptoJS?.pad?.Pkcs7,
-    mode: CryptoJS?.mode?.CBC,
-  });
-  return decrypted?.toString(CryptoJS.enc.Utf8);
-};
-
+/**
+ * Main handler function for processing requests.
+ * The logic here determines the type of request and routes it to the appropriate function.
+ */
 const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let message: any;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
-  const configKeys: string[] = Object.keys(body);
-  const configKeysLength: number = configKeys?.length;
-  for (let i = 0; i < configKeysLength; i += 1) {
-    const key: any = configKeys[i];
-    const value: any = body[key];
-    // body will have the config object
-    if (root_config.SENSITIVE_CONFIG_KEYS.indexOf(key) > -1) {
-      body[key] = decrypt(value, constants.DECRYPTION.password);
-    }
-  }
+  // eslint-disable-next-line no-param-reassign
+  body = processRequestBody(body);
+
   try {
     console.info(constants.LOGS.REQ_BODY, body);
     console.info(constants.LOGS.QUERY_PARAMS, query);
-    const resErr: any = new Error();
-    if (_isEmpty(body)) {
-      resErr.statusCode = constants.HTTP_ERROR_CODES.BAD_REQ;
-      resErr.message = constants.HTTP_ERROR_TEXTS.QUERY_MISSING;
 
-      throw resErr;
+    // Check if the body is empty and throw an error if it is
+    if (_isEmpty(body)) {
+      throw {
+        statusCode: constants.HTTP_ERROR_CODES.BAD_REQ,
+        message: constants.HTTP_ERROR_TEXTS.QUERY_MISSING,
+      };
     }
 
-    /** Below block of code is just for illustration.
-     * Actuall logic of getting products or categories or any other data,
-     * might change based on the ecommerce platform that you are using to integrate.
-     * Please update the code accordingly.
-     * */
-    query.limit =
-      query?.limit > constants.FETCH_PRODUCT_LIMIT ?
-        constants.FETCH_PRODUCT_LIMIT
-        : query?.limit;
-    if (query["sku:in"] || query["id:in"])
-      message = await getSelectedProdsAndCats(query, body);
-    else if (query["categories:in"])
+    // Determine request type and process accordingly
+    if (query?.["sku:in"] || query?.["id:in"]) {
+      // Request for selected products or categories
+      message = await getSelectedProductsAndCategories(query, body);
+    } else if (query?.["categories:in"]) {
+      // Filter products by categories
       message = await filterByCategory(query, body);
-    else if (query?.id) message = await getById(query, body);
-    else message = await getProductAndCategory(query, body);
-    /** Above block of code is just for illustration.
-     * Actuall logic of getting products or categories or any other data,
-     * might change based on the ecommerce platform that you are using to integrate.
-     * Please update the code accordingly.
-     * */
+    } else if (query?.id) {
+      // Get a particular product by ID
+      message = await getProductByID(query, body);
+    } else {
+      // Get all products and categories
+      message = await getAllProductsAndCategories(query, body);
+    }
   } catch (e: any) {
+    // Handle errors and set response status code and message
     statusCode = e?.statusCode || constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
     message = e?.message || constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
     console.error(
       `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`
     );
   }
+
+  // Return the response with the appropriate status code, headers, and body
   const res = {
     statusCode,
     headers: {
@@ -92,6 +62,7 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     // body: JSON.stringify(message), // For deploying the code to AWS Lambda
     body: message, // For Localhost
   };
+
   return res;
 };
 
