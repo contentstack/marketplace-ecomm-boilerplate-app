@@ -58,8 +58,7 @@ const ecommerceEnv: EcommerceEnv = {
  * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
  *  - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
  */
-const configureConfigScreen: () => ConfigureConfigScreen = () => ({
-});
+const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
 const getCustomKeys = (): KeyOption[] => [
   {

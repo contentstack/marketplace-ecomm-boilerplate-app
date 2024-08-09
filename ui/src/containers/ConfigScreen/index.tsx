@@ -57,9 +57,8 @@ const ConfigScreen: React.FC = function () {
       saveInServerConfig[field] = configInputFields?.[field];
   });
   // Function to check if any key has isMultiConfig: true
-   const hasMultiConfig = (config:any) => (
-   Object.values(config)?.some((field:any) => field?.isMultiConfig === true)
-   )
+  const hasMultiConfig = (config: any) =>
+    Object.values(config)?.some((field: any) => field?.isMultiConfig === true);
 
   // Determine if at least one key has isMultiConfig: true
   const shouldIncludeMultiConfig = hasMultiConfig(configInputFields);
@@ -169,7 +168,7 @@ const ConfigScreen: React.FC = function () {
       }
       return false;
     };
-  
+
     const checkMultiConfigKeys = (multiConfigKeys: any) => {
       const invalidKeys: any = {};
 
@@ -189,7 +188,8 @@ const ConfigScreen: React.FC = function () {
     const checkOtherKeys = (keys: any) => {
       const invalidKeys: string[] = [];
       Object.entries(keys || {})?.forEach(([key, value]) => {
-        if (key === "default_multi_config_key"||key==="multi_config_keys") return; 
+        if (key === "default_multi_config_key" || key === "multi_config_keys")
+          return;
         if (isEmptyValue(value)) {
           invalidKeys?.push(key);
         }
@@ -197,19 +197,24 @@ const ConfigScreen: React.FC = function () {
       return invalidKeys;
     };
 
-  const hasMultiConfigKeys = (data: any) => (
-     Object.values(data)?.some((field: any) => field?.isMultiConfig === true)
-  )
+    const hasMultiConfigKeys = (data: any) =>
+      Object.values(data)?.some((field: any) => field?.isMultiConfig === true);
 
-  const multiConfigKeysPresent = hasMultiConfigKeys(rootConfig?.configureConfigScreen())
+    const multiConfigKeysPresent = hasMultiConfigKeys(
+      rootConfig?.configureConfigScreen()
+    );
 
-  let normalInvalidKeys = {};
-  let serverNormalInvalidKeys = {};
+    let normalInvalidKeys = {};
+    let serverNormalInvalidKeys = {};
 
-  if (multiConfigKeysPresent && !validateMultiConfigKeysByApi) {
-    normalInvalidKeys = checkMultiConfigKeys(configurationData?.multi_config_keys);
-    serverNormalInvalidKeys = checkMultiConfigKeys(serverConfiguration?.multi_config_keys);
-  }
+    if (multiConfigKeysPresent && !validateMultiConfigKeysByApi) {
+      normalInvalidKeys = checkMultiConfigKeys(
+        configurationData?.multi_config_keys
+      );
+      serverNormalInvalidKeys = checkMultiConfigKeys(
+        serverConfiguration?.multi_config_keys
+      );
+    }
 
     const normalInvalidKeysList = [
       ...Object.entries(normalInvalidKeys)
@@ -302,22 +307,27 @@ const ConfigScreen: React.FC = function () {
           });
         } else if (!isValid) {
           const uniqueInvalidKeysMap = new Map<string, Set<string>>();
-        
+
           invalidKeys.forEach(({ source, keys }: any) => {
             if (!uniqueInvalidKeysMap?.has(source)) {
               uniqueInvalidKeysMap?.set(source, new Set<string>());
             }
-            keys?.forEach((key: string) => uniqueInvalidKeysMap?.get(source)?.add(key));
+            keys?.forEach((key: string) =>
+              uniqueInvalidKeysMap?.get(source)?.add(key)
+            );
           });
-        
+
           const invalidKeysMessage = Array.from(uniqueInvalidKeysMap?.entries())
-            ?.map(([source, keysSet]) => `${source}: ${Array.from(keysSet).join(", ")}`)
+            ?.map(
+              ([source, keysSet]) =>
+                `${source}: ${Array.from(keysSet).join(", ")}`
+            )
             ?.join(" | ");
-        
+
           sdkConfigDataState.setValidity(false, {
             message: `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg}: ${invalidKeysMessage}`,
           });
-        }else {
+        } else {
           sdkConfigDataState.setValidity(true);
         }
       };
@@ -446,116 +456,126 @@ const ConfigScreen: React.FC = function () {
             installationDataFromSDK
           );
           const defaultMultiConfigKey =            installationDataOfSdk?.default_multi_config_key ?? "legacy_config";
-          if(shouldIncludeMultiConfig){
-          if (defaultMultiConfigKey === "legacy_config") {
-            Object.keys(installationDataOfSdk?.configuration)?.forEach(
-              (key) => {
-                if (!keysToIncludeOrExclude.includes(key)) {
-                  if (
-                    Object.hasOwn(result?.isMultiConfigAndSaveInConfig, key)
-                  ) {
-                    newConfigurationObject.legacy_config[key] =                      installationDataOfSdk?.configuration?.multi_config_keys
-                        ?.legacy_config?.[key] !== undefined
-                        ? installationDataOfSdk?.configuration
-                            ?.multi_config_keys?.legacy_config?.[key]
-                        : installationDataOfSdk?.configuration?.[key];
+          if (shouldIncludeMultiConfig) {
+            if (defaultMultiConfigKey === "legacy_config") {
+              Object.keys(installationDataOfSdk?.configuration)?.forEach(
+                (key) => {
+                  if (!keysToIncludeOrExclude.includes(key)) {
+                    if (
+                      Object.hasOwn(result?.isMultiConfigAndSaveInConfig, key)
+                    ) {
+                      newConfigurationObject.legacy_config[key] =                        installationDataOfSdk?.configuration?.multi_config_keys
+                          ?.legacy_config?.[key] !== undefined
+                          ? installationDataOfSdk?.configuration
+                              ?.multi_config_keys?.legacy_config?.[key]
+                          : installationDataOfSdk?.configuration?.[key];
+                    }
                   }
                 }
-              }
-            );
+              );
 
-            Object.keys(installationDataOfSdk?.serverConfiguration)?.forEach(
-              (key) => {
-                if (!keysToIncludeOrExclude.includes(key)) {
-                  if (
-                    Object.hasOwn(
-                      result?.isMultiConfigAndSaveInServerConfig,
-                      key
-                    )
-                  ) {
-                    newServerConfigurationObject.legacy_config[key] =                      installationDataOfSdk?.serverConfiguration
-                        ?.multi_config_keys?.legacy_config?.[key] !== undefined
-                        ? installationDataOfSdk?.serverConfiguration
-                            ?.multi_config_keys?.legacy_config?.[key]
-                        : installationDataOfSdk?.serverConfiguration?.[key];
+              Object.keys(installationDataOfSdk?.serverConfiguration)?.forEach(
+                (key) => {
+                  if (!keysToIncludeOrExclude.includes(key)) {
+                    if (
+                      Object.hasOwn(
+                        result?.isMultiConfigAndSaveInServerConfig,
+                        key
+                      )
+                    ) {
+                      newServerConfigurationObject.legacy_config[key] =                        installationDataOfSdk?.serverConfiguration
+                          ?.multi_config_keys?.legacy_config?.[key]
+                        !== undefined
+                          ? installationDataOfSdk?.serverConfiguration
+                              ?.multi_config_keys?.legacy_config?.[key]
+                          : installationDataOfSdk?.serverConfiguration?.[key];
+                    }
                   }
                 }
-              }
-            );
+              );
 
-            const filteredConfiguration: any =              combinedConfigurationKeys?.reduce((acc: any, key: any) => {
-                if (Object.hasOwn(installationDataOfSdk?.configuration, key)) {
-                  acc[key] = installationDataOfSdk?.configuration?.[key];
-                }
-                return acc;
-              }, {});
+              const filteredConfiguration: any =                combinedConfigurationKeys?.reduce((acc: any, key: any) => {
+                  if (
+                    Object.hasOwn(installationDataOfSdk?.configuration, key)
+                  ) {
+                    acc[key] = installationDataOfSdk?.configuration?.[key];
+                  }
+                  return acc;
+                }, {});
 
-            const filteredServerConfiguration: any =              combinedServerConfigurationKeys?.reduce((acc: any, key: any) => {
-                if (
-                  Object.hasOwn(installationDataOfSdk?.serverConfiguration, key)
-                ) {
-                  acc[key] = installationDataOfSdk?.serverConfiguration?.[key];
-                }
-                return acc;
-              }, {});
+              const filteredServerConfiguration: any =                combinedServerConfigurationKeys?.reduce(
+                  (acc: any, key: any) => {
+                    if (
+                      Object.hasOwn(
+                        installationDataOfSdk?.serverConfiguration,
+                        key
+                      )
+                    ) {
+                      acc[key] =                        installationDataOfSdk?.serverConfiguration?.[key];
+                    }
+                    return acc;
+                  },
+                  {}
+                );
 
-            const updatedMultiConfigKeys = {
-              ...installationDataOfSdk?.configuration?.multi_config_keys,
-              ...newConfigurationObject,
-            };
-            const updatedMultiConfigServerKeys = {
-              ...installationDataOfSdk?.serverConfiguration?.multi_config_keys,
-              ...newServerConfigurationObject,
-            };
-            updatedConfigurationObject = {
-              configuration: filteredConfiguration,
-              serverConfiguration: filteredServerConfiguration,
-              webhooks: installationDataOfSdk?.webhooks,
-              uiLocations: installationDataOfSdk?.uiLocations,
-            };
-            updatedConfigurationObject.configuration.multi_config_keys =              updatedMultiConfigKeys;
-            updatedConfigurationObject.serverConfiguration.multi_config_keys =              updatedMultiConfigServerKeys;
-          }
-          if (
-            Object.keys(
-              updatedConfigurationObject?.configuration?.multi_config_keys
-                ?.legacy_config
-            ).every((key) => {
-              const value =                updatedConfigurationObject?.configuration?.multi_config_keys
-                  ?.legacy_config?.[key];
-              return value === undefined || value === null || value === "";
-            })
-          ) {
-            delete updatedConfigurationObject?.configuration?.multi_config_keys
-              ?.legacy_config;
-          }
+              const updatedMultiConfigKeys = {
+                ...installationDataOfSdk?.configuration?.multi_config_keys,
+                ...newConfigurationObject,
+              };
+              const updatedMultiConfigServerKeys = {
+                ...installationDataOfSdk?.serverConfiguration
+                  ?.multi_config_keys,
+                ...newServerConfigurationObject,
+              };
+              updatedConfigurationObject = {
+                configuration: filteredConfiguration,
+                serverConfiguration: filteredServerConfiguration,
+                webhooks: installationDataOfSdk?.webhooks,
+                uiLocations: installationDataOfSdk?.uiLocations,
+              };
+              updatedConfigurationObject.configuration.multi_config_keys =                updatedMultiConfigKeys;
+              updatedConfigurationObject.serverConfiguration.multi_config_keys =                updatedMultiConfigServerKeys;
+            }
+            if (
+              Object.keys(
+                updatedConfigurationObject?.configuration?.multi_config_keys
+                  ?.legacy_config
+              ).every((key) => {
+                const value =                  updatedConfigurationObject?.configuration?.multi_config_keys
+                    ?.legacy_config?.[key];
+                return value === undefined || value === null || value === "";
+              })
+            ) {
+              delete updatedConfigurationObject?.configuration
+                ?.multi_config_keys?.legacy_config;
+            }
 
-          if (
-            Object.keys(
-              updatedConfigurationObject?.serverConfiguration?.multi_config_keys
-                ?.legacy_config
-            ).every((key) => {
-              const value =                updatedConfigurationObject?.serverConfiguration
-                  ?.multi_config_keys?.legacy_config[key];
-              return value === undefined || value === null || value === "";
-            })
-          ) {
-            delete updatedConfigurationObject?.serverConfiguration
-              ?.multi_config_keys?.legacy_config;
+            if (
+              Object.keys(
+                updatedConfigurationObject?.serverConfiguration
+                  ?.multi_config_keys?.legacy_config
+              ).every((key) => {
+                const value =                  updatedConfigurationObject?.serverConfiguration
+                    ?.multi_config_keys?.legacy_config[key];
+                return value === undefined || value === null || value === "";
+              })
+            ) {
+              delete updatedConfigurationObject?.serverConfiguration
+                ?.multi_config_keys?.legacy_config;
+            }
+            if (Object.keys(updatedConfigurationObject)?.length) {
+              const decryptedConfiguration = decryptObject(
+                updatedConfigurationObject?.configuration || {},
+                rootConfig?.configureConfigScreen()
+              );
+              const decryptedServerConfiguration = decryptObject(
+                updatedConfigurationObject?.serverConfiguration || {},
+                rootConfig?.configureConfigScreen()
+              );
+              updatedConfigurationObject.configuration = decryptedConfiguration;
+              updatedConfigurationObject.serverConfiguration =                decryptedServerConfiguration;
+            }
           }
-          if (Object.keys(updatedConfigurationObject)?.length) {
-            const decryptedConfiguration = decryptObject(
-              updatedConfigurationObject?.configuration || {},
-              rootConfig?.configureConfigScreen()
-            );
-            const decryptedServerConfiguration = decryptObject(
-              updatedConfigurationObject?.serverConfiguration || {},
-              rootConfig?.configureConfigScreen()
-            );
-            updatedConfigurationObject.configuration = decryptedConfiguration;
-            updatedConfigurationObject.serverConfiguration =              decryptedServerConfiguration;
-          }
-        }
 
           setState({
             ...state,
@@ -644,7 +664,6 @@ const ConfigScreen: React.FC = function () {
         serverConfiguration,
         rootConfig.configureConfigScreen()
       );
-      
 
       if (state?.setInstallationData) {
         await state?.setInstallationData({
