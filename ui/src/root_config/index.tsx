@@ -46,7 +46,7 @@ const ecommerceEnv: EcommerceEnv = {
  *
  * @returns {ConfigureConfigScreen} The function returns an object where each key corresponds to a field in the
  * configuration screen. The configuration includes:
- * - `type`: Specifies the input field type, such as "textInputFields" or "selectInputFields".
+ * - `type`: Specifies the input field type, such as "textInputFields".
  * - `labelText`: A label describing the input field.
  * - `helpText`: Text providing additional help or information for the input field.
  * - `placeholderText`: Placeholder text displayed in the input field when it is empty.
