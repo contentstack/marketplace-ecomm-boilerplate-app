@@ -308,7 +308,7 @@ const ConfigScreen: React.FC = function () {
         } else if (!isValid) {
           const uniqueInvalidKeysMap = new Map<string, Set<string>>();
 
-          invalidKeys.forEach(({ source, keys }: any) => {
+          invalidKeys?.forEach(({ source, keys }: any) => {
             if (!uniqueInvalidKeysMap?.has(source)) {
               uniqueInvalidKeysMap?.set(source, new Set<string>());
             }
@@ -476,7 +476,7 @@ const ConfigScreen: React.FC = function () {
 
               Object.keys(installationDataOfSdk?.serverConfiguration)?.forEach(
                 (key) => {
-                  if (!keysToIncludeOrExclude.includes(key)) {
+                  if (!keysToIncludeOrExclude?.includes(key)) {
                     if (
                       Object.hasOwn(
                         result?.isMultiConfigAndSaveInServerConfig,
@@ -554,9 +554,9 @@ const ConfigScreen: React.FC = function () {
               Object.keys(
                 updatedConfigurationObject?.serverConfiguration
                   ?.multi_config_keys?.legacy_config
-              ).every((key) => {
+              )?.every((key) => {
                 const value =                  updatedConfigurationObject?.serverConfiguration
-                    ?.multi_config_keys?.legacy_config[key];
+                    ?.multi_config_keys?.legacy_config?.[key];
                 return value === undefined || value === null || value === "";
               })
             ) {
