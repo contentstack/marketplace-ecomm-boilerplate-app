@@ -21,6 +21,7 @@ import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponen
 import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
 /* eslint-disable */
 import categoryConfig from "./categories";
+import { ApiValidationEnabledForConfig } from "../services/index";
 /* eslint-enable */
 
 /* all values in this file are an example.
@@ -37,6 +38,7 @@ const ecommerceEnv: EcommerceEnv = {
     product: "id",
     category: "id",
   },
+  ENABLE_MULTI_CONFIG: true,
 };
 
 /**
@@ -57,310 +59,63 @@ const ecommerceEnv: EcommerceEnv = {
  * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
  * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
  *  - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
+ * - `suffix`: A String indicating suffix when isSensitive is set to true 
+    allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
  */
 const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
-const getCustomKeys = (): KeyOption[] => [
-  {
-    label: "approvalStatus",
-    value: "approvalStatus",
-    searchLabel: "approvalStatus",
-  },
-  {
-    label: "availableForPickup",
-    value: "availableForPickup",
-    searchLabel: "availableForPickup",
-  },
-  {
-    label: "averageRating",
-    value: "averageRating",
-    searchLabel: "averageRating",
-  },
-  {
-    label: "baseOptions",
-    value: "baseOptions",
-    searchLabel: "baseOptions",
-  },
-  {
-    label: "baseProduct",
-    value: "baseProduct",
-    searchLabel: "baseProduct",
-  },
-  {
-    label: "baseProductName",
-    value: "baseProductName",
-    searchLabel: "baseProductName",
-  },
-  {
-    label: "categories",
-    value: "categories",
-    searchLabel: "categories",
-  },
-  {
-    label: "children",
-    value: "children",
-    searchLabel: "children",
-  },
-  {
-    label: "classifications",
-    value: "classifications",
-    searchLabel: "classifications",
-  },
-  {
-    label: "code",
-    value: "code",
-    searchLabel: "code",
-    isDisabled: true,
-  },
-  {
-    label: "colors",
-    value: "colors",
-    searchLabel: "colors",
-  },
-  {
-    label: "componentId",
-    value: "componentId",
-    searchLabel: "componentId",
-  },
-  {
-    label: "configurable",
-    value: "configurable",
-    searchLabel: "configurable",
-  },
-  {
-    label: "configuratorType",
-    value: "configuratorType",
-    searchLabel: "configuratorType",
-  },
-  {
-    label: "description",
-    value: "description",
-    searchLabel: "description",
-  },
-  {
-    label: "disabledMessage",
-    value: "disabledMessage",
-    searchLabel: "disabledMessage",
-  },
-  {
-    label: "futureStocks",
-    value: "futureStocks",
-    searchLabel: "futureStocks",
-  },
-  {
-    label: "hasParentBpos",
-    value: "hasParentBpos",
-    searchLabel: "hasParentBpos",
-  },
-  {
-    label: "images",
-    value: "images",
-    searchLabel: "images",
-  },
-  {
-    label: "isBundle",
-    value: "isBundle",
-    searchLabel: "isBundle",
-  },
-  {
-    label: "isComponentEditable",
-    value: "isComponentEditable",
-    searchLabel: "isComponentEditable",
-  },
-  {
-    label: "isMaxLimitReachedForBundle",
-    value: "isMaxLimitReachedForBundle",
-    searchLabel: "isMaxLimitReachedForBundle",
-  },
-  {
-    label: "isRemovableEntry",
-    value: "isRemovableEntry",
-    searchLabel: "isRemovableEntry",
-  },
-  {
-    label: "mainSpoPriceInBpo",
-    value: "mainSpoPriceInBpo",
-    searchLabel: "mainSpoPriceInBpo",
-  },
-  {
-    label: "manufacturer",
-    value: "manufacturer",
-    searchLabel: "manufacturer",
-  },
-  {
-    label: "modifiedTime",
-    value: "modifiedTime",
-    searchLabel: "modifiedTime",
-  },
-  {
-    label: "multidimensional",
-    value: "multidimensional",
-    searchLabel: "multidimensional",
-  },
-  {
-    label: "name",
-    value: "name",
-    searchLabel: "name",
-    isDisabled: true,
-  },
-  {
-    label: "numberOfReviews",
-    value: "numberOfReviews",
-    searchLabel: "numberOfReviews",
-  },
-  {
-    label: "offeringGroup",
-    value: "offeringGroup",
-    searchLabel: "offeringGroup",
-  },
-  {
-    label: "parents",
-    value: "parents",
-    searchLabel: "parents",
-  },
-  {
-    label: "potentialPromotions",
-    value: "potentialPromotions",
-    searchLabel: "potentialPromotions",
-  },
-  {
-    label: "preselected",
-    value: "preselected",
-    searchLabel: "preselected",
-  },
-  {
-    label: "price",
-    value: "price",
-    searchLabel: "price",
-  },
-  {
-    label: "priceRange",
-    value: "priceRange",
-    searchLabel: "priceRange",
-  },
-  {
-    label: "productOfferingPrice",
-    value: "productOfferingPrice",
-    searchLabel: "productOfferingPrice",
-  },
-  {
-    label: "productReferences",
-    value: "productReferences",
-    searchLabel: "productReferences",
-  },
-  {
-    label: "productSpecDescription",
-    value: "productSpecDescription",
-    searchLabel: "productSpecDescription",
-  },
-  {
-    label: "productSpecification",
-    value: "productSpecification",
-    searchLabel: "productSpecification",
-  },
-  {
-    label: "purchasable",
-    value: "purchasable",
-    searchLabel: "purchasable",
-  },
-  {
-    label: "reviews",
-    value: "reviews",
-    searchLabel: "reviews",
-  },
-  {
-    label: "soldIndividually",
-    value: "soldIndividually",
-    searchLabel: "soldIndividually",
-  },
-  {
-    label: "stock",
-    value: "stock",
-    searchLabel: "stock",
-  },
-  {
-    label: "storageSize",
-    value: "storageSize",
-    searchLabel: "storageSize",
-  },
-  {
-    label: "parents",
-    value: "parents",
-    searchLabel: "parents",
-  },
-  {
-    label: "summary",
-    value: "summary",
-    searchLabel: "summary",
-  },
-  {
-    label: "tags",
-    value: "tags",
-    searchLabel: "tags",
-  },
-  {
-    label: "url",
-    value: "url",
-    searchLabel: "url",
-  },
-  {
-    label: "validFor",
-    value: "validFor",
-    searchLabel: "validFor",
-  },
-  {
-    label: "variantMatrix",
-    value: "variantMatrix",
-    searchLabel: "variantMatrix",
-  },
-  {
-    label: "variantOptions",
-    value: "variantOptions",
-    searchLabel: "variantOptions",
-  },
-  {
-    label: "variantType",
-    value: "variantType",
-    searchLabel: "variantType",
-  },
-  {
-    label: "volumePrices",
-    value: "volumePrices",
-    searchLabel: "volumePrices",
-  },
-  {
-    label: "volumePricesFlag",
-    value: "volumePricesFlag",
-    searchLabel: "volumePricesFlag",
-  },
-];
+// Function to generate key options from key names
+const generateKeyOptionsFromNames = (
+  keyNames: string[],
+  mandatoryKeyNames: string[]
+): KeyOption[] =>
+  keyNames.map((keyName) => ({
+    label: keyName,
+    value: keyName,
+    searchLabel: keyName,
+    isDisabled: mandatoryKeyNames.includes(keyName),
+  }));
 
-const mandatoryKeys: KeyOption[] = [
-  { label: "code", value: "code", searchLabel: "code" },
-  { label: "name", value: "name", searchLabel: "name" },
-];
+const getCustomKeys = (): {
+  mandatoryKeys: KeyOption[];
+  nonMandatoryKeys: KeyOption[];
+} => {
+  const keyNames = ["id", "name", "price", "description"];
+  const mandatoryKeyNames = ["id", "name"];
+
+  const keyOptions = generateKeyOptionsFromNames(keyNames, mandatoryKeyNames);
+
+  const mandatoryKeys = keyOptions.filter((key) => key.isDisabled);
+  const nonMandatoryKeys = keyOptions;
+
+  return { mandatoryKeys, nonMandatoryKeys };
+};
 
 // this function maps the corresponding keys to your product object that gets saved in custom field
+/* eslint-disable */
 const returnFormattedProduct = (product: any, config: any): TypeProduct => ({
-  id: product?.code || "",
-  name: product?.name || "",
-  description: product?.description || "-",
+  id: product?.id || "",
+  name: product?.key || "",
+  description: product?.description?.en || "-",
   image: product?.images?.[0]?.url
     ? `https://${config?.configField2}${product?.images?.[0]?.url}`
     : "",
   price: product?.price?.formattedValue || "-",
   sku: product?.sku || "",
   isProductDeleted: product?.cs_metadata?.isConfigDeleted ?? false,
+  cs_metadata: product?.cs_metadata?.multiConfigName,
 });
 
 // this function maps the corresponding keys to your category object that gets saved in custom field
-const returnFormattedCategory = (category: any): TypeCategory => ({
-  id: category?.id || "",
-  name: category?.name || "-",
-  customUrl: "",
-  description: category?.description || "Not Available",
-  isCategoryDeleted: category?.cs_metadata?.isConfigDeleted ?? false,
-});
+const returnFormattedCategory = (category: any): TypeCategory => {
+  return {
+    id: category?.id || "",
+    name: category?.key || "",
+    customUrl: "",
+    description: category?.description || "Not Available",
+    isCategoryDeleted: category?.cs_metadata?.isConfigDeleted ?? false,
+  };
+};
 
 /* this function returns the titles and data that are to be displayed in the sidebar
     by default, name, image, price and description are being displayed.
@@ -383,9 +138,14 @@ const getSidebarData = (product: any): SidebarDataObj[] => [
     title: "Url",
     value: product?.url,
   },
+  {
+    title: "MultiConfigName",
+    value: product?.cs_metadata?.multiConfigName
+      ? product?.cs_metadata?.multiConfigName
+      : "",
+  },
 ];
 
-// this defines what and how will the columns will be displayed in your product selector page
 const getProductSelectorColumns = (config: any): ColumnsProp[] => [
   {
     Header: "ID", // the title of the column
@@ -675,16 +435,18 @@ const customMultiConfigComponent = (
   configurationData: any,
   serverConfiguration: any,
   onChangeCallback: (
-    event: { name: string; value: any },
+    event: { target: { name: string; value: any } },
     multiConfigID: any,
     isMultiConfig: boolean
-  ) => void
+  ) => void,
+  componentConfigOptions: any
 ) => (
   <MultiConfigCustomComponent
     multiConfigurationDataID={multiConfigId}
     configurationObject={configurationData}
     serverConfigurationObject={serverConfiguration}
     customComponentOnChange={onChangeCallback}
+    componentConfigOptions={componentConfigOptions}
   />
 );
 
@@ -708,15 +470,17 @@ const customNonMultiConfigComponent = (
   configurationData: any,
   serverConfiguration: any,
   onChangeCallback: (
-    event: { name: string; value: any },
+    event: { target: { name: string; value: any } },
     multiConfigID: any,
     isMultiConfig: boolean
-  ) => void
+  ) => void,
+  componentConfigOptions: any
 ) => (
   <NonMultiConfigCustomComponent
     configurationObject={configurationData}
     serverConfigurationObject={serverConfiguration}
     customComponentOnChange={onChangeCallback}
+    componentConfigOptions={componentConfigOptions}
   />
 );
 
@@ -733,25 +497,33 @@ const customNonMultiConfigComponent = (
  * - If `multiConfigTrueAndApiValidationEnabled` contains the invalid configuration, the `source` should be the multi-config name (e.g., "demos-95") and `keys` should include the field names that are invalid.
  * - If the configuration is not multi-config, the `source` should be "configuration" or "serverConfiguration", and `keys` should include the names of the invalid fields.
  */
-const validateConfigFilesByApi = async (
+const validateConfigKeyByApi = async (
   configurationObject: any, // Data stored in the configuration of the app (appsdk)
   serverConfiguration: any, // Data stored in the server configuration of the app (appsdk)
   multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
   multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
-): Promise<ValidationResult> => ({
-  invalidKeys: [
-    {
-      source: "demos-95", // Example of multi-config name
-      keys: ["configField8"], // Example of invalid field name
-    },
-  ],
-});
+): Promise<ValidationResult> => {
+  const apiValidationEnabledForConfigResponse =
+    await ApiValidationEnabledForConfig(
+      configurationObject,
+      serverConfiguration,
+      multiConfigTrueAndApiValidationEnabled,
+      multiConfigFalseAndApiValidationEnabled
+    );
+  return {
+    invalidKeys: [
+      {
+        source: "demos-95", // Example of multi-config name
+        keys: ["configField8"], // Example of invalid field name
+      },
+    ],
+  };
+};
 
 const rootConfig = {
   verifyAppSigning,
   ecommerceEnv,
   configureConfigScreen,
-  mandatoryKeys,
   getFormattedResponse,
   returnFormattedProduct,
   returnFormattedCategory,
@@ -765,7 +537,7 @@ const rootConfig = {
   mapCategoryIdsByMultiConfig,
   customMultiConfigComponent,
   customNonMultiConfigComponent,
-  validateConfigFilesByApi,
+  validateConfigKeyByApi,
 };
 
 export default rootConfig;

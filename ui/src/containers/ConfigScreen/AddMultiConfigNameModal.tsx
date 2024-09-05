@@ -30,23 +30,35 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
   } = props;
   const [enteredConfigurationName, setEnteredConfigurationName] =    useState<any>("");
   const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =    useState<boolean>(false);
+  const [alphanumericIdentifier, setAlphanumericIdentifier] =    useState<any>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onInputChange = (e: any) => {
-    const trimmedValue = e?.target?.value?.trim();
-    setEnteredConfigurationName(trimmedValue);
+    const inputValue = e?.target?.value ?? "";
+    const trimmedValue = inputValue;
+    const regex = /^[a-zA-Z0-9-_]*$/;
+    if (!regex.test(trimmedValue)) {
+      // Input is invalid
+      setAlphanumericIdentifier(true);
+      setHasDuplicateConfigurationName(false);
+    } else {
+      setAlphanumericIdentifier(false);
 
-    if (
-      Object.keys(addMultiConfigurationData)?.length
-      && trimmedValue !== "shopifystore"
-    ) {
-      const isDuplicate = Object.keys(addMultiConfigurationData)?.some(
-        (addMultiConfigurationKeys: string) =>
-          addMultiConfigurationKeys === trimmedValue
-      );
-      setHasDuplicateConfigurationName(isDuplicate);
+      if (
+        Object.keys(addMultiConfigurationData)?.length
+        && trimmedValue !== "legacy_config"
+      ) {
+        const isDuplicate = Object.keys(addMultiConfigurationData)?.some(
+          (addMultiConfigurationKeys: string) =>
+            addMultiConfigurationKeys === trimmedValue
+        );
+        setHasDuplicateConfigurationName(isDuplicate);
+      } else {
+        setHasDuplicateConfigurationName(false);
+      }
     }
-    setEnteredConfigurationName(e?.target?.value?.trim());
+    setEnteredConfigurationName(trimmedValue);
   };
+
   const onSaveConfiguration = () => {
     addMultiConfiguration(enteredConfigurationName);
     onRequestClose();
@@ -90,14 +102,26 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                     onChange={onInputChange}
                     version="v2"
                   />
-                  {hasDuplicateConfigurationName
-                  || enteredConfigurationName === "legacy_config" ? (
+                  {alphanumericIdentifier ? (
                     <span className="errorcontainer">
-                      {enteredConfigurationName === "legacy_config"
-                        ? localeTexts.configPage.multiConfig.ErrorMessage
-                            .oldV2KeysNameMsg
-                        : localeTexts.configPage.multiConfig.ErrorMessage
-                            .duplicateLabelError.msg}
+                      {
+                        localeTexts.configPage.multiConfig.ErrorMessage
+                          .invalidAlphanumeric
+                      }
+                    </span>
+                  ) : hasDuplicateConfigurationName ? (
+                    <span className="errorcontainer">
+                      {
+                        localeTexts.configPage.multiConfig.ErrorMessage
+                          .duplicateLabelError.msg
+                      }
+                    </span>
+                  ) : enteredConfigurationName === "legacy_config" ? (
+                    <span className="errorcontainer">
+                      {
+                        localeTexts.configPage.multiConfig.ErrorMessage
+                          .oldV2KeysNameMsg
+                      }
                     </span>
                   ) : (
                     ""

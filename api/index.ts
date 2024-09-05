@@ -4,6 +4,7 @@ import {
   getProductByID,
   getSelectedProductsAndCategories,
   filterByCategory,
+  getApiValidationForConfigPageKeys,
 } from "./handler";
 import { processRequestBody, _isEmpty } from "./utils";
 
@@ -16,7 +17,8 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let statusCode = constants.HTTP_ERROR_CODES.OK;
   // eslint-disable-next-line no-param-reassign
   body = processRequestBody(body);
-
+    // eslint-disable-next-line no-param-reassign
+  if (typeof body === "string") body = JSON.parse(body);
   try {
     console.info(constants.LOGS.REQ_BODY, body);
     console.info(constants.LOGS.QUERY_PARAMS, query);
@@ -39,22 +41,24 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     } else if (query?.id) {
       // Get a particular product by ID
       message = await getProductByID(query, body);
+    } else if (query?.type === "isApiValidationEnabled") {
+      message = await getApiValidationForConfigPageKeys(body, query);
     } else {
       // Get all products and categories
       message = await getAllProductsAndCategories(query, body);
     }
   } catch (e: any) {
-    // Handle errors and set response status code and message
-    statusCode = e?.statusCode || constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
-    message = e?.message || constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
+    statusCode =
+      e?.response?.status ?? constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
+    message =
+      e?.response?.data?.message ??
+      constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
     console.error(
-      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`
+      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}, stack: ${e?.stack}`
     );
   }
-
-  // Return the response with the appropriate status code, headers, and body
   const res = {
-    statusCode,
+    statusCode: statusCode,
     headers: {
       ...constants.HTTP_RESPONSE_HEADERS,
       authToken: "",

@@ -1,10 +1,16 @@
 import React from "react";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import { Icon, Tooltip, Link } from "@contentstack/venus-components";
+import {
+  Icon,
+  Tooltip,
+  Link,
+  Notification,
+} from "@contentstack/venus-components";
 import { TypePopupWindowDetails } from "../types";
 import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
+import rootConfig from "../../root_config";
 
 const isEmpty = (val: any): boolean =>
   val === undefined
@@ -272,8 +278,126 @@ const extractKeysForCustomApiValidation = (config: Record<string, any>) =>
       multiConfigFalseAndApiValidationEnabled: [] as string[],
     }
   );
+const toastMessage = ({ type, text }: any) => {
+  const message = text.replace("$", rootConfig.ecommerceEnv.APP_ENG_NAME);
+  Notification({
+    notificationContent: {
+      text: message,
+    },
+    notifyProps: {
+      hideProgressBar: false,
+      className: "modal_toast_message",
+      autoClose: true,
+    },
+    type,
+  });
+};
+
+const convertStringAndMergeToObject = (
+  inputString: string,
+  value: any,
+  existingObject: any
+) => {
+  const properties = inputString?.split(".");
+  let temp = existingObject;
+
+  for (let i = 0; i < properties?.length; i += 1) {
+    const property = properties?.[i];
+    const matchArrayIndex = property?.match(/(\w+)\[(\d+)\]/);
+    // eslint-disable-next-line
+    const isLastProperty = i === properties?.length - 1;
+
+    if (matchArrayIndex) {
+      const arrayName = matchArrayIndex?.[1];
+      const index = parseInt(matchArrayIndex?.[2], 10);
+
+      if (!temp?.[arrayName]) {
+        temp[arrayName] = [];
+      }
+
+      if (!temp?.[arrayName]?.[index]) {
+        temp[arrayName][index] = isLastProperty ? value : {};
+      }
+
+      temp = temp?.[arrayName]?.[index];
+    } else {
+      if (!temp?.[property]) {
+        temp[property] = isLastProperty ? value : {};
+      }
+
+      temp = temp[property] ?? {};
+    }
+  }
+
+  const removeEmptyFromArray = (arr: any) =>
+    arr?.filter((item: any) => item !== undefined);
+  const cleanUpArrays: any = (obj: any) => {
+    if (Array.isArray(obj)) {
+      return removeEmptyFromArray(obj?.map((item: any) => cleanUpArrays(item)));
+    }
+    if (typeof obj === "object" && obj !== null) {
+      const newObj: any = {};
+      Object.keys(obj)?.forEach((key) => {
+        newObj[key] = cleanUpArrays(obj?.[key]);
+      });
+      return newObj;
+    }
+    return obj;
+  };
+
+  return cleanUpArrays(existingObject);
+};
+
+const navigateObject = (obj: any, findkeys: string[]) => {
+  let currentObj = obj;
+  let isKeyPresent = true;
+  findkeys?.forEach((keyvalue: string) => {
+    const regex = /\[.*\]/;
+    if (regex?.test(keyvalue)) {
+      const newKey = keyvalue?.replace(/\]/g, "");
+      const subKeyArr = newKey?.split("[");
+      // eslint-disable-next-line
+      if (currentObj?.hasOwnProperty(subKeyArr?.[0])) {
+        currentObj = currentObj?.[subKeyArr?.[0]]?.[subKeyArr?.[1]];
+      } else {
+        isKeyPresent = false;
+      }
+      // eslint-disable-next-line
+    } else if (currentObj?.hasOwnProperty(keyvalue)) {
+      currentObj = currentObj?.[keyvalue] ?? {};
+    } else {
+      isKeyPresent = false;
+      currentObj = undefined;
+    }
+  });
+  return { currentObj, isKeyPresent };
+};
+
+const getFilteredAssets = (assets: any[], keyArray: string[]) =>
+  assets?.map((asset: any) => {
+    let returnObj: any = {};
+
+    keyArray?.forEach((key: string) => {
+      const result = navigateObject(asset, key?.split("."));
+      if (result?.isKeyPresent) {
+        if (key?.includes(".") || key?.includes("[")) {
+          const response = convertStringAndMergeToObject(
+            key,
+            result?.currentObj,
+            returnObj
+          );
+          returnObj = response;
+        } else {
+          returnObj[key] = result?.currentObj;
+        }
+      }
+    });
+    return returnObj;
+  });
 
 export {
+  getFilteredAssets,
+  toastMessage,
   extractKeysForCustomApiValidation,
   isEmpty,
   popupWindow,

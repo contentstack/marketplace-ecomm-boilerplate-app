@@ -2,7 +2,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 /* Import other node modules */
-import { isEmpty } from "lodash";
 // import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
   AsyncLoader,
@@ -39,6 +38,7 @@ const SidebarWidget: React.FC = function () {
   const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
+  const [isOldUser, setIsOldUser] = useState<any>(false);
 
   useEffect(() => {
     if (!appSdkInitialized) return;
@@ -61,8 +61,35 @@ const SidebarWidget: React.FC = function () {
   }, [entryData, appConfig, appSdkInitialized]);
 
   const getCurrentFieldData = async (field: any) => {
+    let isMultiConfigEnabled: Boolean =      rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
+    if (appConfig) {
+      const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
+        "multi_config_keys"
+      );
+
+      if (isMultiConfigEnabled) {
+        if (isMultiConfigEnabled && ISOLDUSER) {
+          isMultiConfigEnabled = false;
+          setIsOldUser(true);
+        }
+      } else {
+        setIsOldUser(false);
+      }
+    }
     if (entryData?.[field?.value]?.data?.length) {
-      setProductList(entryData?.[field?.value]?.data);
+      let sideBarData = entryData?.[field?.value]?.data;
+      if (isMultiConfigEnabled === true) {
+        sideBarData = sideBarData?.map((fieldDataSet: any) => ({
+          ...fieldDataSet,
+          cs_metadata: fieldDataSet.cs_metadata
+            ? fieldDataSet.cs_metadata
+            : {
+                multiConfigName: "legacy_config",
+                isConfigDeleted: false,
+              },
+        }));
+      }
+      setProductList(sideBarData);
     } else {
       setProductList([]);
     }
@@ -72,15 +99,6 @@ const SidebarWidget: React.FC = function () {
     if (fieldList?.length) setSelectedField(fieldList[0]);
     getCurrentFieldData(fieldList?.[0]);
   }, [fieldList]);
-
-  const fetchSelectedIdData = async (data: any) => {
-    const product = await getSelectedIDs(appConfig, "product", [data], false);
-    if (product?.error) {
-      setIsInvalidCredentials(product);
-    } else return product?.data?.items?.[0];
-
-    return null;
-  };
 
   useEffect(() => {
     if (isInvalidCredentials.error)
@@ -119,15 +137,72 @@ const SidebarWidget: React.FC = function () {
     if (!loading && !selectedDropdownProduct) setIsFieldEmpty(true);
   }, [selectedDropdownProduct]);
 
+  const fetchSelectedIdData = async (data: any, isOldUserLocal: boolean) => {
+    let productID;
+    if (typeof data === "object") {
+      productID = data;
+    } else {
+      productID = [data];
+    }
+
+    const product = await getSelectedIDs(
+      appConfig,
+      "product",
+      productID,
+      isOldUserLocal
+    ); // Use the local value
+    if (product?.error) {
+      setIsInvalidCredentials(product);
+    } else {
+      return product?.data?.items?.[0];
+    }
+
+    return null;
+  };
   useEffect(() => {
     const setInitialProductDropdown = async () => {
-      const selectProduct = await fetchSelectedIdData(
-        selectedDropdownProduct?.value
-      );
+      let isMultiConfigEnableds = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
+      let isOldUserLocal = false;
+      if (appConfig) {
+        const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
+          "multi_config_keys"
+        );
+
+        if (isMultiConfigEnableds) {
+          if (ISOLDUSER) {
+            isMultiConfigEnableds = false;
+            isOldUserLocal = true;
+          }
+        } else {
+          // eslint-disable-next-line
+          if (ISOLDUSER) {
+            isMultiConfigEnableds = false;
+            isOldUserLocal = true;
+          } else {
+            isOldUserLocal = false;
+          }
+        }
+      }
+      let ids;
+      if (!isMultiConfigEnableds) {
+        ids = selectedDropdownProduct?.value;
+      } else {
+        const product = productList.find(
+          (p: any) => p?.id === selectedDropdownProduct?.value
+        );
+        const formattedData: any = rootConfig.mapProductIdsByMultiConfig(
+          [product],
+          "product"
+        );
+        ids = formattedData;
+      }
+      const selectProduct = await fetchSelectedIdData(ids, isOldUserLocal); // Pass the local variable
+
       if (selectProduct) {
         setSelectedProduct(selectProduct);
       }
     };
+
     if (selectedDropdownProduct) {
       setInitialProductDropdown();
       setLoading(false);

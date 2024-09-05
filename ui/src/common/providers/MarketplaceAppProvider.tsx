@@ -45,7 +45,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
       setIsInvalidCredentials,
       failed,
     }),
-    [appSdk, appConfig]
+    [appSdk, appConfig, isInvalidCredentials]
   );
 
   // wait until the SDK is initialized. This will ensure the values are set

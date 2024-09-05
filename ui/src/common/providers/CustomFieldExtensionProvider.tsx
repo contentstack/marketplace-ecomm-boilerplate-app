@@ -28,6 +28,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   const appConfig = useAppConfig();
   const { location } = useAppLocation();
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
+  const isMultiConfigEnabled = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
   const [stackApiKey, setStackApiKey] = useState<any>("");
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<any>({});
@@ -77,7 +78,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       // eslint-disable-next-line
       const { api_key } = appSdk?.stack?._data ?? {};
       let updatedFieldData: any = [];
-      let oldUser: Boolean = false;
+      let oldUser: any = isMultiConfigEnabled === false;
+      setIsOldUser(oldUser);
       setStackApiKey(api_key);
       window.iframeRef = null;
       window.postRobot = appSdk?.postRobot;
@@ -183,13 +185,17 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   }, [location, appConfig]);
 
   useEffect(() => {
-    setIsInvalidCredentials({
-      error: Object.values(appConfig ?? {}).includes(""),
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
+    if (appConfig) {
+      setIsInvalidCredentials({
+        error: Object?.keys(appConfig)?.length
+          ? Object.values(appConfig ?? {}).includes("")
+          : true,
+        data: localeTexts.warnings.invalidCredentials.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        ),
+      });
+    }
   }, [appConfig]);
 
   const setFieldData = useCallback(
@@ -200,8 +206,12 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
     },
     [location, setLoading]
   );
-
   const fetchData = async (selectedIdsArray: any) => {
+    if (isEmpty(selectedIdsArray)) {
+      setSelectedItems([]);
+      return; // Exit early since there's nothing to fetch
+    }
+
     if (
       isOldUser
         ? Array.isArray(selectedIdsArray)
@@ -212,6 +222,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error
     ) {
       let res;
+
       if (
         categoryConfig.customCategoryStructure === true
         && type === "category"
@@ -222,37 +233,38 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           selectedIdsArray,
           isOldUser
         );
-        if (res?.error) {
-          setIsInvalidCredentials(res);
-        } else setSelectedItems(res?.data?.items);
+      } else if (
+        categoryConfig.customCategoryStructure === false
+        && type === "category"
+      ) {
+        res = await getCustomCategoryData(
+          appConfig,
+          type,
+          selectedIdsArray,
+          isOldUser
+        );
       } else {
-        // eslint-disable-next-line
-        if (
-          categoryConfig.customCategoryStructure === false
-          && type === "category"
-        ) {
-          res = await getCustomCategoryData(
-            appConfig,
-            type,
-            selectedIdsArray,
-            isOldUser
-          );
-          if (res?.error) {
-            setIsInvalidCredentials(res);
-          } else setSelectedItems(res?.data?.items);
-        } else {
-          res = await getSelectedIDs(
-            appConfig,
-            type,
-            selectedIdsArray,
-            isOldUser
-          );
-          if (res?.error) {
-            setIsInvalidCredentials(res);
-          } else {
-            setSelectedItems(res?.data?.items);
-          }
-        }
+        res = await getSelectedIDs(
+          appConfig,
+          type,
+          selectedIdsArray,
+          isOldUser
+        );
+      }
+
+      // Error handling for all cases
+      if (res?.error) {
+        setIsInvalidCredentials({
+          error: true,
+          data:
+            res?.data
+            ?? localeTexts.warnings.invalidCredentials.replace(
+              "$",
+              rootConfig.ecommerceEnv.APP_ENG_NAME
+            ),
+        });
+      } else {
+        setSelectedItems(res?.data?.items);
       }
     }
   };
@@ -269,6 +281,10 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       );
 
       setEntryIds(selectedIDs);
+      if (selectedIDs?.length === 0) {
+        setSelectedItems([]);
+        setSelectedIds([]);
+      }
     } else {
       // eslint-disable-next-line
       if (isOldUser === true) {
@@ -300,8 +316,14 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   };
 
   useEffect(() => {
-    if (isOldUser ? selectedIds?.length : Object.keys(selectedIds)?.length)
+    const isEmptySelectedIds = isOldUser
+      ? selectedIds.length === 0
+      : Object.keys(selectedIds).length === 0;
+    if (isEmptySelectedIds) {
+      setSelectedItems([]);
+    } else {
       fetchData(selectedIds);
+    }
   }, [selectedIds]);
 
   const handleDragEvent = (sortedItems: any) => {

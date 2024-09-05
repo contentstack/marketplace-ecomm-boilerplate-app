@@ -9,6 +9,7 @@ interface CustomComponentProps {
     isMultiConfig: boolean
   ) => void;
   multiConfigurationDataID: any;
+  componentConfigOptions: any;
 }
 // eslint-disable-next-line
 const MultiConfigCustomComponent: React.FC<CustomComponentProps> = function ({
@@ -16,6 +17,7 @@ const MultiConfigCustomComponent: React.FC<CustomComponentProps> = function ({
   serverConfigurationObject,
   customComponentOnChange,
   multiConfigurationDataID,
+  componentConfigOptions: any,
 }) {
   return <p>MultiConfigCustomComponent</p>;
 };

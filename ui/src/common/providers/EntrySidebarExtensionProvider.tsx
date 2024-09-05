@@ -37,13 +37,17 @@ const EntrySidebarExtensionProvider: React.FC = function ({ children }: any) {
   }, [entryData, location, setEntry]);
 
   useEffect(() => {
-    setIsInvalidCredentials({
-      error: Object.values(appConfig ?? {}).includes(""),
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
+    if (appConfig) {
+      setIsInvalidCredentials({
+        error: Object?.keys(appConfig)?.length
+          ? Object.values(appConfig ?? {}).includes("")
+          : true,
+        data: localeTexts.warnings.invalidCredentials.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        ),
+      });
+    }
   }, [appConfig]);
 
   const memoizedValue = useMemo(
