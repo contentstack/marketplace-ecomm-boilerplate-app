@@ -17,7 +17,7 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
   let statusCode = constants.HTTP_ERROR_CODES.OK;
   // eslint-disable-next-line no-param-reassign
   body = processRequestBody(body);
-    // eslint-disable-next-line no-param-reassign
+  // eslint-disable-next-line no-param-reassign
   if (typeof body === "string") body = JSON.parse(body);
   try {
     console.info(constants.LOGS.REQ_BODY, body);
