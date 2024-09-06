@@ -138,7 +138,7 @@ const SidebarWidget: React.FC = function () {
   }, [selectedDropdownProduct]);
 
   const fetchSelectedIdData = async (data: any, isOldUserLocal: boolean) => {
-    const productID = (typeof data === "object") ? data : [data];
+    const productID = typeof data === "object" ? data : [data];
 
     const product = await getSelectedIDs(
       appConfig,
@@ -153,7 +153,8 @@ const SidebarWidget: React.FC = function () {
     }
 
     return null;
-  };  useEffect(() => {
+  };
+  useEffect(() => {
     const setInitialProductDropdown = async () => {
       let isMultiConfigEnableds = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
       let isOldUserLocal = false;
