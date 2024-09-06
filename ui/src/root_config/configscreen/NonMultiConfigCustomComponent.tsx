@@ -6,6 +6,7 @@ interface CustomComponentProps {
     multiConfigID: any,
     isMultiConfig: boolean
   ) => void;
+  componentConfigOptions: any;
 }
 
 /*eslint-disable */
@@ -14,6 +15,7 @@ const NonMultiConfigCustomComponent: React.FC<CustomComponentProps> =
     configurationObject,
     serverConfigurationObject,
     customComponentOnChange,
+    componentConfigOptions: any,
   }) {
     return <p>NonMultiConfigCustomComponent</p>;
   };

@@ -16,6 +16,7 @@ import {
   getTypeLabel,
   gridViewDropdown,
   isEmpty,
+  getFilteredAssets,
 } from "../../common/utils";
 
 /* Import node module CSS */
@@ -76,13 +77,7 @@ const CustomField: React.FC<any> = function ({
           const data: any[] = [];
           const keys = config?.custom_keys?.map((i: any) => i?.value);
           if (selectedItems?.length) {
-            selectedItems.forEach((item: any) => {
-              const obj1: any = {};
-              keys?.forEach((key: any) => {
-                obj1[key] = item[key];
-              });
-              data.push(obj1);
-            });
+            data.push(...getFilteredAssets(selectedItems, keys));
           }
           setFieldData({
             data,

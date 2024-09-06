@@ -20,16 +20,6 @@ export const _makeApiCall: any = async (opts: any) => {
     const res: any = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
     return res?.data;
   } catch (e: any) {
-    if (e?.response?.status === constants.HTTP_ERROR_CODES.NOT_FOUND) {
-      return {
-        data: {
-          id: e?.response?.data?.title?.match(constants.EXTRACT_ID_REGX)[0],
-          error: e?.response?.data?.title,
-        },
-      };
-    }
-    console.error(constants.HTTP_ERROR_TEXTS.API_ERROR);
-    console.error(e);
     throw e;
   }
 };
@@ -127,5 +117,28 @@ export const getSelectedProductsAndCategories: any = async (
  */
 export const filterByCategory: any = async (data: any, key: any) => {
   let response = await root_config.filterProductsByCategory(data, key);
+  return response;
+};
+/**
+ * Retrieves API validation for configuration page keys.
+ *
+ * @param {Object} apkSdkInstallationData - The data used for API validation.
+ * @param {Object} query - The query for whether isApiValidationEnabled is enabaled or not.
+ *
+ * @param {Object} apkSdkInstallationData.configurationObject - The configuration object containing various settings.
+ * @param {Object} apkSdkInstallationData.serverConfigurationObject - The server configuration object for API settings.
+ * @param {Array<string>} apkSdkInstallationData.multiconfigTrueApiEnabledKeys - Array of keys for multi-config API validation that are enabled.
+ * @param {Array<string>} apkSdkInstallationData.nonMulticonfigApiEnabledKeys - Array of keys for non-multi-config API validation that are enabled.
+ *
+ * @returns {Promise<any>} - A promise that resolves to the API validation response.
+ */
+export const getApiValidationForConfigPageKeys: any = async (
+  apkSdkInstallationData: any,
+  query: any
+) => {
+  let response = await root_config.retrieveConfigPageValidation(
+    apkSdkInstallationData,
+    query
+  );
   return response;
 };

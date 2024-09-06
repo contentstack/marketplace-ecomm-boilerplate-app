@@ -70,7 +70,7 @@ export interface APIResponseType {
   };
 }
 
-export interface ConfigField {
+export interface ConfigFieldBase {
   type: any;
   labelText: string;
   helpText: string;
@@ -82,8 +82,10 @@ export interface ConfigField {
   isMultiConfig: boolean;
   isConfidential: boolean;
   isApiValidationEnabled: boolean;
+  suffixName: string;
+  allowDuplicateKeyValue: boolean;
 }
 
 export interface ConfigureConfigScreen {
-  [key: string]: ConfigField;
+  [key: string]: ConfigFieldBase;
 }

@@ -7,7 +7,7 @@ import useProductCustomField from "../../common/hooks/useCustomField";
 const RenderList: React.FC<Props> = function ({ type, childWindow, view }) {
   const { selectedItems, removeIdFromField } = useProductCustomField();
   const removeItem = (removeId: any) => {
-    removeIdFromField(removeId);
+    removeIdFromField(removeId, "");
     if (childWindow) {
       childWindow.postMessage(
         { message: "remove", removeId },

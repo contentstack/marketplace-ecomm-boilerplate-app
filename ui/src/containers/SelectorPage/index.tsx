@@ -193,8 +193,19 @@ const SelectorPage: React.FC = function () {
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchData({ searchText, skip: 0, limit: 30 });
+    if (config) {
+      setIsInvalidCredentials({
+        error: Object?.keys(config)?.length
+          ? Object.values(config ?? {}).includes("")
+          : true,
+        data: localeTexts.warnings.invalidCredentials.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        ),
+      });
+      setLoading(true);
+      fetchData({ searchText, skip: 0, limit: 30 });
+    }
   }, [config]);
 
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
