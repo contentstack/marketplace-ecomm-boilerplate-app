@@ -85,7 +85,7 @@ const getCustomKeys = (): {
 
   const keyOptions = generateKeyOptionsFromNames(keyNames, mandatoryKeyNames);
 
-  const mandatoryKeys = keyOptions.filter((key) => key.isDisabled);
+  const mandatoryKeys = keyOptions?.filter((key) => key?.isDisabled);
   const nonMandatoryKeys = keyOptions;
 
   return { mandatoryKeys, nonMandatoryKeys };

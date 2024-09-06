@@ -65,7 +65,7 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
           data:
             resData?.message
             || localeTexts.warnings.somethingWentWrong
-            || "An unexpected error occurred. Please try again later.",
+            || localeTexts.warnings.unexpectedError,
         };
     }
   }

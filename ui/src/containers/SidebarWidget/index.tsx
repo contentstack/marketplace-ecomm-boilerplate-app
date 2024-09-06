@@ -81,8 +81,8 @@ const SidebarWidget: React.FC = function () {
       if (isMultiConfigEnabled === true) {
         sideBarData = sideBarData?.map((fieldDataSet: any) => ({
           ...fieldDataSet,
-          cs_metadata: fieldDataSet.cs_metadata
-            ? fieldDataSet.cs_metadata
+          cs_metadata: fieldDataSet?.cs_metadata
+            ? fieldDataSet?.cs_metadata
             : {
                 multiConfigName: "legacy_config",
                 isConfigDeleted: false,
@@ -138,12 +138,7 @@ const SidebarWidget: React.FC = function () {
   }, [selectedDropdownProduct]);
 
   const fetchSelectedIdData = async (data: any, isOldUserLocal: boolean) => {
-    let productID;
-    if (typeof data === "object") {
-      productID = data;
-    } else {
-      productID = [data];
-    }
+    const productID = (typeof data === "object") ? data : [data];
 
     const product = await getSelectedIDs(
       appConfig,
@@ -158,8 +153,7 @@ const SidebarWidget: React.FC = function () {
     }
 
     return null;
-  };
-  useEffect(() => {
+  };  useEffect(() => {
     const setInitialProductDropdown = async () => {
       let isMultiConfigEnableds = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
       let isOldUserLocal = false;

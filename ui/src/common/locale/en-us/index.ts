@@ -234,6 +234,7 @@ export default {
       "Something went wrong while fetching data, please try again.",
     cookiesBlocked:
       "Third-party cookies are blocked. To use the $ app, please disable this setting in your browser.",
+    unexpectedError: "An unexpected error occurred. Please try again later."
   },
   Decryption: {
     keySize: "256",

@@ -317,8 +317,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
 
   useEffect(() => {
     const isEmptySelectedIds = isOldUser
-      ? selectedIds.length === 0
-      : Object.keys(selectedIds).length === 0;
+      ? selectedIds?.length === 0
+      : Object.keys(selectedIds)?.length === 0;
     if (isEmptySelectedIds) {
       setSelectedItems([]);
     } else {

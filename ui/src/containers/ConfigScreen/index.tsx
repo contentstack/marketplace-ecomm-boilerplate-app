@@ -65,8 +65,8 @@ const ConfigScreen: React.FC = function () {
   // Determine if at least one key has isMultiConfig: true
   const shouldIncludeMultiConfig = hasMultiConfig(configInputFields);
   const { mandatoryKeys, nonMandatoryKeys } = rootConfig.getCustomKeys();
-  const keysWithNoDuplicateAllowed = Object.keys(configInputFields).filter(
-    (key) => !configInputFields[key].allowDuplicateKeyValue
+  const keysWithNoDuplicateAllowed = Object.keys(configInputFields)?.filter(
+    (key) => !configInputFields?.[key]?.allowDuplicateKeyValue
   );
   /* state for configuration */
   const [isCustom, setIsCustom] = useState(false);
@@ -168,11 +168,11 @@ const ConfigScreen: React.FC = function () {
   const encryptObject = (obj: any, config: any): any => {
     if (typeof obj === "object" && obj !== null) {
       if (Array.isArray(obj)) {
-        return obj.map((item) => encryptObject(item, config));
+        return obj?.map((item) => encryptObject(item, config));
         // eslint-disable-next-line
       } else {
         const encryptedObj: any = {};
-        Object.keys(obj).forEach((key) => {
+        Object.keys(obj)?.forEach((key) => {
           const keyConfig = config?.[key];
 
           if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
@@ -196,11 +196,11 @@ const ConfigScreen: React.FC = function () {
   const decryptObject = (obj: any, config: any): any => {
     if (typeof obj === "object" && obj !== null) {
       if (Array.isArray(obj)) {
-        return obj.map((item) => decryptObject(item, config));
+        return obj?.map((item) => decryptObject(item, config));
         // eslint-disable-next-line
       } else {
         const decryptedObj: any = {};
-        Object.keys(obj).forEach((key) => {
+        Object.keys(obj)?.forEach((key) => {
           const keyConfig = config?.[key];
 
           if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
@@ -239,7 +239,7 @@ const ConfigScreen: React.FC = function () {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration =        state?.installationData?.serverConfiguration || {};
-      const fieldValue = typeof value === "string" ? value.trim() : value;
+      const fieldValue = typeof value === "string" ? value?.trim() : value;
 
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
@@ -517,7 +517,7 @@ const ConfigScreen: React.FC = function () {
         for (const [key, value] of Object.entries(config || {})) {
           if (nonDuplicateKeys.includes(key)) {
             // Ignore falsy values like empty strings
-            if (value && valuesTracker[key].has(value)) {
+            if (value && valuesTracker?.[key]?.has(value)) {
               duplicateKeys.push(key); // Record the key that has a duplicate
             }
             valuesTracker[key].add(value);
@@ -540,7 +540,7 @@ const ConfigScreen: React.FC = function () {
       keysWithNoDuplicateAllowed
     );
 
-    if (configDataDuplicates.length || serverConfigDuplicates.length) {
+    if (configDataDuplicates?.length || serverConfigDuplicates?.length) {
       const allInvalidKeys = [
         ...configDataDuplicates.map((key) => ({
           source: "duplicate keys",
@@ -624,14 +624,14 @@ const ConfigScreen: React.FC = function () {
       const { multiConfigFields } = extractFieldsByConfigType(configScreen);
 
       const { isValid, invalidKeys } = await checkValidity(
-        state.installationData.configuration,
-        state.installationData.serverConfiguration,
+        state?.installationData?.configuration,
+        state?.installationData?.serverConfiguration,
         multiConfigTrueAndApiValidationEnabled?.length > 0,
         multiConfigFalseAndApiValidationEnabled?.length > 0
       );
 
       const isDefaultKeyExist = multiConfigFields?.length
-        ? checkIsDefaultInitial(state.installationData.configuration)
+        ? checkIsDefaultInitial(state?.installationData?.configuration)
         : false;
       const isMultiConfigKeysEmpty = multiConfigFields?.length
         ? Object.keys(state.installationData?.configuration?.multi_config_keys)
@@ -685,13 +685,13 @@ const ConfigScreen: React.FC = function () {
     };
 
     if (sdkConfigDataState && state?.installationData?.configuration) {
-      const currentConfiguration = state.installationData.configuration;
+      const currentConfiguration = state?.installationData?.configuration;
       const currentServerConfiguration =
-        state.installationData.serverConfiguration;
+        state?.installationData?.serverConfiguration;
 
       const configUnchanged =
-        deepEqual(currentConfiguration, prevConfiguration.current) &&
-        deepEqual(currentServerConfiguration, prevServerConfiguration.current);
+        deepEqual(currentConfiguration, prevConfiguration?.current) &&
+        deepEqual(currentServerConfiguration, prevServerConfiguration?.current);
 
       if (configUnchanged) {
         return;
@@ -899,7 +899,7 @@ const ConfigScreen: React.FC = function () {
           setKeyPathOptions(keyOptions);
           setIsCustom(state?.installationData?.configuration?.is_custom_json);
           setCustomKeys([
-            ...state.installationData.configuration.custom_keys,
+            ...state?.installationData?.configuration?.custom_keys,
             ...keyOptions,
           ]);
           setCustomOptions([...customOptions, ...keyOptions]);
@@ -1061,7 +1061,7 @@ const ConfigScreen: React.FC = function () {
           : `Show ${objValue?.suffixName}`
       }
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+        if (e?.key === "Enter" || e?.key === " ") {
           setIsClientSecretShown(!isClientSecretShown);
         }
       }}
@@ -1307,11 +1307,11 @@ const ConfigScreen: React.FC = function () {
                             )}
                             {
                               /* eslint-disable */
-                              Object.entries(configInputFields).map(
+                              Object.entries(configInputFields)?.map(
                                 ([key, configOption]) => {
                                   if (
-                                    configOption.isMultiConfig &&
-                                    configOption.type !== "textInputFields"
+                                    configOption?.isMultiConfig &&
+                                    configOption?.type !== "textInputFields"
                                   ) {
                                     return (
                                       <Field
