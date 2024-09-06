@@ -6,7 +6,35 @@ export default {
     learnMore: "Learn more",
     signFail: "Signature Verification failed",
   },
+  error_Messages: {
+    keyInputLimit: `Maximum character limit reached. $ key path length should not exceed 100 characters.`,
+  },
   configPage: {
+    customWholeJson: {
+      modal: {
+        header: `Add $ Key Field`,
+        label: "Key Name or Path",
+        placeholder: "Enter Key Name or Path",
+        instructionS:
+          'Use the dot format to enter nested objects, for eg: "file.url".',
+        instructionE: "Existing labels in the dropdown will not be created.",
+        note: "Note: ",
+        btn: {
+          cancel: "Cancel",
+          create: "Create",
+          apply: "Create",
+        },
+        addOption: "New Key Field",
+        successToast: {
+          type: "success",
+          text: `$ Key Field added successfully`,
+        },
+      },
+      notification: {
+        errorS: "The option",
+        errorE: "already exists",
+      },
+    },
     errorInADK: "Something Went Wrong While Loading App SDK",
     saveInEntry: {
       label: "Save In Entry",
@@ -21,6 +49,7 @@ export default {
       wholeJson: "All Fields",
       customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
+      onlyID: "Only ID",
     },
     customKeys: {
       label: "Ecommerce Fields",
@@ -58,6 +87,8 @@ export default {
       },
 
       ErrorMessage: {
+        invalidAlphanumeric:
+          "Only alphanumeric characters, hyphens, and underscores are allowed, with no spaces.",
         validInputMsg: "Please enter atleast one multiconfig",
         oneDefaultMsg: "Please select at least one default configuration.  ",
         configDefaultMessgae:
@@ -203,9 +234,28 @@ export default {
       "Something went wrong while fetching data, please try again.",
     cookiesBlocked:
       "Third-party cookies are blocked. To use the $ app, please disable this setting in your browser.",
+    unexpectedError: "An unexpected error occurred. Please try again later.",
   },
   Decryption: {
     keySize: "256",
     iterations: "100",
+  },
+  TextInputFieldWithSuffix: {
+    tooltip: {
+      hide: "Hide",
+      show: "Show",
+    },
+    icon: {
+      eyeClose: "EyeClose",
+      eye: "Eye",
+    },
+  },
+
+  errors: {
+    badRequest: "Bad Request. Please check your input.",
+    unauthorized: "Unauthorized access. Please login again.",
+    forbidden: "Forbidden. You do not have permission to access this resource.",
+    notFound: "Resource not found. Please check the URL or try again later.",
+    tooManyRequests: "Too many requests. Please try again later.",
   },
 };

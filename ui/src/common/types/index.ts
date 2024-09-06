@@ -90,6 +90,7 @@ export interface EcommerceEnv {
   SELECTOR_PAGE_LOGO: string;
   APP_ENG_NAME: string;
   UNIQUE_KEY: UniqueKeyOptions | any;
+  ENABLE_MULTI_CONFIG: Boolean;
 }
 
 export interface UniqueKeyOptions {
@@ -133,6 +134,7 @@ export interface TypeProduct {
   price: string;
   sku?: string;
   isProductDeleted: Boolean;
+  cs_metadata: string;
 }
 
 export interface TypeCategory {
@@ -155,7 +157,7 @@ export interface APIResponseType {
 
 interface InvalidKey {
   source: string;
-  keys: string[];
+  keys?: string[];
 }
 
 export interface ValidationResult {

@@ -17,6 +17,8 @@ import useAppConfig from "../../common/hooks/useAppConfig";
 import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
 
 const Category: React.FC<Props> = function ({ categories, remove }) {
+  const { id, name, customUrl, description, isCategoryDeleted } =    rootConfig.returnFormattedCategory(categories);
+
   const {
     attributes,
     listeners,
@@ -24,11 +26,9 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: categories?.id });
+  } = useSortable({ id });
   const config = useAppConfig();
   const { error } = categories;
-  const { id, name, customUrl, description, isCategoryDeleted } =    rootConfig.returnFormattedCategory(categories);
-
   const getImageUrl = (category: any) => {
     let imageSrc = category?.c_slotBannerImage || category?.image;
 
@@ -75,7 +75,7 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
       multiConfigName={categories?.cs_metadata?.multiConfigName}
       type="Category"
       remove={remove}
-      id={categories?.id}
+      id={id}
       name={name}
       {...props}
     />
@@ -151,7 +151,6 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
                 <div className="divider" />
                 <div className="product-body">
                   <span className="product-name">{name}</span>
-
                   {!isCategoryDeleted && (
                     <span className="product-desc">
                       {getSanitizedHTML(removeHTMLTags(description))}
