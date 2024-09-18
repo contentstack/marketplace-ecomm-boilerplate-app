@@ -44,18 +44,20 @@ const ConfigScreen: React.FC = function () {
   const saveInConfig: any = {};
   /* Configuration objects to be saved in serverConfiguration */
   const saveInServerConfig: any = {};
+  /* these keys will have eye icon and can be hidden or viewed as per the visibility toggle */
+  const sensitiveKeys: any = [];
   const {
     multiConfigTrueAndApiValidationEnabled,
     multiConfigFalseAndApiValidationEnabled,
   } = extractKeysForCustomApiValidation(configInputFields);
+
   Object.keys(configInputFields)?.forEach((field: any) => {
     if (configInputFields?.[field]?.saveInConfig)
       saveInConfig[field] = configInputFields?.[field];
-  });
-
-  Object.keys(configInputFields)?.forEach((field: any) => {
     if (configInputFields?.[field]?.saveInServerConfig)
       saveInServerConfig[field] = configInputFields?.[field];
+    if(configInputFields?.[field]?.isSensitive)
+      sensitiveKeys.push(field)
   });
 
   // Function to check if any key has isMultiConfig: true
@@ -132,6 +134,8 @@ const ConfigScreen: React.FC = function () {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isAddKeyModalOpen, setIsAddKeyModalOpen] = useState(false);
   const [keyPathOptions, setKeyPathOptions] = useState<any[]>([]);
+  // this map will store the sensitive keys along with the visibility status
+  const [showSensitiveConfig, setShowSensitiveConfig] = useState<any>({}) 
   // Using refs to store previous configuration objects
   const prevConfiguration = useRef(state?.installationData?.configuration);
   const prevServerConfiguration = useRef(
@@ -618,6 +622,21 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
+// this function creates a map of the sensitive keys of every multiconfig object.
+// every time a 
+  const createSensitiveConfigMap = (multiConfigFields: any) => {
+    const sensitiveConfigMap: any = {}
+
+    const generatedKeys = multiConfigFields.flatMap((field: any) => 
+      sensitiveKeys?.map((key: any) => `${field}_${key}`)
+    );
+    generatedKeys?.forEach((key: any) => {
+      sensitiveConfigMap[key] = showSensitiveConfig?.[key] || false
+    })
+
+    setShowSensitiveConfig({...sensitiveConfigMap});
+  }
+
   useEffect(() => {
     const validateConfig = async () => {
       const configScreen = rootConfig.configureConfigScreen();
@@ -701,6 +720,7 @@ const ConfigScreen: React.FC = function () {
       prevServerConfiguration.current = currentServerConfiguration;
 
       triggerValidation();
+      createSensitiveConfigMap(Object.keys(state?.installationData?.configuration?.multi_config_keys))
     }
 
     return () => {
@@ -1048,36 +1068,39 @@ const ConfigScreen: React.FC = function () {
   ) => {
     updateConfig(event, multiConfigID, isMultiConfig);
   };
+
   const [isClientSecretShown, setIsClientSecretShown] =
     useState<boolean>(false);
-  const renderSuffix = (objValue: any) => (
+
+
+  const renderSuffix = (objKey: string, objValue: any) => (
     <div
-      onClick={() => setIsClientSecretShown(!isClientSecretShown)}
+      onClick={() => toggleDisplayType(objKey)}
       role="button"
       tabIndex={0}
       aria-label={
-        isClientSecretShown
-          ? `Hide ${objValue?.suffixName}`
-          : `Show ${objValue?.suffixName}`
+        showSensitiveConfig?.[objKey]
+          ? `Show ${objValue?.suffixName}`
+          : `Hide ${objValue?.suffixName}`
       }
       onKeyDown={(e) => {
         if (e?.key === "Enter" || e?.key === " ") {
-          setIsClientSecretShown(!isClientSecretShown);
+          toggleDisplayType(objKey);
         }
       }}
     >
       <Tooltip
         content={
-          isClientSecretShown
-            ? `${localeTexts?.TextInputFieldWithSuffix?.tooltip?.hide} ${objValue?.suffixName}`
-            : `${localeTexts?.TextInputFieldWithSuffix?.tooltip?.show} ${objValue?.suffixName}`
+          showSensitiveConfig?.[objKey]
+            ? `${localeTexts?.TextInputFieldWithSuffix?.tooltip?.show} ${objValue?.suffixName}`
+            : `${localeTexts?.TextInputFieldWithSuffix?.tooltip?.hide} ${objValue?.suffixName}`
         }
         position="top"
         variantType="dark"
       >
         <Icon
           icon={
-            isClientSecretShown
+            showSensitiveConfig?.[objKey]
               ? localeTexts?.TextInputFieldWithSuffix?.icon?.eyeClose
               : localeTexts?.TextInputFieldWithSuffix?.icon?.eye
           }
@@ -1087,6 +1110,14 @@ const ConfigScreen: React.FC = function () {
       </Tooltip>
     </div>
   );
+
+
+  const toggleDisplayType  = (objKey: string) => {
+    setShowSensitiveConfig((prevState: any) => ({
+      ...prevState,
+      [objKey]: !prevState[objKey]
+    }))
+  }
 
   const renderConfig = () => {
     const configScreen = rootConfig?.configureConfigScreen();
@@ -1259,9 +1290,7 @@ const ConfigScreen: React.FC = function () {
                                         <TextInput
                                           id={`${objKey}-id`}
                                           type={
-                                            isClientSecretShown
-                                              ? "password"
-                                              : "text"
+                                            showSensitiveConfig?.[`${multiConfigurationID}_${objKey}`] ? "password" : "text"
                                           }
                                           required
                                           value={
@@ -1289,7 +1318,7 @@ const ConfigScreen: React.FC = function () {
                                           }
                                           suffix={
                                             objValue?.isSensitive
-                                              ? renderSuffix(objValue)
+                                              ? renderSuffix(`${multiConfigurationID}_${objKey}`, objValue)
                                               : ""
                                           }
                                           data-testid="text_input"
@@ -1428,7 +1457,7 @@ const ConfigScreen: React.FC = function () {
                             canShowPassword={objValue?.isSensitive ?? false}
                             suffix={
                               objValue?.isSensitive
-                                ? renderSuffix(objValue)
+                                ? renderSuffix(objKey, objValue)
                                 : ""
                             }
                             data-testid="text_input"
