@@ -56,8 +56,7 @@ const ConfigScreen: React.FC = function () {
       saveInConfig[field] = configInputFields?.[field];
     if (configInputFields?.[field]?.saveInServerConfig)
       saveInServerConfig[field] = configInputFields?.[field];
-    if(configInputFields?.[field]?.isSensitive)
-      sensitiveKeys.push(field)
+    if (configInputFields?.[field]?.isSensitive) sensitiveKeys.push(field);
   });
 
   // Function to check if any key has isMultiConfig: true
@@ -135,7 +134,7 @@ const ConfigScreen: React.FC = function () {
   const [isAddKeyModalOpen, setIsAddKeyModalOpen] = useState(false);
   const [keyPathOptions, setKeyPathOptions] = useState<any[]>([]);
   // this map will store the sensitive keys along with the visibility status
-  const [showSensitiveConfig, setShowSensitiveConfig] = useState<any>({}) 
+  const [showSensitiveConfig, setShowSensitiveConfig] = useState<any>({});
   // Using refs to store previous configuration objects
   const prevConfiguration = useRef(state?.installationData?.configuration);
   const prevServerConfiguration = useRef(
@@ -622,20 +621,20 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
-// this function creates a map of the sensitive keys of every multiconfig object.
-// every time a 
+  // this function creates a map of the sensitive keys of every multiconfig object.
+  // every time a
   const createSensitiveConfigMap = (multiConfigFields: any) => {
-    const sensitiveConfigMap: any = {}
+    const sensitiveConfigMap: any = {};
 
-    const generatedKeys = multiConfigFields.flatMap((field: any) => 
+    const generatedKeys = multiConfigFields.flatMap((field: any) =>
       sensitiveKeys?.map((key: any) => `${field}_${key}`)
     );
     generatedKeys?.forEach((key: any) => {
-      sensitiveConfigMap[key] = showSensitiveConfig?.[key] || false
-    })
+      sensitiveConfigMap[key] = showSensitiveConfig?.[key] || false;
+    });
 
-    setShowSensitiveConfig({...sensitiveConfigMap});
-  }
+    setShowSensitiveConfig({ ...sensitiveConfigMap });
+  };
 
   useEffect(() => {
     const validateConfig = async () => {
@@ -720,7 +719,9 @@ const ConfigScreen: React.FC = function () {
       prevServerConfiguration.current = currentServerConfiguration;
 
       triggerValidation();
-      createSensitiveConfigMap(Object.keys(state?.installationData?.configuration?.multi_config_keys))
+      createSensitiveConfigMap(
+        Object.keys(state?.installationData?.configuration?.multi_config_keys)
+      );
     }
 
     return () => {
@@ -1072,7 +1073,6 @@ const ConfigScreen: React.FC = function () {
   const [isClientSecretShown, setIsClientSecretShown] =
     useState<boolean>(false);
 
-
   const renderSuffix = (objKey: string, objValue: any) => (
     <div
       onClick={() => toggleDisplayType(objKey)}
@@ -1111,13 +1111,12 @@ const ConfigScreen: React.FC = function () {
     </div>
   );
 
-
-  const toggleDisplayType  = (objKey: string) => {
+  const toggleDisplayType = (objKey: string) => {
     setShowSensitiveConfig((prevState: any) => ({
       ...prevState,
-      [objKey]: !prevState[objKey]
-    }))
-  }
+      [objKey]: !prevState[objKey],
+    }));
+  };
 
   const renderConfig = () => {
     const configScreen = rootConfig?.configureConfigScreen();
@@ -1290,7 +1289,11 @@ const ConfigScreen: React.FC = function () {
                                         <TextInput
                                           id={`${objKey}-id`}
                                           type={
-                                            showSensitiveConfig?.[`${multiConfigurationID}_${objKey}`] ? "password" : "text"
+                                            showSensitiveConfig?.[
+                                              `${multiConfigurationID}_${objKey}`
+                                            ]
+                                              ? "password"
+                                              : "text"
                                           }
                                           required
                                           value={
@@ -1318,7 +1321,10 @@ const ConfigScreen: React.FC = function () {
                                           }
                                           suffix={
                                             objValue?.isSensitive
-                                              ? renderSuffix(`${multiConfigurationID}_${objKey}`, objValue)
+                                              ? renderSuffix(
+                                                  `${multiConfigurationID}_${objKey}`,
+                                                  objValue
+                                                )
                                               : ""
                                           }
                                           data-testid="text_input"
