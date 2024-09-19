@@ -139,6 +139,7 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                       !enteredConfigurationName
                       || hasDuplicateConfigurationName
                       || enteredConfigurationName === "legacy_config"
+                      || alphanumericIdentifier
                     }
                   >
                     {
