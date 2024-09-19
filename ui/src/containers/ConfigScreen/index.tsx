@@ -1267,7 +1267,7 @@ const ConfigScreen: React.FC = function () {
                               /* eslint-disable */
                               Object.entries(configInputFields)?.map(
                                 ([objKey, objValue]: any) => {
-                                  if(objValue?.isMultiConfig ) {
+                                  if(objValue?.isMultiConfig) {
                                     if (objValue?.type !== "textInputFields") {
                                       return (
                                         <Field
