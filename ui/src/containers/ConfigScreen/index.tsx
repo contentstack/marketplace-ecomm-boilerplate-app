@@ -36,6 +36,7 @@ import { DeleteModalConfig } from "./DeleteModal";
 import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { CustomModal } from "./AddKeyModal";
+import WarningMessage from "../../components/WarningMessage";
 
 const ConfigScreen: React.FC = function () {
   /* entire configuration object returned from configureConfigScreen */
@@ -720,7 +721,7 @@ const ConfigScreen: React.FC = function () {
 
       triggerValidation();
       createSensitiveConfigMap(
-        Object.keys(state?.installationData?.configuration?.multi_config_keys)
+        Object.keys(state?.installationData?.configuration?.multi_config_keys??{})
       );
     }
 
@@ -1068,6 +1069,70 @@ const ConfigScreen: React.FC = function () {
     isMultiConfig: boolean
   ) => {
     updateConfig(event, multiConfigID, isMultiConfig);
+  };
+
+  const renderContent = () => {
+    const ISCUSTOMJSON=state?.installationData?.configuration?.is_custom_json
+
+    if(ISCUSTOMJSON){
+      return (
+        <div className="warning-container">
+      <WarningMessage content={
+        <>
+        {localeTexts.configPage.saveInEntry.customFieldsInstruction}
+         <a
+           href={localeTexts?.configPage?.saveInEntry?.url}
+           target="_blank"
+           rel="noreferrer"
+         >
+           {localeTexts?.configPage?.saveInEntry?.link}
+         </a>
+         {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
+         <a
+           href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+           target="_blank"
+           rel="noreferrer"
+         >
+           {localeTexts?.configPage?.saveInEntry?.supportLink}
+         </a>
+         <br />
+         <strong>{localeTexts?.configPage?.saveInEntry?.NoteText}</strong>
+       </>
+      } />
+      </div>
+    )
+
+    }
+    return (
+      <div className="warning-container">
+      <WarningMessage content={
+        <>
+        {localeTexts.configPage.saveInEntry.allFieldsInstruction}
+         <a
+           href={localeTexts?.configPage?.saveInEntry?.url}
+           target="_blank"
+           rel="noreferrer"
+         >
+           {localeTexts?.configPage?.saveInEntry?.link}
+         </a>
+         {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
+         <a
+           href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+           target="_blank"
+           rel="noreferrer"
+         >
+           {localeTexts?.configPage?.saveInEntry?.supportLink}
+         </a>
+         <br />
+         <strong>{localeTexts?.configPage?.saveInEntry?.NoteText}</strong>
+       </>
+      } />
+      </div>
+
+    );
+
+   
+    
   };
 
   const [isClientSecretShown, setIsClientSecretShown] =
@@ -1524,15 +1589,7 @@ const ConfigScreen: React.FC = function () {
               />
             </div>
             <InstructionText>
-              {localeTexts.configPage.saveInEntry.instruction1}
-              <a
-                href={localeTexts.configPage.saveInEntry.url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {localeTexts.configPage.saveInEntry.link}
-              </a>
-              {localeTexts.configPage.saveInEntry.instruction2}
+              {renderContent()}
             </InstructionText>
 
             {isCustom && (
