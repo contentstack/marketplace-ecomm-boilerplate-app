@@ -721,7 +721,9 @@ const ConfigScreen: React.FC = function () {
 
       triggerValidation();
       createSensitiveConfigMap(
-        Object.keys(state?.installationData?.configuration?.multi_config_keys??{})
+        Object.keys(
+          state?.installationData?.configuration?.multi_config_keys ?? {}
+        )
       );
     }
 
@@ -1072,67 +1074,68 @@ const ConfigScreen: React.FC = function () {
   };
 
   const renderContent = () => {
-    const ISCUSTOMJSON=state?.installationData?.configuration?.is_custom_json
+    const ISCUSTOMJSON = state?.installationData?.configuration?.is_custom_json;
 
-    if(ISCUSTOMJSON){
+    if (ISCUSTOMJSON) {
       return (
         <div className="warning-container">
-      <WarningMessage content={
-        <>
-        {localeTexts.configPage.saveInEntry.customFieldsInstruction}
-         <a
-           href={localeTexts?.configPage?.saveInEntry?.url}
-           target="_blank"
-           rel="noreferrer"
-         >
-           {localeTexts?.configPage?.saveInEntry?.link}
-         </a>
-         {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
-         <a
-           href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
-           target="_blank"
-           rel="noreferrer"
-         >
-           {localeTexts?.configPage?.saveInEntry?.supportLink}
-         </a>
-         <br />
-         <strong>{localeTexts?.configPage?.saveInEntry?.NoteText}</strong>
-       </>
-      } />
-      </div>
-    )
-
+          <WarningMessage
+            content={
+              <>
+                {localeTexts.configPage.saveInEntry.customFieldsInstruction}
+                <a
+                  href={localeTexts?.configPage?.saveInEntry?.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {localeTexts?.configPage?.saveInEntry?.link}
+                </a>
+                {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
+                <a
+                  href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {localeTexts?.configPage?.saveInEntry?.supportLink}
+                </a>
+                <br />
+                <strong>
+                  {localeTexts?.configPage?.saveInEntry?.NoteText}
+                </strong>
+              </>
+            }
+          />
+        </div>
+      );
     }
     return (
       <div className="warning-container">
-      <WarningMessage content={
-        <>
-        {localeTexts.configPage.saveInEntry.allFieldsInstruction}
-         <a
-           href={localeTexts?.configPage?.saveInEntry?.url}
-           target="_blank"
-           rel="noreferrer"
-         >
-           {localeTexts?.configPage?.saveInEntry?.link}
-         </a>
-         {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
-         <a
-           href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
-           target="_blank"
-           rel="noreferrer"
-         >
-           {localeTexts?.configPage?.saveInEntry?.supportLink}
-         </a>
-         <br />
-         <strong>{localeTexts?.configPage?.saveInEntry?.NoteText}</strong>
-       </>
-      } />
+        <WarningMessage
+          content={
+            <>
+              {localeTexts.configPage.saveInEntry.allFieldsInstruction}
+              <a
+                href={localeTexts?.configPage?.saveInEntry?.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {localeTexts?.configPage?.saveInEntry?.link}
+              </a>
+              {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
+              <a
+                href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {localeTexts?.configPage?.saveInEntry?.supportLink}
+              </a>
+              <br />
+              <strong>{localeTexts?.configPage?.saveInEntry?.NoteText}</strong>
+            </>
+          }
+        />
       </div>
-
     );
-
-   
-    
   };
 
   const [isClientSecretShown, setIsClientSecretShown] =
@@ -1332,7 +1335,7 @@ const ConfigScreen: React.FC = function () {
                               /* eslint-disable */
                               Object.entries(configInputFields)?.map(
                                 ([objKey, objValue]: any) => {
-                                  if(objValue?.isMultiConfig) {
+                                  if (objValue?.isMultiConfig) {
                                     if (objValue?.type !== "textInputFields") {
                                       return (
                                         <Field
@@ -1379,7 +1382,9 @@ const ConfigScreen: React.FC = function () {
                                               required
                                               value={
                                                 objValue?.saveInConfig
-                                                  ? multiConfigurationData?.[objKey]
+                                                  ? multiConfigurationData?.[
+                                                      objKey
+                                                    ]
                                                   : state?.installationData
                                                       ?.serverConfiguration
                                                       ?.multi_config_keys?.[
@@ -1403,9 +1408,9 @@ const ConfigScreen: React.FC = function () {
                                               suffix={
                                                 objValue?.isSensitive
                                                   ? renderSuffix(
-                                                    `${multiConfigurationID}_${objKey}`,
-                                                    objValue
-                                                  )
+                                                      `${multiConfigurationID}_${objKey}`,
+                                                      objValue
+                                                    )
                                                   : ""
                                               }
                                               data-testid="text_input"
@@ -1588,9 +1593,7 @@ const ConfigScreen: React.FC = function () {
                 onChange={updateCustomJSON}
               />
             </div>
-            <InstructionText>
-              {renderContent()}
-            </InstructionText>
+            <InstructionText>{renderContent()}</InstructionText>
 
             {isCustom && (
               <Field className="custom-keys">

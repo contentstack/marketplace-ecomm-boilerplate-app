@@ -140,12 +140,13 @@ const CustomField: React.FC<any> = function ({
     setView(event);
   }, []);
   const renderCustomField = () => {
-    if (isInvalidCredentials.error){
-      return(
+    if (isInvalidCredentials.error) {
+      return (
         <div className="warning-container">
-      <WarningMessage content={isInvalidCredentials?.data} />
-      </div>)
-  }
+          <WarningMessage content={isInvalidCredentials?.data} />
+        </div>
+      );
+    }
     if (loading) {
       return (
         <SkeletonTile

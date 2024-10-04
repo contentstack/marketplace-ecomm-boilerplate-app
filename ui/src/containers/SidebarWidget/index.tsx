@@ -144,7 +144,7 @@ const SidebarWidget: React.FC = function () {
       "product",
       productID,
       isOldUserLocal
-    ); 
+    );
     if (product?.error) {
       setIsInvalidCredentials(product);
     } else {
@@ -190,7 +190,7 @@ const SidebarWidget: React.FC = function () {
         );
         ids = formattedData;
       }
-      const selectProduct = await fetchSelectedIdData(ids, isolduser); 
+      const selectProduct = await fetchSelectedIdData(ids, isolduser);
 
       if (selectProduct) {
         setSelectedProduct(selectProduct);

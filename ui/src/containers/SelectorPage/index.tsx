@@ -182,8 +182,7 @@ const SelectorPage: React.FC = function () {
         } else {
           setIsInvalidCredentials(response);
         }
-      } 
-      else {
+      } else {
         setLoading(true);
         setSearchText("");
         fetchInitialData(meta);
@@ -273,7 +272,7 @@ const SelectorPage: React.FC = function () {
     }
   }, [selectedMultiConfigValue]);
 
-  const updateList = (filteredList: any) =>  setList(filteredList);
+  const updateList = (filteredList: any) => setList(filteredList);
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {
