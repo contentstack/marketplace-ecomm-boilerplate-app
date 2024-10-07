@@ -140,7 +140,7 @@ const CustomField: React.FC<any> = function ({
     setView(event);
   }, []);
   const renderCustomField = () => {
-    if (isInvalidCredentials.error) {
+    if (isInvalidCredentials?.error) {
       return (
         <div className="warning-container">
           <WarningMessage content={isInvalidCredentials?.data} />

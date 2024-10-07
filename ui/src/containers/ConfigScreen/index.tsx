@@ -1092,7 +1092,7 @@ const ConfigScreen: React.FC = function () {
                 </a>
                 {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
                 <a
-                  href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+                  href={`mailto:${localeTexts?.configPage?.saveInEntry?.supportUrl}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -1123,7 +1123,7 @@ const ConfigScreen: React.FC = function () {
               </a>
               {localeTexts?.configPage?.saveInEntry?.contentstackSupportText}
               <a
-                href={`mailto:${localeTexts?.configPage?.saveInEntry.supportUrl}`}
+                href={`mailto:${localeTexts?.configPage?.saveInEntry?.supportUrl}`}
                 target="_blank"
                 rel="noreferrer"
               >

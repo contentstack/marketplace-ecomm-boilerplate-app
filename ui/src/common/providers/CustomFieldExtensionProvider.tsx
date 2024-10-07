@@ -112,7 +112,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       if (oldUser) {
         updatedFieldData = fieldData?.data;
       } else {
-        console.info("in the else block");
         updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => {
           if (!fieldDataSet?.cs_metadata) {
             return {

@@ -203,8 +203,6 @@ const SelectorPage: React.FC = function () {
           rootConfig.ecommerceEnv.APP_ENG_NAME
         ),
       });
-      // setLoading(true);
-      // fetchData({ searchText, skip: 0, limit: 30 });
     }
   }, [config]);
 
