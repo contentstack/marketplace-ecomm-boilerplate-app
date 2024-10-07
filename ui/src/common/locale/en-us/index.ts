@@ -40,13 +40,19 @@ export default {
       label: "Save In Entry",
       help: "You can select different ways to store your ecommerce data.",
       placeholder: "Enter the structure of data you want to save in the entry",
-      instruction1:
-        "If you select the ''Custom Fields'' option, you can select the structure of the data you want to save in the entry. If 'All Fields' option is selected, you might be able to add limited products in the custom field depending on the size of the data (Refer to the ",
-      link: "Custom Fields Limitations documentation",
+      allFieldsInstruction:
+        "The 'All Fields' option allows you to add a limited number of products based on the entry's response data structure. (Refer ",
+      customFieldsInstruction:
+        "The 'Custom Field' option allows you to define and select the data structure you want to save in the entry. (Refer ",
+      link: "Custom Fields Limitations",
       url: "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/",
-      instruction2:
-        ", for more details). To increase this limit, please contact support.",
+      contentstackSupportText:
+        " for more details). To increase this limit, please contact ",
       wholeJson: "All Fields",
+      supportLink: "support.",
+      supportUrl: "support@contentstack.com",
+      NoteText:
+        "Note: Switching options with existing data in entry may cause data loss. Proceed with caution.",
       customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
       onlyID: "Only ID",

@@ -203,8 +203,6 @@ const SelectorPage: React.FC = function () {
           rootConfig.ecommerceEnv.APP_ENG_NAME
         ),
       });
-      setLoading(true);
-      fetchData({ searchText, skip: 0, limit: 30 });
     }
   }, [config]);
 
@@ -272,7 +270,7 @@ const SelectorPage: React.FC = function () {
     }
   }, [selectedMultiConfigValue]);
 
-  const updateList = (filteredList: any) => filteredList;
+  const updateList = (filteredList: any) => setList(filteredList);
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {

@@ -139,7 +139,7 @@ const getSidebarData = (product: any): SidebarDataObj[] => [
     value: product?.url,
   },
   {
-    title: "MultiConfigName",
+    title: "StorName",
     value: product?.cs_metadata?.multiConfigName
       ? product?.cs_metadata?.multiConfigName
       : "",

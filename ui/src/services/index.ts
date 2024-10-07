@@ -146,7 +146,7 @@ const getSelectedIDs = async (
   const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`;
   return makeAnApiCall(apiUrl, "POST", { config: { ...config } });
 };
-// runes when categoryConfig.customCategoryStructure is true
+// runes when categoryConfig.customCategoryStructure is true/false
 const getCustomCategoryData = async (
   config: any,
   type: any,
@@ -158,10 +158,13 @@ const getCustomCategoryData = async (
       ? Array.isArray(selectedIDs) && selectedIDs?.length
       : Object.keys(selectedIDs)?.length
   ) {
+    const categoryID = isOldUser
+      ? selectedIDs?.join(",")
+      : JSON.stringify(selectedIDs);
     const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
       config,
       type,
-      selectedIDs,
+      categoryID,
       isOldUser
     );
     return makeAnApiCall(apiUrl, "POST", requestData);

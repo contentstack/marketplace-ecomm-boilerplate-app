@@ -139,13 +139,12 @@ const SidebarWidget: React.FC = function () {
 
   const fetchSelectedIdData = async (data: any, isOldUserLocal: boolean) => {
     const productID = typeof data === "object" ? data : [data];
-
     const product = await getSelectedIDs(
       appConfig,
       "product",
       productID,
       isOldUserLocal
-    ); // Use the local value
+    );
     if (product?.error) {
       setIsInvalidCredentials(product);
     } else {
@@ -156,30 +155,30 @@ const SidebarWidget: React.FC = function () {
   };
   useEffect(() => {
     const setInitialProductDropdown = async () => {
-      let isMultiConfigEnableds = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
-      let isOldUserLocal = false;
+      let isMultiConfigEnabled = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
+      let isolduser = false;
       if (appConfig) {
         const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
           "multi_config_keys"
         );
 
-        if (isMultiConfigEnableds) {
+        if (isMultiConfigEnabled) {
           if (ISOLDUSER) {
-            isMultiConfigEnableds = false;
-            isOldUserLocal = true;
+            isMultiConfigEnabled = false;
+            isolduser = true;
           }
         } else {
           // eslint-disable-next-line
           if (ISOLDUSER) {
-            isMultiConfigEnableds = false;
-            isOldUserLocal = true;
+            isMultiConfigEnabled = false;
+            isolduser = true;
           } else {
-            isOldUserLocal = false;
+            isolduser = false;
           }
         }
       }
       let ids;
-      if (!isMultiConfigEnableds) {
+      if (!isMultiConfigEnabled) {
         ids = selectedDropdownProduct?.value;
       } else {
         const product = productList.find(
@@ -191,7 +190,7 @@ const SidebarWidget: React.FC = function () {
         );
         ids = formattedData;
       }
-      const selectProduct = await fetchSelectedIdData(ids, isOldUserLocal); // Pass the local variable
+      const selectProduct = await fetchSelectedIdData(ids, isolduser);
 
       if (selectProduct) {
         setSelectedProduct(selectProduct);

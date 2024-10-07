@@ -46,7 +46,6 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   ) => {
     const findMatchingKeys = (keys: any) =>
       keys?.filter((key: any) => config?.multi_config_keys?.[key]);
-
     if (fieldConfigData?.locale?.[currentLocale]?.config_label?.length) {
       const localeConfigLabels =        fieldConfigData?.locale?.[currentLocale]?.config_label;
       const matchingLocaleKeys = findMatchingKeys(localeConfigLabels);
@@ -74,54 +73,47 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   };
 
   const initialLoad = async () => {
-    if (location) {
+    let oldUser = false;
+    if (location && appConfig) {
       // eslint-disable-next-line
       const { api_key } = appSdk?.stack?._data ?? {};
       let updatedFieldData: any = [];
-      let oldUser: any = isMultiConfigEnabled === false;
+      const hasMultiConfigKeys = Object.keys(appConfig ?? {}).includes(
+        "multi_config_keys"
+      );
+      if (
+        isMultiConfigEnabled === false
+        || (isMultiConfigEnabled === true && !hasMultiConfigKeys)
+      ) {
+        oldUser = true;
+      } else {
+        oldUser = false;
+      }
       setIsOldUser(oldUser);
       setStackApiKey(api_key);
       window.iframeRef = null;
       window.postRobot = appSdk?.postRobot;
       location?.frame?.enableAutoResizing();
+
       const fieldData = await location?.field?.getData();
       const retrievedAdvancedFieldConfigs = await location?.fieldConfig;
       const currentLocale = await location?.entry?.locale;
+
       const data = getFieldConfigValue(
         currentLocale,
         retrievedAdvancedFieldConfigs,
         appConfig
       );
+
       if (data?.length) {
         setAdvancedConfig(data);
       }
-      if (appConfig) {
-        const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
-          "multi_config_keys"
-        );
-        setIsOldUser(ISOLDUSER);
 
-        if (ISOLDUSER) {
-          oldUser = true;
-        }
-      }
-      if (oldUser === true) {
-        updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => ({
-          ...fieldDataSet,
-          cs_metadata: {
-            multiConfigName: "legacy_config",
-            isConfigDeleted: false,
-          },
-        }));
-      }
-      // eslint-disable-next-line
-      else {
+      if (oldUser) {
+        updatedFieldData = fieldData?.data;
+      } else {
         updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => {
-          if (
-            !fieldDataSet?.cs_metadata
-            && fieldDataSet?.cs_metadata?.multiConfigName !== "legacy_config"
-            && fieldDataSet?.cs_metadata?.isConfigDeleted !== false
-          ) {
+          if (!fieldDataSet?.cs_metadata) {
             return {
               ...fieldDataSet,
               cs_metadata: {
@@ -130,9 +122,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
               },
             };
           }
-          return {
-            ...fieldDataSet,
-          };
+          return fieldDataSet;
         });
       }
 
@@ -147,26 +137,22 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
             const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
-        } else {
-          // eslint-disable-next-line
-          if (
-            type === "category"
-            && categoryConfig.customCategoryStructure === false
-          ) {
-            if (oldUser === true) {
-              setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
-            } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
-              setEntryIds(returnProductFormatedData);
-            }
+        } else if (
+          type === "category"
+          && categoryConfig.customCategoryStructure === false
+        ) {
+          if (oldUser === true) {
+            setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
           } else {
-            // eslint-disable-next-line
-            if (oldUser === true) {
-              setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
-            } else {
-              const returnProductFormatedData: any =                rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
-              setEntryIds(returnProductFormatedData);
-            }
+            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
+            setEntryIds(returnProductFormatedData);
+          }
+        } else if (type === "product") {
+          if (oldUser === true) {
+            setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
+          } else {
+            const returnProductFormatedData: any =              rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
+            setEntryIds(returnProductFormatedData);
           }
         }
       }
