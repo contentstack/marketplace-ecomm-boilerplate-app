@@ -139,10 +139,14 @@ const CustomField: React.FC<any> = function ({
   const handleToggle = useCallback((event: any) => {
     setView(event);
   }, []);
-
   const renderCustomField = () => {
-    if (isInvalidCredentials.error)
-      return <WarningMessage content={isInvalidCredentials?.data} />;
+    if (isInvalidCredentials?.error) {
+      return (
+        <div className="warning-container">
+          <WarningMessage content={isInvalidCredentials?.data} />
+        </div>
+      );
+    }
     if (loading) {
       return (
         <SkeletonTile
