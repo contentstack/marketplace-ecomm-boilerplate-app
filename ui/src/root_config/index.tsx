@@ -512,7 +512,6 @@ const validateConfigKeyByApi = async (
     };
   }
 
-  // console.info("apiValidationEnabledForConfigResponse",apiValidationEnabledForConfigResponse)
   return {
     invalidKeys: [
       {
@@ -597,10 +596,10 @@ const search = (
 
   // Filter out empty or undefined query parameters
   const filteredParams: any = Object.fromEntries(
-    Object.entries(queryParamsObject).filter(([_, value]) => value)
+    Object.entries(queryParamsObject)?.filter(([_, value]) => value)
   );
 
-  const queryParams = new URLSearchParams(filteredParams).toString();
+  const queryParams = new URLSearchParams(filteredParams)?.toString();
   const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams}`;
 
   return makeAnApiCall(apiUrl, "POST", {

@@ -151,9 +151,7 @@ const ApiValidationEnabledForConfig = (
 
 export {
   getSelectedIDs,
-  // getProductandCategory,
   requestCategories,
-  // search,
   getCustomCategoryData,
   ApiValidationEnabledForConfig,
   makeAnApiCall,

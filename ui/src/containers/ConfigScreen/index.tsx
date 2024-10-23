@@ -491,7 +491,7 @@ const ConfigScreen: React.FC = function () {
         Object.entries(config || {})?.forEach(([key, value]) => {
           if (configInputFields?.[key]?.required) {
             if (isEmptyValue(value)) {
-              if (!invalidKeys[configKey]) {
+              if (!invalidKeys?.[configKey]) {
                 invalidKeys[configKey] = [];
               }
               invalidKeys?.[configKey]?.push(key);
@@ -538,12 +538,12 @@ const ConfigScreen: React.FC = function () {
       for (const config of Object.values(multiConfigKeys || {})) {
         for (const [key, value] of Object.entries(config || {})) {
           if (configInputFields?.[key]?.required) {
-            if (nonDuplicateKeys.includes(key)) {
+            if (nonDuplicateKeys?.includes(key)) {
               // Ignore falsy values like empty strings
               if (value && valuesTracker?.[key]?.has(value)) {
-                duplicateKeys.push(key); // Record the key that has a duplicate
+                duplicateKeys?.push(key); // Record the key that has a duplicate
               }
-              valuesTracker[key].add(value);
+              valuesTracker?.[key].add(value);
             }
           }
         }
