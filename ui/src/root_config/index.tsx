@@ -21,7 +21,10 @@ import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponen
 import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
 /* eslint-disable */
 import categoryConfig from "./categories";
-import { ApiValidationEnabledForConfig } from "../services/index";
+import {
+  ApiValidationEnabledForConfig,
+  makeAnApiCall,
+} from "../services/index";
 /* eslint-enable */
 
 /* all values in this file are an example.
@@ -261,15 +264,7 @@ const removeItemsFromCustomField = (
   uniqueKey: any,
   isOldUser: Boolean,
   multiConfigName: any
-) => {
-  if (type === "category") {
-    // Remove item based on a unique key if the type is 'category'
-    return selectedIds?.filter((data: any) => data?.[uniqueKey] !== removeId);
-  }
-
-  // Remove item based on a direct ID match for other types
-  return selectedIds?.filter((data: any) => Number(data) !== Number(removeId));
-};
+) => {};
 
 // this function is used for app signing, i.e. for verifying app tokens in ui
 interface TokenPayload extends JWTPayload {
@@ -342,7 +337,7 @@ const mapProductIdsByMultiConfig = (productData: any, type: any): Result => {
   const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
   if (productData?.length) {
-    const multiConfigUniqueKey = "multiConfiguniqueKey";
+    const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
     result = productData?.reduce((acc: any, item: any) => {
       const multiConfigName = item?.cs_metadata?.multiConfigName;
       if (!acc[multiConfigName]) {
@@ -375,7 +370,7 @@ const mapProductIdsByMultiConfig = (productData: any, type: any): Result => {
 const mapCategoryIdsByMultiConfig = (categoryData: any, type: any): Result => {
   const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
-  const multiConfigUniqueKey = "multiConfiguniqueKey";
+  const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
 
   // Check if category data is present and has length
   if (categoryData?.length) {
@@ -503,13 +498,20 @@ const validateConfigKeyByApi = async (
   multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
   multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
 ): Promise<ValidationResult> => {
-  const apiValidationEnabledForConfigResponse =
+  const apiValidationEnabledForConfigResponse: any =
     await ApiValidationEnabledForConfig(
       configurationObject,
       serverConfiguration,
       multiConfigTrueAndApiValidationEnabled,
       multiConfigFalseAndApiValidationEnabled
     );
+
+  if (apiValidationEnabledForConfigResponse?.error === false) {
+    return {
+      invalidKeys: [],
+    };
+  }
+
   return {
     invalidKeys: [
       {
@@ -518,6 +520,93 @@ const validateConfigKeyByApi = async (
       },
     ],
   };
+};
+
+/**
+ * Fetches paginated products and categories based on the provided parameters.
+ *
+ * @param {any} config - Configuration data of the app.
+ * @param {any} requestType - Indicates whether the request is for product or category.
+ * @param {any} skip - Specifies how many products/categories to skip.
+ * @param {any} limit - Specifies how much data to return.
+ * @param {any} isOldUser - Used to check if multiconfiguration is enabled or not.
+ * @param {any} multiConfigDropDown - Contains the multiconfiguration key names.
+ * @param {any} selectorePageData - Contains the selectorpage data
+ *
+ * @returns {Promise<any>} - The API response.
+ */
+const getProductandCategory = (
+  config: any,
+  requestType: any,
+  skip: any,
+  limit: any,
+  isOldUser: any,
+  multiConfigDropDown: any,
+  selectorePageData: any
+) => {
+  const queryParamsObject: any = {
+    query: requestType,
+    skip: String(skip),
+    limit: String(limit),
+  };
+
+  if (multiConfigDropDown?.value) {
+    queryParamsObject.configKey = JSON.stringify({
+      [multiConfigDropDown.value]: {},
+    });
+  }
+
+  const queryParams = new URLSearchParams(queryParamsObject);
+
+  return makeAnApiCall(
+    `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`,
+    "POST",
+    { config, isOldUser, multiConfigDropDown }
+  );
+};
+
+/**
+ * Fetches paginated products and categories based on the provided parameters.
+ *
+ * @param {any} config - Configuration data of the app.
+ * @param {any} keyword - SearchKeyWord for the api request
+ * @param {any} skip - Specifies how many products/categories to skip.
+ * @param {any} limit - Specifies how much data to return.
+ * @param {any} isOldUser - Used to check if multiconfiguration is enabled or not.
+ * @param {any} selectedMultiConfigValue - Active multiconfig
+ * @param {any} selectorePageData - Contains the selectorpage data
+ *
+ * @returns {Promise<any>} - The API response.
+ */
+const search = (
+  config: any,
+  keyword: string,
+  skip: number,
+  limit: number,
+  oldUser: boolean,
+  selectedMultiConfigValue: any,
+  selectorPageData: any
+) => {
+  const queryParamsObject: any = {
+    query: config?.type || "",
+    searchParam: keyword ? `keyword=${keyword}` : "",
+    skip: skip ? String(skip) : "0",
+    limit: limit ? String(limit) : "10",
+  };
+
+  // Filter out empty or undefined query parameters
+  const filteredParams: any = Object.fromEntries(
+    Object.entries(queryParamsObject)?.filter(([_, value]) => value)
+  );
+
+  const queryParams = new URLSearchParams(filteredParams)?.toString();
+  const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams}`;
+
+  return makeAnApiCall(apiUrl, "POST", {
+    config,
+    oldUser,
+    selectedMultiConfigValue,
+  });
 };
 
 const rootConfig = {
@@ -538,6 +627,8 @@ const rootConfig = {
   customMultiConfigComponent,
   customNonMultiConfigComponent,
   validateConfigKeyByApi,
+  getProductandCategory,
+  search,
 };
 
 export default rootConfig;

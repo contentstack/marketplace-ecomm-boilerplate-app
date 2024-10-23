@@ -71,47 +71,6 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
   }
 };
 
-/**
- * Fetches paginated products and categories based on the provided parameters.
- *
- * @param {any} config - Configuration data of the app.
- * @param {any} requestType - Indicates whether the request is for product or category.
- * @param {any} skip - Specifies how many products/categories to skip.
- * @param {any} limit - Specifies how much data to return.
- * @param {any} isOldUser - Used to check if multiconfiguration is enabled or not.
- * @param {any} multiConfigDropDown - Contains the multiconfiguration key names.
- *
- * @returns {Promise<any>} - The API response.
- */
-const getProductandCategory = (
-  config: any,
-  requestType: any,
-  skip: any,
-  limit: any,
-  isOldUser: any,
-  multiConfigDropDown: any
-) => {
-  const queryParamsObject: any = {
-    query: requestType,
-    skip: String(skip),
-    limit: String(limit),
-  };
-
-  if (multiConfigDropDown?.value) {
-    queryParamsObject.configKey = JSON.stringify({
-      [multiConfigDropDown.value]: {},
-    });
-  }
-
-  const queryParams = new URLSearchParams(queryParamsObject);
-
-  return makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`,
-    "POST",
-    { config, isOldUser, multiConfigDropDown }
-  );
-};
-
 // get all available categories
 const requestCategories = (config: any) =>
   makeAnApiCall(
@@ -171,20 +130,6 @@ const getCustomCategoryData = async (
   }
   return null;
 };
-// search products and categories
-const search = (
-  config: any,
-  keyword: any,
-  skip: any,
-  limit: any,
-  oldUser: Boolean,
-  selectedMultiConfigValue: any
-) =>
-  makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`,
-    "POST",
-    { config, oldUser, selectedMultiConfigValue }
-  );
 
 //  Retrieves API validation for configuration page keys when  isApiValidation is true
 const ApiValidationEnabledForConfig = (
@@ -192,7 +137,7 @@ const ApiValidationEnabledForConfig = (
   serverConfigurationObject: any,
   multiConfigTrueAndApiValidationEnabledKeys: any,
   multiConfigFalseAndApiValidationEnabledKeys: any
-) => {
+) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?type=isApiValidationEnabled`,
     "POST",
@@ -203,12 +148,11 @@ const ApiValidationEnabledForConfig = (
       multiConfigFalseAndApiValidationEnabledKeys,
     }
   );
-};
+
 export {
   getSelectedIDs,
-  getProductandCategory,
   requestCategories,
-  search,
   getCustomCategoryData,
   ApiValidationEnabledForConfig,
+  makeAnApiCall,
 };

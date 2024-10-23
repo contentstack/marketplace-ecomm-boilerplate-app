@@ -298,6 +298,17 @@ const ConfigScreen: React.FC = function () {
             },
           };
         }
+
+        if (multiConfigID) {
+          configuration = {
+            ...configuration,
+            active_multi_config: multiConfigID,
+          };
+          serverConfiguration = {
+            ...serverConfiguration,
+            active_multi_config: multiConfigID,
+          };
+        }
       } else {
         if (fieldName === "keypath_options") {
           configuration = {
@@ -324,6 +335,7 @@ const ConfigScreen: React.FC = function () {
             [fieldName]: fieldValue,
           };
         }
+
         configuration = {
           ...configuration,
           [fieldName]: fieldValue,
@@ -365,6 +377,7 @@ const ConfigScreen: React.FC = function () {
     },
     [state?.setInstallationData, state?.installationData]
   );
+
   const updateTypeObj = useCallback(
     async (list: any[]) => {
       const customKeysTemp: any[] = [];
@@ -397,6 +410,7 @@ const ConfigScreen: React.FC = function () {
     setKeyPathOptions(updatedValue);
     updateConfig(e, "", false);
   };
+
   const addMultiConfig = async (inputValue: any) => {
     const accordionId = inputValue;
     const result = categorizeConfigFields(configInputFields);
@@ -475,11 +489,13 @@ const ConfigScreen: React.FC = function () {
 
       Object.entries(multiConfigKeys || {})?.forEach(([configKey, config]) => {
         Object.entries(config || {})?.forEach(([key, value]) => {
-          if (isEmptyValue(value)) {
-            if (!invalidKeys[configKey]) {
-              invalidKeys[configKey] = [];
+          if (configInputFields?.[key]?.required) {
+            if (isEmptyValue(value)) {
+              if (!invalidKeys?.[configKey]) {
+                invalidKeys[configKey] = [];
+              }
+              invalidKeys?.[configKey]?.push(key);
             }
-            invalidKeys?.[configKey]?.push(key);
           }
         });
       });
@@ -491,8 +507,10 @@ const ConfigScreen: React.FC = function () {
       Object.entries(keys || {})?.forEach(([key, value]) => {
         if (key === "default_multi_config_key" || key === "multi_config_keys")
           return;
-        if (isEmptyValue(value)) {
-          invalidKeys?.push(key);
+        if (configInputFields?.[key]?.required) {
+          if (isEmptyValue(value)) {
+            invalidKeys?.push(key);
+          }
         }
       });
       return invalidKeys;
@@ -519,12 +537,14 @@ const ConfigScreen: React.FC = function () {
 
       for (const config of Object.values(multiConfigKeys || {})) {
         for (const [key, value] of Object.entries(config || {})) {
-          if (nonDuplicateKeys.includes(key)) {
-            // Ignore falsy values like empty strings
-            if (value && valuesTracker?.[key]?.has(value)) {
-              duplicateKeys.push(key); // Record the key that has a duplicate
+          if (configInputFields?.[key]?.required) {
+            if (nonDuplicateKeys?.includes(key)) {
+              // Ignore falsy values like empty strings
+              if (value && valuesTracker?.[key]?.has(value)) {
+                duplicateKeys?.push(key); // Record the key that has a duplicate
+              }
+              valuesTracker?.[key].add(value);
             }
-            valuesTracker[key].add(value);
           }
         }
       }
@@ -641,7 +661,6 @@ const ConfigScreen: React.FC = function () {
     const validateConfig = async () => {
       const configScreen = rootConfig.configureConfigScreen();
       const { multiConfigFields } = extractFieldsByConfigType(configScreen);
-
       const { isValid, invalidKeys } = await checkValidity(
         state?.installationData?.configuration,
         state?.installationData?.serverConfiguration,

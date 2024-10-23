@@ -32,7 +32,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   const [stackApiKey, setStackApiKey] = useState<any>("");
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [entryIds, setEntryIds] = useState<EntryIdsType[]>([]);
   const { isInvalidCredentials, setIsInvalidCredentials } = useError();
   const [isOldUser, setIsOldUser] = useState<Boolean>(false);
@@ -185,13 +185,12 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   }, [appConfig]);
 
   const setFieldData = useCallback(
-    async (data) => {
-      setLoading(true);
-      await location?.field?.setData(data);
-      setLoading(false);
+    (data) => {
+      location?.field?.setData(data);
     },
-    [location, setLoading]
+    [location]
   );
+
   const fetchData = async (selectedIdsArray: any) => {
     if (isEmpty(selectedIdsArray)) {
       setSelectedItems([]);
@@ -207,6 +206,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         ? selectedIdsArray?.length
         : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error
     ) {
+      setLoading(true);
       let res;
 
       if (
@@ -252,12 +252,44 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       } else {
         setSelectedItems(res?.data?.items);
       }
+      setLoading(false);
+    }
+  };
+  const executeElseCase = (removeId: any, multiConfigName: string) => {
+    if (isOldUser === true) {
+      if (type === "category") {
+        setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
+      } else {
+        setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
+      }
+    } else {
+      let updatedRootConfig = { ...selectedIds };
+      const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
+      const config = selectedIds?.[multiConfigName];
+      const updatedIds = config?.[multiConfigUniqueKey]?.filter(
+        (id: any) => id !== removeId
+      );
+
+      const updatedConfig = {
+        ...config,
+        [multiConfigUniqueKey]: updatedIds,
+      };
+      if (updatedIds?.length === 0) {
+        delete updatedRootConfig?.[multiConfigName];
+      } else {
+        updatedRootConfig = {
+          ...updatedRootConfig,
+          [multiConfigName]: updatedConfig,
+        };
+      }
+      setEntryIds(updatedRootConfig);
     }
   };
 
   const removeIdFromField = (removeId: any, multiConfigName: any) => {
+    let selectedIDs: any;
     if (typeof rootConfig.removeItemsFromCustomField === "function") {
-      const selectedIDs = rootConfig.removeItemsFromCustomField(
+      selectedIDs = rootConfig.removeItemsFromCustomField(
         removeId,
         selectedIds,
         type,
@@ -265,48 +297,26 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         isOldUser,
         multiConfigName
       );
+    }
 
+    if (selectedIDs?.length) {
       setEntryIds(selectedIDs);
-      if (selectedIDs?.length === 0) {
-        setSelectedItems([]);
-        setSelectedIds([]);
-      }
     } else {
-      // eslint-disable-next-line
-      if (isOldUser === true) {
-        if (type === "category") {
-          setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
-        } else {
-          setEntryIds(selectedIds?.filter((data: any) => data !== removeId));
-        }
-      } else {
-        let updatedRootConfig = { ...selectedIds };
-        const config = selectedIds?.[multiConfigName];
-        const updatedIds = config?.multiConfiguniqueKey?.filter(
-          (id: any) => id !== removeId
-        );
-        const updatedConfig = {
-          ...config,
-          multiConfiguniqueKey: updatedIds,
-        };
-
-        updatedRootConfig = {
-          ...updatedRootConfig,
-          [multiConfigName]: updatedConfig,
-        };
-        setEntryIds(updatedRootConfig);
-      }
+      executeElseCase(removeId, multiConfigName);
     }
 
     return "";
   };
 
   useEffect(() => {
+    if (isEmpty(appConfig)) return;
+
     const isEmptySelectedIds = isOldUser
       ? selectedIds?.length === 0
       : Object.keys(selectedIds)?.length === 0;
     if (isEmptySelectedIds) {
       setSelectedItems([]);
+      setLoading(false);
     } else {
       fetchData(selectedIds);
     }

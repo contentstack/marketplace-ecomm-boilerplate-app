@@ -17,7 +17,6 @@ import {
   KeyValueObj,
   TypeWarningtext,
 } from "../../common/types";
-import { getProductandCategory, search } from "../../services/index";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
@@ -126,19 +125,18 @@ const SelectorPage: React.FC = function () {
         setItemStatus({
           ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = await getProductandCategory(
+        const response = await rootConfig.getProductandCategory(
           config,
           config?.type,
           meta?.skip,
           meta?.limit,
           oldUser,
-          selectedMultiConfigValue
+          selectedMultiConfigValue,
+          list
         );
         if (!response?.error) {
           setList(response?.data?.items);
-          if (config?.type === "category")
-            setTotalCounts(response?.data?.items?.length);
-          else setTotalCounts(response?.data?.meta?.total);
+          setTotalCounts(response?.data?.meta?.total);
           const responseDataLength = response?.data?.items?.length;
           setItemStatus({
             ...getItemStatusMap(
@@ -163,13 +161,14 @@ const SelectorPage: React.FC = function () {
     try {
       if (meta?.searchText && !isEmpty(config)) {
         setSearchText(meta?.searchText);
-        const response = await search(
+        const response = await rootConfig.search(
           config,
           meta?.searchText,
           meta?.skip,
           meta?.limit,
           oldUser,
-          selectedMultiConfigValue
+          selectedMultiConfigValue,
+          list
         );
         if (!response?.error) {
           setList(response?.data?.items);
@@ -206,6 +205,13 @@ const SelectorPage: React.FC = function () {
     }
   }, [config]);
 
+  const getQueryParams = () => {
+    const queryString = window.location.hash.split("?")?.[1];
+    const params = new URLSearchParams(queryString);
+    const paramsObj = Object.fromEntries(params?.entries());
+    return paramsObj;
+  };
+
   const getSelectedRow = (singleSelectedRowIds: any, selected: any) => {
     const selectedObj: any = [];
     singleSelectedRowIds?.forEach((assetUid: any) => {
@@ -213,13 +219,10 @@ const SelectorPage: React.FC = function () {
     });
     if (oldUser === false && config) {
       const cpyOfSelectedIDS = { ...selectedIds };
-      const url = window?.location?.href;
-      const urlObj = new URL(url);
-      const params = new URLSearchParams(urlObj.search);
-      const type = params?.get("type");
+      const queryParams = getQueryParams();
       const multiConfigFormatIDS = rootConfig.mapProductIdsByMultiConfig(
         selected,
-        type
+        queryParams?.type
       );
       const updatedSelectedIDS = {
         ...cpyOfSelectedIDS,
@@ -267,6 +270,7 @@ const SelectorPage: React.FC = function () {
     };
     if (selectedMultiConfigValue?.value) {
       fetchShopifyData();
+      tableRef?.current?.setTablePage(1);
     }
   }, [selectedMultiConfigValue]);
 
@@ -314,6 +318,7 @@ const SelectorPage: React.FC = function () {
         </div>
 
         <InfiniteScrollTable
+          ref={tableRef}
           uniqueKey={rootConfig.ecommerceEnv.UNIQUE_KEY[config?.type]}
           hiddenColumns={hiddenColumns}
           onToggleColumnSelector={onToggleColumnSelector}
@@ -346,7 +351,6 @@ const SelectorPage: React.FC = function () {
           itemStatusMap={itemStatus}
           fetchTableData={fetchData}
           totalCounts={totalCounts}
-          fixedlistRef={tableRef}
           minBatchSizeToFetch={30}
           name={
             config.type === "category"
