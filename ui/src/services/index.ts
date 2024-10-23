@@ -71,8 +71,6 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
   }
 };
 
-
-
 // get all available categories
 const requestCategories = (config: any) =>
   makeAnApiCall(
@@ -133,14 +131,13 @@ const getCustomCategoryData = async (
   return null;
 };
 
-
 //  Retrieves API validation for configuration page keys when  isApiValidation is true
 const ApiValidationEnabledForConfig = (
   configurationObject: any,
   serverConfigurationObject: any,
   multiConfigTrueAndApiValidationEnabledKeys: any,
   multiConfigFalseAndApiValidationEnabledKeys: any
-) => 
+) =>
   makeAnApiCall(
     `${process.env.REACT_APP_API_URL}?type=isApiValidationEnabled`,
     "POST",
@@ -159,5 +156,5 @@ export {
   // search,
   getCustomCategoryData,
   ApiValidationEnabledForConfig,
-  makeAnApiCall
+  makeAnApiCall,
 };

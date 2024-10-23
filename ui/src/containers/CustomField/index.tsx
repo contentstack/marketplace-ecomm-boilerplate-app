@@ -45,11 +45,11 @@ const CustomField: React.FC<any> = function ({
     advancedConfig,
     isOldUser,
     selectedIds,
-    loading
+    loading,
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
-  let childWindow: any=null;
+  let childWindow: any = null;
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
   useEffect(() => {
@@ -76,12 +76,12 @@ const CustomField: React.FC<any> = function ({
         else {
           const data: any[] = [];
           const custom_keys = config?.custom_keys ?? config?.bc_keys;
-        if (
-          rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
-          && isOldUser === false
-        ) {
-          custom_keys?.push({ label: "cs_metadata", value: "cs_metadata" });
-        }
+          if (
+            rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
+            && isOldUser === false
+          ) {
+            custom_keys?.push({ label: "cs_metadata", value: "cs_metadata" });
+          }
           const keys = custom_keys?.map((i: any) => i?.value);
           if (selectedItems?.length) {
             data.push(...getFilteredAssets(selectedItems, keys));
@@ -92,8 +92,7 @@ const CustomField: React.FC<any> = function ({
           });
         }
       }
-    }
-    else{
+    } else {
       setFieldData({
         data: selectedItems,
         type: `${appName}_${type}`,

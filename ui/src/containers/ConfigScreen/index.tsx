@@ -242,13 +242,13 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration = state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value?.trim() : value;
-  
+
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
-        const shouldSaveInServerConfig = configInputFields?.[fieldName]?.saveInServerConfig;
-  
+        const shouldSaveInServerConfig =          configInputFields?.[fieldName]?.saveInServerConfig;
+
         if (shouldSaveInConfig && shouldSaveInServerConfig) {
           // Save in both `configuration` and `serverConfiguration`
           configuration = {
@@ -266,7 +266,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] || {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -290,13 +291,14 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] || {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
           };
         }
-  
+
         if (multiConfigID) {
           configuration = {
             ...configuration,
@@ -320,7 +322,7 @@ const ConfigScreen: React.FC = function () {
             [fieldName]: fieldValue,
           };
         }
-  
+
         if (configInputFields?.[fieldName]?.saveInConfig) {
           configuration = {
             ...configuration,
@@ -333,13 +335,13 @@ const ConfigScreen: React.FC = function () {
             [fieldName]: fieldValue,
           };
         }
-  
+
         configuration = {
           ...configuration,
           [fieldName]: fieldValue,
         };
       }
-  
+
       // Encrypt values before setting them in appsdk
       const encryptedConfiguration = encryptObject(
         configuration,
@@ -349,7 +351,7 @@ const ConfigScreen: React.FC = function () {
         serverConfiguration,
         rootConfig.configureConfigScreen()
       );
-  
+
       if (state?.setInstallationData) {
         await state?.setInstallationData({
           ...state?.installationData,
@@ -370,12 +372,12 @@ const ConfigScreen: React.FC = function () {
           },
         }));
       }
-  
+
       return true;
     },
     [state?.setInstallationData, state?.installationData]
   );
-  
+
   // const updateConfig = useCallback(
   //   async (e: any, multiConfigID: any, isMultiConfig: any) => {
   //     const { name: fieldName, value } = e?.target || {};
@@ -614,7 +616,7 @@ const ConfigScreen: React.FC = function () {
 
       Object.entries(multiConfigKeys || {})?.forEach(([configKey, config]) => {
         Object.entries(config || {})?.forEach(([key, value]) => {
-          if(configInputFields?.[key]?.required){
+          if (configInputFields?.[key]?.required) {
             if (isEmptyValue(value)) {
               if (!invalidKeys[configKey]) {
                 invalidKeys[configKey] = [];
@@ -632,7 +634,7 @@ const ConfigScreen: React.FC = function () {
       Object.entries(keys || {})?.forEach(([key, value]) => {
         if (key === "default_multi_config_key" || key === "multi_config_keys")
           return;
-        if(configInputFields?.[key]?.required){
+        if (configInputFields?.[key]?.required) {
           if (isEmptyValue(value)) {
             invalidKeys?.push(key);
           }
@@ -662,7 +664,7 @@ const ConfigScreen: React.FC = function () {
 
       for (const config of Object.values(multiConfigKeys || {})) {
         for (const [key, value] of Object.entries(config || {})) {
-          if(configInputFields?.[key]?.required){
+          if (configInputFields?.[key]?.required) {
             if (nonDuplicateKeys.includes(key)) {
               // Ignore falsy values like empty strings
               if (value && valuesTracker?.[key]?.has(value)) {
@@ -671,7 +673,6 @@ const ConfigScreen: React.FC = function () {
               valuesTracker[key].add(value);
             }
           }
-         
         }
       }
 

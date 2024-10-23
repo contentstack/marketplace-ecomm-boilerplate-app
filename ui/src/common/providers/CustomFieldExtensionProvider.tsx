@@ -85,7 +85,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         isMultiConfigEnabled === false
         || (isMultiConfigEnabled === true && !hasMultiConfigKeys)
       ) {
-        oldUser = true;  
+        oldUser = true;
       } else {
         oldUser = false;
       }
@@ -190,8 +190,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
     },
     [location]
   );
-  
-  
+
   const fetchData = async (selectedIdsArray: any) => {
     if (isEmpty(selectedIdsArray)) {
       setSelectedItems([]);
@@ -207,7 +206,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         ? selectedIdsArray?.length
         : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error
     ) {
-      setLoading(true)
+      setLoading(true);
       let res;
 
       if (
@@ -253,7 +252,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       } else {
         setSelectedItems(res?.data?.items);
       }
-      setLoading(false)
+      setLoading(false);
     }
   };
   const executeElseCase = (removeId: any, multiConfigName: string) => {
@@ -265,7 +264,7 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       }
     } else {
       let updatedRootConfig = { ...selectedIds };
-      const multiConfigUniqueKey = uniqueKey??"multiConfiguniqueKey";
+      const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
       const config = selectedIds?.[multiConfigName];
       const updatedIds = config?.[multiConfigUniqueKey]?.filter(
         (id: any) => id !== removeId
@@ -310,15 +309,14 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
   };
 
   useEffect(() => {
+    if (isEmpty(appConfig)) return;
 
-    if(isEmpty(appConfig)) return
-    
     const isEmptySelectedIds = isOldUser
       ? selectedIds?.length === 0
       : Object.keys(selectedIds)?.length === 0;
     if (isEmptySelectedIds) {
       setSelectedItems([]);
-      setLoading(false)
+      setLoading(false);
     } else {
       fetchData(selectedIds);
     }

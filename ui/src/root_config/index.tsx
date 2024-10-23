@@ -21,7 +21,10 @@ import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponen
 import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
 /* eslint-disable */
 import categoryConfig from "./categories";
-import { ApiValidationEnabledForConfig,makeAnApiCall } from "../services/index";
+import {
+  ApiValidationEnabledForConfig,
+  makeAnApiCall,
+} from "../services/index";
 /* eslint-enable */
 
 /* all values in this file are an example.
@@ -261,8 +264,7 @@ const removeItemsFromCustomField = (
   uniqueKey: any,
   isOldUser: Boolean,
   multiConfigName: any
-) => {
-};
+) => {};
 
 // this function is used for app signing, i.e. for verifying app tokens in ui
 interface TokenPayload extends JWTPayload {
@@ -335,7 +337,7 @@ const mapProductIdsByMultiConfig = (productData: any, type: any): Result => {
   const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
   if (productData?.length) {
-    const multiConfigUniqueKey = uniqueKey??"multiConfiguniqueKey";
+    const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
     result = productData?.reduce((acc: any, item: any) => {
       const multiConfigName = item?.cs_metadata?.multiConfigName;
       if (!acc[multiConfigName]) {
@@ -368,7 +370,7 @@ const mapProductIdsByMultiConfig = (productData: any, type: any): Result => {
 const mapCategoryIdsByMultiConfig = (categoryData: any, type: any): Result => {
   const uniqueKey: any = ecommerceEnv.UNIQUE_KEY?.[type];
   let result: Result = {};
-  const multiConfigUniqueKey = uniqueKey??"multiConfiguniqueKey";
+  const multiConfigUniqueKey = uniqueKey ?? "multiConfiguniqueKey";
 
   // Check if category data is present and has length
   if (categoryData?.length) {
@@ -496,7 +498,7 @@ const validateConfigKeyByApi = async (
   multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
   multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
 ): Promise<ValidationResult> => {
-  const apiValidationEnabledForConfigResponse:any =
+  const apiValidationEnabledForConfigResponse: any =
     await ApiValidationEnabledForConfig(
       configurationObject,
       serverConfiguration,
@@ -504,14 +506,13 @@ const validateConfigKeyByApi = async (
       multiConfigFalseAndApiValidationEnabled
     );
 
-    if(apiValidationEnabledForConfigResponse?.error===false){
-      return {
-        invalidKeys: [],
-      };
-    }
-    
+  if (apiValidationEnabledForConfigResponse?.error === false) {
+    return {
+      invalidKeys: [],
+    };
+  }
 
-    // console.info("apiValidationEnabledForConfigResponse",apiValidationEnabledForConfigResponse)
+  // console.info("apiValidationEnabledForConfigResponse",apiValidationEnabledForConfigResponse)
   return {
     invalidKeys: [
       {
@@ -542,7 +543,7 @@ const getProductandCategory = (
   limit: any,
   isOldUser: any,
   multiConfigDropDown: any,
-  selectorePageData:any
+  selectorePageData: any
 ) => {
   const queryParamsObject: any = {
     query: requestType,
@@ -588,14 +589,14 @@ const search = (
   selectorPageData: any
 ) => {
   const queryParamsObject: any = {
-    query: config?.type || '',
-    searchParam: keyword ? `keyword=${keyword}` : '',
-    skip: skip ? String(skip) : '0',
-    limit: limit ? String(limit) : '10',
+    query: config?.type || "",
+    searchParam: keyword ? `keyword=${keyword}` : "",
+    skip: skip ? String(skip) : "0",
+    limit: limit ? String(limit) : "10",
   };
 
   // Filter out empty or undefined query parameters
-  const filteredParams:any = Object.fromEntries(
+  const filteredParams: any = Object.fromEntries(
     Object.entries(queryParamsObject).filter(([_, value]) => value)
   );
 
@@ -608,8 +609,6 @@ const search = (
     selectedMultiConfigValue,
   });
 };
-
-
 
 const rootConfig = {
   verifyAppSigning,
@@ -630,7 +629,7 @@ const rootConfig = {
   customNonMultiConfigComponent,
   validateConfigKeyByApi,
   getProductandCategory,
-  search
+  search,
 };
 
 export default rootConfig;

@@ -206,7 +206,7 @@ const SelectorPage: React.FC = function () {
   }, [config]);
 
   const getQueryParams = () => {
-    const queryString = window.location.hash.split('?')?.[1]; 
+    const queryString = window.location.hash.split("?")?.[1];
     const params = new URLSearchParams(queryString);
     const paramsObj = Object.fromEntries(params?.entries());
     return paramsObj;
@@ -219,7 +219,7 @@ const SelectorPage: React.FC = function () {
     });
     if (oldUser === false && config) {
       const cpyOfSelectedIDS = { ...selectedIds };
-const queryParams = getQueryParams();
+      const queryParams = getQueryParams();
       const multiConfigFormatIDS = rootConfig.mapProductIdsByMultiConfig(
         selected,
         queryParams?.type
@@ -270,10 +270,9 @@ const queryParams = getQueryParams();
     };
     if (selectedMultiConfigValue?.value) {
       fetchShopifyData();
-      tableRef?.current?.setTablePage(1)
+      tableRef?.current?.setTablePage(1);
     }
   }, [selectedMultiConfigValue]);
-
 
   const updateList = (filteredList: any) => setList(filteredList);
 
