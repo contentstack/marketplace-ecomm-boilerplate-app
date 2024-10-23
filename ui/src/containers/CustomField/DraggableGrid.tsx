@@ -18,7 +18,7 @@ const DraggableGrid: React.FC<any> = function ({
   remove,
   type,
 }: {
-  remove: (id: string) => void;
+  remove: (id: string,multiConfigName:string) => void;
   type: "product" | "category";
 }) {
   const { selectedItems, handleDragEvent } = useProductCustomField();

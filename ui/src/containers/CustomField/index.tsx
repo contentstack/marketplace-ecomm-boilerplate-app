@@ -45,11 +45,11 @@ const CustomField: React.FC<any> = function ({
     advancedConfig,
     isOldUser,
     selectedIds,
+    loading
   }: any = useProductCustomField();
   const appName = rootConfig.ecommerceEnv.REACT_APP_NAME;
   const uniqueKey: any = rootConfig.ecommerceEnv.UNIQUE_KEY[type];
-  let childWindow: any;
-  const [loading, setLoading] = useState(true);
+  let childWindow: any=null;
   const [view, setView] = useState<any>({ value: "card" });
   const config = useAppConfig();
   useEffect(() => {
@@ -59,8 +59,8 @@ const CustomField: React.FC<any> = function ({
     });
   }, []);
   useEffect(() => {
+    if (!appSdkInitialized) return;
     if (selectedItems?.length) {
-      if (!appSdkInitialized) return;
       if (type === "category") {
         setFieldData({
           data: selectedItems,
@@ -75,7 +75,14 @@ const CustomField: React.FC<any> = function ({
           });
         else {
           const data: any[] = [];
-          const keys = config?.custom_keys?.map((i: any) => i?.value);
+          const custom_keys = config?.custom_keys ?? config?.bc_keys;
+        if (
+          rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
+          && isOldUser === false
+        ) {
+          custom_keys?.push({ label: "cs_metadata", value: "cs_metadata" });
+        }
+          const keys = custom_keys?.map((i: any) => i?.value);
           if (selectedItems?.length) {
             data.push(...getFilteredAssets(selectedItems, keys));
           }
@@ -86,7 +93,12 @@ const CustomField: React.FC<any> = function ({
         }
       }
     }
-    setLoading(false);
+    else{
+      setFieldData({
+        data: selectedItems,
+        type: `${appName}_${type}`,
+      });
+    }
   }, [selectedItems]);
 
   const handleMessage = (event: any) => {
@@ -127,7 +139,7 @@ const CustomField: React.FC<any> = function ({
   const handleClick = () => {
     if (!childWindow) {
       childWindow = popupWindow({
-        url: `${process.env.REACT_APP_UI_URL}/selector-page?type=${type}`,
+        url: `${process.env.REACT_APP_UI_URL}/#/selector-page?type=${type}`,
         title: `${rootConfig.ecommerceEnv.APP_ENG_NAME}Client`,
         w: 1440,
         h: 844,

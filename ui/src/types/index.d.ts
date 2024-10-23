@@ -84,6 +84,7 @@ export interface ConfigFieldBase {
   isApiValidationEnabled: boolean;
   suffixName: string;
   allowDuplicateKeyValue: boolean;
+  required:boolean
 }
 
 export interface ConfigureConfigScreen {
