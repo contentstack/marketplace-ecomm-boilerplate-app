@@ -378,7 +378,6 @@ const ConfigScreen: React.FC = function () {
     [state?.setInstallationData, state?.installationData]
   );
 
-  
   const updateTypeObj = useCallback(
     async (list: any[]) => {
       const customKeysTemp: any[] = [];
