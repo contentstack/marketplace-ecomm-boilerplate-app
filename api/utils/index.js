@@ -1,16 +1,19 @@
-import CryptoJS from "crypto-js";
-import root_config from "../root_config";
+// Import necessary modules
+const CryptoJS = require("crypto-js");
+const root_config = require("../root_config");
 
-export const _isEmpty: any = (val: any) =>
+// Utility function to check if a value is empty
+exports._isEmpty = (val) =>
   val === undefined ||
   val === null ||
   (typeof val === "object" && !Object.keys(val)?.length) ||
   (typeof val === "string" && !val.trim()?.length);
 
-export const decrypt = (value: any) => {
+// Function to decrypt a value
+exports.decrypt = (value) => {
   try {
     const decryptionKey = `${process.env.DECRYPTION_KEY}`;
-    const bytes = CryptoJS.AES.decrypt(value, decryptionKey); // Replace 'yourEncryptionKey' with your actual key
+    const bytes = CryptoJS.AES.decrypt(value, decryptionKey);
     return bytes.toString(CryptoJS.enc.Utf8);
   } catch (e) {
     console.error("Decryption failed:", e);
@@ -18,16 +21,17 @@ export const decrypt = (value: any) => {
   }
 };
 
-export const processRequestBody = (requestBody: any): any => {
-  const decryptSensitiveKeys = (obj: any): any => {
+// Function to process and decrypt sensitive keys in a request body
+exports.processRequestBody = (requestBody) => {
+  const decryptSensitiveKeys = (obj) => {
     if (typeof obj === "object" && obj !== null) {
       if (Array.isArray(obj)) {
         return obj.map((item) => decryptSensitiveKeys(item));
       } else {
-        const result: any = {};
+        const result = {};
         Object.keys(obj).forEach((key) => {
           if (root_config?.SENSITIVE_CONFIG_KEYS?.includes(key)) {
-            result[key] = decrypt(obj?.[key]);
+            result[key] = exports.decrypt(obj?.[key]);
           } else if (typeof obj?.[key] === "object") {
             result[key] = decryptSensitiveKeys(obj?.[key]);
           } else {
