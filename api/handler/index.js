@@ -1,6 +1,6 @@
-import axios from "axios";
-import constants from "../constants";
-import root_config from "../root_config";
+const axios = require("axios");
+const constants = require("../constants");
+const root_config = require("../root_config");
 
 /**
  * Makes a third-party API call with the provided options.
@@ -15,11 +15,11 @@ import root_config from "../root_config";
  * It handles errors by returning a default response for `404 Not Found` errors
  * and throws an error for other types of failures.
  */
-export const _makeApiCall: any = async (opts: any) => {
+const _makeApiCall = async (opts) => {
   try {
-    const res: any = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
+    const res = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
     return res?.data;
-  } catch (e: any) {
+  } catch (e) {
     throw e;
   }
 };
@@ -31,10 +31,7 @@ export const _makeApiCall: any = async (opts: any) => {
  * @param {Object} productPayload - Payload containing additional data for the request.
  * @returns {Promise<Object>} - The product data.
  */
-export const getProductByID: any = async (
-  productQuery: any,
-  productPayload: any
-) => {
+const getProductByID = async (productQuery, productPayload) => {
   let response = await root_config.getSingleProduct(
     productQuery,
     productPayload
@@ -52,9 +49,9 @@ export const getProductByID: any = async (
  * @param {Object} productCategoryPayload - Payload containing additional data for the request.
  * @returns {Promise<Object>} - The products and categories data.
  */
-export const getAllProductsAndCategories: any = async (
-  productCategoryQuery: any,
-  productCategoryPayload: any
+const getAllProductsAndCategories = async (
+  productCategoryQuery,
+  productCategoryPayload
 ) => {
   let response = {};
   if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
@@ -86,9 +83,9 @@ export const getAllProductsAndCategories: any = async (
  * @param {Object} productCategoryPayload - Payload containing additional data for the request.
  * @returns {Promise<Object>} - The selected products and categories data.
  */
-export const getSelectedProductsAndCategories: any = async (
-  productCategoryQuery: any,
-  productCategoryPayload: any
+const getSelectedProductsAndCategories = async (
+  productCategoryQuery,
+  productCategoryPayload
 ) => {
   let response = {};
   if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
@@ -115,10 +112,11 @@ export const getSelectedProductsAndCategories: any = async (
 /**
  * Filters products based on the provided categories.
  */
-export const filterByCategory: any = async (data: any, key: any) => {
+const filterByCategory = async (data, key) => {
   let response = await root_config.filterProductsByCategory(data, key);
   return response;
 };
+
 /**
  * Retrieves API validation for configuration page keys.
  *
@@ -132,13 +130,22 @@ export const filterByCategory: any = async (data: any, key: any) => {
  *
  * @returns {Promise<any>} - A promise that resolves to the API validation response.
  */
-export const getApiValidationForConfigPageKeys: any = async (
-  apkSdkInstallationData: any,
-  query: any
+const getApiValidationForConfigPageKeys = async (
+  apkSdkInstallationData,
+  query
 ) => {
   let response = await root_config.retrieveConfigPageValidation(
     apkSdkInstallationData,
     query
   );
   return response;
+};
+
+module.exports = {
+  _makeApiCall,
+  getProductByID,
+  getAllProductsAndCategories,
+  getSelectedProductsAndCategories,
+  filterByCategory,
+  getApiValidationForConfigPageKeys,
 };
