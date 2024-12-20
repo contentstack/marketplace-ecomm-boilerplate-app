@@ -1,6 +1,6 @@
 // Import necessary modules
 const CryptoJS = require("crypto-js");
-const root_config = require("../root_config");
+const root_config = require("./root_config");
 const constants = require("./constants");
 const {
   getAllProductsAndCategories,
