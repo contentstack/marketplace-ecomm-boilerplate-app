@@ -16,19 +16,31 @@ import rootConfig from "..";
  *
  * @returns {JSX.Element | null} - A React fragment containing rendered dynamic fields, or `null` if no fields are found.
  */
-function renderDynamicFields(fields: any, configurationObject: any,serverConfigurationObject: any, multiConfigurationDataID: any, customComponentOnChange: (event: any, multiConfigID: any, isMultiConfig: boolean) => void) {
+function renderDynamicFields(
+  fields: any,
+  configurationObject: any,
+  serverConfigurationObject: any,
+  multiConfigurationDataID: any,
+  customComponentOnChange: (
+    event: any,
+    multiConfigID: any,
+    isMultiConfig: boolean
+  ) => void
+) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
   if (!configInputFields) {
     console.error("🚀 ~ renderDynamicFields ~ configInputFields is undefined!");
     return null;
   }
 
-  const fieldsToRender = fields.map((fieldName: any) => configInputFields[fieldName]).filter((fieldConfig: any) => fieldConfig && fieldConfig.isDynamic);
+  const fieldsToRender = fields
+    .map((fieldName: any) => configInputFields[fieldName])
+    .filter((fieldConfig: any) => fieldConfig && fieldConfig.isDynamic);
 
   return (
     <>
       {fieldsToRender.map((fieldConfig: any, index: number) => {
-        const objKey = fields[index]
+        const objKey = fields[index];
         if (!fieldConfig) return null;
 
         return (
@@ -45,8 +57,12 @@ function renderDynamicFields(fields: any, configurationObject: any,serverConfigu
               required={fieldConfig.required}
               value={
                 fieldConfig?.saveInServerConfig
-                  ? serverConfigurationObject?.multi_config_keys?.[multiConfigurationDataID]?.[objKey] || ""
-                  : configurationObject?.multi_config_keys?.[multiConfigurationDataID]?.[fields[index]] || ""
+                  ? serverConfigurationObject?.multi_config_keys?.[
+                      multiConfigurationDataID
+                    ]?.[objKey] || ""
+                  : configurationObject?.multi_config_keys?.[
+                      multiConfigurationDataID
+                    ]?.[fields[index]] || ""
               }
               onChange={(e: any) =>
                 customComponentOnChange(
