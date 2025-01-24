@@ -44,7 +44,7 @@ function renderDynamicFields(
         if (!fieldConfig) return null;
 
         return (
-          <div key={index} className="dynamic-field">
+          <div key={objKey} className="dynamic-field">
             <FieldLabel htmlFor={fields[index]}>
               {fieldConfig.labelText}
               {fieldConfig.required && <span style={{ color: "red" }}> *</span>}
