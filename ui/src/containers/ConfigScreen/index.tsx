@@ -242,12 +242,14 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =
+        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value?.trim() : value;
 
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
-        const shouldSaveInServerConfig =          configInputFields?.[fieldName]?.saveInServerConfig;
+        const shouldSaveInServerConfig =
+          configInputFields?.[fieldName]?.saveInServerConfig;
 
         if (shouldSaveInConfig && shouldSaveInServerConfig) {
           // Save in both `configuration` and `serverConfiguration`
@@ -266,8 +268,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
-                  || {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
+                  {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -291,8 +293,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
-                  || {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
+                  {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -1355,92 +1357,96 @@ const ConfigScreen: React.FC = function () {
                               Object.entries(configInputFields)?.map(
                                 ([objKey, objValue]: any) => {
                                   if (objValue?.isMultiConfig) {
-                                    if (objValue?.type !== "textInputFields") {
-                                      return (
-                                        <Field
-                                          key={`customComponentField-${objKey}`}
-                                        >
-                                          {rootConfig.customMultiConfigComponent(
-                                            multiConfigurationID,
-                                            state?.installationData
-                                              ?.configuration,
-                                            state?.installationData
-                                              ?.serverConfiguration,
-                                            customComponentOnChange,
-                                            { objKey, objValue }
-                                          )}
-                                        </Field>
-                                      );
-                                    } else {
-                                      return (
-                                        <div key={`${objKey}`}>
-                                          <Field>
-                                            <FieldLabel
-                                              required
-                                              htmlFor={`${objKey}-id`}
-                                              data-testid="text_label"
-                                              className="multi-config-wrapper__FieldLabel"
-                                            >
-                                              {objValue?.labelText}
-                                            </FieldLabel>
-                                            {objValue?.helpText && (
-                                              <Help
-                                                text={objValue?.helpText}
-                                                data-testid="text_help"
-                                              />
+                                    if (!objValue?.isDynamic) {
+                                      if (
+                                        objValue?.type !== "textInputFields"
+                                      ) {
+                                        return (
+                                          <Field
+                                            key={`customComponentField-${objKey}`}
+                                          >
+                                            {rootConfig.customMultiConfigComponent(
+                                              multiConfigurationID,
+                                              state?.installationData
+                                                ?.configuration,
+                                              state?.installationData
+                                                ?.serverConfiguration,
+                                              customComponentOnChange,
+                                              { objKey, objValue }
                                             )}
-                                            <TextInput
-                                              id={`${objKey}-id`}
-                                              type={
-                                                showSensitiveConfig?.[
-                                                  `${multiConfigurationID}_${objKey}`
-                                                ]
-                                                  ? "password"
-                                                  : "text"
-                                              }
-                                              required
-                                              value={
-                                                objValue?.saveInConfig
-                                                  ? multiConfigurationData?.[
-                                                      objKey
-                                                    ]
-                                                  : state?.installationData
-                                                      ?.serverConfiguration
-                                                      ?.multi_config_keys?.[
-                                                      multiConfigurationID
-                                                    ]?.[objKey] || ""
-                                              }
-                                              placeholder={
-                                                objValue?.placeholderText
-                                              }
-                                              name={objKey}
-                                              onChange={(e: any) =>
-                                                updateConfig(
-                                                  e,
-                                                  multiConfigurationID,
-                                                  objValue?.isMultiConfig
-                                                )
-                                              }
-                                              suffixVisible={
-                                                objValue?.isSensitive ?? false
-                                              }
-                                              suffix={
-                                                objValue?.isSensitive
-                                                  ? renderSuffix(
-                                                      `${multiConfigurationID}_${objKey}`,
-                                                      objValue
-                                                    )
-                                                  : ""
-                                              }
-                                              data-testid="text_input"
-                                              version="v2"
-                                            />
-                                            <InstructionText data-testid="text_instruction">
-                                              {objValue?.instructionText}
-                                            </InstructionText>
                                           </Field>
-                                        </div>
-                                      );
+                                        );
+                                      } else {
+                                        return (
+                                          <div key={`${objKey}`}>
+                                            <Field>
+                                              <FieldLabel
+                                                required
+                                                htmlFor={`${objKey}-id`}
+                                                data-testid="text_label"
+                                                className="multi-config-wrapper__FieldLabel"
+                                              >
+                                                {objValue?.labelText}
+                                              </FieldLabel>
+                                              {objValue?.helpText && (
+                                                <Help
+                                                  text={objValue?.helpText}
+                                                  data-testid="text_help"
+                                                />
+                                              )}
+                                              <TextInput
+                                                id={`${objKey}-id`}
+                                                type={
+                                                  showSensitiveConfig?.[
+                                                    `${multiConfigurationID}_${objKey}`
+                                                  ]
+                                                    ? "password"
+                                                    : "text"
+                                                }
+                                                required
+                                                value={
+                                                  objValue?.saveInConfig
+                                                    ? multiConfigurationData?.[
+                                                        objKey
+                                                      ]
+                                                    : state?.installationData
+                                                        ?.serverConfiguration
+                                                        ?.multi_config_keys?.[
+                                                        multiConfigurationID
+                                                      ]?.[objKey] || ""
+                                                }
+                                                placeholder={
+                                                  objValue?.placeholderText
+                                                }
+                                                name={objKey}
+                                                onChange={(e: any) =>
+                                                  updateConfig(
+                                                    e,
+                                                    multiConfigurationID,
+                                                    objValue?.isMultiConfig
+                                                  )
+                                                }
+                                                suffixVisible={
+                                                  objValue?.isSensitive ?? false
+                                                }
+                                                suffix={
+                                                  objValue?.isSensitive
+                                                    ? renderSuffix(
+                                                        `${multiConfigurationID}_${objKey}`,
+                                                        objValue
+                                                      )
+                                                    : ""
+                                                }
+                                                data-testid="text_input"
+                                                version="v2"
+                                              />
+                                              <InstructionText data-testid="text_instruction">
+                                                {objValue?.instructionText}
+                                              </InstructionText>
+                                            </Field>
+                                          </div>
+                                        );
+                                      }
                                     }
                                   }
                                   /* eslint-enable */
@@ -1456,8 +1462,8 @@ const ConfigScreen: React.FC = function () {
                                   }
                                   checked={
                                     state?.installationData?.configuration
-                                      ?.default_multi_config_key
-                                    === multiConfigurationID
+                                      ?.default_multi_config_key ===
+                                    multiConfigurationID
                                   }
                                   onClick={(e: any) =>
                                     handleCheckboxChange(

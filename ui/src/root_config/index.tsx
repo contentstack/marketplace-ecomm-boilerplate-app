@@ -61,7 +61,8 @@ const ecommerceEnv: EcommerceEnv = {
  * - `isSensitive`: A boolean indicating if the input field contains sensitive data (e.g., passwords).
  * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
  * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
- *  - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
+ * - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
+ * - `isDynamic`: A boolean indicating if field needs to be rendered dynamically or not.
  * - `suffix`: A String indicating suffix when isSensitive is set to true 
     allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
  */
