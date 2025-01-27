@@ -34,18 +34,18 @@ function renderDynamicFields(
   }
 
   const fieldsToRender = fields
-    .map((fieldName: any) => configInputFields[fieldName])
-    .filter((fieldConfig: any) => fieldConfig && fieldConfig.isDynamic);
+    .map((fieldName: any) => configInputFields?.[fieldName])
+    .filter((fieldConfig: any) => fieldConfig && fieldConfig?.isDynamic);
 
   return (
     <>
       {fieldsToRender.map((fieldConfig: any, index: number) => {
-        const objKey = fields[index];
+        const objKey = fields?.[index];
         if (!fieldConfig) return null;
 
         return (
           <div key={objKey} className="dynamic-field">
-            <FieldLabel htmlFor={fields[index]}>
+            <FieldLabel htmlFor={fields?.[index]}>
               {fieldConfig.labelText}
               {fieldConfig.required && <span style={{ color: "red" }}> *</span>}
             </FieldLabel>
@@ -53,8 +53,8 @@ function renderDynamicFields(
               type="text"
               name={objKey}
               id={objKey}
-              placeholder={fieldConfig.placeholderText}
-              required={fieldConfig.required}
+              placeholder={fieldConfig?.placeholderText}
+              required={fieldConfig?.required}
               value={
                 fieldConfig?.saveInServerConfig
                   ? serverConfigurationObject?.multi_config_keys?.[
@@ -72,9 +72,8 @@ function renderDynamicFields(
                 )
               }
             />
-            {fieldConfig.helpText && <p>{fieldConfig.helpText}</p>}
-            {fieldConfig.instructionText && (
-              <p>{fieldConfig.instructionText}</p>
+            {fieldConfig?.instructionText && (
+              <p>{fieldConfig?.instructionText}</p>
             )}
           </div>
         );
