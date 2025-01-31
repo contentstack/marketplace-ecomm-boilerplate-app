@@ -3,32 +3,6 @@ Detailed Documentation :https://docs.google.com/document/d/1Eq-wFLABdED13Zf9V03J
 ## Overview
 MultiConfig support allows a single application to handle multiple configurations in a single step. This enables better organization and tracking of products and categories across different configurations.
 
-## API Requirements
-To support MultiConfig across all APIs, additional parameters need to be included in API requests:
-
-### Required Parameters
-```json
-cs_metadata: {
-    "multiConfigName": "configKey", // The name of the multi-config used
-    "isConfigDeleted": false // Indicates that the configuration is not deleted
-}
-```
-
-### Purpose of Parameters
-- **multiConfigName**: Tracks which configuration a product or category belongs to.
-- **isConfigDeleted**: Ensures that configurations marked as deleted are not processed.
-
-## Implementation
-Ensure that all API endpoints handling configurations, products, and categories include the `cs_metadata` object in their request/response payloads. This allows seamless tracking and management of different configurations within the same application.
-
-## Notes
-- Always ensure `multiConfigName` is correctly assigned to prevent misclassification.
-- `isConfigDeleted` should be updated accordingly when configurations are removed.
-- Proper logging should be implemented to monitor configuration usage and modifications.
-
-This ensures a streamlined approach to handling multiple configurations within a single application.
-
-
 ## Front End
 
 ### UI Locations
@@ -129,6 +103,31 @@ You can use this object in the configuration page code.
 ```
 
 
+## API Requirements
+To support MultiConfig across all APIs, additional parameters need to be included in API requests:
+
+### Required Parameters
+```json
+cs_metadata: {
+    "multiConfigName": "configKey", // The name of the multi-config used
+    "isConfigDeleted": false // Indicates that the configuration is not deleted
+}
+```
+
+### Purpose of Parameters
+- **multiConfigName**: Tracks which configuration a product or category belongs to.
+- **isConfigDeleted**: Ensures that configurations marked as deleted are not processed.
+
+## Implementation
+Ensure that all API endpoints handling configurations, products, and categories include the `cs_metadata` object in their request/response payloads. This allows seamless tracking and management of different configurations within the same application.
+
+## Notes
+- Always ensure `multiConfigName` is correctly assigned to prevent misclassification.
+- `isConfigDeleted` should be updated accordingly when configurations are removed.
+- Proper logging should be implemented to monitor configuration usage and modifications.
+
+This ensures a streamlined approach to handling multiple configurations within a single application.
+
 ## Product Custom Field
 
 In the Product Custom Field, you need to implement the `returnFormattedProduct()` function. 
@@ -139,7 +138,7 @@ In the Product Custom Field, you need to implement the `returnFormattedProduct()
 * This function assigns and returns the required data formatting to be displayed in the product custom field.
 
 * Parameter
-`product` - this variable contains the product returned from your commerce API. You need to restructure it into the following format and return it.
+`product` - this variable contains the product returned from your commerce API. You need to restructure it into the following format and return it. f
 ```
 # Product Data Model
 
@@ -179,6 +178,8 @@ This document outlines the structure of the product data model and provides desc
 
 ```
 Use the `product` parameter to provide the values to these keys accordingly.
+
+For more information for new fields i.e. cs_metadata, multi-config_name, is_deleted_from_portal is mentioned in API Requirements above.
 
 ## Category Custom Field
 
