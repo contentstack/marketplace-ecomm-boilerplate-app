@@ -1,4 +1,33 @@
 # Marketplace eCommerce App Boilerplate Template Documentation
+Detailed Documentation :https://docs.google.com/document/d/1Eq-wFLABdED13Zf9V03J_kbusnU4gagS3ly8ekYjgoQ/edit?tab=t.0
+## Overview
+MultiConfig support allows a single application to handle multiple configurations in a single step. This enables better organization and tracking of products and categories across different configurations.
+
+## API Requirements
+To support MultiConfig across all APIs, additional parameters need to be included in API requests:
+
+### Required Parameters
+```json
+cs_metadata: {
+    "multiConfigName": "configKey", // The name of the multi-config used
+    "isConfigDeleted": false // Indicates that the configuration is not deleted
+}
+```
+
+### Purpose of Parameters
+- **multiConfigName**: Tracks which configuration a product or category belongs to.
+- **isConfigDeleted**: Ensures that configurations marked as deleted are not processed.
+
+## Implementation
+Ensure that all API endpoints handling configurations, products, and categories include the `cs_metadata` object in their request/response payloads. This allows seamless tracking and management of different configurations within the same application.
+
+## Notes
+- Always ensure `multiConfigName` is correctly assigned to prevent misclassification.
+- `isConfigDeleted` should be updated accordingly when configurations are removed.
+- Proper logging should be implemented to monitor configuration usage and modifications.
+
+This ensures a streamlined approach to handling multiple configurations within a single application.
+
 
 ## Front End
 
@@ -26,6 +55,7 @@ Type:
     product: string;
     category: string;
   }
+  ENABLE_MULTI_CONFIG: boolean,
 }
 ```
 
@@ -36,6 +66,7 @@ Type:
 |SELECTOR_PAGE_LOGO*   |Svg code of Logo  |Svg code of Logo for Selector page |
 |APP_ENG_NAME*   |String |This value is used to display the app name in error messages |
 |UNIQUE_KEY* |Object  |Unique Identifier for the product and category object returned from the API Eg. `{product: 'id', category: 'id'}` |
+|ENABLE_MULTI_CONFIG*   | boolean          | This determines whether to enable multi-configuration for the eCommerce app.
 
 ## Configuration Screen
 
@@ -46,16 +77,22 @@ In this file, you need to make two changes.
 1. `configureConfigScreen()` function
 * This function will return objects of Config Screen keys along with their corresponding field key names and functionality. An example can be found in the codebase.
 ```
-configField1: {
-    type: "textInputFields",
-    labelText: "Sample Ecommerce App Client ID",
-    helpText:
-    "You can use this field for information such as Store ID, Auth Token, Client ID, Base URL, etc.",
-    placeholderText: "Enter the value",
-    instructionText: "Enter the Client ID from your ecommerce platform",
-    saveInConfig: true,
-    isSensitive: true,
-},
+configfield: {
+    type: "textInputfiled",
+    labelText: "",
+    helpText: "",
+    placeholderText: "",
+    instructionText: "",
+    saveInConfig: ",
+    saveInServerConfig: "",
+    isSensitive: "",
+    isMultiConfig: "" 
+    isConfidential: ,
+    isApiValidationEnabled: ,
+    suffixName: "",
+    allowDuplicateKeyValue: ,
+    required: ,
+  },
 ```
 
 |Key                    | Type            | Description
@@ -66,7 +103,14 @@ configField1: {
 |placeholderText |string |Placeholder for the input field. |
 |instructionText* |string |Any additional information you want to display for that field. Appears below the input field.|
 |saveInConfig |boolean |Determines whether you want to save it in a config |
-|isSensitive  |boolean  |Determines whether the informaion should be encrypted |
+|saveInServerConfig |boolean|Determines whether you want to save it in a serverconfig| 
+|isSensitive  |boolean  |A boolean indicating if the input field contains sensitive data (e.g., passwords) |
+|isMultiConfig  |boolean  |A boolean indicating if the key should be stored in multi-configurations|
+|isConfidential  |boolean  |A boolean indicating if the key needs to be encrypted/decrypted|
+|isApiValidationEnabled  |boolean  |A boolean indicating if the key needs to be validated by api or not|
+|suffixName  |boolean  |A String indicating suffix when isSensitive is set to true|
+|allowDuplicateKeyValue  |boolean  | A boolean to indicate whether to allow duplicate values for these key for multiconfig|
+
 
 You can use this object in the configuration page code. 
 
@@ -97,14 +141,42 @@ In the Product Custom Field, you need to implement the `returnFormattedProduct()
 * Parameter
 `product` - this variable contains the product returned from your commerce API. You need to restructure it into the following format and return it.
 ```
-{
-    id: string,
-    name: string,
-    description: string,
-    image: string,
-    price: string,
-    sku?: string
-}
+# Product Data Model
+
+This document outlines the structure of the product data model and provides descriptions for each field.
+
+## Fields
+
+- **id** (`string`):  
+  A unique identifier for the product.
+
+- **name** (`string`):  
+  The name of the product.
+
+- **description** (`string`):  
+  A brief description of the product.
+
+- **image** (`string`):  
+  URL or path to the product image.
+
+- **price** (`string`):  
+  The price of the product in string format.
+
+- **sku** (`string`, optional):  
+  Stock Keeping Unit – a unique identifier for inventory management.
+
+- **isProductDeleted** (`boolean`):  
+  A flag sent from the backend to track whether the product configuration has been deleted from the config gateway.
+
+- **cs_metadata** (`string`):  
+  Extra metadata added from the API side, primarily used for multi-configuration purposes. More details are available in the API section.
+
+- **multiConfigName** (`string`):  
+  A unique identifier for multi-configuration settings.
+
+- **isDeletedFromPortal** (`boolean`):  
+  A boolean flag indicating whether the asset has been deleted from the e-commerce portal.
+
 ```
 Use the `product` parameter to provide the values to these keys accordingly.
 
@@ -120,12 +192,33 @@ For the Category Custom Field to work, you need to implement the `returnFormatte
 * Parameter
 `category` - this variable contains the category returned from your commerce API. You need to restructure it into the following format and return it. 
 ```
-{
-    id: string,
-    name: string,
-    customUrl?: string,
-    description: string,
-}
+# Category Data Model
+
+This document outlines the structure of the category data model and provides descriptions for each field.
+
+## Fields
+
+- **id** (`string`):  
+  A unique identifier for the category. Defaults to an empty string if not available.
+
+- **name** (`string`):  
+  The localized name of the category. Falls back to `"-"` if not provided.
+
+- **key** (`string`):  
+  A unique key for the category, used for identification. Defaults to `"-"` if missing.
+
+- **isCategoryDeleted** (`boolean`):  
+  A flag that indicates whether the category configuration has been deleted from the config gateway. Pulled from `cs_metadata`.
+
+- **multiConfigName** (`string`):  
+  A unique identifier for the multi-configuration setup, sourced from `cs_metadata`.
+
+- **isDeletedFromPortal** (`boolean`):  
+  A flag indicating whether the category has been deleted from the e-commerce portal. Pulled from `cs_metadata`.
+
+- **image** (`string`):  
+  URL or path to the category image. Defaults to an empty string if not available.
+
 ```
 Use the `category` parameter to provide the values to these keys accordingly.
 
@@ -337,6 +430,5 @@ API calls that are made on UI locations gets triggered from the service file i.e
 * Enable Webhook: True
 * URL To Notify: Absolute URL of your backend
 * App Events: Install, Update, Uninstall
-
 
 
