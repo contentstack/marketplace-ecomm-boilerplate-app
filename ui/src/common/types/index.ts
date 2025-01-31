@@ -158,6 +158,7 @@ export interface APIResponseType {
 interface InvalidKey {
   source: string;
   keys?: string[];
+  message?: string;
 }
 
 export interface ValidationResult {
