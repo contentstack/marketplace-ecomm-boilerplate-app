@@ -242,14 +242,12 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =
-        state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value?.trim() : value;
 
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
-        const shouldSaveInServerConfig =
-          configInputFields?.[fieldName]?.saveInServerConfig;
+        const shouldSaveInServerConfig =          configInputFields?.[fieldName]?.saveInServerConfig;
 
         if (shouldSaveInConfig && shouldSaveInServerConfig) {
           // Save in both `configuration` and `serverConfiguration`
@@ -268,8 +266,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
-                  {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -293,8 +291,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
-                  {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -1462,8 +1460,8 @@ const ConfigScreen: React.FC = function () {
                                   }
                                   checked={
                                     state?.installationData?.configuration
-                                      ?.default_multi_config_key ===
-                                    multiConfigurationID
+                                      ?.default_multi_config_key
+                                    === multiConfigurationID
                                   }
                                   onClick={(e: any) =>
                                     handleCheckboxChange(

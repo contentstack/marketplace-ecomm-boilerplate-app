@@ -1,4 +1,10 @@
-import { Field, FieldLabel, InstructionText, TextInput, ToggleSwitch } from "@contentstack/venus-components";
+import {
+  Field,
+  FieldLabel,
+  InstructionText,
+  TextInput,
+  ToggleSwitch,
+} from "@contentstack/venus-components";
 import React, { useEffect, useState } from "react";
 import rootConfig from "..";
 
