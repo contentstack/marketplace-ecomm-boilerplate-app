@@ -72,6 +72,7 @@ const ConfigScreen: React.FC = function () {
   );
   /* state for configuration */
   const [isCustom, setIsCustom] = useState(false);
+  const [errors, setErrors] = useState<any>({});
   const [customKeys, setCustomKeys] = useState<any[]>(mandatoryKeys);
   const encryptionKey: any = process.env.ENCRYPTION_KEY;
   const [state, setState] = React.useState<TypeAppSdkConfigState>({
@@ -244,6 +245,15 @@ const ConfigScreen: React.FC = function () {
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value?.trim() : value;
+
+      if(e?.type === "change"){
+        const errorState = { ...errors }
+        errorState[`${multiConfigID}_${fieldName}`] = {
+          isOnchangeTriggered: true,
+          errorMessage: "",
+        },                
+        setErrors(errorState);
+      }
 
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
@@ -471,6 +481,7 @@ const ConfigScreen: React.FC = function () {
     validateMultiConfigKeysByApi: any,
     validateOtherKeysByApi: any
   ) => {
+    let newErrors: { [key: string]: any } = {};
     const isEmptyValue = (value: any) => {
       if (typeof value === "string") {
         return value?.trim() === "";
@@ -585,6 +596,15 @@ const ConfigScreen: React.FC = function () {
       normalInvalidKeys = checkMultiConfigKeys(
         configurationData?.multi_config_keys
       );
+      Object.entries(normalInvalidKeys).forEach(([configKey, keys]: any) => {
+        keys.forEach((key: any) => {
+          newErrors = { ...errors };
+          if(newErrors?.[`${configKey}_${key}`]) {
+            newErrors[`${configKey}_${key}`]["errorMessage"] = `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg}${key}`;
+          }
+        });
+      });
+      setErrors(newErrors)
     }
 
     const normalInvalidKeysList = [
@@ -614,7 +634,7 @@ const ConfigScreen: React.FC = function () {
     }
 
     if (validateMultiConfigKeysByApi || validateOtherKeysByApi) {
-      const apiValidationResults = await rootConfig.validateConfigKeyByApi(
+      const apiValidationResults: any = await rootConfig.validateConfigKeyByApi(
         configurationData,
         serverConfiguration,
         multiConfigTrueAndApiValidationEnabled,
@@ -629,7 +649,13 @@ const ConfigScreen: React.FC = function () {
       ];
 
       const isValid = allInvalidKeys?.length === 0;
-
+      allInvalidKeys?.forEach((data)=>{
+        data?.keys?.forEach((key: any)=>{
+          newErrors = { ...errors };
+          newErrors[`${data.source}_${key}`]["errorMessage"] = data?.message || `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg} ${key}`
+        })
+      })
+      setErrors(newErrors);
       return { isValid, invalidKeys: allInvalidKeys };
     } else {
       const allInvalidKeys = [
@@ -1354,6 +1380,8 @@ const ConfigScreen: React.FC = function () {
                               /* eslint-disable */
                               Object.entries(configInputFields)?.map(
                                 ([objKey, objValue]: any) => {
+                                  const errorMessage = errors?.[`${multiConfigurationID}_${objKey}`]?.errorMessage;
+                                  const isError = errors[`${multiConfigurationID}_${objKey}`]?.isOnchangeTriggered
                                   if (objValue?.isMultiConfig) {
                                     if (!objValue?.isDynamic) {
                                       if (
@@ -1424,6 +1452,7 @@ const ConfigScreen: React.FC = function () {
                                                     objValue?.isMultiConfig
                                                   )
                                                 }
+                                                error={!!errorMessage}
                                                 suffixVisible={
                                                   objValue?.isSensitive ?? false
                                                 }
@@ -1441,6 +1470,13 @@ const ConfigScreen: React.FC = function () {
                                               <InstructionText data-testid="text_instruction">
                                                 {objValue?.instructionText}
                                               </InstructionText>
+                                              {isError && (
+                                                <InstructionText
+                                                  className="error-message"
+                                                >
+                                                  {errorMessage}
+                                                </InstructionText>
+                                              )}
                                             </Field>
                                           </div>
                                         );
