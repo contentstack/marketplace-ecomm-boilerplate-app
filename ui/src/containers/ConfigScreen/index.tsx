@@ -247,7 +247,7 @@ const ConfigScreen: React.FC = function () {
         state?.installationData?.serverConfiguration || {};
       const fieldValue = typeof value === "string" ? value?.trim() : value;
 
-      if(e.type === "change"){
+      if(e?.type === "change"){
         const errorState = { ...errors }
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
@@ -601,7 +601,7 @@ const ConfigScreen: React.FC = function () {
       Object.entries(normalInvalidKeys).forEach(([configKey, keys]: any) => {
         keys.forEach((key: any) => {
           newErrors = { ...errors };
-          if(newErrors[`${configKey}_${key}`]) {
+          if(newErrors?.[`${configKey}_${key}`]) {
             newErrors[`${configKey}_${key}`]["errorMessage"] = `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg}${key}`;
           }
         });
@@ -651,8 +651,8 @@ const ConfigScreen: React.FC = function () {
       ];
 
       const isValid = allInvalidKeys?.length === 0;
-      allInvalidKeys.forEach((data)=>{
-        data.keys.forEach((key: any)=>{
+      allInvalidKeys?.forEach((data)=>{
+        data?.keys.forEach((key: any)=>{
           newErrors = { ...errors };
           newErrors[`${data.source}_${key}`]["errorMessage"] = data?.message || `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg} ${key}`
         })
@@ -1475,7 +1475,6 @@ const ConfigScreen: React.FC = function () {
                                               {isError && (
                                                 <InstructionText
                                                   className="error-message"
-                                                  style={{ color: "red" }}
                                                 >
                                                   {errorMessage}
                                                 </InstructionText>
