@@ -652,7 +652,7 @@ const ConfigScreen: React.FC = function () {
 
       const isValid = allInvalidKeys?.length === 0;
       allInvalidKeys?.forEach((data)=>{
-        data?.keys.forEach((key: any)=>{
+        data?.keys?.forEach((key: any)=>{
           newErrors = { ...errors };
           newErrors[`${data.source}_${key}`]["errorMessage"] = data?.message || `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg} ${key}`
         })
