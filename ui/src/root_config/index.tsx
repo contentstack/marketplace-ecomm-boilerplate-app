@@ -65,6 +65,7 @@ const ecommerceEnv: EcommerceEnv = {
  * - `isDynamic`: A boolean indicating if field needs to be rendered dynamically or not.
  * - `suffix`: A String indicating suffix when isSensitive is set to true 
     allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
+ * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
  */
 const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
@@ -80,6 +81,7 @@ const generateKeyOptionsFromNames = (
     isDisabled: mandatoryKeyNames.includes(keyName),
   }));
 
+// refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-config
 const getCustomKeys = (): {
   mandatoryKeys: KeyOption[];
   nonMandatoryKeys: KeyOption[];
@@ -233,6 +235,7 @@ const categorySelectorColumns = (config?: any): ColumnsProp[] => [
   },
 ];
 
+// For details - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#1-getformattedresponse
 const getFormattedResponse = (response: any): FormattedRespose => ({
   items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
   meta: {
@@ -245,6 +248,7 @@ const getFormattedResponse = (response: any): FormattedRespose => ({
 // this function returns the link to open the product or category in the third party app
 // you can use the id, config and type to generate links
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// More details - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#2-getopenerlink
 const getOpenerLink = (id: any, config: any, type: any): string =>
   config?.configField4;
 
@@ -257,6 +261,7 @@ const getOpenerLink = (id: any, config: any, type: any): string =>
  * @param {boolean} isOldUser - Indicates whether the user had previous data before enabling multi-configuration. This affects how data is processed.
  * @param {any} multiConfigName - Used to handle different ID formats when removing items. Required for scenarios involving multi-configuration.
  * @returns {any[]} - The filtered array of selected IDs with the specified item removed.
+ * for more details - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#4-removeitemsfromcustomfield
  */
 const removeItemsFromCustomField = (
   removeId: any,
@@ -286,6 +291,7 @@ interface TokenPayload extends JWTPayload {
  * app token is valid and the verification process is successful, the function returns `true`. If the
  * app token is missing or invalid, or if there is an error during the verification process, the
  * function returns `false`.
+ * for more details - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#3-verifyappsigning
  */
 const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   if (app_token) {
