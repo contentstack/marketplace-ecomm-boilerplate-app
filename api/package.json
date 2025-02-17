@@ -7,9 +7,11 @@
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "dompurify": "^3.1.6",
     "express": "^4.21.2",
     "jsonwebtoken": "9.0.0",
-    "node-fetch": "^3.2.3"
+    "node-fetch": "^3.2.3",
+    "nodemon": "^3.1.9"
   },
   "scripts": {
     "dev": "nodemon server.js",
