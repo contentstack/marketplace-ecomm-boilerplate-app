@@ -70,28 +70,76 @@ const ecommerceEnv: EcommerceEnv = {
 const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
 // Function to generate key options from key names
-const generateKeyOptionsFromNames = (
-  keyNames: string[],
-  mandatoryKeyNames: string[]
-): KeyOption[] =>
-  keyNames.map((keyName) => ({
-    label: keyName,
-    value: keyName,
-    searchLabel: keyName,
-    isDisabled: mandatoryKeyNames.includes(keyName),
-  }));
+const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => {
+  let options: any = [];
 
+  Object.keys(obj)?.forEach((key) => {
+    const fullPath = prefix ? `${prefix}.${key}` : key;
+    const isMandatory = mandatoryKeyNames?.includes(fullPath) ?? false;
+    
+    options.push({
+      label: key.replace(/[-_.]/g, " "),
+      value: fullPath,
+      searchLabel: fullPath,
+      depth: depth,
+      isMandatory,
+      isDisabled: isMandatory,
+    });
+
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      options = options.concat(generateKeyOptionsFromNames(obj[key], mandatoryKeyNames, fullPath, depth + 1));
+    }
+  });
+
+  return options;
+};
+
+// Provide a sample response object which will be identical to actual object. 
 // refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-config
 const getCustomKeys = (): {
   mandatoryKeys: KeyOption[];
   nonMandatoryKeys: KeyOption[];
 } => {
-  const keyNames = ["id", "name", "price", "description"];
+  const keyNames = {
+    id: 123,
+    name: "Sample Item",
+    category: {
+      id: 10,
+      name: "Category Name",
+    },
+    details: {
+      description: {
+        "en-us": { text: "English description" },
+        "fr-fr": { text: "French description" },
+      },
+      tags: ["tag1", "tag2", "tag3"],
+    },
+    metadata: {
+      createdAt: "2024-02-12T10:00:00Z",
+      updatedAt: "2024-02-12T12:00:00Z",
+      isActive: true,
+    },
+    images: { name: "thumbnail", url: "https://example.com/thumbnail.jpg" },
+    pricing: {
+      price: 99.99,
+      currency: "USD",
+      discount: {
+        amount: 10,
+        type: "percentage",
+      },
+    },
+    settings: {
+      notifications: { email: true, sms: false },
+      permissions: { canEdit: true, canDelete: false },
+    },
+  };
+  
+
   const mandatoryKeyNames = ["id", "name"];
 
   const keyOptions = generateKeyOptionsFromNames(keyNames, mandatoryKeyNames);
 
-  const mandatoryKeys = keyOptions?.filter((key) => key?.isDisabled);
+  const mandatoryKeys = keyOptions?.filter((key: any) => key?.isDisabled);
   const nonMandatoryKeys = keyOptions;
 
   return { mandatoryKeys, nonMandatoryKeys };
