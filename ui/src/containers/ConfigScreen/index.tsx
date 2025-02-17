@@ -1673,6 +1673,7 @@ const ConfigScreen: React.FC = function () {
                   isSearchable
                   hasAddOption
                   version="v2"
+                  isNested={true}
                   addOptionText={
                     <>
                       <Icon className="add-label" icon="Plus" />
