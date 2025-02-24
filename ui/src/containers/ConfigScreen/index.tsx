@@ -241,12 +241,20 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value } = e?.target || {};
+      const { name: fieldName, value, checked } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
-      const fieldValue = typeof value === "string" ? value?.trim() : value;
+      let serverConfiguration = state?.installationData?.serverConfiguration || {};
+      const fieldValue = e.target.checked ? checked : (typeof value === "string" ? value?.trim() : value);
+      
+      if(e.target.type === "radio") {
+        Object.keys(configuration.multi_config_keys[multiConfigID]).forEach((key: any) =>{
+          if(configInputFields[key]?.type === "radioInputField") {
+            configuration.multi_config_keys[multiConfigID][key] = false;
+          }
+        })
+      }
 
-      if(e?.type === "change"){
+      if(e?.type === "change" && e?.target?.type === "text"){
         const errorState = { ...errors }
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
@@ -1384,6 +1392,20 @@ const ConfigScreen: React.FC = function () {
                                   const isError = errors[`${multiConfigurationID}_${objKey}`]?.isOnchangeTriggered
                                   if (objValue?.isMultiConfig) {
                                     if (!objValue?.isDynamic) {
+                                      if(objValue?.type === "radioInputField") {
+                                        return (
+                                            <Radio
+                                              id={objKey}
+                                              name={objKey}
+                                              checked={multiConfigurationData[objKey]}
+                                              label={objValue?.labelText}
+                                              value
+                                              onClick={(e: any) => {
+                                                updateConfig(e, multiConfigurationID, objValue?.isMultiConfig)
+                                              }}
+                                            />
+                                        );
+                                      }
                                       if (
                                         objValue?.type !== "textInputFields"
                                       ) {
