@@ -37,6 +37,7 @@ import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { CustomModal } from "./AddKeyModal";
 import WarningMessage from "../../components/WarningMessage";
+import { CheckboxInputField, RadioInputField } from "./components";
 
 const ConfigScreen: React.FC = function () {
   /* entire configuration object returned from configureConfigScreen */
@@ -243,8 +244,14 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
-      const fieldValue = typeof value === "string" ? value?.trim() : value;
+      let serverConfiguration = state?.installationData?.serverConfiguration || {};
+      let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+
+      if(e?.target?.type === "checkbox") {
+        const previousSelectedOptions = configuration?.multi_config_keys?.[multiConfigID]?.[fieldName]
+        const currentData = [...previousSelectedOptions, fieldValue]
+        fieldValue = currentData
+      }
 
       if(e?.type === "change"){
         const errorState = { ...errors }
@@ -446,7 +453,6 @@ const ConfigScreen: React.FC = function () {
         },
       },
     });
-
     setState(updateInstallationData);
     state.setInstallationData(updateInstallationData(state));
   };
@@ -1384,6 +1390,37 @@ const ConfigScreen: React.FC = function () {
                                   const isError = errors[`${multiConfigurationID}_${objKey}`]?.isOnchangeTriggered
                                   if (objValue?.isMultiConfig) {
                                     if (!objValue?.isDynamic) {
+                                      if (objValue?.type === "radioInputField" || objValue?.type === "checkboxInputField") {
+                                        return (
+                                          <Field>
+                                            <FieldLabel
+                                              required
+                                              htmlFor={`${objKey}_options`}
+                                              data-testid="radio_label"
+                                            >
+                                              {objValue?.labelText}
+                                            </FieldLabel>
+                                            {objValue?.type === "radioInputField" && (
+                                              <RadioInputField
+                                                configurationObject={state?.installationData?.configuration}
+                                                serverConfigurationObject={state?.installationData?.serverConfiguration}
+                                                customComponentOnChange={customComponentOnChange}
+                                                multiConfigurationDataID={multiConfigurationID}
+                                                componentConfigOptions={{objKey, objValue,}}
+                                              />
+                                            )}
+                                            {objValue?.type === "checkboxInputField" && (
+                                              <CheckboxInputField
+                                                configurationObject={state?.installationData?.configuration}
+                                                serverConfigurationObject={state?.installationData?.serverConfiguration}
+                                                customComponentOnChange={customComponentOnChange}
+                                                multiConfigurationDataID={multiConfigurationID}
+                                                componentConfigOptions={{ objKey, objValue,}}
+                                              />
+                                            )}
+                                          </Field>
+                                        );
+                                      }
                                       if (
                                         objValue?.type !== "textInputFields"
                                       ) {
