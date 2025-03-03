@@ -21,7 +21,7 @@ export const RadioInputField: React.FC<CustomComponentProps> = function ({
   }) {
     const { objKey, objValue } = componentConfigOptions;
     return (
-        objValue?.options.map((option: any) => {
+        objValue?.options?.map((option: any) => {
             return (
                 <Radio
                   id={option?.label}
