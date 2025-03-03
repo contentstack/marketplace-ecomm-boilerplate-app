@@ -37,6 +37,7 @@ import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { CustomModal } from "./AddKeyModal";
 import WarningMessage from "../../components/WarningMessage";
+import { RadioInputField } from "./components";
 
 const ConfigScreen: React.FC = function () {
   /* entire configuration object returned from configureConfigScreen */
@@ -241,12 +242,13 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value } = e?.target || {};
+      const { name: fieldName, value, checked } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
-      const fieldValue = typeof value === "string" ? value?.trim() : value;
+      let serverConfiguration = state?.installationData?.serverConfiguration || {};
+      const fieldValue = e?.target?.type === "radio" ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      
 
-      if(e?.type === "change"){
+      if(e?.type === "change" && e?.target?.type === "text"){
         const errorState = { ...errors }
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
@@ -1384,6 +1386,25 @@ const ConfigScreen: React.FC = function () {
                                   const isError = errors[`${multiConfigurationID}_${objKey}`]?.isOnchangeTriggered
                                   if (objValue?.isMultiConfig) {
                                     if (!objValue?.isDynamic) {
+                                      if (objValue?.type === "radioInputField") {
+                                        return (
+                                          <Field>
+                                            <FieldLabel
+                                                required
+                                                htmlFor={`${objKey}_options`}
+                                                data-testid="radio_label"
+                                              >
+                                                {objValue?.labelText}
+                                              </FieldLabel>
+                                              <RadioInputField 
+                                                configurationObject = {state?.installationData?.configuration}
+                                                serverConfigurationObject = {state?.installationData?.serverConfiguration}
+                                                customComponentOnChange = {customComponentOnChange}
+                                                multiConfigurationDataID={multiConfigurationID}
+                                                componentConfigOptions={{ objKey, objValue }}/>
+                                          </Field>
+                                        )
+                                      }
                                       if (
                                         objValue?.type !== "textInputFields"
                                       ) {
