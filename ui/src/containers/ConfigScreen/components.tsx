@@ -12,6 +12,18 @@ interface CustomComponentProps {
   componentConfigOptions: any;
 }
 
+interface CustomComponentProps {
+    configurationObject: { [key: string]: any };
+    serverConfigurationObject: { [key: string]: any };
+    customComponentOnChange: (
+      event: any,
+      multiConfigID: any,
+      isMultiConfig: boolean
+    ) => void;
+    multiConfigurationDataID: any;
+    componentConfigOptions: any;
+  }
+
 export const RadioInputField: React.FC<CustomComponentProps> = function ({
     configurationObject,
     serverConfigurationObject,

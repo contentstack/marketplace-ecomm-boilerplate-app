@@ -242,7 +242,7 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value } = e?.target || {};
+      const { name: fieldName, value, checked } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration = state?.installationData?.serverConfiguration || {};
       let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
@@ -253,7 +253,7 @@ const ConfigScreen: React.FC = function () {
         fieldValue = currentData
       }
 
-      if(e?.type === "change"){
+      if(e?.type === "change" && e?.target?.type === "text"){
         const errorState = { ...errors }
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
