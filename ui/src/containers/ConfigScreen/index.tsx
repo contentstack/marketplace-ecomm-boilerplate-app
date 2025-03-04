@@ -37,7 +37,7 @@ import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { CustomModal } from "./AddKeyModal";
 import WarningMessage from "../../components/WarningMessage";
-import { CheckboxInputField, RadioInputField } from "./components";
+import { CheckboxInputField, RadioInputField, SelectInputField } from "./components";
 
 const ConfigScreen: React.FC = function () {
   /* entire configuration object returned from configureConfigScreen */
@@ -247,11 +247,6 @@ const ConfigScreen: React.FC = function () {
       let serverConfiguration = state?.installationData?.serverConfiguration || {};
       let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
 
-      if(e?.target?.type === "checkbox") {
-        const previousSelectedOptions = configuration?.multi_config_keys?.[multiConfigID]?.[fieldName]
-        const currentData = [...previousSelectedOptions, fieldValue]
-        fieldValue = currentData
-      }
 
       if(e?.type === "change" && e?.target?.type === "text"){
         const errorState = { ...errors }
@@ -1420,6 +1415,17 @@ const ConfigScreen: React.FC = function () {
                                             )}
                                           </Field>
                                         );
+                                      }
+                                      if(objValue?.type === "selectInputField") {
+                                        return (
+                                          <SelectInputField
+                                              configurationObject={state?.installationData?.configuration}
+                                              serverConfigurationObject={state?.installationData?.serverConfiguration}
+                                              customComponentOnChange={customComponentOnChange}
+                                              multiConfigurationDataID={multiConfigurationID}
+                                              componentConfigOptions={{ objKey, objValue,}}
+                                            />
+                                          )
                                       }
                                       if (
                                         objValue?.type !== "textInputFields"
