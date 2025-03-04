@@ -72,11 +72,11 @@ export const CheckboxInputField: React.FC<CustomComponentProps> = function ({
   }, [configurationObject, multiConfigurationDataID, objKey]);
 
   const handleOnChange = (e: any) => {
-    const selectedOption = objValue.options.find((key: any) => key.label === e.target.name);
+    const selectedOption = objValue?.options?.find((key: any) => key?.label === e?.target?.name);
 
     let updatedValues;
-    if (selectedValues.some((item: any) => item.label === selectedOption.label)) {
-      updatedValues = selectedValues.filter((item: any) => item.label !== selectedOption.label);
+    if (selectedValues?.some((item: any) => item?.label === selectedOption?.label)) {
+      updatedValues = selectedValues.filter((item: any) => item.label !== selectedOption?.label);
     } else {
       updatedValues = [...selectedValues, selectedOption];
     }
@@ -88,11 +88,11 @@ export const CheckboxInputField: React.FC<CustomComponentProps> = function ({
 
   return objValue?.options?.map((option: any) => (
     <Checkbox
-      key={option.label}
-      id={option.label}
-      name={option.label}
-      checked={selectedValues.some((item: any) => item.label === option.label)}
-      label={option.label}
+      key={option?.label}
+      id={option?.label}
+      name={option?.label}
+      checked={selectedValues?.some((item: any) => item?.label === option?.label)}
+      label={option?.label}
       onClick={handleOnChange}
     />
   ));
