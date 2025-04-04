@@ -149,10 +149,57 @@ const ApiValidationEnabledForConfig = (
     }
   );
 
+  const getProductsByCategory = (
+    config: any,
+    isOldUser: any,
+    multiConfigDropDown: any,
+    skip: number,
+    limit: number,
+    category: string
+  ) => {
+    let url = `${process.env.REACT_APP_API_URL}?query=product&skip=${skip}&limit=${limit}&categories:in=${category}`;
+  
+    if (!isOldUser) {
+      const configKey = JSON.stringify({
+        [multiConfigDropDown?.value]: {},
+      });
+  
+      url += `&configKey=${configKey}`;
+    }
+  
+    return makeAnApiCall(url, "POST", { config, isOldUser, multiConfigDropDown });
+  };
+
+  const search = (
+    config: any,
+    keyword: any,
+    skip: any,
+    limit: any,
+    isOldUser: Boolean,
+    multiConfigDropDown: any,
+    searchCategories?: string
+  ) => {
+    let url = `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`;
+  
+    if (searchCategories) url += `&searchCategories=${searchCategories}`;
+  
+    if (!isOldUser) {
+      const configKey = JSON.stringify({
+        [multiConfigDropDown?.value]: {},
+      });
+  
+      url += `&configKey=${configKey}`;
+    }
+  
+    return makeAnApiCall(url, "POST", { config, isOldUser, multiConfigDropDown });
+  };
+
 export {
   getSelectedIDs,
   requestCategories,
   getCustomCategoryData,
   ApiValidationEnabledForConfig,
   makeAnApiCall,
+  getProductsByCategory,
+  search,
 };

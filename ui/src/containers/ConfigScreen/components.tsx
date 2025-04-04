@@ -21,7 +21,7 @@ interface CustomComponentProps {
       isMultiConfig: boolean
     ) => void;
     multiConfigurationDataID: any;
-    componentConfigOptions: any;
+    componentConfigOptions: any
   }
 
 export const RadioInputField: React.FC<CustomComponentProps> = function ({

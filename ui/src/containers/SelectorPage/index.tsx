@@ -33,6 +33,7 @@ const SelectorPage: React.FC = function () {
   const [config, setConfig] = useState<any>({});
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [category, setCategory] = useState<any>(null);
   const [hiddenColumns, setHiddenColumns] = useState<any>(
     config?.type === "category" ? [] : ["id"]
   );
@@ -274,7 +275,11 @@ const SelectorPage: React.FC = function () {
     }
   }, [selectedMultiConfigValue]);
 
-  const updateList = (filteredList: any) => setList(filteredList);
+  const updateList = (filteredList: any) => {
+    setList(filteredList);
+    setTotalCounts(filteredList?.data?.meta?.total);
+    setLoading(false);
+  }
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {
@@ -314,6 +319,13 @@ const SelectorPage: React.FC = function () {
             config={config}
             meta={metaState}
             updateList={updateList}
+            category={category}
+            setCategory={setCategory}
+            setLoading={setLoading}
+            tableRef={tableRef}
+            oldUser={oldUser}
+            fetchData={fetchData}
+            selectedMultiConfigValue={selectedMultiConfigValue}
           />
         </div>
 
