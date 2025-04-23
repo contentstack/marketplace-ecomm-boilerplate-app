@@ -70,31 +70,43 @@ const ecommerceEnv: EcommerceEnv = {
 const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
 
 // Function to generate key options from key names
-const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => {
+const generateKeyOptionsFromNames = (
+  obj: any,
+  mandatoryKeyNames: any,
+  prefix = "",
+  depth = 0
+) => {
   let options: any = [];
 
   Object.keys(obj)?.forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
     const isMandatory = mandatoryKeyNames?.includes(fullPath) ?? false;
-    
+
     options.push({
       label: key.replace(/[-_.]/g, " "),
       value: fullPath,
       searchLabel: fullPath,
-      depth: depth,
+      depth,
       isMandatory,
       isDisabled: isMandatory,
     });
 
     if (typeof obj[key] === "object" && obj[key] !== null) {
-      options = options.concat(generateKeyOptionsFromNames(obj[key], mandatoryKeyNames, fullPath, depth + 1));
+      options = options.concat(
+        generateKeyOptionsFromNames(
+          obj[key],
+          mandatoryKeyNames,
+          fullPath,
+          depth + 1
+        )
+      );
     }
   });
 
   return options;
 };
 
-// Provide a sample response object which will be identical to actual object. 
+// Provide a sample response object which will be identical to actual object.
 // refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-config
 const getCustomKeys = (): {
   mandatoryKeys: KeyOption[];
@@ -133,7 +145,6 @@ const getCustomKeys = (): {
       permissions: { canEdit: true, canDelete: false },
     },
   };
-  
 
   const mandatoryKeyNames = ["id", "name"];
 

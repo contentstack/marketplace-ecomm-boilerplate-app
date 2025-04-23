@@ -89,7 +89,7 @@ export const CustomModal = ({
     const value = e?.target?.value.trim();
     debouncedHandleChange(value);
   };
-  const handleValueCreate = async (action: string) => {
+  const handleValueCreate = async () => {
     const updatedValue = checkModalValue({
       customOptions,
       modalValue,
@@ -183,7 +183,7 @@ export const CustomModal = ({
                     disabled={
                       isEmptySpace || modalValue?.length > inputLengthLimit
                     }
-                    onClick={() => handleValueCreate("")}
+                    onClick={() => handleValueCreate()}
                   >
                     <Icon icon="CheckedWhite" />
                     {localeTexts.configPage.customWholeJson.modal.btn.apply}

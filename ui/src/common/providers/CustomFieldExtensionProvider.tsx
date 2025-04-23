@@ -197,15 +197,10 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       return; // Exit early since there's nothing to fetch
     }
 
-    if (
-      isOldUser
-        ? Array.isArray(selectedIdsArray)
-        : Object.keys(selectedIdsArray)?.length
-          && !isEmpty(appConfig)
-          && isOldUser
+    const isInvalidCreds =      Object.keys(selectedIdsArray)?.length && !isEmpty(appConfig) && isOldUser
         ? selectedIdsArray?.length
-        : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error
-    ) {
+        : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error;
+    if (isOldUser ? Array.isArray(selectedIdsArray) : isInvalidCreds) {
       setLoading(true);
       let res;
 

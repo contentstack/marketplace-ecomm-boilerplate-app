@@ -67,6 +67,34 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     setIsModalOpen(isOpen);
   }, [isOpen]);
 
+  const renderTexts = () => {
+    if (alphanumericIdentifier)
+      return (
+        <span className="errorcontainer">
+          {localeTexts.configPage.multiConfig.ErrorMessage.invalidAlphanumeric}
+        </span>
+      );
+
+    if (hasDuplicateConfigurationName)
+      return (
+        <span className="errorcontainer">
+          {
+            localeTexts.configPage.multiConfig.ErrorMessage.duplicateLabelError
+              .msg
+          }
+        </span>
+      );
+
+    if (enteredConfigurationName === "legacy_config")
+      return (
+        <span className="errorcontainer">
+          {localeTexts.configPage.multiConfig.ErrorMessage.oldV2KeysNameMsg}
+        </span>
+      );
+
+    return "";
+  };
+
   return (
     // eslint-disable-next-line
     <>
@@ -102,30 +130,7 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                     onChange={onInputChange}
                     version="v2"
                   />
-                  {alphanumericIdentifier ? (
-                    <span className="errorcontainer">
-                      {
-                        localeTexts.configPage.multiConfig.ErrorMessage
-                          .invalidAlphanumeric
-                      }
-                    </span>
-                  ) : hasDuplicateConfigurationName ? (
-                    <span className="errorcontainer">
-                      {
-                        localeTexts.configPage.multiConfig.ErrorMessage
-                          .duplicateLabelError.msg
-                      }
-                    </span>
-                  ) : enteredConfigurationName === "legacy_config" ? (
-                    <span className="errorcontainer">
-                      {
-                        localeTexts.configPage.multiConfig.ErrorMessage
-                          .oldV2KeysNameMsg
-                      }
-                    </span>
-                  ) : (
-                    ""
-                  )}
+                  {renderTexts()}
                 </Field>
               </ModalBody>
               <ModalFooter>
