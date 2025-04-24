@@ -21,6 +21,7 @@ import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";
 import FilterComponent from "../../root_config/selector/FilterComponent";
+import { getSelectedIDs } from "../../services";
 
 const SelectorPage: React.FC = function () {
   const [list, setList] = useState<any[]>([]);
@@ -45,6 +46,8 @@ const SelectorPage: React.FC = function () {
   const [multiConfigDropDown, setMultiConfigDropDown] = useState<any>([]);
   const [selectedMultiConfigValue, setSelectedMultiConfigValue] =    useState<any>();
   const [oldUser, setOldUser] = useState<any>(false);
+  const [togglestate, setTogglestate] = useState(false);
+
 
   const tableRef: any = useRef(null);
 
@@ -158,6 +161,13 @@ const SelectorPage: React.FC = function () {
   };
 
   const fetchData = async (meta: any) => {
+    if (togglestate && meta?.searchText) {
+        const results = list?.filter((product) =>
+          product?.name?.toLowerCase().includes(meta?.searchText?.toLowerCase())
+        );
+        setList(results);
+      return;
+    }
     setMetaState(meta);
     try {
       if (meta?.searchText && !isEmpty(config)) {
@@ -269,9 +279,12 @@ const SelectorPage: React.FC = function () {
     const fetchShopifyData = async () => {
       fetchData({ searchText, skip: 0, limit: 30 });
     };
-    if (selectedMultiConfigValue?.value) {
+    if (togglestate) {
+      handleSelectedDataToggle();
+    } else if (selectedMultiConfigValue?.value) {
       fetchShopifyData();
       tableRef?.current?.setTablePage(1);
+
     }
   }, [selectedMultiConfigValue]);
 
@@ -287,6 +300,42 @@ const SelectorPage: React.FC = function () {
     }
     setIsInvalidCredentials("" as any);
     setSelectedMultiConfigValue(event);
+  };
+
+  const handleSelectedDataToggle = async () => {
+    setLoading(true);
+    const selectedProductsCategories = await getSelectedIDs(
+      config,
+      config?.type,
+      selectedIds,
+      oldUser
+    );
+    
+    const items =
+    selectedProductsCategories?.data?.items.filter(
+      (item: any) =>
+        item?.cs_metadata?.multiConfigName === selectedMultiConfigValue?.value
+    ) || [];
+    
+    setList(items);
+    
+    setTotalCounts(items?.length);
+    setMetaState({
+      skip: 0,
+      limit: items?.length,
+      searchText: "",
+    });
+    setLoading(false);
+  };
+
+  const onToggleClick = (meta: any) => {
+    const newState = !togglestate;
+    setTogglestate(newState);
+    if (newState) {
+      handleSelectedDataToggle();
+    } else {
+      fetchData(meta);
+    }
   };
 
   const renderSelectorPage = () => {
@@ -326,6 +375,8 @@ const SelectorPage: React.FC = function () {
             oldUser={oldUser}
             fetchData={fetchData}
             selectedMultiConfigValue={selectedMultiConfigValue}
+            togglestate={togglestate}
+            onToggleClick={onToggleClick}
           />
         </div>
 
@@ -339,8 +390,9 @@ const SelectorPage: React.FC = function () {
           viewSelector
           canRefresh
           canSearch={config?.type !== "category"}
+          loadMoreItems={() => {}}
           v2Features={{
-            pagination: true,
+            pagination: togglestate ? false : true,
           }}
           data={
             list?.length
