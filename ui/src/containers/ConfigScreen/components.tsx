@@ -76,7 +76,7 @@ export const CheckboxInputField: React.FC<CustomComponentProps> = function ({
 
     let updatedValues;
     if (selectedValues?.some((item: any) => item?.label === selectedOption?.label)) {
-      updatedValues = selectedValues.filter((item: any) => item.label !== selectedOption?.label);
+      updatedValues = selectedValues.filter((item: any) => item?.label !== selectedOption?.label);
     } else {
       updatedValues = [...selectedValues, selectedOption];
     }
