@@ -253,7 +253,7 @@ const ConfigScreen: React.FC = function () {
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
           errorMessage: "",
-        },                
+        }            
         setErrors(errorState);
       }
 
@@ -1716,7 +1716,7 @@ const ConfigScreen: React.FC = function () {
                   isSearchable
                   hasAddOption
                   version="v2"
-                  isNested={true}
+                  isNested
                   addOptionText={
                     <>
                       <Icon className="add-label" icon="Plus" />
