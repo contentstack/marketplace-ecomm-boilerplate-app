@@ -75,14 +75,14 @@ const CustomField: React.FC<any> = function ({
           });
         else {
           const data: any[] = [];
-          const custom_keys = config?.custom_keys ?? config?.bc_keys;
+          const customKeys = config?.custom_keys ?? config?.bc_keys;
           if (
             rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
             && isOldUser === false
           ) {
-            custom_keys?.push({ label: "cs_metadata", value: "cs_metadata" });
+            customKeys?.push({ label: "cs_metadata", value: "cs_metadata" });
           }
-          const keys = custom_keys?.map((i: any) => i?.value);
+          const keys = customKeys?.map((i: any) => i?.value);
           if (selectedItems?.length) {
             data.push(...getFilteredAssets(selectedItems, keys));
           }

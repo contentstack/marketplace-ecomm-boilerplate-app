@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Field,
   FieldLabel,
@@ -34,10 +35,7 @@ function renderDynamicFields(
   ) => void
 ) {
   const configInputFields = rootConfig?.configureConfigScreen?.();
-  if (!configInputFields) {
-    console.error("🚀 ~ renderDynamicFields ~ configInputFields is undefined!");
-    return null;
-  }
+  if (!configInputFields) return null;
 
   const fieldsToRender = fields
     .map((fieldName: any) => configInputFields?.[fieldName])
@@ -99,7 +97,7 @@ interface CustomComponentProps {
   multiConfigurationDataID: any;
   componentConfigOptions: any;
 }
-// eslint-disable-next-line
+
 const MultiConfigCustomComponent: React.FC<CustomComponentProps> = function ({
   configurationObject,
   serverConfigurationObject,

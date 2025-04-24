@@ -12,11 +12,7 @@ import {
   getItemStatusMap,
 } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
-import {
-  CustomFieldType,
-  KeyValueObj,
-  TypeWarningtext,
-} from "../../common/types";
+import { TypeWarningtext } from "../../common/types";
 import "./styles.scss";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config/index";

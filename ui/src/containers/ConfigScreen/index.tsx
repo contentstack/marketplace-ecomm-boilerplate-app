@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Import React modules */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 /* ContentStack Modules */
@@ -244,21 +245,22 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value, checked } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration = state?.installationData?.serverConfiguration || {};
-      let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
+      let fieldValue = e?.target?.checked ? e?.target?.id : value;
+      fieldValue = typeof value === "string" ? value?.trim() : value;
 
-      if(e?.target?.type === "checkbox") {
-        const previousSelectedOptions = configuration?.multi_config_keys?.[multiConfigID]?.[fieldName]
-        const currentData = [...previousSelectedOptions, fieldValue]
-        fieldValue = currentData
+      if (e?.target?.type === "checkbox") {
+        const previousSelectedOptions =          configuration?.multi_config_keys?.[multiConfigID]?.[fieldName];
+        const currentData = [...previousSelectedOptions, fieldValue];
+        fieldValue = currentData;
       }
 
-      if(e?.type === "change" && e?.target?.type === "text"){
-        const errorState = { ...errors }
+      if (e?.type === "change" && e?.target?.type === "text") {
+        const errorState = { ...errors };
         errorState[`${multiConfigID}_${fieldName}`] = {
           isOnchangeTriggered: true,
           errorMessage: "",
-        },                
+        };
         setErrors(errorState);
       }
 
@@ -472,13 +474,8 @@ const ConfigScreen: React.FC = function () {
     }
   };
 
-  const checkIsDefaultInitial = (configurationData: any) => {
-    const { default_multi_config_key } = configurationData;
-    if (default_multi_config_key === "") {
-      return true;
-    }
-    return false;
-  };
+  const checkIsDefaultInitial = (configurationData: any) =>
+    configurationData?.default_multi_config_key === "";
 
   /* eslint-disable */
   const checkValidity = async (
@@ -605,12 +602,14 @@ const ConfigScreen: React.FC = function () {
       Object.entries(normalInvalidKeys).forEach(([configKey, keys]: any) => {
         keys.forEach((key: any) => {
           newErrors = { ...errors };
-          if(newErrors?.[`${configKey}_${key}`]) {
-            newErrors[`${configKey}_${key}`]["errorMessage"] = `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg}${key}`;
+          if (newErrors?.[`${configKey}_${key}`]) {
+            newErrors[`${configKey}_${key}`][
+              "errorMessage"
+            ] = `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg}${key}`;
           }
         });
       });
-      setErrors(newErrors)
+      setErrors(newErrors);
     }
 
     const normalInvalidKeysList = [
@@ -655,12 +654,14 @@ const ConfigScreen: React.FC = function () {
       ];
 
       const isValid = allInvalidKeys?.length === 0;
-      allInvalidKeys?.forEach((data)=>{
-        data?.keys?.forEach((key: any)=>{
+      allInvalidKeys?.forEach((data) => {
+        data?.keys?.forEach((key: any) => {
           newErrors = { ...errors };
-          newErrors[`${data.source}_${key}`]["errorMessage"] = data?.message || `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg} ${key}`
-        })
-      })
+          newErrors[`${data.source}_${key}`]["errorMessage"] =
+            data?.message ||
+            `${localeTexts?.configPage?.multiConfig?.ErrorMessage?.emptyConfigNotifyMsg} ${key}`;
+        });
+      });
       setErrors(newErrors);
       return { isValid, invalidKeys: allInvalidKeys };
     } else {
@@ -1386,11 +1387,19 @@ const ConfigScreen: React.FC = function () {
                               /* eslint-disable */
                               Object.entries(configInputFields)?.map(
                                 ([objKey, objValue]: any) => {
-                                  const errorMessage = errors?.[`${multiConfigurationID}_${objKey}`]?.errorMessage;
-                                  const isError = errors[`${multiConfigurationID}_${objKey}`]?.isOnchangeTriggered
+                                  const errorMessage =
+                                    errors?.[
+                                      `${multiConfigurationID}_${objKey}`
+                                    ]?.errorMessage;
+                                  const isError =
+                                    errors[`${multiConfigurationID}_${objKey}`]
+                                      ?.isOnchangeTriggered;
                                   if (objValue?.isMultiConfig) {
                                     if (!objValue?.isDynamic) {
-                                      if (objValue?.type === "radioInputField" || objValue?.type === "checkboxInputField") {
+                                      if (
+                                        objValue?.type === "radioInputField" ||
+                                        objValue?.type === "checkboxInputField"
+                                      ) {
                                         return (
                                           <Field>
                                             <FieldLabel
@@ -1400,22 +1409,50 @@ const ConfigScreen: React.FC = function () {
                                             >
                                               {objValue?.labelText}
                                             </FieldLabel>
-                                            {objValue?.type === "radioInputField" && (
+                                            {objValue?.type ===
+                                              "radioInputField" && (
                                               <RadioInputField
-                                                configurationObject={state?.installationData?.configuration}
-                                                serverConfigurationObject={state?.installationData?.serverConfiguration}
-                                                customComponentOnChange={customComponentOnChange}
-                                                multiConfigurationDataID={multiConfigurationID}
-                                                componentConfigOptions={{objKey, objValue,}}
+                                                configurationObject={
+                                                  state?.installationData
+                                                    ?.configuration
+                                                }
+                                                serverConfigurationObject={
+                                                  state?.installationData
+                                                    ?.serverConfiguration
+                                                }
+                                                customComponentOnChange={
+                                                  customComponentOnChange
+                                                }
+                                                multiConfigurationDataID={
+                                                  multiConfigurationID
+                                                }
+                                                componentConfigOptions={{
+                                                  objKey,
+                                                  objValue,
+                                                }}
                                               />
                                             )}
-                                            {objValue?.type === "checkboxInputField" && (
+                                            {objValue?.type ===
+                                              "checkboxInputField" && (
                                               <CheckboxInputField
-                                                configurationObject={state?.installationData?.configuration}
-                                                serverConfigurationObject={state?.installationData?.serverConfiguration}
-                                                customComponentOnChange={customComponentOnChange}
-                                                multiConfigurationDataID={multiConfigurationID}
-                                                componentConfigOptions={{ objKey, objValue,}}
+                                                configurationObject={
+                                                  state?.installationData
+                                                    ?.configuration
+                                                }
+                                                serverConfigurationObject={
+                                                  state?.installationData
+                                                    ?.serverConfiguration
+                                                }
+                                                customComponentOnChange={
+                                                  customComponentOnChange
+                                                }
+                                                multiConfigurationDataID={
+                                                  multiConfigurationID
+                                                }
+                                                componentConfigOptions={{
+                                                  objKey,
+                                                  objValue,
+                                                }}
                                               />
                                             )}
                                           </Field>
@@ -1508,9 +1545,7 @@ const ConfigScreen: React.FC = function () {
                                                 {objValue?.instructionText}
                                               </InstructionText>
                                               {isError && (
-                                                <InstructionText
-                                                  className="error-message"
-                                                >
+                                                <InstructionText className="error-message">
                                                   {errorMessage}
                                                 </InstructionText>
                                               )}
@@ -1603,6 +1638,7 @@ const ConfigScreen: React.FC = function () {
                             placeholder={objValue?.placeholderText}
                             name={objKey}
                             value={
+                              // eslint-disable-next-line no-nested-ternary
                               objValue?.saveInConfig
                                 ? state?.installationData?.configuration?.[
                                     objKey
@@ -1710,7 +1746,7 @@ const ConfigScreen: React.FC = function () {
                   isSearchable
                   hasAddOption
                   version="v2"
-                  isNested={true}
+                  isNested
                   addOptionText={
                     <>
                       <Icon className="add-label" icon="Plus" />
