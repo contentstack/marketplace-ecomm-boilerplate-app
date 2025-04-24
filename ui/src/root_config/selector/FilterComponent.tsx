@@ -48,9 +48,9 @@ function FilterComponent({
     let categoriesData = response?.data?.items 
     if (togglestate) {
       categoriesData =
-        response?.data?.items.filter(
+        response?.data?.items?.filter(
           (item: any) =>
-            item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+            item?.cs_metadata?.multiConfigName === selectedMultiConfigValue?.value
         ) || [];
     }
 
@@ -100,7 +100,7 @@ function FilterComponent({
       categoriesData =
         response?.data?.items.filter(
           (item: any) =>
-            item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+            item?.cs_metadata?.multiConfigName === selectedMultiConfigValue?.value
         ) || [];
     }
     updateList(categoriesData);

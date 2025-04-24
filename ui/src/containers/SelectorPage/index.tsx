@@ -162,8 +162,8 @@ const SelectorPage: React.FC = function () {
 
   const fetchData = async (meta: any) => {
     if (togglestate && meta?.searchText) {
-        const results = list.filter((product) =>
-          product.name.toLowerCase().includes(meta?.searchText?.toLowerCase())
+        const results = list?.filter((product) =>
+          product?.name?.toLowerCase().includes(meta?.searchText?.toLowerCase())
         );
         setList(results);
       return;
@@ -314,15 +314,15 @@ const SelectorPage: React.FC = function () {
     const items =
     selectedProductsCategories?.data?.items.filter(
       (item: any) =>
-        item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+        item?.cs_metadata?.multiConfigName === selectedMultiConfigValue?.value
     ) || [];
     
     setList(items);
     
-    setTotalCounts(items.length);
+    setTotalCounts(items?.length);
     setMetaState({
       skip: 0,
-      limit: items.length,
+      limit: items?.length,
       searchText: "",
     });
     setLoading(false);
