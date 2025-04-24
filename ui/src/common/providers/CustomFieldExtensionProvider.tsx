@@ -109,22 +109,20 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         setAdvancedConfig(data);
       }
 
-      if (oldUser) {
-        updatedFieldData = fieldData?.data;
-      } else {
-        updatedFieldData = fieldData?.data?.map((fieldDataSet: any) => {
-          if (!fieldDataSet?.cs_metadata) {
-            return {
-              ...fieldDataSet,
-              cs_metadata: {
-                multiConfigName: "legacy_config",
-                isConfigDeleted: false,
-              },
-            };
-          }
-          return fieldDataSet;
-        });
-      }
+      updatedFieldData = oldUser
+        ? fieldData?.data
+        : fieldData?.data?.map((fieldDataSet: any) => {
+            if (!fieldDataSet?.cs_metadata) {
+              return {
+                ...fieldDataSet,
+                cs_metadata: {
+                  multiConfigName: "legacy_config",
+                  isConfigDeleted: false,
+                },
+              };
+            }
+            return fieldDataSet;
+          });
 
       if (updatedFieldData?.length) {
         if (

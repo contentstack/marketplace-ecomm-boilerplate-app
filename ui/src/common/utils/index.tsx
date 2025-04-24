@@ -39,20 +39,29 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   );
 };
 
-const mergeObjects = (target: any, source: any) => {
-  const sourceCopy = JSON.parse(JSON.stringify(source)); // Deep copy of source
+const isObject = (obj: any) =>
+  obj && typeof obj === "object" && !Array.isArray(obj);
 
-  Object.keys(sourceCopy)?.forEach((key) => {
-    if (sourceCopy?.[key] instanceof Object && key in target) {
-      Object.assign(
-        sourceCopy?.[key],
-        mergeObjects(target?.[key], sourceCopy?.[key])
-      );
-    }
+const mergeObjects = (target = {}, source = {}) => {
+  if (!isObject(target) || !isObject(source)) return target;
+
+  if (!Object.keys(source)?.length) return target;
+
+  const targetCopy = JSON.parse(JSON.stringify(target));
+  const sourceCopy = JSON.parse(JSON.stringify(source));
+  const result: any = {};
+
+  (Object.keys(sourceCopy) || []).forEach((key) => {
+    result[key] =      key in targetCopy
+      && isObject(sourceCopy[key])
+      && isObject(targetCopy[key])
+        ? mergeObjects(targetCopy[key], sourceCopy[key])
+        : sourceCopy[key];
   });
-
-  Object.assign(target || {}, sourceCopy);
-  return target;
+  return {
+    ...targetCopy,
+    ...result,
+  };
 };
 
 const getSanitizedHTML = (content: any) => parse(DOMPurify.sanitize(content));

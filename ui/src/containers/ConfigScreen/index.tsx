@@ -164,9 +164,7 @@ const ConfigScreen: React.FC = function () {
   const decrypt = (value: string): string => {
     try {
       const bytes = CryptoJS?.AES?.decrypt(value, encryptionKey ?? "");
-
-      const decryptedValue = bytes?.toString(CryptoJS.enc.Utf8) ?? value;
-      return decryptedValue;
+      return bytes?.toString(CryptoJS.enc.Utf8) ?? value;
     } catch (e) {
       return value;
     }
@@ -174,62 +172,55 @@ const ConfigScreen: React.FC = function () {
 
   const encryptObject = (obj: any, config: any): any => {
     if (typeof obj === "object" && obj !== null) {
-      if (Array.isArray(obj)) {
+      if (Array.isArray(obj))
         return obj?.map((item) => encryptObject(item, config));
-        // eslint-disable-next-line
-      } else {
-        const encryptedObj: any = {};
-        Object.keys(obj)?.forEach((key) => {
-          const keyConfig = config?.[key];
 
-          if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
-            if (typeof obj[key] === "object" && obj[key] !== null) {
-              encryptedObj[key] = encrypt(JSON.stringify(obj[key]));
-            } else {
-              encryptedObj[key] = encrypt(obj[key]);
-            }
-          } else if (typeof obj[key] === "object" && obj[key] !== null) {
-            encryptedObj[key] = encryptObject(obj[key], config);
-          } else {
-            encryptedObj[key] = obj[key];
-          }
-        });
-        return encryptedObj;
-      }
+      const encryptedObj: any = {};
+      Object.keys(obj)?.forEach((key) => {
+        const keyConfig = config?.[key];
+
+        if (keyConfig?.isConfidential && keyConfig?.saveInConfig)
+          encryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
+              ? encrypt(JSON.stringify(obj[key]))
+              : encrypt(obj[key]);
+        else
+          encryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
+              ? encryptObject(obj[key], config)
+              : obj[key];
+      });
+      return encryptedObj;
     }
     return obj;
   };
 
   const decryptObject = (obj: any, config: any): any => {
     if (typeof obj === "object" && obj !== null) {
-      if (Array.isArray(obj)) {
+      if (Array.isArray(obj))
         return obj?.map((item) => decryptObject(item, config));
-        // eslint-disable-next-line
-      } else {
-        const decryptedObj: any = {};
-        Object.keys(obj)?.forEach((key) => {
-          const keyConfig = config?.[key];
 
-          if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
-            if (typeof obj[key] === "string") {
-              let decryptedValue = decrypt(obj[key]);
-              try {
-                decryptedValue = JSON.parse(decryptedValue);
-              } catch (e) {
-                console.error("error in decryptObject", e);
-              }
-              decryptedObj[key] = decryptedValue;
-            } else {
-              decryptedObj[key] = decryptObject(obj[key], config);
+      const decryptedObj: any = {};
+      Object.keys(obj)?.forEach((key) => {
+        const keyConfig = config?.[key];
+
+        if (keyConfig?.isConfidential && keyConfig?.saveInConfig) {
+          if (typeof obj[key] === "string") {
+            let decryptedValue = decrypt(obj[key]);
+            try {
+              decryptedValue = JSON.parse(decryptedValue);
+            } catch (e) {
+              console.error("error in decryptObject", e);
             }
-          } else if (typeof obj[key] === "object" && obj[key] !== null) {
-            decryptedObj[key] = decryptObject(obj[key], config);
+            decryptedObj[key] = decryptedValue;
           } else {
-            decryptedObj[key] = obj[key];
+            decryptedObj[key] = decryptObject(obj[key], config);
           }
-        });
-        return decryptedObj;
-      }
+        } else {
+          decryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
+              ? decryptObject(obj[key], config)
+              : obj[key];
+        }
+      });
+      return decryptedObj;
     }
     return obj;
   };

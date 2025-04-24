@@ -39,7 +39,7 @@ const DraggableListItemCategory: React.FC<Props> = function ({
 
   const getDeleteModal = (props: any) => (
     <DeleteModal
-      type={"Product" || "Category"}
+      type="Product"
       remove={remove}
       id={id || product?.id}
       name={
