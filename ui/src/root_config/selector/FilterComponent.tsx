@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AsyncSelect, Select } from "@contentstack/venus-components";
+import { AsyncSelect, Select, ToggleSwitch } from "@contentstack/venus-components";
 import React, { useEffect, useState } from "react";
 import { getProductsByCategory, search } from "../../services";
 
@@ -14,6 +14,8 @@ function FilterComponent({
   fetchData,
   oldUser,
   selectedMultiConfigValue,
+  togglestate,
+  onToggleClick,
 }: any) {
   const options = [
     {
@@ -43,8 +45,16 @@ function FilterComponent({
       meta?.limit,
       category?.value
     );
+    let categoriesData = response?.data?.items 
+    if (togglestate) {
+      categoriesData =
+        response?.data?.items.filter(
+          (item: any) =>
+            item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+        ) || [];
+    }
 
-    updateList(response);
+    updateList(categoriesData);
   };
 
   const loadMoreOptions: any = async ({
@@ -85,8 +95,15 @@ function FilterComponent({
       selectedMultiConfigValue,
       category?.value
     );
-
-    updateList(response);
+    let categoriesData = response?.data?.items 
+    if (togglestate) {
+      categoriesData =
+        response?.data?.items.filter(
+          (item: any) =>
+            item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+        ) || [];
+    }
+    updateList(categoriesData);
   };
 
   useEffect(() => {}, [config, meta]);
@@ -128,6 +145,11 @@ function FilterComponent({
         placeholder="Select a filter"
         isClearable
         version="v2"
+      />
+      <ToggleSwitch
+        label="Selected Products"
+        checked={togglestate}
+        onClick={onToggleClick}
       />
       <AsyncSelect
         value={category}

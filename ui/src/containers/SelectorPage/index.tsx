@@ -161,13 +161,11 @@ const SelectorPage: React.FC = function () {
   };
 
   const fetchData = async (meta: any) => {
-    if (togglestate) {
-      if (meta?.searchText) {
+    if (togglestate && meta?.searchText) {
         const results = list.filter((product) =>
           product.name.toLowerCase().includes(meta?.searchText?.toLowerCase())
         );
         setList(results);
-      }
       return;
     }
     setMetaState(meta);
@@ -314,13 +312,13 @@ const SelectorPage: React.FC = function () {
     );
     
     const items =
-      selectedProductsCategories?.data?.items.filter(
-        (item: any) =>
-          item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
-      ) || [];
-
+    selectedProductsCategories?.data?.items.filter(
+      (item: any) =>
+        item.cs_metadata.multiConfigName === selectedMultiConfigValue.value
+    ) || [];
+    
     setList(items);
-
+    
     setTotalCounts(items.length);
     setMetaState({
       skip: 0,
