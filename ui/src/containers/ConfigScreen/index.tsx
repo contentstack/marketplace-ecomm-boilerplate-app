@@ -450,27 +450,10 @@ const ConfigScreen: React.FC = function () {
     });
     if(!Object.keys(state?.installationData?.configuration?.multi_config_keys).length) {
       {
-        setState({
-          ...state,
-          installationData: {
-            ...state?.installationData,
-            configuration: {
-              ...state?.installationData?.configuration,
-              multi_config_keys: {
-                ...state?.installationData?.configuration?.multi_config_keys,
-                [accordionId]: result?.isMultiConfigAndSaveInConfig,
-              },
-              default_multi_config_key: accordionId,
-            },
-            serverConfiguration: {
-              ...state?.installationData?.serverConfiguration,
-              multi_config_keys: {
-                ...state?.installationData?.serverConfiguration
-                  ?.multi_config_keys,
-                [accordionId]: result?.isMultiConfigAndSaveInServerConfig,
-              },
-            },
-          },
+        setState((prev: any) => {
+          const updatedState = updateInstallationData(prev);
+          updatedState.installationData.configuration.default_multi_config_key = accordionId;
+          return updatedState;
         });
       }
     }
