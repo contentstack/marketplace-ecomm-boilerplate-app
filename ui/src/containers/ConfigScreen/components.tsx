@@ -33,8 +33,6 @@ export const RadioInputField: React.FC<CustomComponentProps> = function ({
     componentConfigOptions,
   }) {
     const { objKey, objValue } = componentConfigOptions;
-    objValue?.options?.map((option: any) => {
-    })
     return (
         objValue?.options?.map((option: any) => {
             return (
