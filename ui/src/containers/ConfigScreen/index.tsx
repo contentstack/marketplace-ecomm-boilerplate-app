@@ -242,10 +242,13 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value, checked } = e?.target || {};
+      let { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration = state?.installationData?.serverConfiguration || {};
       let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      if(e?.target?.type === "radio") {
+        fieldName = fieldName?.replace(`${multiConfigID}_`, "")
+      }
 
 
       if(e?.type === "change" && e?.target?.type === "text"){

@@ -33,12 +33,14 @@ export const RadioInputField: React.FC<CustomComponentProps> = function ({
     componentConfigOptions,
   }) {
     const { objKey, objValue } = componentConfigOptions;
+    objValue?.options?.map((option: any) => {
+    })
     return (
         objValue?.options?.map((option: any) => {
             return (
                 <Radio
                   id={option?.label}
-                  name={objKey}
+                  name={`${multiConfigurationDataID}_${objKey}`}
                   checked={configurationObject?.multi_config_keys?.[multiConfigurationDataID]?.[objKey] === option?.label}
                   label={option?.label}
                   value
