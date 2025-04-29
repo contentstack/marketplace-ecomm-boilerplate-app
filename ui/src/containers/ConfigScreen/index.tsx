@@ -245,7 +245,7 @@ const ConfigScreen: React.FC = function () {
       let { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration = state?.installationData?.serverConfiguration || {};
-      let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      const fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
       if(e?.target?.type === "radio") {
         fieldName = fieldName?.replace(`${multiConfigID}_`, "")
       }
@@ -452,13 +452,11 @@ const ConfigScreen: React.FC = function () {
       },
     });
     if(!Object.keys(state?.installationData?.configuration?.multi_config_keys).length) {
-      {
         setState((prev: any) => {
           const updatedState = updateInstallationData(prev);
           updatedState.installationData.configuration.default_multi_config_key = accordionId;
           return updatedState;
         });
-      }
     }
     setState(updateInstallationData);
     state.setInstallationData(updateInstallationData(state));

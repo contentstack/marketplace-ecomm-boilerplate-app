@@ -1,5 +1,5 @@
 import { Checkbox, Field, FieldLabel, Radio, Select } from "@contentstack/venus-components";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface CustomComponentProps {
   configurationObject: { [key: string]: any };
