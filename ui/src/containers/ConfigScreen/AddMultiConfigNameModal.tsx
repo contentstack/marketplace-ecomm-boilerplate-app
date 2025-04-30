@@ -32,6 +32,7 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
   const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =    useState<boolean>(false);
   const [alphanumericIdentifier, setAlphanumericIdentifier] =    useState<any>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [maxConfigLimit, setMaxConfigLimit] = useState(false)
   const onInputChange = (e: any) => {
     const inputValue = e?.target?.value ?? "";
     const trimmedValue = inputValue;
@@ -64,6 +65,13 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     onRequestClose();
   };
   React.useEffect(() => {
+    const MAX_MULTI_CONFIG_LIMIT = parseInt(
+      process.env.REACT_APP_MULTI_CONFIG_LIMIT ?? "10",
+      10
+    );
+      if (Object.keys(addMultiConfigurationData ?? {})?.length >= MAX_MULTI_CONFIG_LIMIT) {
+        setMaxConfigLimit(true)
+      }
     setIsModalOpen(isOpen);
   }, [isOpen]);
 
@@ -123,7 +131,13 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                           .oldV2KeysNameMsg
                       }
                     </span>
-                  ) : (
+                  ) : maxConfigLimit ? (
+                    <span className="errorcontainer">
+                      {
+                        localeTexts.configPage.multiConfig.ErrorMessage.maxLimitReachedError.msg
+                      }
+                    </span>
+                  ): (
                     ""
                   )}
                 </Field>
@@ -140,6 +154,7 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                       || hasDuplicateConfigurationName
                       || enteredConfigurationName === "legacy_config"
                       || alphanumericIdentifier
+                      || maxConfigLimit
                     }
                   >
                     {

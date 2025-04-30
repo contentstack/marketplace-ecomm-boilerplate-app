@@ -1,5 +1,5 @@
 import { Checkbox, Field, FieldLabel, Radio, Select } from "@contentstack/venus-components";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface CustomComponentProps {
   configurationObject: { [key: string]: any };
@@ -38,7 +38,7 @@ export const RadioInputField: React.FC<CustomComponentProps> = function ({
             return (
                 <Radio
                   id={option?.label}
-                  name={objKey}
+                  name={`${multiConfigurationDataID}_${objKey}`}
                   checked={configurationObject?.multi_config_keys?.[multiConfigurationDataID]?.[objKey] === option?.label}
                   label={option?.label}
                   value

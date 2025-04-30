@@ -242,10 +242,13 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value, checked } = e?.target || {};
+      let { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration = state?.installationData?.serverConfiguration || {};
-      let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      const fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
+      if(e?.target?.type === "radio") {
+        fieldName = fieldName?.replace(`${multiConfigID}_`, "")
+      }
 
 
       if(e?.type === "change" && e?.target?.type === "text"){
@@ -448,6 +451,13 @@ const ConfigScreen: React.FC = function () {
         },
       },
     });
+    if(!Object.keys(state?.installationData?.configuration?.multi_config_keys).length) {
+        setState((prev: any) => {
+          const updatedState = updateInstallationData(prev);
+          updatedState.installationData.configuration.default_multi_config_key = accordionId;
+          return updatedState;
+        });
+    }
     setState(updateInstallationData);
     state.setInstallationData(updateInstallationData(state));
   };
@@ -1065,7 +1075,7 @@ const ConfigScreen: React.FC = function () {
           configuration: {
             ...prevState?.installationData?.configuration,
             multi_config_keys: updatedConfigAccordions,
-            default_multi_config_key: "",
+            default_multi_config_key: prevState?.installationData?.configuration?.default_multi_config_key || "",
           },
           serverConfiguration: {
             ...prevState?.installationData?.serverConfiguration,
