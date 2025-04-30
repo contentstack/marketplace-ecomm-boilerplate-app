@@ -105,6 +105,9 @@ export default {
         duplicateLabelError: {
           msg: "Configuration label name already exists. Please use a different name and try again.",
         },
+        maxLimitReachedError: {
+          msg: "The maximum limit for adding configurations has been reached."
+        }
       },
     },
   },

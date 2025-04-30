@@ -1075,7 +1075,7 @@ const ConfigScreen: React.FC = function () {
           configuration: {
             ...prevState?.installationData?.configuration,
             multi_config_keys: updatedConfigAccordions,
-            default_multi_config_key: "",
+            default_multi_config_key: prevState?.installationData?.configuration?.default_multi_config_key || "",
           },
           serverConfiguration: {
             ...prevState?.installationData?.serverConfiguration,
