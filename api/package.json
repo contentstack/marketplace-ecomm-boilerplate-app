@@ -5,7 +5,7 @@
   "main": "index.ts",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.20.0",
     "axios": "^0.24.0",
     "crypto-js": "^4.1.1",
     "jsonwebtoken": "9.0.0",
