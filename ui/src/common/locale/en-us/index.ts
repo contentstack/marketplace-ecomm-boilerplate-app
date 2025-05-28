@@ -8,6 +8,9 @@ export default {
   },
   error_Messages: {
     keyInputLimit: `Maximum character limit reached. $ key path length should not exceed 100 characters.`,
+    invalidInput: "Invalid key name – only letters, numbers, and dots allowed.",
+    invalidConfigName:
+      "Configuration name can only contain letters, hyphens (-), and underscores (_). Spaces, special characters, and numeric-only names are not allowed.",
   },
   configPage: {
     customWholeJson: {
