@@ -28,35 +28,45 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     isOpen,
     onRequestClose,
   } = props;
-  const [enteredConfigurationName, setEnteredConfigurationName] =    useState<any>("");
-  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =    useState<boolean>(false);
-  const [alphanumericIdentifier, setAlphanumericIdentifier] =    useState<any>(false);
+  const [enteredConfigurationName, setEnteredConfigurationName] =
+    useState<any>("");
+  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =
+    useState<boolean>(false);
+  const [alphanumericIdentifier, setAlphanumericIdentifier] =
+    useState<any>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const onInputChange = (e: any) => {
-    const inputValue = e?.target?.value ?? "";
-    const trimmedValue = inputValue;
-    const regex = /^[a-zA-Z0-9-_]*$/;
-    if (!regex.test(trimmedValue)) {
-      // Input is invalid
-      setAlphanumericIdentifier(true);
-      setHasDuplicateConfigurationName(false);
-    } else {
-      setAlphanumericIdentifier(false);
+  const [maxConfigLimit, setMaxConfigLimit] = useState(false);
+  const [invalidConfigurationName, setInvalidConfigurationName] =
+    useState<any>("");
 
-      if (
-        Object.keys(addMultiConfigurationData)?.length
-        && trimmedValue !== "legacy_config"
-      ) {
-        const isDuplicate = Object.keys(addMultiConfigurationData)?.some(
-          (addMultiConfigurationKeys: string) =>
-            addMultiConfigurationKeys === trimmedValue
-        );
-        setHasDuplicateConfigurationName(isDuplicate);
-      } else {
-        setHasDuplicateConfigurationName(false);
-      }
-    }
+  const onInputChange = (e: any) => {
+    const trimmedValue = e?.target?.value?.trim();
     setEnteredConfigurationName(trimmedValue);
+
+    const validNameRegex = /^(?=.*[A-Za-z])[A-Za-z0-9_-]+$/;
+    const isNumericOnly = /^[0-9]+$/.test(trimmedValue);
+
+    if (!trimmedValue) {
+      setInvalidConfigurationName("");
+    } else if (!validNameRegex.test(trimmedValue) || isNumericOnly) {
+      setInvalidConfigurationName(
+        localeTexts?.error_Messages?.invalidConfigName
+      );
+    } else {
+      setInvalidConfigurationName("");
+    }
+
+    if (
+      Object.keys(addMultiConfigurationData)?.length &&
+      trimmedValue !== "shopifystore"
+    ) {
+      const isDuplicate = Object.keys(addMultiConfigurationData).some(
+        (addMultiConfigurationKeys: string) =>
+          addMultiConfigurationKeys === trimmedValue
+      );
+      setHasDuplicateConfigurationName(isDuplicate);
+    }
+    setEnteredConfigurationName(e?.target?.value?.trim());
   };
 
   const onSaveConfiguration = () => {
@@ -64,6 +74,16 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     onRequestClose();
   };
   React.useEffect(() => {
+    const MAX_MULTI_CONFIG_LIMIT = parseInt(
+      process.env.REACT_APP_MULTI_CONFIG_LIMIT ?? "10",
+      10
+    );
+    if (
+      Object.keys(addMultiConfigurationData ?? {})?.length >=
+      MAX_MULTI_CONFIG_LIMIT
+    ) {
+      setMaxConfigLimit(true);
+    }
     setIsModalOpen(isOpen);
   }, [isOpen]);
 
@@ -102,25 +122,37 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                     onChange={onInputChange}
                     version="v2"
                   />
+                  {invalidConfigurationName && (
+                    <span className="error_container">
+                      {invalidConfigurationName}
+                    </span>
+                  )}
                   {alphanumericIdentifier ? (
-                    <span className="errorcontainer">
+                    <span className="error_container">
                       {
                         localeTexts.configPage.multiConfig.ErrorMessage
                           .invalidAlphanumeric
                       }
                     </span>
                   ) : hasDuplicateConfigurationName ? (
-                    <span className="errorcontainer">
+                    <span className="error_container">
                       {
                         localeTexts.configPage.multiConfig.ErrorMessage
                           .duplicateLabelError.msg
                       }
                     </span>
                   ) : enteredConfigurationName === "legacy_config" ? (
-                    <span className="errorcontainer">
+                    <span className="error_container">
                       {
                         localeTexts.configPage.multiConfig.ErrorMessage
                           .oldV2KeysNameMsg
+                      }
+                    </span>
+                  ) : maxConfigLimit ? (
+                    <span className="error_container">
+                      {
+                        localeTexts.configPage.multiConfig.ErrorMessage
+                          .maxLimitReachedError.msg
                       }
                     </span>
                   ) : (
@@ -136,10 +168,12 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                   <Button
                     onClick={onSaveConfiguration}
                     disabled={
-                      !enteredConfigurationName
-                      || hasDuplicateConfigurationName
-                      || enteredConfigurationName === "legacy_config"
-                      || alphanumericIdentifier
+                      !enteredConfigurationName ||
+                      hasDuplicateConfigurationName ||
+                      enteredConfigurationName === "legacy_config" ||
+                      alphanumericIdentifier ||
+                      maxConfigLimit ||
+                      invalidConfigurationName
                     }
                   >
                     {

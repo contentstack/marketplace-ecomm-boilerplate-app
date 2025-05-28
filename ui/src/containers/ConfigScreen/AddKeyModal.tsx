@@ -13,12 +13,20 @@ import {
   Notification,
 } from "@contentstack/venus-components";
 import localeTexts from "../../common/locale/en-us/index";
-import { toastMessage } from "../../common/utils";
 import rootConfig from "../../root_config";
 
+const toastMessage = ({ text }: any) => {
+  Notification({
+    notificationContent: { text },
+    notificationProps: {
+      hideProgressBar: true,
+    },
+    type: "success",
+  });
+};
 const inputLengthLimit = 100;
 const checkModalValue = ({ modalValue, customOptions }: any) => {
-  let returnValue: any[] = [];
+  let returnValue: any = {};
   const trimmedModalValue: any = modalValue?.trim();
   const matchValue = customOptions?.find(
     (i: any) => i?.value === trimmedModalValue
@@ -26,7 +34,7 @@ const checkModalValue = ({ modalValue, customOptions }: any) => {
   if (matchValue === undefined) {
     returnValue = [
       {
-        label: modalValue,
+        label: trimmedModalValue,
         value: trimmedModalValue,
         searchLabel: trimmedModalValue,
       },
@@ -59,6 +67,12 @@ export const CustomModal = ({
   const [isEmptySpace, setIsEmptySpace] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalValue, setModalValue] = useState("");
+  const [keyNameError, setKeyNameError] = useState<string>("");
+
+  const isValidKeyName = (value: string) => {
+    const validPattern = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$/;
+    return validPattern.test(value);
+  };
 
   React.useEffect(() => {
     setIsEmptySpace(true);
@@ -77,8 +91,14 @@ export const CustomModal = ({
     debounce((value) => {
       if (/\s/.test(value) || value === "") {
         setIsEmptySpace(true);
+        setKeyNameError(localeTexts?.error_Messages?.invalidInput);
       } else {
         setIsEmptySpace(false);
+        if (!isValidKeyName(value)) {
+          setKeyNameError(localeTexts?.error_Messages?.invalidInput);
+        } else {
+          setKeyNameError("");
+        }
         setModalValue(value);
       }
     }, 300),
@@ -86,21 +106,26 @@ export const CustomModal = ({
   );
 
   const handleChange = (e: any) => {
-    const value = e?.target?.value.trim();
+    const value = e?.target?.value?.trim();
     debouncedHandleChange(value);
   };
-  const handleValueCreate = async (action: string) => {
+  const handleValueCreate = async () => {
     const updatedValue = checkModalValue({
       customOptions,
       modalValue,
     });
-    if (updatedValue?.length) {
+    if (Object.keys(updatedValue)?.length) {
       const updatedKeyPathOptions = [...keyPathOptions, ...updatedValue];
       handleModalValue(updatedKeyPathOptions, updatedValue);
       setModalValue("");
       setIsEmptySpace(true);
       onRequestClose();
-      toastMessage(localeTexts.configPage.customWholeJson.modal.successToast);
+      const message =
+        localeTexts.configPage.customWholeJson.modal.successToast.text.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        );
+      toastMessage({ text: message });
     }
   };
 
@@ -122,6 +147,7 @@ export const CustomModal = ({
                 closeModal={() => {
                   setModalValue("");
                   setIsEmptySpace(true);
+                  setKeyNameError("");
                   onRequestClose();
                 }}
               />
@@ -130,6 +156,7 @@ export const CustomModal = ({
                   {localeTexts.configPage.customWholeJson.modal.label}
                 </FieldLabel>
                 <Help
+                  type="basic"
                   text={
                     localeTexts.configPage.customWholeJson.modal.instructionE
                   }
@@ -149,8 +176,14 @@ export const CustomModal = ({
                   onChange={handleChange}
                   version="v2"
                 />
+                <InstructionText>
+                  {localeTexts.configPage.customWholeJson.modal.instructionS}
+                </InstructionText>
+                {keyNameError && (
+                  <p className="error_container">{keyNameError}</p>
+                )}
                 {modalValue?.length > inputLengthLimit ? (
-                  <p className="error_msg_container">
+                  <p className="error_container">
                     {localeTexts?.error_Messages?.keyInputLimit?.replace(
                       "$",
                       rootConfig.ecommerceEnv.APP_ENG_NAME
@@ -159,9 +192,6 @@ export const CustomModal = ({
                 ) : (
                   ""
                 )}
-                <InstructionText>
-                  {localeTexts.configPage.customWholeJson.modal.instructionS}
-                </InstructionText>
               </ModalBody>
               <ModalFooter>
                 <ButtonGroup>
@@ -172,6 +202,7 @@ export const CustomModal = ({
                     onClick={() => {
                       setModalValue("");
                       setIsEmptySpace(true);
+                      setKeyNameError("");
                       onRequestClose();
                     }}
                   >
@@ -181,9 +212,11 @@ export const CustomModal = ({
                     version="v2"
                     size="small"
                     disabled={
-                      isEmptySpace || modalValue?.length > inputLengthLimit
+                      isEmptySpace ||
+                      !!keyNameError ||
+                      modalValue?.length > inputLengthLimit
                     }
-                    onClick={() => handleValueCreate("")}
+                    onClick={() => handleValueCreate()}
                   >
                     <Icon icon="CheckedWhite" />
                     {localeTexts.configPage.customWholeJson.modal.btn.apply}
