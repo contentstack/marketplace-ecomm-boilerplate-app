@@ -7,6 +7,9 @@ const {
   getHeaders,
 } = require("./utilityFunctions");
 
+const products = require("../data/products.json");
+const categories = require("../data/categories.json");
+
 const _makeApiCall = async (opts) => {
   try {
     const res = await axios({ ...opts, timeout: constants.REQ_TIMEOUT });
@@ -30,19 +33,24 @@ const root_config = {
   },
 
   getSingleProduct: async (productQuery, productPayload) => {
-    const url = getUrl(
-      {
-        query: productQuery?.query,
-        id: productQuery?.id ?? productQuery?.productID,
-      },
-      productPayload
-    );
-    const productResponse = await _makeApiCall({
-      url,
-      method: "GET",
-      headers: getHeaders(productPayload),
-    });
-    return productResponse;
+    // const url = getUrl(
+    //   {
+    //     query: productQuery?.query,
+    //     id: productQuery?.id ?? productQuery?.productID,
+    //   },
+    //   productPayload
+    // );
+    // const productResponse = await _makeApiCall({
+    //   url,
+    //   method: "GET",
+    //   headers: getHeaders(productPayload),
+    // });
+    // return productResponse;
+
+    // Mocked response for demonstration purposes
+    const productID = productQuery?.id || productQuery?.productID;
+    const product = products.data.find((product) => product.id === +productID);
+    return product || {};
   },
 
   getSelectedProductsById: async (productQuery, productPayload) => {
@@ -50,15 +58,21 @@ const root_config = {
     if (productQuery?.isOldUser === "false") {
       // Example implementation for new users
     } else {
-      const extractedProductID =
-        productQuery?.["id:in"]?.split(",")?.filter((id) => id !== "") || [];
-      response = await Promise.all(
-        extractedProductID?.map((id) =>
-          root_config.getSingleProduct(
-            { id, query: productPayload?.query },
-            productPayload
-          )
-        )
+      const extractedProductID = (
+        productQuery?.["id:in"]?.split(",")?.filter((id) => id !== "") || []
+      )?.map((id) => +id);
+      // response = await Promise.all(
+      //   extractedProductID?.map((id) =>
+      //     root_config.getSingleProduct(
+      //       { id, query: productPayload?.query },
+      //       productPayload
+      //     )
+      //   )
+      // );
+
+      //Mocked response for demonstration purposes
+      response = products.data.filter((product) =>
+        extractedProductID.includes(product.id)
       );
       return response;
     }
@@ -69,21 +83,30 @@ const root_config = {
     if (categoryPayLoad?.isOldUser === false) {
       // Example implementation for new users
     } else {
-      return Promise.all(
-        categoryPayLoad?.selectedIDs?.map(async (category) => {
-          const url = getByCategoryIdUrl(
-            categoryPayLoad,
-            categoryQuery?.query,
-            category
-          );
-          const categoryResponse = await _makeApiCall({
-            url,
-            method: "GET",
-            headers: getHeaders(categoryPayLoad),
-          });
-          return categoryResponse;
-        })
+      // return Promise.all(
+      //   categoryPayLoad?.selectedIDs?.map(async (category) => {
+      //     const url = getByCategoryIdUrl(
+      //       categoryPayLoad,
+      //       categoryQuery?.query,
+      //       category
+      //     );
+      //     const categoryResponse = await _makeApiCall({
+      //       url,
+      //       method: "GET",
+      //       headers: getHeaders(categoryPayLoad),
+      //     });
+      //     return categoryResponse;
+      //   })
+      // );
+
+      // Mocked response for demonstration purposes
+      const categoriesId = (
+        categoryQuery?.["id:in"]?.split(",")?.filter((id) => id !== "") || []
+      )?.map((id) => +id);
+      response = categories.data.filter((category) =>
+        categoriesId.includes(category.id)
       );
+      return response;
     }
   },
 
@@ -109,12 +132,15 @@ const root_config = {
     if (productPayload?.isOldUser === false) {
       // Example implementation for new users
     } else {
-      response = await _makeApiCall({
-        url: getUrl(productQuery, productPayload),
-        method: "GET",
-        headers: getHeaders(productPayload),
-      });
-      return response;
+      // response = await _makeApiCall({
+      //   url: getUrl(productQuery, productPayload),
+      //   method: "GET",
+      //   headers: getHeaders(productPayload),
+      // });
+      // return response;
+
+      // Mocked response for demonstration purposes
+      return products.data;
     }
   },
 
@@ -123,12 +149,15 @@ const root_config = {
     if (categoryPayLoad?.isOldUser === false) {
       // Example implementation for new users
     } else {
-      response = await _makeApiCall({
-        url: getUrl(categoryQuery, categoryPayLoad),
-        method: "GET",
-        headers: getHeaders(categoryPayLoad),
-      });
-      return response;
+      // response = await _makeApiCall({
+      //   url: getUrl(categoryQuery, categoryPayLoad),
+      //   method: "GET",
+      //   headers: getHeaders(categoryPayLoad),
+      // });
+      // return response;
+
+      // Mocked response for demonstration purposes
+      return categories.data;
     }
   },
 

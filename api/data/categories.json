@@ -1,0 +1,210 @@
+{
+  "data": [
+    {
+      "id": 18,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Bath",
+      "description": "",
+      "views": 0,
+      "sort_order": 1,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/bath/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 19,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Garden",
+      "description": "",
+      "views": 0,
+      "sort_order": 2,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/garden/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 20,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Publications",
+      "description": "",
+      "views": 0,
+      "sort_order": 4,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/publications/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 21,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Kitchen",
+      "description": "",
+      "views": 0,
+      "sort_order": 3,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/kitchen/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 22,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Utility",
+      "description": "",
+      "views": 0,
+      "sort_order": 5,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/utility/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 23,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Shop All",
+      "description": "",
+      "views": 0,
+      "sort_order": 0,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category_with_facets.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "url": {
+        "path": "/shop-all/",
+        "is_customized": false
+      },
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 24,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Contentstack Demo 1",
+      "description": "<p><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>",
+      "views": 0,
+      "sort_order": 0,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    },
+    {
+      "id": 25,
+      "parent_id": 0,
+      "tree_id": 1,
+      "name": "Contentstack Demo 1 Category 2",
+      "description": "<p>Test description&nbsp;Contentstack Demo 1 Category 2</p>",
+      "views": 0,
+      "sort_order": 0,
+      "page_title": "",
+      "search_keywords": "",
+      "meta_keywords": [],
+      "meta_description": "",
+      "layout_file": "category.html",
+      "is_visible": true,
+      "default_product_sort": "use_store_settings",
+      "image_url": "",
+      "cs_metadata": {
+        "multiConfigName": "new_config",
+        "isConfigDeleted": false
+      }
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "total": 8,
+      "count": 8,
+      "per_page": 30,
+      "current_page": 1,
+      "total_pages": 1,
+      "links": {
+        "previous": "?limit=30&page=1",
+        "current": "?limit=30&page=1",
+        "next": "?limit=30&page=1"
+      }
+    }
+  }
+}
