@@ -1,0 +1,69 @@
+{
+  "name": "qwerty",
+  "description": "Ecommerce integration app for Contentstack",
+  "target_type": "stack",
+  "ui_location": {
+    "signed": false,
+    "base_url": "https://example.com/#",
+    "locations": [
+      {
+        "type": "cs.cm.stack.custom_field",
+        "meta": [
+          {
+            "multiple": false,
+            "name": "Ecom Boilerplate - Product",
+            "path": "/product-field",
+            "signed": true,
+            "enabled": true,
+            "data_type": "json"
+          },
+          {
+            "multiple": false,
+            "name": "ECom Boilerplate - Category",
+            "path": "/category-field",
+            "signed": true,
+            "enabled": true,
+            "data_type": "json"
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.config",
+        "meta": [
+          {
+            "path": "/config",
+            "signed": true,
+            "enabled": true,
+            "required": true
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.sidebar",
+        "meta": [
+          {
+            "name": "ECom Boilerplate",
+            "path": "/sidebar-widget",
+            "signed": true,
+            "enabled": true,
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "webhook": {
+    "signed": true,
+    "enabled": true,
+    "custom_headers": [],
+    "target_url": "https://example.com/webhook",
+    "channels": [
+      "cs.apps.installations.install",
+      "cs.apps.installations.uninstall",
+      "cs.apps.installations.update"
+    ],
+    "notifiers": [],
+    "branch_scope": "main"
+  },
+  "uid": "68c2a84a730af10012572de1"
+}
