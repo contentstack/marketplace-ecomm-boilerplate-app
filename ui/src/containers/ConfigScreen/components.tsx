@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Checkbox, Radio } from "@contentstack/venus-components";
 
@@ -28,6 +27,7 @@ interface CustomComponentProps {
 
 export const RadioInputField: React.FC<CustomComponentProps> = function ({
   configurationObject,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   serverConfigurationObject,
   customComponentOnChange,
   multiConfigurationDataID,
@@ -58,6 +58,7 @@ export const RadioInputField: React.FC<CustomComponentProps> = function ({
 
 export const CheckboxInputField: React.FC<CustomComponentProps> = function ({
   configurationObject,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   serverConfigurationObject,
   customComponentOnChange,
   multiConfigurationDataID,

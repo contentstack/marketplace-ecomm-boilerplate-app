@@ -30,7 +30,7 @@
   "scripts": {
     "start": "export PORT=4000 && react-scripts start",
     "startWin": "SET PORT=4000 && react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject",
     "prettify": "prettier --write .",

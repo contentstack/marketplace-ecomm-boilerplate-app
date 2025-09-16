@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 /* Import other node modules */
@@ -38,7 +37,7 @@ const SidebarWidget: React.FC = function () {
   const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
-  const [isOldUser, setIsOldUser] = useState<any>(false);
+  // const [isOldUser, setIsOldUser] = useState<any>(false);
 
   useEffect(() => {
     if (!appSdkInitialized) return;
@@ -70,10 +69,10 @@ const SidebarWidget: React.FC = function () {
       if (isMultiConfigEnabled) {
         if (isMultiConfigEnabled && ISOLDUSER) {
           isMultiConfigEnabled = false;
-          setIsOldUser(true);
+          // setIsOldUser(true);
         }
       } else {
-        setIsOldUser(false);
+        // setIsOldUser(false);
       }
     }
     if (entryData?.[field?.value]?.data?.length) {

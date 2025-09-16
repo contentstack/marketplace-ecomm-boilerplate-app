@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Select } from "@contentstack/venus-components";
 import React, { useEffect, useState } from "react";
 

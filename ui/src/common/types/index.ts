@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import { IInstallationData } from "@contentstack/app-sdk/dist/src/types";
 
 declare global {

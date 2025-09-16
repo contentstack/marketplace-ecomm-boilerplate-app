@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Import React modules */
 import React, { Suspense } from "react";
-import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";

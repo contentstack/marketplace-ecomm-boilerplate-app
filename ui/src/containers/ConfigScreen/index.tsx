@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Import React modules */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 /* ContentStack Modules */
@@ -98,7 +97,6 @@ const ConfigScreen: React.FC = function () {
               default_multi_config_key: "",
             }
           : {}),
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         custom_keys: mandatoryKeys,
         ...(shouldIncludeMultiConfig
           ? {
@@ -234,7 +232,7 @@ const ConfigScreen: React.FC = function () {
    */
   const updateConfig = useCallback(
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
-      const { name: fieldName, value, checked } = e?.target || {};
+      const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
       let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       let fieldValue = e?.target?.checked ? e?.target?.id : value;

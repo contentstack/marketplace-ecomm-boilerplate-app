@@ -1,12 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  Field,
-  FieldLabel,
-  InstructionText,
-  TextInput,
-  ToggleSwitch,
-} from "@contentstack/venus-components";
-import React, { useEffect, useState } from "react";
+import { FieldLabel, TextInput } from "@contentstack/venus-components";
+import React from "react";
 import rootConfig from "..";
 
 /**
@@ -23,6 +16,7 @@ import rootConfig from "..";
  *
  * @returns {JSX.Element | null} - A React fragment containing rendered dynamic fields, or `null` if no fields are found.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function renderDynamicFields(
   fields: any,
   configurationObject: any,
@@ -103,8 +97,15 @@ const MultiConfigCustomComponent: React.FC<CustomComponentProps> = function ({
   serverConfigurationObject,
   customComponentOnChange,
   multiConfigurationDataID,
-  componentConfigOptions: any,
+  componentConfigOptions,
 }) {
+  console.info(
+    configurationObject,
+    serverConfigurationObject,
+    customComponentOnChange,
+    multiConfigurationDataID,
+    componentConfigOptions
+  );
   return <p>MultiConfigCustomComponent</p>;
 };
 

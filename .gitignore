@@ -31,3 +31,5 @@ api/.env
 ui/.env
 ui/.npmrc
 coverage/
+
+scripts/credentials.json

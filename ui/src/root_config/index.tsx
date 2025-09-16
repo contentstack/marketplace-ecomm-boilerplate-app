@@ -1,4 +1,3 @@
-/* @typescript-eslint/naming-convention */
 import React from "react";
 import axios from "axios";
 import { jwtVerify, importJWK, JWTPayload } from "jose";
@@ -299,7 +298,6 @@ const getFormattedResponse = (response: any): FormattedRespose => ({
   items: response?.data?.products || response?.data?.catalogs, // assign this to the key that contains your data
   meta: {
     total: response?.data?.pagination?.totalResults, // assign this to the key that specifies the total count of the data fetched
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     current_page: response?.data?.pagination?.currentPage, // assign this to the key that corresponds to the current page
   },
 });

@@ -1,5 +1,4 @@
 /* eslint-disable no-plusplus */
-/* eslint-disable @typescript-eslint/no-shadow */
 import { get, isEmpty, keys } from "lodash";
 import { useMemo } from "react";
 import useAppSdk from "./useAppSdk";
@@ -16,18 +15,18 @@ const useAppLocation = (): { locationName: string; location: any } => {
    * memoized locationName and location instance
    */
   const { locationName, location } = useMemo(() => {
-    let location = null;
-    let locationName: string = "";
+    let foundLocation = null;
+    let foundLocationName: string = "";
     const locationsLength = locations?.length;
     for (let i = 0; i <= locationsLength; i++) {
       if (!isEmpty(get(appSdk, `location.${locations[i]}`, undefined))) {
-        locationName = locations[i];
-        location = get(appSdk?.location, locationName);
+        foundLocationName = locations[i];
+        foundLocation = get(appSdk?.location, foundLocationName);
         break;
       }
     }
 
-    return { location, locationName };
+    return { location: foundLocation, locationName: foundLocationName };
   }, [locations, appSdk]);
 
   return { locationName, location };

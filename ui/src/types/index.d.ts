@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from "react";
 
-type uniqueKeyOptions = {
+type UniqueKeyOptions = {
   [key: string]: string;
 };
 
@@ -10,7 +9,7 @@ export interface EcommerceEnv {
   REACT_APP_NAME: string;
   SELECTOR_PAGE_LOGO: string;
   APP_ENG_NAME: string;
-  UNIQUE_KEY: uniqueKeyOptions = {
+  UNIQUE_KEY: UniqueKeyOptions = {
     product: string,
     category: string,
   };
