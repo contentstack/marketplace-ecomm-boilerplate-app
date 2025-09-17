@@ -1,4 +1,7 @@
-import { Checkbox, Field, FieldLabel, Radio, Select } from "@contentstack/venus-components";
+
+
+/* eslint-disable*/
+import { Checkbox, Field, FieldLabel, Radio, Select,Accordion } from "@contentstack/venus-components";
 import { useEffect, useState } from "react";
 
 interface CustomComponentProps {
@@ -135,3 +138,19 @@ export const SelectInputField: React.FC<CustomComponentProps> = function ({
     </Field>
   );
 }
+
+
+
+
+export const SelectWrapper: React.FC = () => {
+  return <p>hi</p>;
+};
+
+
+export const MultiConfigComponent:React.FC=()=>{
+
+
+  return <Accordion>
+  </Accordion>
+}
+

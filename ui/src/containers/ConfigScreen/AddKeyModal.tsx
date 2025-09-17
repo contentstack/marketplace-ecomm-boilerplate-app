@@ -130,10 +130,7 @@ export const CustomModal = ({
                   {localeTexts.configPage.customWholeJson.modal.label}
                 </FieldLabel>
                 <Help
-                  text={
-                    localeTexts.configPage.customWholeJson.modal.instructionE
-                  }
-                />
+                  text={localeTexts.configPage.customWholeJson.modal.instructionE} type="basic"/>
                 <TextInput
                   required
                   error={modalValue?.length > inputLengthLimit}

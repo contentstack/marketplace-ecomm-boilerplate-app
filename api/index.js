@@ -100,7 +100,7 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
     } else if (query?.type === "isApiValidationEnabled") {
       message = await getApiValidationForConfigPageKeys(body, query);
     } else {
-      message = await getAllProductsAndCategories(query, body);
+      // message = await getAllProductsAndCategories(query, body);
     }
   } catch (e) {
     statusCode =

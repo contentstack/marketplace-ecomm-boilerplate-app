@@ -1,3 +1,4 @@
+/* eslint-disable*/
 /* @typescript-eslint/naming-convention */
 import React from "react";
 import axios from "axios";
@@ -25,7 +26,52 @@ import {
   ApiValidationEnabledForConfig,
   makeAnApiCall,
 } from "../services/index";
-/* eslint-enable */
+
+// export const ECOMMERCE_APP_CONFIG = {
+//   /**
+//    * Global settings that apply to the entire application.
+//    */
+//   "global": {
+//     "appName": "Your Ecommerce App",
+//     "platform": "shopify", // The ecommerce platform being used
+//   },
+
+//   /**
+//    * Contains configurations for all Contentstack UI locations.
+//    */
+//   "uiLocations": {
+//     /**
+//      * Settings for the main application configuration screen.
+//      */
+//     "configPage": {
+//     },
+
+//     /**
+//      * Settings for how the selected data is displayed within an entry.
+//      */
+//     "customField": {
+//     },
+
+//     /**
+//      * Defines the experience of the modal/popup used to select products.
+//      */
+//     "selectorPage": {
+//       "component": "ProductSelector", // The main "Flow Runner" component
+//       "props": {
+//       },
+//       "flow": [
+//       ]
+//     },
+
+//     /**
+//      * Configures the sidebar widget.
+//      */
+//     "sidebarWidget": {
+//     }
+//   }
+// };
+
+
 
 /* all values in this file are an example.
     You can modify its values and implementation,
@@ -44,30 +90,156 @@ const ecommerceEnv: EcommerceEnv = {
   ENABLE_MULTI_CONFIG: true,
 };
 
-/**
- * The function `configureConfigScreen` provides configuration details for various fields used in the application.
- * Each field in the configuration specifies its type, label, help text, placeholder text, instruction text, and
- * various attributes related to storage and sensitivity.
- *
- * @returns {ConfigureConfigScreen} The function returns an object where each key corresponds to a field in the
- * configuration screen. The configuration includes:
- * - `type`: Specifies the input field type, such as "textInputFields".
- * - `labelText`: A label describing the input field.
- * - `helpText`: Text providing additional help or information for the input field.
- * - `placeholderText`: Placeholder text displayed in the input field when it is empty.
- * - `instructionText`: Instructions or guidance for the input field.
- * - `saveInConfig`: A boolean indicating if the key should be stored in the configuration object.
- * - `saveInServerConfig`: A boolean indicating if the key should be stored in the server configuration object.
- * - `isSensitive`: A boolean indicating if the input field contains sensitive data (e.g., passwords).
- * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
- * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
- * - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
- * - `isDynamic`: A boolean indicating if field needs to be rendered dynamically or not.
- * - `suffix`: A String indicating suffix when isSensitive is set to true 
-    allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
- * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
- */
-const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
+  /**
+   * The function `configureConfigScreen` provides configuration details for various fields used in the application.
+   * Each field in the configuration specifies its type, label, help text, placeholder text, instruction text, and
+   * various attributes related to storage and sensitivity.
+   *
+   * @returns {ConfigureConfigScreen} The function returns an object where each key corresponds to a field in the
+   * configuration screen. The configuration includes:
+   * - `type`: Specifies the input field type, such as "textInputFields".
+   * - `labelText`: A label describing the input fielnd.
+   * - `helpText`: Text providing additional help or information for the input field.
+   * - `placeholderText`: Placeholder text displayed in the input field when it is empty.
+   * - `instructionText`: Instructions or guidance for the input field.
+   * - `saveInConfig`: A boolean indicating if the key should be stored in the configuration object.
+   * - `saveInServerConfig`: A boolean indicating if the key should be stored in the server configuration object.
+   * - `isSensitive`: A boolean indicating if the input field contains sensitive data (e.g., passwords).
+   * - `isMultiConfig`: A boolean indicating if the key should be stored in multi-configurations.
+   * - `isConfidential`: A boolean indicating if the key needs to be encrypted/decrypted.
+   * - `isApiValidationEnabled`:A boolean indicating if the key needs to be validatedby api or not
+   * - `isDynamic`: A boolean indicating if field needs to be rendered dynamically or not.
+   * - `suffix`: A String indicating suffix when isSensitive is set to true 
+        allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
+  * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
+  */
+  const configureConfigScreen: () => ConfigureConfigScreen = () => ({
+
+    // multi_confg_keys:{
+    //   items:{
+    //     "region_url":{
+    //       data_scheam:{
+    //         "type":"string",
+    //           "storage":{
+    //             "location":"app",
+    //             "encrypted":true
+    //           }
+
+    //       }
+    //       Ui_Schema:{
+    //     "ui:widget": {
+    //       "component":"singleSelect",
+    //       "options":{
+    //          "type": 'static',
+    //          "values": [
+    //         { "label": "Google Cloud (US)", "value": "gcp-us-east1" },
+    //         { "label": "Google Cloud (Europe)", "value": "gcp-europe-west1" }
+    //       ]
+
+    //       }
+    //     },
+    //     "ui:placeholder": "Select Your Region URL",
+    //     "ui:help": "Select Your Region URL.",      
+    //   },
+
+
+    //       }
+    //     }
+
+    //   }
+    // }
+  });
+
+  //todo:for emcrtyption and dec
+
+  const configureConfigScreens = () => ({
+  // User *only* gives keys
+  validationRules: {
+    allowDuplicatesFor: ["special_token"],   // duplicates allowed for this key
+    required: ["project_key", "client_secret"] // these must exist
+  },
+  apiValidationKeys:{
+    keys:["project_key", "client_secret"],
+    action:async()=>{
+      const apiValidationResponse=await getApiValidationResponse({},{})
+    }
+
+  },
+  fields: [
+    {
+      key: "project_key",
+      type: "text",
+      label: "Project Key",
+      placeholder: "Enter Project Key",
+      saveTo: "both"
+    },
+    {
+      key: "client_secret",
+      type: "text",
+      label: "Client Secret",
+      placeholder: "Enter Client Secret",
+      saveTo: "server",
+      componentProps: { inputType: "password" }
+    },
+    {
+      key: "default_currency",
+      type: "select",
+      label: "Default Currency",
+      placeholder: "Select Currency",
+      saveTo: "config",
+      componentProps: { optionsApi: "/api/currencies" }
+    }
+  ]
+});
+
+const getApiValidationResponse=(configOnject: any,ServerObject: {})=>{
+
+
+}
+
+
+const defineConfigPageSchema = () => {
+  return {
+    "required":[],
+    "top_level_keys":{
+
+    },
+    "multi_config_keys":{
+       "component": 'custom',
+      "type":"Object",
+      "items":{
+        "region_url":{
+          "ui:schema":{
+              "ui:component":{
+                "component":"select",
+                "options":{
+                  "source":"api",
+                  "options":[
+                    {"value":"","label":""},
+                  ]
+        
+                }
+
+              },
+            "labelText": "Select Your commercetools Region",
+             "helpText": "The commercetools Region",
+    "placeholderText": "Select Region",
+    "instructionText": "Select Region",
+          },
+          "data:scheam":{
+            "storage":{
+              "loacation":"All",
+            }
+          }
+        }
+      }
+      
+
+    }
+  }
+};
+
+
 
 // Function to generate key options from key names
 const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => {
@@ -684,6 +856,7 @@ const rootConfig = {
   validateConfigKeyByApi,
   getProductandCategory,
   search,
+  defineConfigPageSchema
 };
 
 export default rootConfig;
