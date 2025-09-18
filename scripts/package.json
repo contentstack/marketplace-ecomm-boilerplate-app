@@ -8,13 +8,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "login": "node ops/login.js",
     "create-app": "node ops/create-update.js create-app",
-    "update-app": "node ops/create-update.js update-app"
+    "update-app": "node ops/create-update.js update-app",
+    "deploy": "node ops/deploy.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@contentstack/marketplace-sdk": "^1.3.0",
+    "adm-zip": "^0.5.16",
     "axios": "^1.11.0",
     "readline-sync": "^1.4.10"
   }

@@ -53,6 +53,28 @@ const constants = {
       url: "https://gcp-na-api.contentstack.com",
     },
   ],
+  APP_BASE_URLS: [
+    {
+      region: "",
+      url: "https://app.contentstack.com",
+    },
+    {
+      region: "eu",
+      url: "https://eu-app.contentstack.com",
+    },
+    {
+      region: "azure-na",
+      url: "https://azure-na-app.contentstack.com",
+    },
+    {
+      region: "azure-eu",
+      url: "https://azure-eu-app.contentstack.com",
+    },
+    {
+      region: "gcp-na",
+      url: "https://gcp-na-app.contentstack.com",
+    },
+  ],
   DEVELOPERHUB_BASE_URLS: [
     {
       region: "",
@@ -75,6 +97,7 @@ const constants = {
       url: "https://gcp-na-developerhub-api.contentstack.com",
     },
   ],
+  LAUNCH_BASE_PATH: "launch-api/manage/graphql",
 };
 
 module.exports = constants;

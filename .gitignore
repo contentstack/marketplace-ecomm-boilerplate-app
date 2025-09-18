@@ -33,3 +33,4 @@ ui/.npmrc
 coverage/
 
 scripts/credentials.json
+scripts/build
