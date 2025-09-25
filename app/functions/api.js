@@ -1,3 +1,8 @@
+/*
+This file contains the main handler function for processing API requests.
+It routes requests based on query parameters and handles errors appropriately.
+*/
+
 // Import necessary modules
 import constants from "./constants/index.js";
 import apiHandler from "./handler/index.js";
