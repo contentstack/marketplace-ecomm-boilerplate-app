@@ -77,8 +77,8 @@ const CustomField: React.FC<any> = function ({
           const data: any[] = [];
           const customKeys = config?.custom_keys ?? config?.bc_keys;
           if (
-            rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG &&
-            isOldUser === false
+            rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
+            && isOldUser === false
           ) {
             customKeys?.push({ label: "cs_metadata", value: "cs_metadata" });
           }
@@ -124,8 +124,8 @@ const CustomField: React.FC<any> = function ({
         );
       } else if (data.message === "add") {
         if (
-          type === "category" &&
-          categoryConfig.customCategoryStructure === true
+          type === "category"
+          && categoryConfig.customCategoryStructure === true
         )
           setSelectedIds(data?.dataIds); // FIXME remove this logic
         else setSelectedIds(data?.dataIds);
