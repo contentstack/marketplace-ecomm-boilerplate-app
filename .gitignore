@@ -2,18 +2,18 @@
 
 # dependencies
 node_modules/
-/ui/node_modules
-/ui/.npmrc
-/ui/coverage
+/app/node_modules
+/app/.npmrc
+/app/coverage
 
 # production
-/ui/build
-/ui/src/config.js
+/app/build
+/app/src/config.js
 /to-deploy
 
 # misc
 .DS_Store
-/ui/.DS_Store
+/app/.DS_Store
 /**/**/npm-debug.log*
 /**/**/yarn-debug.log*
 /**/**/yarn-error.log*

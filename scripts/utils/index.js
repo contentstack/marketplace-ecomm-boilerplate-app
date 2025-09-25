@@ -59,7 +59,7 @@ const updateAppManifest = (name, uid) => {
 const getEnvVariables = () => {
   const envVariables = [];
   const envData = fs.readFileSync(
-    path.join(__dirname, "../../ui/.env"),
+    path.join(__dirname, "../../app/.env"),
     "utf-8"
   );
 
@@ -75,7 +75,7 @@ const buildAppZip = () => {
   try {
     console.info("Preparing the app zip...");
 
-    const appBasePath = path.join(__dirname, "../../ui");
+    const appBasePath = path.join(__dirname, "../../app");
     const buildPath = path.join(__dirname, "../build/app.zip");
 
     // Deleting existing build folder if any
