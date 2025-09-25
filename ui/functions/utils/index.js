@@ -1,6 +1,6 @@
 // Import necessary modules
-const CryptoJS = require("crypto-js");
-const root_config = require("../root_config");
+import CryptoJS from "crypto-js";
+import root_config from "../root_config/index.js";
 
 // Utility function to check if a value is empty
 const _isEmpty = (val) =>
@@ -29,10 +29,10 @@ const processRequestBody = (requestBody) => {
 
       const result = {};
       Object.keys(obj).forEach((key) => {
-        result[key] = root_config?.SENSITIVE_CONFIG_KEYS?.includes(key) ?
-          decrypt(obj?.[key])
-          : typeof obj?.[key] === "object" ?
-          decryptSensitiveKeys(obj?.[key])
+        result[key] = root_config?.SENSITIVE_CONFIG_KEYS?.includes(key)
+          ? decrypt(obj?.[key])
+          : typeof obj?.[key] === "object"
+          ? decryptSensitiveKeys(obj?.[key])
           : obj?.[key];
       });
       return result;
@@ -55,7 +55,7 @@ const processRequestBody = (requestBody) => {
   return requestBody;
 };
 
-module.exports = {
+export default {
   _isEmpty,
   decrypt,
   processRequestBody,

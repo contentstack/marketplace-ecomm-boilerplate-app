@@ -1,7 +1,7 @@
-const express = require("express");
-const cors = require("cors");
-const { handler } = require("./index");
-const constants = require("./constants");
+import express from "express";
+import cors from "cors";
+import launchFunction from "./api.js";
+import constants from "./constants/index.js";
 
 const app = express();
 const PORT = 8080;
@@ -11,13 +11,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use("/", async (req, res) => {
-  const event = {
-    queryStringParameters: req.query,
+  const request = {
+    query: req.query,
     body: req.body,
   };
-  const response = await handler(event);
-  res.set(response.headers);
-  res.status(response.statusCode).json(response.body);
+  const result = await launchFunction(request);
+  res.status(result.statusCode).json(result.body);
 });
 
 //Global Error handler middleware.

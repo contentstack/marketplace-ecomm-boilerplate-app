@@ -1,8 +1,8 @@
 // Import the root configuration
-const root_config = require(".");
+import root_config from "./index.js";
 
 // Function to generate headers
-exports.getHeaders = (key) => {
+export const getHeaders = (key) => {
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer `, // Add logic to include the actual token if needed
@@ -15,7 +15,7 @@ const calculatePage = (skip, limit) => {
 };
 
 // Function to construct a URL
-exports.getUrl = (
+export const getUrl = (
   { skip, limit, query, searchParam, id, searchCategories },
   productPayload
 ) => {
@@ -40,7 +40,7 @@ exports.getUrl = (
 };
 
 // Function to extract and flatten categories
-exports.extractCategories = (categories) => {
+export const extractCategories = (categories) => {
   function flat(r, a) {
     const b = {};
     Object.keys(a)?.forEach((k) => {
@@ -80,7 +80,7 @@ exports.extractCategories = (categories) => {
 };
 
 // Function to get URL by category ID
-exports.getByCategoryIdUrl = (categoryPayLoad, query, category) => {
+export const getByCategoryIdUrl = (categoryPayLoad, query, category) => {
   const url = `https://`;
   // Add logic to construct the URL based on the payload, query, and category
   return url;

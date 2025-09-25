@@ -1,10 +1,11 @@
 // Import necessary modules
-const constants = require("./constants");
-const handler = require("./handler");
-const utils = require("./utils");
+import constants from "./constants/index.js";
+import apiHandler from "./handler/index.js";
+import utils from "./utils/index.js";
 
 // Main handler function for processing requests
-exports.handler = async ({ queryStringParameters: query, body }) => {
+export default async function handler(request, response) {
+  const { query, body } = request;
   let message;
   let statusCode = constants.HTTP_ERROR_CODES.OK;
 
@@ -26,17 +27,24 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
 
     // Determine request type and process accordingly
     if (query?.["sku:in"] || query?.["id:in"]) {
-      message = await handler.getSelectedProductsAndCategories(query, newBody);
+      message = await apiHandler.getSelectedProductsAndCategories(
+        query,
+        newBody
+      );
     } else if (query?.["categories:in"]) {
-      message = await handler.filterByCategory(query, newBody);
+      message = await apiHandler.filterByCategory(query, newBody);
     } else if (query?.id) {
-      message = await handler.getProductByID(query, newBody);
+      message = await apiHandler.getProductByID(query, newBody);
     } else if (query?.type === "isApiValidationEnabled") {
-      message = await handler.getApiValidationForConfigPageKeys(newBody, query);
+      message = await apiHandler.getApiValidationForConfigPageKeys(
+        newBody,
+        query
+      );
     } else {
-      message = await handler.getAllProductsAndCategories(query, newBody);
+      message = await apiHandler.getAllProductsAndCategories(query, newBody);
     }
   } catch (e) {
+    console.error("Error caught in handler:", e);
     statusCode =
       e?.response?.status ?? constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
     message =
@@ -47,12 +55,10 @@ exports.handler = async ({ queryStringParameters: query, body }) => {
     );
   }
 
-  return {
-    statusCode,
-    headers: {
-      ...constants.HTTP_RESPONSE_HEADERS,
-      authToken: "",
-    },
-    body: message, // For Localhost or JSON.stringify(message) for AWS Lambda
-  };
-};
+  if (process.env.NODE_ENV === "development")
+    return {
+      statusCode,
+      body: message,
+    };
+  else response.status(statusCode).json(message);
+}

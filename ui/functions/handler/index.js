@@ -1,6 +1,6 @@
-const axios = require("axios");
-const constants = require("../constants");
-const root_config = require("../root_config");
+import axios from "axios";
+import constants from "../constants/index.js";
+import root_config from "../root_config/index.js";
 
 /**
  * Makes a third-party API call with the provided options.
@@ -141,7 +141,7 @@ const getApiValidationForConfigPageKeys = async (
   return response;
 };
 
-module.exports = {
+export default {
   _makeApiCall,
   getProductByID,
   getAllProductsAndCategories,

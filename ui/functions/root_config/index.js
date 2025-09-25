@@ -1,14 +1,14 @@
-const axios = require("axios");
-const constants = require("../constants");
-const {
+import axios from "axios";
+import constants from "../constants/index.js";
+import {
   getByCategoryIdUrl,
   getUrl,
   extractCategories,
   getHeaders,
-} = require("./utilityFunctions");
+} from "./utilityFunctions.js";
 
-const products = require("../data/products.json");
-const categories = require("../data/categories.json");
+import products from "../data/products.json" assert { type: "json" };
+import categories from "../data/categories.json" assert { type: "json" };
 
 const _makeApiCall = async (opts) => {
   try {
@@ -111,11 +111,11 @@ const root_config = {
   },
 
   getSelectedProductsandCategories: (data, key) => {
-    let url = root_config.getUrl(key, data?.query);
+    let url = getUrl(key, data?.query);
     const urlHasQueryParams = url?.includes("?");
 
-    url += data["id:in"] ?
-      `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
+    url += data["id:in"]
+      ? `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
       : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
     if (data?.query === "product") url += root_config.SEARCH_URL_PARAMS;
     if (data?.limit) url += `&limit=${data?.limit}`;
@@ -168,14 +168,14 @@ const root_config = {
       headers: getHeaders(body),
     });
 
-    return data?.query === "category" ?
-      { catalogs: root_config.extractCategories(response) }
+    return data?.query === "category"
+      ? { catalogs: extractCategories(response) }
       : response;
   },
 
   filterProductsByCategory: async (data, key) => {
     return _makeApiCall({
-      url: `${root_config.getUrl({ query: data?.query }, key)}?categories:in=${
+      url: `${getUrl({ query: data?.query }, key)}?categories:in=${
         data["categories:in"]
       }&${root_config.SEARCH_URL_PARAMS}`,
       method: "GET",
@@ -184,4 +184,4 @@ const root_config = {
   },
 };
 
-module.exports = root_config;
+export default root_config;
