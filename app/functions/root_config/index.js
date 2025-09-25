@@ -7,8 +7,8 @@ import {
   getHeaders,
 } from "./utilityFunctions.js";
 
-import products from "../data/products.json" assert { type: "json" };
-import categories from "../data/categories.json" assert { type: "json" };
+import products from "../data/products.js";
+import categories from "../data/categories.js";
 
 const _makeApiCall = async (opts) => {
   try {

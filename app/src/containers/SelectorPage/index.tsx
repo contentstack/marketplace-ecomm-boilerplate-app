@@ -33,12 +33,14 @@ const SelectorPage: React.FC = function () {
     config?.type === "category" ? [] : ["id"]
   );
   const [metaState, setMetaState] = useState<any>({});
-  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =
+    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials,
     });
   const [multiConfigDropDown, setMultiConfigDropDown] = useState<any>([]);
-  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =    useState<any>();
+  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =
+    useState<any>();
   const [oldUser, setOldUser] = useState<any>(false);
 
   const tableRef: any = useRef(null);
