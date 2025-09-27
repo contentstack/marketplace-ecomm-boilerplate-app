@@ -123,14 +123,11 @@ exports.processRequestBody = (requestBody) => {
 //   };
 // };
 
-
-
-
 // exports.handler=async(event)=>{
 //   try {
-    
+
 //   } catch (error) {
-    
+
 //   }
 // }
 
@@ -151,16 +148,26 @@ const _isEmpty = (obj) =>
 
 // --- API Logic Imports (Assumed) ---
 // You would replace these with your actual imported functions
-const getSelectedProductsAndCategories = (query, body) => { /* ... */ };
-const filterByCategory = (query, body) => { /* ... */ };
-const getProductByID = (query, body) => { /* ... */ };
-const getApiValidationForConfigPageKeys = (body, query) => { /* ... */ };
-const getAllProductsAndCategories = (query, body) => { /* ... */ };
+const getSelectedProductsAndCategoriesECOm = (query, body) => {
+  /* ... */
+};
+const filterByCategoryECOM = (query, body) => {
+  /* ... */
+};
+const getProductByIDECOM = (query, body) => {
+  /* ... */
+};
+const getApiValidationForConfigPageKeysECOm = (body, query) => {
+  /* ... */
+};
+const getAllProductsAndCategoriesECOM = (query, body) => {
+  /* ... */
+};
 // ------------------------------------
 
 /**
  * Constructs the final standardized response object.
- * @param {number} statusCode - HTTP status code.
+ * @param {number} statusCode - HTTP status code.git
  * @param {string|object} body - The response message or data.
  * @returns {object} The standardized response object.
  */
@@ -169,10 +176,10 @@ const _buildResponse = (statusCode, body) => ({
   headers: {
     ...constants.HTTP_RESPONSE_HEADERS,
     // Note: authToken is hardcoded to "" in the original, keep if intended
-    authToken: "", 
+    authToken: "",
   },
   // Ensure the body is a string for serverless environments (like AWS Lambda)
-  body: typeof body === 'string' ? body : JSON.stringify(body), 
+  body: typeof body === "string" ? body : JSON.stringify(body),
 });
 
 // // Main handler function for processing requests
@@ -195,12 +202,12 @@ exports.handler = async ({ queryStringParameters: query, body: rawBody }) => {
     console.error("Error parsing request body:", e);
     return _buildResponse(
       constants.HTTP_ERROR_CODES.BAD_REQ,
-      constants.HTTP_ERROR_TEXTS.INVALID_JSON 
+      constants.HTTP_ERROR_TEXTS.INVALID_JSON
     );
   }
 
   // --- 2. Initial Validation and Logging ---
-  
+
   console.info(constants.LOGS.REQ_BODY, processedBody);
   console.info(constants.LOGS.QUERY_PARAMS, query);
 
@@ -211,12 +218,12 @@ exports.handler = async ({ queryStringParameters: query, body: rawBody }) => {
       constants.HTTP_ERROR_TEXTS.QUERY_MISSING
     );
   }
-  
+
   // --- 3. Request Routing (Main Logic) ---
   try {
     // The conditional chain is fine, but can be slightly cleaner
     // by using a single variable for the query object.
-    
+
     if (query?.["sku:in"] || query?.["id:in"]) {
       message = await getSelectedProductsAndCategories(query, processedBody);
     } else if (query?.["categories:in"]) {
@@ -229,13 +236,15 @@ exports.handler = async ({ queryStringParameters: query, body: rawBody }) => {
       // Default path
       message = await getAllProductsAndCategories(query, processedBody);
     }
-    
   } catch (e) {
     // --- 4. Centralized Error Handling ---
-    
+
     // Prioritize API response status/message if available
-    statusCode = e?.response?.status ?? constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
-    message = e?.response?.data?.message ?? constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
+    statusCode =
+      e?.response?.status ?? constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
+    message =
+      e?.response?.data?.message ??
+      constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
 
     console.error(
       `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}, stack: ${e?.stack}`

@@ -279,7 +279,7 @@ const SelectorPage: React.FC = function () {
     setList(filteredList);
     setTotalCounts(filteredList?.data?.meta?.total);
     setLoading(false);
-  }
+  };
 
   const handleMultiConfigData = (event: any) => {
     if (event !== selectedMultiConfigValue) {

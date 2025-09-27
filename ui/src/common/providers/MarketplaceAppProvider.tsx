@@ -63,48 +63,39 @@
 // };
 // export default MarketplaceAppProvider;
 
-
-
-
-
-
 import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 
-
 function MarketplaceAppProvider({ children }: { children: React.ReactNode }) {
-
   const [appSdk, setAppSdk] = React.useState<any>(null);
   const [sdkError, setSdkError] = React.useState<string | null>("");
   useEffect(() => {
     const initializeAppSDK = async () => {
       try {
         const sdKInstance = await ContentstackAppSDK.init();
-        setAppSdk(sdKInstance)
+        setAppSdk(sdKInstance);
         console.info("sdKInstance", sdKInstance);
-
       } catch (error) {
-         setSdkError("App initialization failed. Please refresh or contact support.");
+        setSdkError(
+          "App initialization failed. Please refresh or contact support."
+        );
       }
     };
 
     initializeAppSDK();
   }, []);
 
+  const memoizedValue = useMemo(
+    () => ({ appSdk, sdkError, setSdkError }),
+    [appSdk, sdkError, setSdkError]
+  );
 
-  const memoizedValue=useMemo(()=>({appSdk,sdkError,setSdkError}),[appSdk,sdkError,setSdkError])
-
-  
-
-  return  <MarketplaceAppContext.Provider value={memoizedValue as any}>
-           {children}
-          </MarketplaceAppContext.Provider>;
+  return (
+    <MarketplaceAppContext.Provider value={memoizedValue as any}>
+      {children}
+    </MarketplaceAppContext.Provider>
+  );
 }
 
-
-export default MarketplaceAppProvider
-
-
-
-    
+export default MarketplaceAppProvider;

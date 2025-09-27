@@ -42,62 +42,62 @@ function App() {
   //   return <div>{localeTexts.appFailedText.signFail}</div>;
   // }
   return (
-      <ErrorBoundary>
-        <MarketplaceAppProvider>
-          <Routes>
-            <Route path="/" element={<HomeRedirectHandler />} />
-            <Route
-              path="/config"
-              element={
-                <Suspense fallback={null}>
-                  <AppConfigurationExtensionProvider>
-                    <AppConfigurationExtension />
-                  </AppConfigurationExtensionProvider>
-                </Suspense>
-              }
-            />
-            <Route
-              path="/product-field"
-              element={
-                <Suspense fallback={null}>
-                  <CustomFieldExtensionProvider type="product">
-                    <ProductExtension />
-                  </CustomFieldExtensionProvider>
-                </Suspense>
-              }
-            />
-            <Route
-              path="/category-field"
-              element={
-                <Suspense fallback={null}>
-                  <CustomFieldExtensionProvider type="category">
-                    <CategoryExtension />
-                  </CustomFieldExtensionProvider>
-                </Suspense>
-              }
-            />
-            <Route
-              path="/sidebar-widget"
-              element={
-                <Suspense fallback={null}>
-                  <EntrySidebarExtensionProvider>
-                    <SidebarExtension />
-                  </EntrySidebarExtensionProvider>
-                </Suspense>
-              }
-            />
+    <ErrorBoundary>
+      <MarketplaceAppProvider>
+        <Routes>
+          <Route path="/" element={<HomeRedirectHandler />} />
+          <Route
+            path="/config"
+            element={
+              <Suspense fallback={null}>
+                <AppConfigurationExtensionProvider>
+                  <AppConfigurationExtension />
+                </AppConfigurationExtensionProvider>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/product-field"
+            element={
+              <Suspense fallback={null}>
+                <CustomFieldExtensionProvider type="product">
+                  <ProductExtension />
+                </CustomFieldExtensionProvider>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/category-field"
+            element={
+              <Suspense fallback={null}>
+                <CustomFieldExtensionProvider type="category">
+                  <CategoryExtension />
+                </CustomFieldExtensionProvider>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/sidebar-widget"
+            element={
+              <Suspense fallback={null}>
+                <EntrySidebarExtensionProvider>
+                  <SidebarExtension />
+                </EntrySidebarExtensionProvider>
+              </Suspense>
+            }
+          />
 
-            <Route
-              path="/selector-page"
-              element={
-                <Suspense fallback={null}>
-                  <SelectorExtension />
-                </Suspense>
-              }
-            />
-          </Routes>
-        </MarketplaceAppProvider>
-      </ErrorBoundary>
+          <Route
+            path="/selector-page"
+            element={
+              <Suspense fallback={null}>
+                <SelectorExtension />
+              </Suspense>
+            }
+          />
+        </Routes>
+      </MarketplaceAppProvider>
+    </ErrorBoundary>
   );
 }
 

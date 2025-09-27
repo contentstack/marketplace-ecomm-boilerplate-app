@@ -1,6 +1,6 @@
 /* eslint-disable*/
-import {MultiConfigComponent} from "./components"
+import { MultiConfigComponent } from "./components";
 
-export const componentRegistry={
-    "custom":MultiConfigComponent
-}   
+export const componentRegistry = {
+  custom: MultiConfigComponent,
+};

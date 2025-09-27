@@ -27,52 +27,44 @@ import {
   makeAnApiCall,
 } from "../services/index";
 
-
 const ECOMMERCE_APP_CONFIG = {
   /**
    * Global settings that apply to the entire application.
    */
-  "global": {
-    "appName": "Commercetools",
-    "platform": "shopify", // The ecommerce platform being used
+  global: {
+    appName: "Commercetools",
+    platform: "shopify", // The ecommerce platform being used
   },
 
   /**
    * Contains configurations for all Contentstack UI locations.
    */
-  "uiLocations": {
+  uiLocations: {
     /**
      * Settings for the main application configuration screen.
      */
-    "configPage": {
-    },
+    configPage: {},
 
     /**
      * Settings for how the selected data is displayed within an entry.
      */
-    "customField": {
-    },
+    customField: {},
 
     /**
      * Defines the experience of the modal/popup used to select products.
      */
-    "selectorPage": {
-      "component": "ProductSelector", // The main "Flow Runner" component
-      "props": {
-      },
-      "flow": [
-      ]
+    selectorPage: {
+      component: "ProductSelector", // The main "Flow Runner" component
+      props: {},
+      flow: [],
     },
 
     /**
      * Configures the sidebar widget.
      */
-    "sidebarWidget": {
-    }
-  }
+    sidebarWidget: {},
+  },
 };
-
-
 
 /* all values in this file are an example.
     You can modify its values and implementation,
@@ -91,7 +83,7 @@ const ecommerceEnv: EcommerceEnv = {
   ENABLE_MULTI_CONFIG: true,
 };
 
-  /**
+/**
    * The function `configureConfigScreen` provides configuration details for various fields used in the application.
    * Each field in the configuration specifies its type, label, help text, placeholder text, instruction text, and
    * various attributes related to storage and sensitivity.
@@ -114,57 +106,50 @@ const ecommerceEnv: EcommerceEnv = {
         allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
   * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
   */
-  const configureConfigScreen: () => ConfigureConfigScreen = () => ({
+const configureConfigScreen: () => ConfigureConfigScreen = () => ({
+  // multi_confg_keys:{
+  //   items:{
+  //     "region_url":{
+  //       data_scheam:{
+  //         "type":"string",
+  //           "storage":{
+  //             "location":"app",
+  //             "encrypted":true
+  //           }
+  //       }
+  //       Ui_Schema:{
+  //     "ui:widget": {
+  //       "component":"singleSelect",
+  //       "options":{
+  //          "type": 'static',
+  //          "values": [
+  //         { "label": "Google Cloud (US)", "value": "gcp-us-east1" },
+  //         { "label": "Google Cloud (Europe)", "value": "gcp-europe-west1" }
+  //       ]
+  //       }
+  //     },
+  //     "ui:placeholder": "Select Your Region URL",
+  //     "ui:help": "Select Your Region URL.",
+  //   },
+  //       }
+  //     }
+  //   }
+  // }
+});
 
-    // multi_confg_keys:{
-    //   items:{
-    //     "region_url":{
-    //       data_scheam:{
-    //         "type":"string",
-    //           "storage":{
-    //             "location":"app",
-    //             "encrypted":true
-    //           }
+//todo:for emcrtyption and dec
 
-    //       }
-    //       Ui_Schema:{
-    //     "ui:widget": {
-    //       "component":"singleSelect",
-    //       "options":{
-    //          "type": 'static',
-    //          "values": [
-    //         { "label": "Google Cloud (US)", "value": "gcp-us-east1" },
-    //         { "label": "Google Cloud (Europe)", "value": "gcp-europe-west1" }
-    //       ]
-
-    //       }
-    //     },
-    //     "ui:placeholder": "Select Your Region URL",
-    //     "ui:help": "Select Your Region URL.",      
-    //   },
-
-
-    //       }
-    //     }
-
-    //   }
-    // }
-  });
-
-  //todo:for emcrtyption and dec
-
-  const configureConfigScreens = () => ({
+const configureConfigScreens = () => ({
   // User *only* gives keys
   validationRules: {
-    allowDuplicatesFor: ["special_token"],   // duplicates allowed for this key
-    required: ["project_key", "client_secret"] // these must exist
+    allowDuplicatesFor: ["special_token"], // duplicates allowed for this key
+    required: ["project_key", "client_secret"], // these must exist
   },
-  apiValidationKeys:{
-    keys:["project_key", "client_secret"],
-    action:async()=>{
-      const apiValidationResponse=await getApiValidationResponse({},{})
-    }
-
+  apiValidationKeys: {
+    keys: ["project_key", "client_secret"],
+    action: async () => {
+      const apiValidationResponse = await getApiValidationResponse({}, {});
+    },
   },
   fields: [
     {
@@ -172,7 +157,7 @@ const ecommerceEnv: EcommerceEnv = {
       type: "text",
       label: "Project Key",
       placeholder: "Enter Project Key",
-      saveTo: "both"
+      saveTo: "both",
     },
     {
       key: "client_secret",
@@ -180,7 +165,7 @@ const ecommerceEnv: EcommerceEnv = {
       label: "Client Secret",
       placeholder: "Enter Client Secret",
       saveTo: "server",
-      componentProps: { inputType: "password" }
+      componentProps: { inputType: "password" },
     },
     {
       key: "default_currency",
@@ -189,74 +174,64 @@ const ecommerceEnv: EcommerceEnv = {
       placeholder: "Select Currency",
       saveTo: "config",
       componentProps: {
-        key:"default_currency_options",
-         options:{
-         "type": 'api',
-          "values": [ 
-          ]
-          }
-      }
-    }
-  ]
+        key: "default_currency_options",
+        options: {
+          type: "api",
+          values: [],
+        },
+      },
+    },
+  ],
 });
 
-const getApiValidationResponse=(configOnject: any,ServerObject: {})=>{
-
-
-}
-
+const getApiValidationResponse = (configOnject: any, ServerObject: {}) => {};
 
 const defineConfigPageSchema = () => {
   return {
-    "required":[],
-    "top_level_keys":{
-
-    },
-    "multi_config_keys":{
-       "component": 'custom',
-      "type":"Object",
-      "items":{
-        "region_url":{
-          "ui:schema":{
-              "ui:component":{
-                "component":"select",
-                "options":{
-                  "source":"api",
-                  "options":[
-                    {"value":"","label":""},
-                  ]
-        
-                }
-
+    required: [],
+    top_level_keys: {},
+    multi_config_keys: {
+      component: "custom",
+      type: "Object",
+      items: {
+        region_url: {
+          "ui:schema": {
+            "ui:component": {
+              component: "select",
+              options: {
+                source: "api",
+                options: [{ value: "", label: "" }],
               },
-            "labelText": "Select Your commercetools Region",
-             "helpText": "The commercetools Region",
-    "placeholderText": "Select Region",
-    "instructionText": "Select Region",
+            },
+            labelText: "Select Your commercetools Region",
+            helpText: "The commercetools Region",
+            placeholderText: "Select Region",
+            instructionText: "Select Region",
           },
-          "data:scheam":{
-            "storage":{
-              "loacation":"All",
-            }
-          }
-        }
-      }
-      
-
-    }
-  }
+          "data:scheam": {
+            storage: {
+              loacation: "All",
+            },
+          },
+        },
+      },
+    },
+  };
 };
 
-
-
 // Function to generate key options from key names
-const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => { 
+const generateKeyOptionsFromNames = (
+  obj: any,
+  mandatoryKeyNames: any,
+  prefix = "",
+  depth = 0
+) => {
   let options: any = [];
 
   Object.keys(obj)?.forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;
     const isMandatory = mandatoryKeyNames?.includes(fullPath) ?? false;
-    
+
     options.push({
       label: key.replace(/[-_.]/g, " "),
       value: fullPath,
@@ -267,14 +242,21 @@ const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = 
     });
 
     if (typeof obj[key] === "object" && obj[key] !== null) {
-      options = options.concat(generateKeyOptionsFromNames(obj[key], mandatoryKeyNames, fullPath, depth + 1));
+      options = options.concat(
+        generateKeyOptionsFromNames(
+          obj[key],
+          mandatoryKeyNames,
+          fullPath,
+          depth + 1
+        )
+      );
     }
   });
 
   return options;
 };
 
-// Provide a sample response object which will be identical to actual object. 
+// Provide a sample response object which will be identical to actual object.
 // refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-config
 const getCustomKeys = (): {
   mandatoryKeys: KeyOption[];
@@ -313,7 +295,6 @@ const getCustomKeys = (): {
       permissions: { canEdit: true, canDelete: false },
     },
   };
-  
 
   const mandatoryKeyNames = ["id", "name"];
 
@@ -866,7 +847,7 @@ const rootConfig = {
   search,
   defineConfigPageSchema,
   configureConfigScreens,
-  ECOMMERCE_APP_CONFIG
+  ECOMMERCE_APP_CONFIG,
 };
 
 export default rootConfig;

@@ -188,22 +188,22 @@ const _makeApiCall = async (opts) => {
  * @returns {Promise<object|Array>} The API response data.
  */
 const _fetchResource = async (query, payload) => {
-    // Placeholder for new user logic
-    if (payload?.isOldUser === false) {
-      return []; 
-    } 
+  // Placeholder for new user logic
+  if (payload?.isOldUser === false) {
+    return [];
+  }
 
-    const url = getUrl(query, payload); 
+  const url = getUrl(query, payload);
 
-    return _makeApiCall({
-      url,
-      method: "GET",
-      headers: getHeaders(payload),
-    });
+  return _makeApiCall({
+    url,
+    method: "GET",
+    headers: getHeaders(payload),
+  });
 };
 
 const root_config = {
-  API_BASE_URL: "https://my.example.com/$/v3/", 
+  API_BASE_URL: "https://my.example.com/$/v3/",
   URI_ENDPOINTS: {
     product: "products",
     category: "catalogs",
@@ -214,15 +214,15 @@ const root_config = {
   ENDPOINTS_CONFIG: {
     getSeparateProductsAndCategories: true,
   },
-  
+
   // Expose the helper function for internal reuse
-  _fetchResource, 
+  _fetchResource,
 
   // --- Single & All Resource Fetching ---
-  
+
   getSingleProduct: async ({ query, id, productID }, productPayload) => {
     // Consolidate id and productID for getUrl
-    const productQuery = { query, id: id ?? productID }; 
+    const productQuery = { query, id: id ?? productID };
     return root_config._fetchResource(productQuery, productPayload);
   },
 
@@ -239,18 +239,17 @@ const root_config = {
   getSelectedProductsById: async (productQuery, productPayload) => {
     if (productQuery?.isOldUser === "false") {
       // Example implementation for new users
-      return []; 
+      return [];
     }
 
-    const extractedProductID = productQuery?.["id:in"]
-      ?.split(",")
-      ?.filter((id) => id !== "") || [];
+    const extractedProductID =
+      productQuery?.["id:in"]?.split(",")?.filter((id) => id !== "") || [];
 
     // Use Promise.all for concurrent fetching of individual products
     return Promise.all(
       extractedProductID.map((id) =>
         root_config.getSingleProduct(
-          { id, query: productPayload?.query }, 
+          { id, query: productPayload?.query },
           productPayload
         )
       )
@@ -282,13 +281,16 @@ const root_config = {
 
   // --- Combined/Filtered Fetching ---
 
-  getSelectedProductsandCategories: ({ query, "id:in": idIn, "sku:in": skuIn, limit }, key) => {
+  getSelectedProductsandCategories: (
+    { query, "id:in": idIn, "sku:in": skuIn, limit },
+    key
+  ) => {
     let url = getUrl({ query }, key);
 
     // Determine the filter key and value
     const filterKey = idIn ? "id:in" : "sku:in";
     const filterValue = idIn || skuIn;
-    
+
     // Construct the URL path and query parameters
     if (filterValue) {
       const separator = url.includes("?") ? "&" : "?";
@@ -307,7 +309,7 @@ const root_config = {
 
   getAllProductsAndCategories: async (data, body) => {
     const response = await root_config._fetchResource(data, body);
-    
+
     // Use ternary operator for concise final response formatting
     return data?.query === "category" ?
       { catalogs: extractCategories(response) }

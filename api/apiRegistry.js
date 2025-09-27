@@ -1,14 +1,10 @@
-
 const apiRegistry = {};
 
-const  registerApi=(name,handler)=>{
+const registerApi = (name, handler) => {};
 
-}
+const getApiHandker = (name) => {};
 
-const getApiHandker=(name)=>{
-
-}
-
-module.exports={
-    registerApi,getApiHandker
-}
+module.exports = {
+  registerApi,
+  getApiHandker,
+};

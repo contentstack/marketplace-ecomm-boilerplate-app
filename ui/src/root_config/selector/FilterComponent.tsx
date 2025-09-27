@@ -61,19 +61,21 @@ function FilterComponent({
       selectedMultiConfigValue,
       skip,
       limit,
-      "category",
+      "category"
     );
 
-    const options = response?.data?.items?.map((tempCategory: any) => {
-      const nameKeys = Object.keys(tempCategory?.name || {});
-      const name = tempCategory?.name?.[nameKeys?.[0]];
-      return {
-        id: tempCategory?.id,
-        label: name,
-        value: tempCategory?.id,
-      }}) || [];
+    const options =
+      response?.data?.items?.map((tempCategory: any) => {
+        const nameKeys = Object.keys(tempCategory?.name || {});
+        const name = tempCategory?.name?.[nameKeys?.[0]];
+        return {
+          id: tempCategory?.id,
+          label: name,
+          value: tempCategory?.id,
+        };
+      }) || [];
 
-    return { options , hasMore: response?.data?.meta?.total > skip + limit }
+    return { options, hasMore: response?.data?.meta?.total > skip + limit };
   };
 
   const loadProductsBySearch = async () => {

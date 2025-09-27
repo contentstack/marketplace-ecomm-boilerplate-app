@@ -7,40 +7,19 @@ html {
 
   .config-error-container {
     display: flex;
-    justify-content: center;  
-    align-items: center;    
+    justify-content: center;
+    align-items: center;
     height: 100%;
     width: 100%;
   }
 
   .config-content {
-  display: flex;
-  flex-direction: column;
-  padding: 4rem; /* consistent spacing */
-  font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    padding: 4rem; /* consistent spacing */
+    font-size: 1.2rem;
+  }
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // .config-wrapper {
 //   .flex {

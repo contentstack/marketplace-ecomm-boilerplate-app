@@ -1,6 +1,12 @@
 /* eslint-disable*/
 /* Import React modules */
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 // import componentRegistry from "./ComponentRegistry"
 /* ContentStack Modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
@@ -32,7 +38,6 @@ import {
   extractFieldsByConfigType,
   extractKeysForCustomApiValidation,
   getConfigureConfigScreenValue,
-  
 } from "../../common/utils";
 import { TypeAppSdkConfigState } from "../../common/types";
 import AddMultiConfigurationModal from "./AddMultiConfigNameModal";
@@ -42,84 +47,77 @@ import "./styles.scss";
 import localeTexts from "../../common/locale/en-us";
 import { CustomModal } from "./AddKeyModal";
 import WarningMessage from "../../components/WarningMessage";
-import { CheckboxInputField, RadioInputField, SelectInputField } from "./components";
+import {
+  CheckboxInputField,
+  RadioInputField,
+  SelectInputField,
+} from "./components";
 import { componentRegistry } from "./ComponentRegistry";
 import { MarketplaceAppContext } from "../../common/contexts/marketplaceContext";
-const ConfigScreen:React.FC=()=>{
-  const appName=rootConfig.ECOMMERCE_APP_CONFIG.global.appName
-  const {appSdk,sdkError,setSdkError}=useContext(MarketplaceAppContext)
-  const [appConfigState,setAppConfigState]=useState<any>({
-    installationData:{
-      configuration:{
-        multi_config_keys:{
-        }
+const ConfigScreen: React.FC = () => {
+  const appName = rootConfig.ECOMMERCE_APP_CONFIG.global.appName;
+  const { appSdk, sdkError, setSdkError } = useContext(MarketplaceAppContext);
+  const [appConfigState, setAppConfigState] = useState<any>({
+    installationData: {
+      configuration: {
+        multi_config_keys: {},
       },
-      serverConfiguration:{
-         multi_config_keys:{      
+      serverConfiguration: {
+        multi_config_keys: {},
+      },
+    },
+  });
+  useEffect(() => {
+    const initializeConfigPage = async () => {
+      if (!appSdk) return;
+      try {
+        const sdkConfigLocation = await appSdk.location;
+        console.info("sdkConfigLocation", sdkConfigLocation);
+        if (sdkConfigLocation?.AppConfigWidget !== null) {
+          console.info("AppConfigWidget", sdkConfigLocation?.AppConfigWidget);
+          // reference
+          const getInstallationDataFromSDK =
+            await sdkConfigLocation?.AppConfigWidget.installation.getInstallationData();
+          console.info(
+            "getInstallationDataFromSDK,",
+            getInstallationDataFromSDK
+          );
+
+          console.info("appConfigState", appConfigState);
+        } else {
+          setSdkError(
+            "Configuration page initialization failed. Please refresh or contact support."
+          );
         }
-      }
-    }
-  })
-  useEffect(()=>{
-    const initializeConfigPage=async()=>{
-      if (!appSdk) return;   
-    try {
-  const sdkConfigLocation=await appSdk.location
-  console.info("sdkConfigLocation",sdkConfigLocation)
-  if(sdkConfigLocation?.AppConfigWidget!==null){
+      } catch (error) {}
+    };
 
-    console.info("AppConfigWidget",sdkConfigLocation?.AppConfigWidget)
-    // reference
-    const getInstallationDataFromSDK=await sdkConfigLocation?.AppConfigWidget.installation.getInstallationData()
-    console.info("getInstallationDataFromSDK,",getInstallationDataFromSDK)
-
-    console.info("appConfigState",appConfigState)
-
-
-    
-  }
-  else{
-    setSdkError("Configuration page initialization failed. Please refresh or contact support.")
-  }
-  
-  
-} catch (error) {
-  
-}
-
-    }
-
-    initializeConfigPage()
-
-
-  },[])
-
-
-
+    initializeConfigPage();
+  }, []);
 
   // React.useEffect(()=>{
   // })
-return (
-  <div className="config-page">
-  {sdkError!=="" ? (
-    <div className="config-error-container">
-      <Info className="config-error-info" content={sdkError} />
+  return (
+    <div className="config-page">
+      {sdkError !== "" ? (
+        <div className="config-error-container">
+          <Info className="config-error-info" content={sdkError} />
+        </div>
+      ) : (
+        <div className="config-content">
+          {" "}
+          {/* parent*/}
+          <div className="multi-config-container">
+            {/*child*/}
+            <Accordion title={`${appName} Configuration`}>
+              {/*child of multi-config-container.*/}
+            </Accordion>
+          </div>
+        </div>
+      )}
     </div>
-  ) : (
-    <div className="config-content"> {/* parent*/}
-      <div className="multi-config-container">{/*child*/}
-        <Accordion title={`${appName} Configuration`}>{/*child of multi-config-container.*/ }
-
-        </Accordion>
-
-      </div>
-
-    </div>
-  )}
-</div>
-
-);
-}
+  );
+};
 // const ConfigScreen: React.FC = function () {
 //   /* entire configuration object returned from configureConfigScreen */
 //   const configInputFields = rootConfig?.configureConfigScreen?.();
@@ -328,13 +326,12 @@ return (
 //       let serverConfiguration = state?.installationData?.serverConfiguration || {};
 //       let fieldValue = e?.target?.checked ? e?.target?.id : (typeof value === "string" ? value?.trim() : value);
 
-
 //       if(e?.type === "change" && e?.target?.type === "text"){
 //         const errorState = { ...errors }
 //         errorState[`${multiConfigID}_${fieldName}`] = {
 //           isOnchangeTriggered: true,
 //           errorMessage: "",
-//         }            
+//         }
 //         setErrors(errorState);
 //       }
 
@@ -1327,7 +1324,6 @@ return (
 // //   const ComponentToRender:any = componentRegistry[data];
 // //   console.info("ComponentToRender",ComponentToRender)
 
-
 // //   return(
 // //     <><ComponentToRender  /></>
 // //   )
@@ -1336,12 +1332,8 @@ return (
 
 // // return UISCHea
 
- 
-
-  
-
 // // }
-// // 
+// //
 
 // React.useEffect(()=>{
 
@@ -1351,9 +1343,7 @@ return (
 
 // },[])
 
-
 // const renderConfigurationPage=()=>{
-
 
 // }
 
@@ -1787,7 +1777,7 @@ return (
 //       <div className="page-wrapper">
 //         <Form className="config-wrapper" data-testid="config-wrapper">
 //           {renderConfig()}
-          
+
 //           <Field className="json-field">
 //             <div className="flex">
 //               <FieldLabel required htmlFor="is_custom_json">
