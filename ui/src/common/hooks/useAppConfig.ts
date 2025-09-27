@@ -16,7 +16,7 @@ const useAppConfig = () => {
     MarketplaceAppContext
   );
 
-  return appConfig;
+  return appConfig ;
 };
 
 export default useAppConfig;

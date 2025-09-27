@@ -42,7 +42,6 @@ function App() {
   //   return <div>{localeTexts.appFailedText.signFail}</div>;
   // }
   return (
-    <div className="app">
       <ErrorBoundary>
         <MarketplaceAppProvider>
           <Routes>
@@ -99,7 +98,6 @@ function App() {
           </Routes>
         </MarketplaceAppProvider>
       </ErrorBoundary>
-    </div>
   );
 }
 

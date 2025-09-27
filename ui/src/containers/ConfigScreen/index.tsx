@@ -1,6 +1,6 @@
 /* eslint-disable*/
 /* Import React modules */
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 // import componentRegistry from "./ComponentRegistry"
 /* ContentStack Modules */
 import ContentstackAppSdk from "@contentstack/app-sdk";
@@ -21,6 +21,7 @@ import {
   Checkbox,
   Button,
   cbModal,
+  Info,
 } from "@contentstack/venus-components";
 import CryptoJS from "crypto-js";
 /* Import our modules */
@@ -30,6 +31,8 @@ import {
   categorizeConfigFields,
   extractFieldsByConfigType,
   extractKeysForCustomApiValidation,
+  getConfigureConfigScreenValue,
+  
 } from "../../common/utils";
 import { TypeAppSdkConfigState } from "../../common/types";
 import AddMultiConfigurationModal from "./AddMultiConfigNameModal";
@@ -41,14 +44,81 @@ import { CustomModal } from "./AddKeyModal";
 import WarningMessage from "../../components/WarningMessage";
 import { CheckboxInputField, RadioInputField, SelectInputField } from "./components";
 import { componentRegistry } from "./ComponentRegistry";
+import { MarketplaceAppContext } from "../../common/contexts/marketplaceContext";
 const ConfigScreen:React.FC=()=>{
+  const appName=rootConfig.ECOMMERCE_APP_CONFIG.global.appName
+  const {appSdk,sdkError,setSdkError}=useContext(MarketplaceAppContext)
+  const [appConfigState,setAppConfigState]=useState<any>({
+    installationData:{
+      configuration:{
+        multi_config_keys:{
+        }
+      },
+      serverConfiguration:{
+         multi_config_keys:{      
+        }
+      }
+    }
+  })
+  useEffect(()=>{
+    const initializeConfigPage=async()=>{
+      if (!appSdk) return;   
+    try {
+  const sdkConfigLocation=await appSdk.location
+  console.info("sdkConfigLocation",sdkConfigLocation)
+  if(sdkConfigLocation?.AppConfigWidget!==null){
+
+    console.info("AppConfigWidget",sdkConfigLocation?.AppConfigWidget)
+    // reference
+    const getInstallationDataFromSDK=await sdkConfigLocation?.AppConfigWidget.installation.getInstallationData()
+    console.info("getInstallationDataFromSDK,",getInstallationDataFromSDK)
+
+    console.info("appConfigState",appConfigState)
+
+
+    
+  }
+  else{
+    setSdkError("Configuration page initialization failed. Please refresh or contact support.")
+  }
+  
+  
+} catch (error) {
+  
+}
+
+    }
+
+    initializeConfigPage()
+
+
+  },[])
+
+
 
 
   // React.useEffect(()=>{
   // })
 return (
-  <p>ConfigScreen</p>
-)
+  <div className="config-page">
+  {sdkError!=="" ? (
+    <div className="config-error-container">
+      <Info className="config-error-info" content={sdkError} />
+    </div>
+  ) : (
+    <div className="config-content"> {/* parent*/}
+      <div className="multi-config-container">{/*child*/}
+        <Accordion title={`${appName} Configuration`}>{/*child of multi-config-container.*/ }
+
+        </Accordion>
+
+      </div>
+
+    </div>
+  )}
+</div>
+
+);
 }
 // const ConfigScreen: React.FC = function () {
 //   /* entire configuration object returned from configureConfigScreen */

@@ -27,49 +27,50 @@ import {
   makeAnApiCall,
 } from "../services/index";
 
-// export const ECOMMERCE_APP_CONFIG = {
-//   /**
-//    * Global settings that apply to the entire application.
-//    */
-//   "global": {
-//     "appName": "Your Ecommerce App",
-//     "platform": "shopify", // The ecommerce platform being used
-//   },
 
-//   /**
-//    * Contains configurations for all Contentstack UI locations.
-//    */
-//   "uiLocations": {
-//     /**
-//      * Settings for the main application configuration screen.
-//      */
-//     "configPage": {
-//     },
+const ECOMMERCE_APP_CONFIG = {
+  /**
+   * Global settings that apply to the entire application.
+   */
+  "global": {
+    "appName": "Commercetools",
+    "platform": "shopify", // The ecommerce platform being used
+  },
 
-//     /**
-//      * Settings for how the selected data is displayed within an entry.
-//      */
-//     "customField": {
-//     },
+  /**
+   * Contains configurations for all Contentstack UI locations.
+   */
+  "uiLocations": {
+    /**
+     * Settings for the main application configuration screen.
+     */
+    "configPage": {
+    },
 
-//     /**
-//      * Defines the experience of the modal/popup used to select products.
-//      */
-//     "selectorPage": {
-//       "component": "ProductSelector", // The main "Flow Runner" component
-//       "props": {
-//       },
-//       "flow": [
-//       ]
-//     },
+    /**
+     * Settings for how the selected data is displayed within an entry.
+     */
+    "customField": {
+    },
 
-//     /**
-//      * Configures the sidebar widget.
-//      */
-//     "sidebarWidget": {
-//     }
-//   }
-// };
+    /**
+     * Defines the experience of the modal/popup used to select products.
+     */
+    "selectorPage": {
+      "component": "ProductSelector", // The main "Flow Runner" component
+      "props": {
+      },
+      "flow": [
+      ]
+    },
+
+    /**
+     * Configures the sidebar widget.
+     */
+    "sidebarWidget": {
+    }
+  }
+};
 
 
 
@@ -187,7 +188,14 @@ const ecommerceEnv: EcommerceEnv = {
       label: "Default Currency",
       placeholder: "Select Currency",
       saveTo: "config",
-      componentProps: { optionsApi: "/api/currencies" }
+      componentProps: {
+        key:"default_currency_options",
+         options:{
+         "type": 'api',
+          "values": [ 
+          ]
+          }
+      }
     }
   ]
 });
@@ -242,7 +250,7 @@ const defineConfigPageSchema = () => {
 
 
 // Function to generate key options from key names
-const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => {
+const generateKeyOptionsFromNames = (obj: any, mandatoryKeyNames: any, prefix = "", depth = 0) => { 
   let options: any = [];
 
   Object.keys(obj)?.forEach((key) => {
@@ -856,7 +864,9 @@ const rootConfig = {
   validateConfigKeyByApi,
   getProductandCategory,
   search,
-  defineConfigPageSchema
+  defineConfigPageSchema,
+  configureConfigScreens,
+  ECOMMERCE_APP_CONFIG
 };
 
 export default rootConfig;

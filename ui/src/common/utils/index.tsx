@@ -12,6 +12,24 @@ import localeTexts from "../locale/en-us/index";
 import NoImg from "../../assets/NoImg.svg";
 import rootConfig from "../../root_config";
 
+const getConfigureConfigScreenValue=()=>{
+  const getData=rootConfig?.configureConfigScreens().fields?.reduce((acc: any, values: any)=>{
+     if(values?.type==="text"){
+        acc[values.key]="";
+    }
+    if(values?.type==="select"){
+        acc[values.key]="";
+        acc[values.componentProps.key]=''
+    }
+    return acc
+  },{} as any)
+
+  return getData
+
+}
+
+
+
 const isEmpty = (val: any): boolean =>
   val === undefined
   || val === null
@@ -418,4 +436,6 @@ export {
   categorizeConfigFields,
   extractFieldsByConfigType,
   arrangeList,
+ getConfigureConfigScreenValue
+
 };

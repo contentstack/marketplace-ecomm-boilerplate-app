@@ -1,149 +1,193 @@
-.config-wrapper {
-  .flex {
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+}
+.config-page {
+  height: 100vh;
+  width: 100vw;
+
+  .config-error-container {
     display: flex;
-  }
-
-  .Form__item {
+    justify-content: center;  
+    align-items: center;    
+    height: 100%;
     width: 100%;
-
-    .Field {
-      width: 90%;
-    }
-
-    .Field .InstructionText {
-      visibility: visible;
-      margin-top: 8px;
-    }
-
-    .custom-keys {
-      margin-top: 20px;
-      margin-left: 0;
-    }
-  }
-  .tippy-wrapper {
-    margin-right: 10px;
   }
 
-  .Radio-wrapper {
-    padding-top: 20px;
-    margin-left: 5px;
-  }
-
-  .custom-styles {
-    margin-left: 20px;
-  }
-
-  .radio-button {
-    margin-right: 20px;
-  }
-
-  .toggle-save-response {
-    padding: 20px 10px;
-  }
-
-  .Select__value-container > div:nth-child(-n + 2) {
-    pointer-events: none;
-    cursor: alias;
-
-    .Select__multi-value__remove {
-      display: unset;
-      display: none !important;
-    }
-  }
-
-  .Select__option--is-disabled {
-    cursor: not-allowed;
-
-    .Checkbox {
-      input {
-        background-color: -internal-light-dark(
-          rgba(239, 239, 239, 0.3),
-          rgba(59, 59, 59, 0.3)
-        );
-        color: -internal-light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
-        border-color: rgba(118, 118, 118, 0.3);
-      }
-    }
-  }
-}
-.page-wrapper {
+  .config-content {
   display: flex;
-  flex-direction: row;
-  margin-top: 40px;
+  flex-direction: column;
+  padding: 4rem; /* consistent spacing */
+  font-size: 1.2rem;
+}
 }
 
-.multi-config-wrapper {
-  margin-left: 30px;
-  margin-right: 30px;
 
-  .multi-config-button {
-    margin-left: 15px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: none !important;
-  }
-}
-.multi-config-wrapper__configblock {
-  margin-top: 15px;
-}
-.single-config-wrapper {
-  margin-left: 40px;
-  margin-right: 40px;
-}
 
-.multi-config-wrapper__sublabel {
-  font-size: 14px;
-  line-height: 25.9px;
-  margin-top: 5px;
-}
 
-.multi-config-wrapper__configblock__checkbox {
-  margin-left: 10px;
-}
 
-.error-message {
-  color: red;
-}
 
-.errorcontainer {
-  margin-left: 8px;
-  color: red;
-  font-family: Inter, Serif, Sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-}
-.default-label {
-  border: 1px solid #a9b6cb;
-  border-radius: 8px;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: #647696;
-  margin-left: 1.25rem;
-  padding: 0.1875rem 0.25rem;
-}
-.json-field {
-  margin-left: 40px;
-}
-.page_count {
-  margin-left: 40px;
-}
-.add-label {
-  font-size: 14px;
-  margin-left: 16px;
-}
-.only_id {
-  margin-right: 20px;
-}
-.warning-container {
-  .Info {
-    margin: 0 !important;
-  }
-}
-.json-field {
-  .InstructionText {
-    margin: 0;
-  }
-}
-.TextInput__suffix__visible {
-  z-index: -99 !important;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// .config-wrapper {
+//   .flex {
+//     display: flex;
+//   }
+
+//   .Form__item {
+//     width: 100%;
+
+//     .Field {
+//       width: 90%;
+//     }
+
+//     .Field .InstructionText {
+//       visibility: visible;
+//       margin-top: 8px;
+//     }
+
+//     .custom-keys {
+//       margin-top: 20px;
+//       margin-left: 0;
+//     }
+//   }
+//   .tippy-wrapper {
+//     margin-right: 10px;
+//   }
+
+//   .Radio-wrapper {
+//     padding-top: 20px;
+//     margin-left: 5px;
+//   }
+
+//   .custom-styles {
+//     margin-left: 20px;
+//   }
+
+//   .radio-button {
+//     margin-right: 20px;
+//   }
+
+//   .toggle-save-response {
+//     padding: 20px 10px;
+//   }
+
+//   .Select__value-container > div:nth-child(-n + 2) {
+//     pointer-events: none;
+//     cursor: alias;
+
+//     .Select__multi-value__remove {
+//       display: unset;
+//       display: none !important;
+//     }
+//   }
+
+//   .Select__option--is-disabled {
+//     cursor: not-allowed;
+
+//     .Checkbox {
+//       input {
+//         background-color: -internal-light-dark(
+//           rgba(239, 239, 239, 0.3),
+//           rgba(59, 59, 59, 0.3)
+//         );
+//         color: -internal-light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
+//         border-color: rgba(118, 118, 118, 0.3);
+//       }
+//     }
+//   }
+// }
+// .page-wrapper {
+//   display: flex;
+//   flex-direction: row;
+//   margin-top: 40px;
+// }
+
+// .multi-config-wrapper {
+//   margin-left: 30px;
+//   margin-right: 30px;
+
+//   .multi-config-button {
+//     margin-left: 15px;
+//     margin-top: 20px;
+//     margin-bottom: 20px;
+//     border: none !important;
+//   }
+// }
+// .multi-config-wrapper__configblock {
+//   margin-top: 15px;
+// }
+// .single-config-wrapper {
+//   margin-left: 40px;
+//   margin-right: 40px;
+// }
+
+// .multi-config-wrapper__sublabel {
+//   font-size: 14px;
+//   line-height: 25.9px;
+//   margin-top: 5px;
+// }
+
+// .multi-config-wrapper__configblock__checkbox {
+//   margin-left: 10px;
+// }
+
+// .error-message {
+//   color: red;
+// }
+
+// .errorcontainer {
+//   margin-left: 8px;
+//   color: red;
+//   font-family: Inter, Serif, Sans-serif;
+//   font-size: 12px;
+//   font-weight: 400;
+// }
+// .default-label {
+//   border: 1px solid #a9b6cb;
+//   border-radius: 8px;
+//   font-size: 0.6875rem;
+//   font-weight: 500;
+//   color: #647696;
+//   margin-left: 1.25rem;
+//   padding: 0.1875rem 0.25rem;
+// }
+// .json-field {
+//   margin-left: 40px;
+// }
+// .page_count {
+//   margin-left: 40px;
+// }
+// .add-label {
+//   font-size: 14px;
+//   margin-left: 16px;
+// }
+// .only_id {
+//   margin-right: 20px;
+// }
+// .warning-container {
+//   .Info {
+//     margin: 0 !important;
+//   }
+// }
+// .json-field {
+//   .InstructionText {
+//     margin: 0;
+//   }
+// }
+// .TextInput__suffix__visible {
+//   z-index: -99 !important;
+// }
