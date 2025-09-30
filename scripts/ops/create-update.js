@@ -54,7 +54,7 @@ const appManifest = require("../app-manifest.json");
         .create({ appManifest, name: appName });
 
       appUid = app.uid;
-      updateAppManifest(appName, app.uid);
+      updateAppManifest({ ...appManifest, name: appName, uid: app.uid });
       console.info("App created successfully");
     } else if (op === "update-app") {
       appUid = appManifest.uid;

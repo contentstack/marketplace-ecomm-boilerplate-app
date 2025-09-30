@@ -6,8 +6,12 @@ const {
   buildAppZip,
   uploadAppZip,
   createProject,
+  getProjectDetails,
+  updateLaunchManifest,
+  updateAppManifest,
 } = require("../utils");
 const loginData = require("../credentials.json");
+const appManifest = require("../app-manifest.json");
 
 (async () => {
   try {
@@ -51,7 +55,7 @@ const loginData = require("../credentials.json");
 
     await uploadAppZip(uploadMetaData, buildPath);
 
-    await createProject(
+    const launchMetaData = await createProject(
       authtoken,
       selectedOrgUid,
       appBaseUrl,
@@ -59,6 +63,31 @@ const loginData = require("../credentials.json");
       uploadMetaData?.uploadUid,
       envName
     );
+
+    const launchProjectDetails = await getProjectDetails(
+      appBaseUrl,
+      launchMetaData,
+      authtoken,
+      selectedOrgUid
+    );
+
+    updateLaunchManifest({
+      project_name: projectName,
+      env_name: envName,
+      ...launchProjectDetails,
+    });
+
+    appManifest.ui_location.base_url =
+      `${launchProjectDetails?.deployment_url}/#` || "";
+    appManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
+    appManifest.hosting = {
+      provider: "launch",
+      deployment_url: launchProjectDetails?.deployment_url || "",
+      environment_uid: launchProjectDetails?.env_uid || "",
+      project_uid: launchProjectDetails?.project_uid || "",
+    };
+
+    updateAppManifest(appManifest);
   } catch (error) {
     console.error("Deployment failed:");
     console.info(error);

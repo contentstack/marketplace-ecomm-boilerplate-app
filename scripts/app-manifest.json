@@ -52,6 +52,12 @@
       }
     ]
   },
+  "hosting": {
+    "provider": "launch",
+    "deployment_url": "https://example.com",
+    "environment_uid": "",
+    "project_uid": ""
+  },
   "webhook": {
     "signed": true,
     "enabled": true,
@@ -65,5 +71,5 @@
     "notifiers": [],
     "branch_scope": "main"
   },
-  "uid": "68c2a84a730af10012572de1"
+  "uid": ""
 }

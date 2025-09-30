@@ -3,7 +3,6 @@ const constants = require("../constants");
 const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
-const appManifest = require("../app-manifest.json");
 const AdmZip = require("adm-zip");
 
 const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
@@ -49,11 +48,12 @@ const getDeveloperhubBaseUrl = (region) =>
   constants.DEVELOPERHUB_BASE_URLS.find((url) => url.region === region)?.url ||
   constants.DEVELOPERHUB_BASE_URLS[0].url;
 
-const updateAppManifest = (name, uid) => {
-  fs.writeFileSync(
-    "app-manifest.json",
-    JSON.stringify({ ...appManifest, name, uid }, null, 2)
-  );
+const updateAppManifest = (manifest) => {
+  fs.writeFileSync("app-manifest.json", JSON.stringify(manifest, null, 2));
+};
+
+const updateLaunchManifest = (manifest) => {
+  fs.writeFileSync("launch-manifest.json", JSON.stringify(manifest, null, 2));
 };
 
 const getEnvVariables = () => {
@@ -240,11 +240,51 @@ const createProject = async (
     console.info(
       `Build and deployment has been initiated. You can checks the logs at ${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`
     );
+
+    return {
+      project_uid: res?.data?.importProject?.uid,
+      env_uid: res?.data?.importProject?.environments[0]?.uid,
+      deployment_uid:
+        res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node
+          ?.uid,
+    };
   } catch (error) {
     console.error("Error while creating a launch project.");
     console.info(JSON.stringify(error, null, 2));
     throw error;
   }
+};
+
+const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
+  const res = await makeApiCall({
+    method: "POST",
+    maxBodyLength: Infinity,
+    url: `${baseUrl}/${constants.LAUNCH_BASE_PATH}`,
+    headers: {
+      authtoken,
+      organization_uid: orgId,
+      "x-project-uid": metaData?.project_uid,
+      "content-type": "application/json",
+    },
+    data: JSON.stringify({
+      query: `query getDeploymentsById {
+  Deployment(
+    query: {uid: "${metaData?.deployment_uid}", environment: "${metaData?.env_uid}"}
+  ) {
+    uid
+    environment
+    status
+    deploymentUrl
+  }
+}`,
+      variables: {},
+    }),
+  });
+
+  return {
+    ...metaData,
+    deployment_url: `https://${res?.data?.Deployment?.deploymentUrl}`,
+  };
 };
 
 module.exports = {
@@ -253,10 +293,12 @@ module.exports = {
   getBaseUrl,
   getDeveloperhubBaseUrl,
   updateAppManifest,
+  updateLaunchManifest,
   getEnvVariables,
   buildAppZip,
   getUploadMetaData,
   getAppBaseUrl,
   uploadAppZip,
   createProject,
+  getProjectDetails,
 };
