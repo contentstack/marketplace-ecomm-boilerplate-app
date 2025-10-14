@@ -31,7 +31,6 @@
   "scripts": {
     "start": "export PORT=4000 && react-scripts start",
     "startWin": "SET PORT=4000 && react-scripts start",
-    "start-backend": "NODE_ENV=development nodemon functions/dev-server.js",
     "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject",

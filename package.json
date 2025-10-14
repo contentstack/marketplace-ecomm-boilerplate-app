@@ -22,7 +22,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "cd app && rimraf build && npm run precommit"
+      "pre-commit": "cd ui && rimraf build && npm run precommit && cd ../api && rimraf build && npm run precommit"
     }
   }
 }

@@ -2,6 +2,7 @@
 This is a simple express server to test the cloud function locally.
 It listens on port 8080 and forwards all requests to the function handler.
 */
+import "dotenv/config";
 
 import express from "express";
 import cors from "cors";

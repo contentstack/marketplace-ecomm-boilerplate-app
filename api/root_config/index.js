@@ -114,8 +114,8 @@ const root_config = {
     let url = getUrl(key, data?.query);
     const urlHasQueryParams = url?.includes("?");
 
-    url += data["id:in"]
-      ? `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
+    url += data["id:in"] ?
+      `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
       : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
     if (data?.query === "product") url += root_config.SEARCH_URL_PARAMS;
     if (data?.limit) url += `&limit=${data?.limit}`;
@@ -168,8 +168,8 @@ const root_config = {
       headers: getHeaders(body),
     });
 
-    return data?.query === "category"
-      ? { catalogs: extractCategories(response) }
+    return data?.query === "category" ?
+      { catalogs: extractCategories(response) }
       : response;
   },
 

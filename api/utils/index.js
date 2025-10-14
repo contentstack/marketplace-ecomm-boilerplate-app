@@ -29,10 +29,10 @@ const processRequestBody = (requestBody) => {
 
       const result = {};
       Object.keys(obj).forEach((key) => {
-        result[key] = root_config?.SENSITIVE_CONFIG_KEYS?.includes(key)
-          ? decrypt(obj?.[key])
-          : typeof obj?.[key] === "object"
-          ? decryptSensitiveKeys(obj?.[key])
+        result[key] = root_config?.SENSITIVE_CONFIG_KEYS?.includes(key) ?
+          decrypt(obj?.[key])
+          : typeof obj?.[key] === "object" ?
+          decryptSensitiveKeys(obj?.[key])
           : obj?.[key];
       });
       return result;
