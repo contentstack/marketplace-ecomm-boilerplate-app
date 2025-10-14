@@ -9,7 +9,8 @@ export type EntrySidebarExtensionContextType = {
   appSdkInitialized: boolean;
 };
 
-export const EntrySidebarExtensionContext =  React.createContext<EntrySidebarExtensionContextType>({
+export const EntrySidebarExtensionContext =
+  React.createContext<EntrySidebarExtensionContextType>({
     entryData: {},
     contentTypeSchema: {},
     isInvalidCredentials: {

@@ -57,40 +57,114 @@ const updateLaunchManifest = (manifest) => {
 };
 
 const getEnvVariables = () => {
-  const envVariables = [];
-  const envData = fs.readFileSync(
-    path.join(__dirname, "../../app/.env"),
-    "utf-8"
-  );
+  try {
+    const envVariables = [];
+    const apiEnvData = fs.readFileSync(
+      path.join(__dirname, "../../api/.env"),
+      "utf-8"
+    );
 
-  envData.split("\n").forEach((line) => {
-    const [key, value] = line.split("=");
-    if (key && value)
-      envVariables.push(`{ key: "${key.trim()}", value: "${value.trim()}" }`);
-  });
-  return `[${envVariables.join(",")}]`;
+    const uiEnvData = fs.readFileSync(
+      path.join(__dirname, "../../ui/.env"),
+      "utf-8"
+    );
+
+    `${apiEnvData}\n${uiEnvData}`.split("\n").forEach((line) => {
+      // Ignore empty lines and comments
+      if (!(line.trim() === "" || line.trim().startsWith("#"))) {
+        const [key, value] = line.split("=");
+        if (key && value)
+          envVariables.push(
+            `{ key: "${key.trim()}", value: "${value.trim()}" }`
+          );
+      }
+    });
+    return `[${envVariables.join(",")}]`;
+  } catch (e) {
+    throw new Error(`Error reading or parsing env files: ${e.message}`);
+  }
 };
 
 const buildAppZip = () => {
   try {
     console.info("Preparing the app zip...");
 
-    const appBasePath = path.join(__dirname, "../../app");
-    const buildPath = path.join(__dirname, "../build/app.zip");
+    const uiAppBasePath = path.join(__dirname, "../../ui");
+    const apiAppBasePath = path.join(__dirname, "../../api");
+    const buildBasePath = path.join(__dirname, "../build");
+    const buildPath = `${buildBasePath}/app.zip`;
 
-    // Deleting existing build folder if any
-    if (fs.existsSync(`${appBasePath}/build`))
-      fs.rmSync(`${appBasePath}/build`, { recursive: true, force: true });
+    // Deleting existing build folder of UI if any
+    if (fs.existsSync(`${uiAppBasePath}/build`))
+      fs.rmSync(`${uiAppBasePath}/build`, { recursive: true, force: true });
 
-    // Deleting node_modules folder to reduce zip size
-    if (fs.existsSync(`${appBasePath}/node_modules`))
-      fs.rmSync(`${appBasePath}/node_modules`, {
+    // Deleting node_modules folder of UI to reduce zip size
+    if (fs.existsSync(`${uiAppBasePath}/node_modules`))
+      fs.rmSync(`${uiAppBasePath}/node_modules`, {
         recursive: true,
         force: true,
       });
 
+    // Deleting node_modules folder of API to reduce zip size
+    if (fs.existsSync(`${apiAppBasePath}/node_modules`))
+      fs.rmSync(`${apiAppBasePath}/node_modules`, {
+        recursive: true,
+        force: true,
+      });
+
+    // Deleting the existing build folder
+    if (fs.existsSync(buildBasePath))
+      fs.rmSync(buildBasePath, {
+        recursive: true,
+        force: true,
+      });
+
+    // create a new build & functions folder
+    fs.mkdirSync(buildBasePath);
+    fs.mkdirSync(`${buildBasePath}/functions`);
+
+    // Copy the UI app to build folder
+    fs.cpSync(uiAppBasePath, buildBasePath, { recursive: true });
+
+    // Copy the API app to build folder
+    fs.cpSync(apiAppBasePath, `${buildBasePath}/functions`, {
+      recursive: true,
+    });
+
+    const uiPackageJson = JSON.parse(
+      fs.readFileSync(`${uiAppBasePath}/package.json`, "utf8")
+    );
+
+    const apiPackageJson = JSON.parse(
+      fs.readFileSync(`${apiAppBasePath}/package.json`, "utf8")
+    );
+
+    (Object.keys(apiPackageJson?.dependencies) || []).forEach((key) => {
+      if (
+        key != "axios" &&
+        (Object.keys(uiPackageJson?.dependencies) || []).find(
+          (uiKey) => uiKey == key
+        )
+      )
+        throw new Error("Conflicting dependency packages found in ui & api.");
+    });
+
+    const appPackageJson = {
+      ...uiPackageJson,
+      dependencies: {
+        ...uiPackageJson?.dependencies,
+        ...apiPackageJson?.dependencies,
+      },
+    };
+
+    // Updating the final app's package.json file
+    fs.writeFileSync(
+      `${buildBasePath}/package.json`,
+      JSON.stringify(appPackageJson, null, 2)
+    );
+
     const zip = new AdmZip();
-    zip.addLocalFolder(appBasePath);
+    zip.addLocalFolder(buildBasePath);
     zip.writeZip(buildPath);
 
     console.info("App zip created successfully...");

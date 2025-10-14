@@ -13,10 +13,10 @@ import NoImg from "../../assets/NoImg.svg";
 import rootConfig from "../../root_config";
 
 const isEmpty = (val: any): boolean =>
-  val === undefined
-  || val === null
-  || (typeof val === "object" && !Object.keys(val)?.length)
-  || (typeof val === "string" && !val?.trim()?.length);
+  val === undefined ||
+  val === null ||
+  (typeof val === "object" && !Object.keys(val)?.length) ||
+  (typeof val === "string" && !val?.trim()?.length);
 
 const filterFetchedArray = (array: any[]) => {
   const tempFetchedList = [...array];
@@ -31,11 +31,11 @@ const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   return window.open(
     windowDetails.url,
     windowDetails.title,
-    "toolbar=no, location=no, directories=no, "
-      + `status=no, menubar=no, scrollbars=no, resizable=no, `
-      + `copyhistory=no, width=${windowDetails.w}, `
-      + `height=${windowDetails.h}, `
-      + `top=${top}, left=${left}`
+    "toolbar=no, location=no, directories=no, " +
+      `status=no, menubar=no, scrollbars=no, resizable=no, ` +
+      `copyhistory=no, width=${windowDetails.w}, ` +
+      `height=${windowDetails.h}, ` +
+      `top=${top}, left=${left}`
   );
 };
 
@@ -52,9 +52,10 @@ const mergeObjects = (target = {}, source = {}) => {
   const result: any = {};
 
   (Object.keys(sourceCopy) || []).forEach((key) => {
-    result[key] =      key in targetCopy
-      && isObject(sourceCopy[key])
-      && isObject(targetCopy[key])
+    result[key] =
+      key in targetCopy &&
+      isObject(sourceCopy[key]) &&
+      isObject(targetCopy[key])
         ? mergeObjects(targetCopy[key], sourceCopy[key])
         : sourceCopy[key];
   });
