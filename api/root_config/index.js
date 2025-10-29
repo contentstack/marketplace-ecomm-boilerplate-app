@@ -49,7 +49,9 @@ const root_config = {
 
     // Mocked response for demonstration purposes
     const productID = productQuery?.id || productQuery?.productID;
-    const product = products.data.find((product) => product.id === +productID);
+    const product = products.products.find(
+      (product) => product.id === +productID
+    );
     return product || {};
   },
 
@@ -71,7 +73,7 @@ const root_config = {
       // );
 
       //Mocked response for demonstration purposes
-      response = products.data.filter((product) =>
+      response = products.products.filter((product) =>
         extractedProductID.includes(product.id)
       );
       return response;
@@ -103,7 +105,7 @@ const root_config = {
       const categoriesId = (
         categoryQuery?.["id:in"]?.split(",")?.filter((id) => id !== "") || []
       )?.map((id) => +id);
-      response = categories.data.filter((category) =>
+      response = categories.catalogs.filter((category) =>
         categoriesId.includes(category.id)
       );
       return response;
@@ -140,7 +142,7 @@ const root_config = {
       // return response;
 
       // Mocked response for demonstration purposes
-      return products.data;
+      return products;
     }
   },
 
@@ -157,7 +159,7 @@ const root_config = {
       // return response;
 
       // Mocked response for demonstration purposes
-      return categories.data;
+      return categories;
     }
   },
 

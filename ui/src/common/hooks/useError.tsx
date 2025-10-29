@@ -17,8 +17,7 @@ import {
  * const appSdk = useAppSdk();
  */
 const useError = () => {
-  const { isInvalidCredentials, setIsInvalidCredentials } =
-    useContext<MarketplaceAppContextType>(MarketplaceAppContext);
+  const { isInvalidCredentials, setIsInvalidCredentials } =    useContext<MarketplaceAppContextType>(MarketplaceAppContext);
   return { isInvalidCredentials, setIsInvalidCredentials };
 };
 export default useError;

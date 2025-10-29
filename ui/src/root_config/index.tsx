@@ -66,7 +66,41 @@ const ecommerceEnv: EcommerceEnv = {
     allowDuplicateKeyValue: A boolean to indicate whether to allow duplicate values for these key for multiconfig
  * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
  */
-const configureConfigScreen: () => ConfigureConfigScreen = () => ({});
+const configureConfigScreen: () => ConfigureConfigScreen = () => ({
+  configField1: {
+    type: "textInputFields",
+    labelText: "Store ID",
+    helpText: "You can find your store's ID on your ECommerce ConsoleL",
+    placeholderText: "Enter your Store ID",
+    instructionText: "Copy and Paste your Store ID",
+    saveInConfig: true,
+    isSensitive: false,
+    saveInServerConfig: false,
+    isMultiConfig: false,
+    isConfidential: true,
+    isApiValidationEnabled: false,
+    suffixName: "",
+    allowDuplicateKeyValue: false,
+    required: true,
+  },
+  configField2: {
+    type: "textInputFields",
+    labelText: "Auth Token",
+    helpText:
+      "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
+    placeholderText: "Enter your Auth Token",
+    instructionText: "Copy and Paste your Auth Token",
+    saveInConfig: true,
+    isSensitive: false,
+    saveInServerConfig: false,
+    isMultiConfig: false,
+    isConfidential: true,
+    isApiValidationEnabled: false,
+    suffixName: "",
+    allowDuplicateKeyValue: false,
+    required: true,
+  },
+});
 
 // Function to generate key options from key names
 const generateKeyOptionsFromNames = (
@@ -159,12 +193,12 @@ const getCustomKeys = (): {
 /* eslint-disable */
 const returnFormattedProduct = (product: any, config: any): TypeProduct => ({
   id: product?.id || "",
-  name: product?.key || "",
-  description: product?.description?.en || "-",
+  name: product?.name || "",
+  description: product?.description || "-",
   image: product?.images?.[0]?.url
     ? `https://${config?.configField2}${product?.images?.[0]?.url}`
-    : "",
-  price: product?.price?.formattedValue || "-",
+    : product?.images?.[0]?.url_standard,
+  price: product?.price || "-",
   sku: product?.sku || "",
   isProductDeleted: product?.cs_metadata?.isConfigDeleted ?? false,
   cs_metadata: product?.cs_metadata?.multiConfigName,
@@ -174,7 +208,7 @@ const returnFormattedProduct = (product: any, config: any): TypeProduct => ({
 const returnFormattedCategory = (category: any): TypeCategory => {
   return {
     id: category?.id || "",
-    name: category?.key || "",
+    name: category?.name || "",
     customUrl: "",
     description: category?.description || "Not Available",
     isCategoryDeleted: category?.cs_metadata?.isConfigDeleted ?? false,
@@ -227,7 +261,7 @@ const getProductSelectorColumns = (config: any): ColumnsProp[] => [
     accessor: (obj: any) =>
       obj?.images?.[0]?.url
         ? getImage(`https://${config?.configField2}${obj?.images?.[0]?.url}`)
-        : getImage(obj?.images?.[0]?.url),
+        : getImage(obj?.images?.[0]?.url_standard),
     default: false,
     disableSortBy: true,
     addToColumnSelector: true,

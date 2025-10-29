@@ -1,5 +1,5 @@
 export default {
-  data: [
+  products: [
     {
       id: 77,
       name: "[Sample] Fog Linen Chambray Towel - Beige Stripe",
@@ -5119,17 +5119,8 @@ export default {
       },
     },
   ],
-  meta: {
-    pagination: {
-      total: 15,
-      count: 15,
-      per_page: 30,
-      current_page: 1,
-      total_pages: 1,
-      links: {
-        current: "?page=1&limit=30&include=primary_image%2Cvariants%2Cimages",
-      },
-      too_many: false,
-    },
+  pagination: {
+    totalResults: 15,
+    currentPage: 1,
   },
 };

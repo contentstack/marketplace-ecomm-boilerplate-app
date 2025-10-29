@@ -1,11 +1,11 @@
 export default {
-  data: [
+  catalogs: [
     {
       id: 18,
       parent_id: 0,
       tree_id: 1,
       name: "Bath",
-      description: "",
+      description: "The description of BATH categories goes here.",
       views: 0,
       sort_order: 1,
       page_title: "",
@@ -30,7 +30,7 @@ export default {
       parent_id: 0,
       tree_id: 1,
       name: "Garden",
-      description: "",
+      description: "The description of Garden categories goes here.",
       views: 0,
       sort_order: 2,
       page_title: "",
@@ -55,7 +55,7 @@ export default {
       parent_id: 0,
       tree_id: 1,
       name: "Publications",
-      description: "",
+      description: "The description of Publications categories goes here.",
       views: 0,
       sort_order: 4,
       page_title: "",
@@ -80,7 +80,7 @@ export default {
       parent_id: 0,
       tree_id: 1,
       name: "Kitchen",
-      description: "",
+      description: "The description of Kitchen categories goes here.",
       views: 0,
       sort_order: 3,
       page_title: "",
@@ -105,7 +105,7 @@ export default {
       parent_id: 0,
       tree_id: 1,
       name: "Utility",
-      description: "",
+      description: "The description of Utility categories goes here.",
       views: 0,
       sort_order: 5,
       page_title: "",
@@ -130,7 +130,7 @@ export default {
       parent_id: 0,
       tree_id: 1,
       name: "Shop All",
-      description: "",
+      description: "The description of 'Shop All' categories goes here.",
       views: 0,
       sort_order: 0,
       page_title: "",
@@ -195,18 +195,8 @@ export default {
       },
     },
   ],
-  meta: {
-    pagination: {
-      total: 8,
-      count: 8,
-      per_page: 30,
-      current_page: 1,
-      total_pages: 1,
-      links: {
-        previous: "?limit=30&page=1",
-        current: "?limit=30&page=1",
-        next: "?limit=30&page=1",
-      },
-    },
+  pagination: {
+    totalResults: 8,
+    currentPage: 1,
   },
 };
