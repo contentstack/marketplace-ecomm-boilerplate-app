@@ -15,7 +15,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@contentstack/marketplace-sdk": "^1.3.0",
     "adm-zip": "^0.5.16",
     "axios": "^1.11.0",
     "readline-sync": "^1.4.10"

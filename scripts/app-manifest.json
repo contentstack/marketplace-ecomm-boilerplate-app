@@ -11,7 +11,8 @@
         "meta": [
           {
             "multiple": false,
-            "name": "Ecom Boilerplate - Product",
+            "__comment__": "Please keep the product's custom field as the first object in meta array.",
+            "name": "Ecom-boilerplate-product",
             "path": "/product-field",
             "signed": true,
             "enabled": true,
@@ -19,7 +20,8 @@
           },
           {
             "multiple": false,
-            "name": "ECom Boilerplate - Category",
+            "__comment__": "Please keep the product's custom field as the second object in meta array.",
+            "name": "Ecom-boilerplate-category",
             "path": "/category-field",
             "signed": true,
             "enabled": true,
@@ -42,7 +44,7 @@
         "type": "cs.cm.stack.sidebar",
         "meta": [
           {
-            "name": "ECom Boilerplate",
+            "name": "Ecom-boilerplate",
             "path": "/sidebar-widget",
             "signed": true,
             "enabled": true,

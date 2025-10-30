@@ -4,6 +4,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
 const AdmZip = require("adm-zip");
+const appManifest = require("../app-manifest.json");
 
 const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
   try {
@@ -142,6 +143,7 @@ const buildAppZip = () => {
     (Object.keys(apiPackageJson?.dependencies) || []).forEach((key) => {
       if (
         key != "axios" &&
+        key != "crypto-js" &&
         (Object.keys(uiPackageJson?.dependencies) || []).find(
           (uiKey) => uiKey == key
         )
@@ -361,6 +363,150 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
   };
 };
 
+const createApp = async (region, authtoken, orgId, appName) => {
+  const res = await makeApiCall({
+    url: `${getDeveloperhubBaseUrl(region)}/manifests`,
+    method: "POST",
+    headers: { authtoken, organization_uid: orgId },
+    data: {
+      name: appName,
+      description: appManifest?.description || "",
+      target_type: "stack",
+      version: 1,
+      group: "user",
+    },
+  });
+
+  return res.data.uid;
+};
+
+const getOrgStacks = async (baseUrl, authtoken, orgId) =>
+  makeApiCall({
+    url: `${baseUrl}/v3/stacks?organization_uid=${orgId}`,
+    method: "GET",
+    headers: { authtoken },
+  });
+
+const updateApp = async (region, authtoken, orgId, appUid) =>
+  makeApiCall({
+    url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
+    method: "PUT",
+    headers: { authtoken, organization_uid: orgId },
+    data: appManifest,
+  });
+
+const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
+  makeApiCall({
+    url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}/install`,
+    method: "POST",
+    headers: { authtoken, organization_uid: orgId },
+    data: {
+      target_type: "stack",
+      target_uid: stackApiKey,
+      include_draft: true,
+    },
+  });
+
+const getExtensionId = async (
+  baseUrl,
+  authtoken,
+  stackApiKey,
+  searchStr = ""
+) => {
+  const res = await makeApiCall({
+    url: `${baseUrl}/v3/extensions?skip=0&limit=100&typeahead=${searchStr}&include_count=true&include_marketplace_extensions=true&desc=updated_at`,
+    method: "GET",
+    headers: { authtoken, api_key: stackApiKey },
+  });
+
+  return (res?.extensions || []).find((ext) => ext?.title === searchStr)?.uid;
+};
+
+const createContentModeling = async (
+  baseUrl,
+  authtoken,
+  orgId,
+  stackApiKey,
+  contentType
+) => {
+  const productCustomFieldId = await getExtensionId(
+    baseUrl,
+    authtoken,
+    stackApiKey,
+    appManifest.ui_location.locations[0]?.meta.name
+  );
+
+  const categoryCustomFieldId = await getExtensionId(
+    baseUrl,
+    authtoken,
+    stackApiKey,
+    appManifest.ui_location.locations[1]?.meta.name
+  );
+
+  const [contentTypeError, contentTypeData] = await safePromise(
+    makeApiCall({
+      url: `${baseUrl}/v3/content_types?organization_uid=${orgId}`,
+      method: "POST",
+      headers: { authtoken, api_key: stackApiKey },
+      data: {
+        content_type: {
+          title: contentType.trim(),
+          description: "Example Ecommerce content type",
+          options: {
+            is_page: false,
+            singleton: true,
+            sub_title: [],
+            title: "title",
+          },
+          schema: [
+            {
+              data_type: "text",
+              display_name: "Title",
+              field_metadata: {
+                _default: true,
+              },
+              mandatory: true,
+              uid: "title",
+              unique: true,
+            },
+            {
+              display_name: "categories",
+              extension_uid: categoryCustomFieldId,
+              field_metadata: {
+                extension: true,
+              },
+              uid: "categories",
+              mandatory: false,
+              non_localizable: false,
+              unique: false,
+              config: {},
+            },
+            {
+              display_name: "products",
+              extension_uid: productCustomFieldId,
+              field_metadata: {
+                extension: true,
+              },
+              uid: "products",
+              mandatory: false,
+              non_localizable: false,
+              unique: false,
+              config: {},
+            },
+          ],
+          uid: contentType.trim().replace(/ /g, "_"),
+        },
+        prevcreate: true,
+      },
+    }),
+    "Error while creating content type."
+  );
+
+  if (contentTypeError) return;
+
+  console.info("Content type created.");
+};
+
 module.exports = {
   makeApiCall,
   safePromise,
@@ -375,4 +521,10 @@ module.exports = {
   uploadAppZip,
   createProject,
   getProjectDetails,
+  createContentModeling,
+  getExtensionId,
+  getOrgStacks,
+  createApp,
+  updateApp,
+  installApp,
 };
