@@ -47,7 +47,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
     const findMatchingKeys = (keys: any) =>
       keys?.filter((key: any) => config?.multi_config_keys?.[key]);
     if (fieldConfigData?.locale?.[currentLocale]?.config_label?.length) {
-      const localeConfigLabels =        fieldConfigData?.locale?.[currentLocale]?.config_label;
+      const localeConfigLabels =
+        fieldConfigData?.locale?.[currentLocale]?.config_label;
       const matchingLocaleKeys = findMatchingKeys(localeConfigLabels);
       if (matchingLocaleKeys?.length) {
         return matchingLocaleKeys;
@@ -82,8 +83,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         "multi_config_keys"
       );
       if (
-        isMultiConfigEnabled === false
-        || (isMultiConfigEnabled === true && !hasMultiConfigKeys)
+        isMultiConfigEnabled === false ||
+        (isMultiConfigEnabled === true && !hasMultiConfigKeys)
       ) {
         oldUser = true;
       } else {
@@ -126,30 +127,33 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
 
       if (updatedFieldData?.length) {
         if (
-          categoryConfig.customCategoryStructure === true
-          && type === "category"
+          categoryConfig.customCategoryStructure === true &&
+          type === "category"
         ) {
           if (oldUser === true) {
             setEntryIds(categoryConfig.generateCustomCategoryData(fieldData));
           } else {
-            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
+            const returnProductFormatedData: any =
+              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
         } else if (
-          type === "category"
-          && categoryConfig.customCategoryStructure === false
+          type === "category" &&
+          categoryConfig.customCategoryStructure === false
         ) {
           if (oldUser === true) {
             setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
           } else {
-            const returnProductFormatedData: any =              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
+            const returnProductFormatedData: any =
+              rootConfig.mapCategoryIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
         } else if (type === "product") {
           if (oldUser === true) {
             setEntryIds(updatedFieldData?.map((i: any) => i?.[uniqueKey]));
           } else {
-            const returnProductFormatedData: any =              rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
+            const returnProductFormatedData: any =
+              rootConfig.mapProductIdsByMultiConfig(updatedFieldData, type);
             setEntryIds(returnProductFormatedData);
           }
         }
@@ -195,7 +199,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       return; // Exit early since there's nothing to fetch
     }
 
-    const isInvalidCreds =      Object.keys(selectedIdsArray)?.length && !isEmpty(appConfig) && isOldUser
+    const isInvalidCreds =
+      Object.keys(selectedIdsArray)?.length && !isEmpty(appConfig) && isOldUser
         ? selectedIdsArray?.length
         : Object.keys(selectedIdsArray)?.length && !isInvalidCredentials.error;
     if (isOldUser ? Array.isArray(selectedIdsArray) : isInvalidCreds) {
@@ -203,8 +208,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
       let res;
 
       if (
-        categoryConfig.customCategoryStructure === true
-        && type === "category"
+        categoryConfig.customCategoryStructure === true &&
+        type === "category"
       ) {
         res = await getCustomCategoryData(
           appConfig,
@@ -213,8 +218,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
           isOldUser
         );
       } else if (
-        categoryConfig.customCategoryStructure === false
-        && type === "category"
+        categoryConfig.customCategoryStructure === false &&
+        type === "category"
       ) {
         res = await getCustomCategoryData(
           appConfig,
@@ -236,8 +241,8 @@ const CustomFieldExtensionProvider: React.FC<any> = function ({
         setIsInvalidCredentials({
           error: true,
           data:
-            res?.data
-            ?? localeTexts.warnings.invalidCredentials.replace(
+            res?.data ??
+            localeTexts.warnings.invalidCredentials.replace(
               "$",
               rootConfig.ecommerceEnv.APP_ENG_NAME
             ),

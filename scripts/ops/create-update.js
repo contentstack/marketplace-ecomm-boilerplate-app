@@ -71,20 +71,22 @@ const appManifest = require("../app-manifest.json");
 
       await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
     } else if (op === "update-app") {
-      appUid = appManifest.uid;
-      const [appError, appData] = await safePromise(
-        updateApp(region, authtoken, selectedOrgUid, appUid),
-        "Error while updating the app"
-      );
+      if (readlineSync.keyInYN("Have you updated the app-manifest.json?")) {
+        appUid = appManifest.uid;
+        const [appError, appData] = await safePromise(
+          updateApp(region, authtoken, selectedOrgUid, appUid),
+          "Error while updating the app"
+        );
 
-      if (appError) {
-        console.error(JSON.stringify(appError, null, 2));
-        return;
+        if (appError) {
+          console.error(JSON.stringify(appError, null, 2));
+          return;
+        }
+
+        console.info("App updated successfully");
+
+        await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
       }
-
-      console.info("App updated successfully");
-
-      await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
     }
   } catch (error) {
     console.info(error);

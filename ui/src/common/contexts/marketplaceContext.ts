@@ -11,7 +11,8 @@ export type MarketplaceAppContextType = {
   setIsInvalidCredentials: (data: any) => void;
 };
 
-export const MarketplaceAppContext =  React.createContext<MarketplaceAppContextType>({
+export const MarketplaceAppContext =
+  React.createContext<MarketplaceAppContextType>({
     appSdk: null,
     appConfig: null,
     isInvalidCredentials: {

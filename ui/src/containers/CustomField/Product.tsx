@@ -18,7 +18,8 @@ import noImage from "../../assets/NoImg.svg";
 
 const Product: React.FC<Props> = function ({ product, remove }) {
   const config = useAppConfig();
-  const { id, name, description, image, price, isProductDeleted }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
+  const { id, name, description, image, price, isProductDeleted }: TypeProduct =
+    rootConfig.returnFormattedProduct(product, config);
 
   const {
     attributes,
@@ -86,8 +87,8 @@ const Product: React.FC<Props> = function ({ product, remove }) {
   ]?.filter(
     (action) =>
       !(
-        isProductDeleted
-        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
+        isProductDeleted &&
+        action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
       )
   );
 

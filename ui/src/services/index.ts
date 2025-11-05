@@ -53,8 +53,8 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
         return {
           error: true,
           data:
-            resData
-            || localeTexts.warnings.invalidCredentials.replace(
+            resData ||
+            localeTexts.warnings.invalidCredentials.replace(
               "$",
               rootConfig.ecommerceEnv.APP_ENG_NAME
             ),
@@ -63,9 +63,9 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
         return {
           error: true,
           data:
-            resData?.message
-            || localeTexts.warnings.somethingWentWrong
-            || localeTexts.warnings.unexpectedError,
+            resData?.message ||
+            localeTexts.warnings.somethingWentWrong ||
+            localeTexts.warnings.unexpectedError,
         };
     }
   }

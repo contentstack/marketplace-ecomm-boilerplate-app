@@ -18,7 +18,7 @@ const appManifest = require("../app-manifest.json");
     const authtoken = loginData?.authtoken;
     const userOrgs = loginData?.userOrgs;
     const region = loginData?.region;
-    const csBaseUrl = getBaseUrl(region);
+    // const csBaseUrl = getBaseUrl(region);
     const appBaseUrl = getAppBaseUrl(region);
 
     if (!authtoken) {

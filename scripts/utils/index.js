@@ -6,6 +6,12 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const appManifest = require("../app-manifest.json");
 
+const isEmpty = (val) =>
+  val === undefined ||
+  val === null ||
+  (typeof val === "object" && !Object.keys(val)?.length) ||
+  (typeof val === "string" && !val.trim().length);
+
 const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
   try {
     const res = await axios({
@@ -407,107 +413,104 @@ const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
     },
   });
 
-const getExtensionId = async (
-  baseUrl,
-  authtoken,
-  stackApiKey,
-  searchStr = ""
-) => {
+const getExtensions = async (baseUrl, authtoken, stackApiKey, appUid) => {
   const res = await makeApiCall({
-    url: `${baseUrl}/v3/extensions?skip=0&limit=100&typeahead=${searchStr}&include_count=true&include_marketplace_extensions=true&desc=updated_at`,
+    url: `${baseUrl}/v3/extensions?include_marketplace_extensions=true&desc=updated_at`,
     method: "GET",
     headers: { authtoken, api_key: stackApiKey },
   });
 
-  return (res?.extensions || []).find((ext) => ext?.title === searchStr)?.uid;
+  return (res?.extensions || []).filter((ext) => ext.app_uid === appUid);
 };
 
-const createContentModeling = async (
+const createContentType = async (
   baseUrl,
   authtoken,
   orgId,
   stackApiKey,
-  contentType
-) => {
-  const productCustomFieldId = await getExtensionId(
-    baseUrl,
-    authtoken,
-    stackApiKey,
-    appManifest.ui_location.locations[0]?.meta.name
-  );
-
-  const categoryCustomFieldId = await getExtensionId(
-    baseUrl,
-    authtoken,
-    stackApiKey,
-    appManifest.ui_location.locations[1]?.meta.name
-  );
-
-  const [contentTypeError, contentTypeData] = await safePromise(
-    makeApiCall({
-      url: `${baseUrl}/v3/content_types?organization_uid=${orgId}`,
-      method: "POST",
-      headers: { authtoken, api_key: stackApiKey },
-      data: {
-        content_type: {
-          title: contentType.trim(),
-          description: "Example Ecommerce content type",
-          options: {
-            is_page: false,
-            singleton: true,
-            sub_title: [],
-            title: "title",
-          },
-          schema: [
-            {
-              data_type: "text",
-              display_name: "Title",
-              field_metadata: {
-                _default: true,
-              },
-              mandatory: true,
-              uid: "title",
-              unique: true,
-            },
-            {
-              display_name: "categories",
-              extension_uid: categoryCustomFieldId,
-              field_metadata: {
-                extension: true,
-              },
-              uid: "categories",
-              mandatory: false,
-              non_localizable: false,
-              unique: false,
-              config: {},
-            },
-            {
-              display_name: "products",
-              extension_uid: productCustomFieldId,
-              field_metadata: {
-                extension: true,
-              },
-              uid: "products",
-              mandatory: false,
-              non_localizable: false,
-              unique: false,
-              config: {},
-            },
-          ],
-          uid: contentType.trim().replace(/ /g, "_"),
+  ctName,
+  productCustomFieldId,
+  categoryCustomFieldId
+) =>
+  makeApiCall({
+    url: `${baseUrl}/v3/content_types?organization_uid=${orgId}`,
+    method: "POST",
+    headers: { authtoken, api_key: stackApiKey },
+    data: {
+      content_type: {
+        title: ctName.trim(),
+        description: "Example Ecommerce content type",
+        options: {
+          is_page: false,
+          singleton: true,
+          sub_title: [],
+          title: "title",
         },
-        prevcreate: true,
+        schema: [
+          {
+            data_type: "text",
+            display_name: "Title",
+            field_metadata: {
+              _default: true,
+            },
+            mandatory: true,
+            uid: "title",
+            unique: true,
+          },
+          {
+            display_name: "categories",
+            extension_uid: categoryCustomFieldId,
+            field_metadata: {
+              extension: true,
+            },
+            uid: "categories",
+            mandatory: false,
+            non_localizable: false,
+            unique: false,
+            config: {},
+          },
+          {
+            display_name: "products",
+            extension_uid: productCustomFieldId,
+            field_metadata: {
+              extension: true,
+            },
+            uid: "products",
+            mandatory: false,
+            non_localizable: false,
+            unique: false,
+            config: {},
+          },
+        ],
+        uid: ctName.trim().replace(/ /g, "_"),
       },
-    }),
-    "Error while creating content type."
-  );
+      prevcreate: true,
+    },
+  });
 
-  if (contentTypeError) return;
-
-  console.info("Content type created.");
-};
+const createEntry = async (baseUrl, authtoken, stackApiKey, contentTypeId) =>
+  makeApiCall({
+    url: `${baseUrl}/v3/content_types/${contentTypeId}/entries?form_uid=${contentTypeId}&locale=en-us`,
+    method: "POST",
+    headers: { authtoken, api_key: stackApiKey },
+    data: {
+      entry: {
+        title: "Ecom boilerplate sample",
+        categories: {
+          data: [],
+          type: "ecommerce-app-name_category",
+        },
+        products: {
+          data: [],
+          type: "ecommerce-app-name_product",
+        },
+        tags: [],
+      },
+    },
+  });
 
 module.exports = {
+  isEmpty,
   makeApiCall,
   safePromise,
   getBaseUrl,
@@ -521,8 +524,9 @@ module.exports = {
   uploadAppZip,
   createProject,
   getProjectDetails,
-  createContentModeling,
-  getExtensionId,
+  createContentType,
+  createEntry,
+  getExtensions,
   getOrgStacks,
   createApp,
   updateApp,
