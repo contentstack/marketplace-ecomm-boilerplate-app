@@ -92,7 +92,7 @@ const path = require("path");
   }
 
   fs.writeFileSync(
-    path.join("credentials.json"),
+    path.join(__dirname, "../../settings/credentials.json"),
     JSON.stringify({ region, authtoken, userOrgs }, null, 2)
   );
   console.info("Login's Authtoken saved Locally.");

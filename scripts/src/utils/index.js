@@ -4,7 +4,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
 const AdmZip = require("adm-zip");
-const appManifest = require("../app-manifest.json");
+const appManifest = require("../../settings/app-manifest.json");
 
 const isEmpty = (val) =>
   val === undefined ||
@@ -27,6 +27,7 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
 
     return res?.data;
   } catch (error) {
+    console.info(JSON.stringify(error));
     throw error.response.data || error.message || error;
   }
 };
@@ -56,23 +57,29 @@ const getDeveloperhubBaseUrl = (region) =>
   constants.DEVELOPERHUB_BASE_URLS[0].url;
 
 const updateAppManifest = (manifest) => {
-  fs.writeFileSync("app-manifest.json", JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(
+    path.join(__dirname, "../../settings/app-manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  );
 };
 
 const updateLaunchManifest = (manifest) => {
-  fs.writeFileSync("launch-manifest.json", JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(
+    path.join(__dirname, "../../settings/launch-manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  );
 };
 
 const getEnvVariables = () => {
   try {
     const envVariables = [];
     const apiEnvData = fs.readFileSync(
-      path.join(__dirname, "../../api/.env"),
+      path.join(__dirname, "../../../api/.env"),
       "utf-8"
     );
 
     const uiEnvData = fs.readFileSync(
-      path.join(__dirname, "../../ui/.env"),
+      path.join(__dirname, "../../../ui/.env"),
       "utf-8"
     );
 
@@ -96,8 +103,8 @@ const buildAppZip = () => {
   try {
     console.info("Preparing the app zip...");
 
-    const uiAppBasePath = path.join(__dirname, "../../ui");
-    const apiAppBasePath = path.join(__dirname, "../../api");
+    const uiAppBasePath = path.join(__dirname, "../../../ui");
+    const apiAppBasePath = path.join(__dirname, "../../../api");
     const buildBasePath = path.join(__dirname, "../build");
     const buildPath = `${buildBasePath}/app.zip`;
 

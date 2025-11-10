@@ -7,13 +7,14 @@ const {
   updateApp,
 } = require("../utils");
 const installApp = require("./install-app");
-const loginData = require("../credentials.json");
-const appManifest = require("../app-manifest.json");
+const loginData = require("../../settings/credentials.json");
+const appManifest = require("../../settings/app-manifest.json");
 
 (async () => {
   try {
     let appUid;
     const op = process.argv[2];
+    // const appEnv = process.argv[3];
     const authtoken = loginData?.authtoken;
     const userOrgs = loginData?.userOrgs;
     const region = loginData?.region;
@@ -71,7 +72,9 @@ const appManifest = require("../app-manifest.json");
 
       await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
     } else if (op === "update-app") {
-      if (readlineSync.keyInYN("Have you updated the app-manifest.json?")) {
+      if (
+        readlineSync.keyInYN(`Have you updated the settings/app-manifest.json?`)
+      ) {
         appUid = appManifest.uid;
         const [appError, appData] = await safePromise(
           updateApp(region, authtoken, selectedOrgUid, appUid),

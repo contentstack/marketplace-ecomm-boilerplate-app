@@ -6,10 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "login": "node ops/login.js",
-    "create-app": "node ops/create-update.js create-app",
-    "update-app": "node ops/create-update.js update-app",
-    "deploy": "node ops/deploy.js"
+    "login": "node src/ops/login.js",
+    "create-app": "node src/ops/create-update.js create-app",
+    "update-app": "node src/ops/create-update.js update-app",
+    "deploy": "node src/ops/deploy.js"
   },
   "keywords": [],
   "author": "",

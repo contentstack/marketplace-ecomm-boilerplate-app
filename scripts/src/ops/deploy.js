@@ -10,8 +10,8 @@ const {
   updateLaunchManifest,
   updateAppManifest,
 } = require("../utils");
-const loginData = require("../credentials.json");
-const appManifest = require("../app-manifest.json");
+const loginData = require("../../settings/credentials.json");
+const appManifest = require("../../settings/app-manifest.json");
 
 (async () => {
   try {

@@ -7,7 +7,7 @@ const {
   safePromise,
   getAppBaseUrl,
 } = require("../utils");
-const appManifest = require("../app-manifest.json");
+const appManifest = require("../../settings/app-manifest.json");
 
 const contentModel = async (
   region,

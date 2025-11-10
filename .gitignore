@@ -28,5 +28,5 @@ ui/.env
 ui/.npmrc
 coverage/
 
-scripts/credentials.json
-scripts/build
+scripts/*/credentials.json
+scripts/*/build
