@@ -1,0 +1,77 @@
+{
+  "name": "qwerty",
+  "description": "Ecommerce integration app for Contentstack",
+  "target_type": "stack",
+  "ui_location": {
+    "signed": false,
+    "base_url": "https://example.com/#",
+    "locations": [
+      {
+        "type": "cs.cm.stack.custom_field",
+        "meta": [
+          {
+            "multiple": false,
+            "__comment__": "Please keep the product's custom field as the first object in meta array.",
+            "name": "Ecom-boilerplate-product",
+            "path": "/product-field",
+            "signed": true,
+            "enabled": true,
+            "data_type": "json"
+          },
+          {
+            "multiple": false,
+            "__comment__": "Please keep the product's custom field as the second object in meta array.",
+            "name": "Ecom-boilerplate-category",
+            "path": "/category-field",
+            "signed": true,
+            "enabled": true,
+            "data_type": "json"
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.config",
+        "meta": [
+          {
+            "path": "/config",
+            "signed": true,
+            "enabled": true,
+            "required": true
+          }
+        ]
+      },
+      {
+        "type": "cs.cm.stack.sidebar",
+        "meta": [
+          {
+            "name": "Ecom-boilerplate",
+            "path": "/sidebar-widget",
+            "signed": true,
+            "enabled": true,
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "hosting": {
+    "provider": "launch",
+    "deployment_url": "https://example.com",
+    "environment_uid": "",
+    "project_uid": ""
+  },
+  "webhook": {
+    "signed": true,
+    "enabled": true,
+    "custom_headers": [],
+    "target_url": "https://example.com/webhook",
+    "channels": [
+      "cs.apps.installations.install",
+      "cs.apps.installations.uninstall",
+      "cs.apps.installations.update"
+    ],
+    "notifiers": [],
+    "branch_scope": "main"
+  },
+  "uid": ""
+}

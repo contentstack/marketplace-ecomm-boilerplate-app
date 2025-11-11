@@ -8,13 +8,14 @@ const {
 } = require("../utils");
 const installApp = require("./install-app");
 const loginData = require("../../settings/credentials.json");
-const appManifest = require("../../settings/app-manifest.json");
+const prodAppManifest = require("../../settings/prod-app-manifest.json");
+const devAppManifest = require("../../settings/dev-app-manifest.json");
 
 (async () => {
   try {
     let appUid;
     const op = process.argv[2];
-    // const appEnv = process.argv[3];
+    const appEnv = process.argv[3];
     const authtoken = loginData?.authtoken;
     const userOrgs = loginData?.userOrgs;
     const region = loginData?.region;
@@ -45,7 +46,7 @@ const appManifest = require("../../settings/app-manifest.json");
       const appName = readlineSync.question("Enter name of app: ");
 
       const [appError, appData] = await safePromise(
-        createApp(region, authtoken, selectedOrgUid, appName),
+        createApp(appEnv, region, authtoken, selectedOrgUid, appName),
         "Error while creating the app."
       );
 
@@ -56,10 +57,17 @@ const appManifest = require("../../settings/app-manifest.json");
 
       appUid = appData;
 
-      updateAppManifest({ ...appManifest, name: appName, uid: appUid });
+      updateAppManifest(
+        {
+          ...(appEnv === "dev" ? devAppManifest : prodAppManifest),
+          name: appName,
+          uid: appUid,
+        },
+        appEnv
+      );
 
       const [appUpdateError, appUpdateData] = await safePromise(
-        updateApp(region, authtoken, selectedOrgUid, appUid),
+        updateApp(appEnv, region, authtoken, selectedOrgUid, appUid),
         "Error while creating the app."
       );
 
@@ -70,14 +78,23 @@ const appManifest = require("../../settings/app-manifest.json");
 
       console.info("App created successfully");
 
-      await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
+      await installApp(
+        appEnv,
+        region,
+        appUid,
+        csBaseUrl,
+        authtoken,
+        selectedOrgUid
+      );
     } else if (op === "update-app") {
       if (
-        readlineSync.keyInYN(`Have you updated the settings/app-manifest.json?`)
+        readlineSync.keyInYN(
+          `Have you updated the settings/${appEnv}-app-manifest.json?`
+        )
       ) {
-        appUid = appManifest.uid;
+        appUid = appEnv === "dev" ? devAppManifest.uid : prodAppManifest.uid;
         const [appError, appData] = await safePromise(
-          updateApp(region, authtoken, selectedOrgUid, appUid),
+          updateApp(appEnv, region, authtoken, selectedOrgUid, appUid),
           "Error while updating the app"
         );
 
@@ -88,7 +105,14 @@ const appManifest = require("../../settings/app-manifest.json");
 
         console.info("App updated successfully");
 
-        await installApp(region, appUid, csBaseUrl, authtoken, selectedOrgUid);
+        await installApp(
+          appEnv,
+          region,
+          appUid,
+          csBaseUrl,
+          authtoken,
+          selectedOrgUid
+        );
       }
     }
   } catch (error) {

@@ -4,7 +4,8 @@ const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
 const AdmZip = require("adm-zip");
-const appManifest = require("../../settings/app-manifest.json");
+const prodAppManifest = require("../../settings/prod-app-manifest.json");
+const devAppManifest = require("../../settings/dev-app-manifest.json");
 
 const isEmpty = (val) =>
   val === undefined ||
@@ -56,16 +57,16 @@ const getDeveloperhubBaseUrl = (region) =>
   constants.DEVELOPERHUB_BASE_URLS.find((url) => url.region === region)?.url ||
   constants.DEVELOPERHUB_BASE_URLS[0].url;
 
-const updateAppManifest = (manifest) => {
+const updateAppManifest = (manifest, appEnv) => {
   fs.writeFileSync(
-    path.join(__dirname, "../../settings/app-manifest.json"),
+    path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
     JSON.stringify(manifest, null, 2)
   );
 };
 
 const updateLaunchManifest = (manifest) => {
   fs.writeFileSync(
-    path.join(__dirname, "../../settings/launch-manifest.json"),
+    path.join(__dirname, "../../settings/prod-app-launch-manifest.json"),
     JSON.stringify(manifest, null, 2)
   );
 };
@@ -376,14 +377,16 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
   };
 };
 
-const createApp = async (region, authtoken, orgId, appName) => {
+const createApp = async (appEnv, region, authtoken, orgId, appName) => {
   const res = await makeApiCall({
     url: `${getDeveloperhubBaseUrl(region)}/manifests`,
     method: "POST",
     headers: { authtoken, organization_uid: orgId },
     data: {
       name: appName,
-      description: appManifest?.description || "",
+      description:
+        (appEnv === "dev" ? devAppManifest : prodAppManifest)?.description ||
+        "",
       target_type: "stack",
       version: 1,
       group: "user",
@@ -400,12 +403,12 @@ const getOrgStacks = async (baseUrl, authtoken, orgId) =>
     headers: { authtoken },
   });
 
-const updateApp = async (region, authtoken, orgId, appUid) =>
+const updateApp = async (appEnv, region, authtoken, orgId, appUid) =>
   makeApiCall({
     url: `${getDeveloperhubBaseUrl(region)}/manifests/${appUid}`,
     method: "PUT",
     headers: { authtoken, organization_uid: orgId },
-    data: appManifest,
+    data: appEnv === "dev" ? devAppManifest : prodAppManifest,
   });
 
 const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>

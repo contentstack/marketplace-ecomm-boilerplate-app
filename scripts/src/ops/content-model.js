@@ -7,9 +7,11 @@ const {
   safePromise,
   getAppBaseUrl,
 } = require("../utils");
-const appManifest = require("../../settings/app-manifest.json");
+const prodAppManifest = require("../../settings/prod-app-manifest.json");
+const devAppManifest = require("../../settings/dev-app-manifest.json");
 
 const contentModel = async (
+  appEnv,
   region,
   baseUrl,
   authtoken,
@@ -18,8 +20,6 @@ const contentModel = async (
   orgId
 ) => {
   try {
-    console.info(region, baseUrl, authtoken, stackApiKey, orgId);
-
     if (
       readlineSync.keyInYN("Do you want a new sample content type & an entry?")
     ) {
@@ -45,13 +45,17 @@ const contentModel = async (
       const productCustomFieldId = extensions?.find(
         (ext) =>
           ext.type == "field" &&
-          ext.title == appManifest.ui_location.locations[0].meta[0].name
+          ext.title ==
+            (appEnv === "dev" ? devAppManifest : prodAppManifest)?.ui_location
+              .locations[0].meta[0].name
       )?.uid;
 
       const categoryCustomFieldId = extensions?.find(
         (ext) =>
           ext.type == "field" &&
-          ext.title == appManifest.ui_location.locations[0].meta[1].name
+          ext.title ==
+            (appEnv === "dev" ? devAppManifest : prodAppManifest).ui_location
+              .locations[0].meta[1].name
       )?.uid;
 
       console.info(productCustomFieldId, categoryCustomFieldId);

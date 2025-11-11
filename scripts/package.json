@@ -7,9 +7,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "login": "node src/ops/login.js",
-    "create-app": "node src/ops/create-update.js create-app",
-    "update-app": "node src/ops/create-update.js update-app",
-    "deploy": "node src/ops/deploy.js"
+    "create-prod-app": "node src/ops/create-update.js create-app prod",
+    "update-prod-app": "node src/ops/create-update.js update-app prod",
+    "create-dev-app": "node src/ops/create-update.js create-app dev",
+    "update-dev-app": "node src/ops/create-update.js update-app dev",
+    "deploy-prod-app": "node src/ops/deploy.js"
   },
   "keywords": [],
   "author": "",

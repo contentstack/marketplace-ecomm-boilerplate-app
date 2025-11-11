@@ -11,7 +11,7 @@ const {
   updateAppManifest,
 } = require("../utils");
 const loginData = require("../../settings/credentials.json");
-const appManifest = require("../../settings/app-manifest.json");
+const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
 (async () => {
   try {
@@ -77,17 +77,17 @@ const appManifest = require("../../settings/app-manifest.json");
       ...launchProjectDetails,
     });
 
-    appManifest.ui_location.base_url =
+    prodAppManifest.ui_location.base_url =
       `${launchProjectDetails?.deployment_url}/#` || "";
-    appManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
-    appManifest.hosting = {
+    prodAppManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
+    prodAppManifest.hosting = {
       provider: "launch",
       deployment_url: launchProjectDetails?.deployment_url || "",
       environment_uid: launchProjectDetails?.env_uid || "",
       project_uid: launchProjectDetails?.project_uid || "",
     };
 
-    updateAppManifest(appManifest);
+    updateAppManifest(prodAppManifest, "prod");
   } catch (error) {
     console.error("Deployment failed:");
     console.info(error);
