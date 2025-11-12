@@ -44,9 +44,12 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     if (op === "create-app") {
       const appName = readlineSync.question("Enter name of app: ");
+      const appDescription =
+        (appEnv === "dev" ? devAppManifest : prodAppManifest)?.description ||
+        "";
 
       const [appError, appData] = await safePromise(
-        createApp(appEnv, region, authtoken, selectedOrgUid, appName),
+        createApp(region, authtoken, selectedOrgUid, appName, appDescription),
         "Error while creating the app."
       );
 
@@ -56,18 +59,15 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       }
 
       appUid = appData;
-
-      updateAppManifest(
-        {
-          ...(appEnv === "dev" ? devAppManifest : prodAppManifest),
-          name: appName,
-          uid: appUid,
-        },
-        appEnv
-      );
+      const appManifest = {
+        ...(appEnv === "dev" ? devAppManifest : prodAppManifest),
+        name: appName,
+        uid: appUid,
+      };
+      updateAppManifest(appManifest, appEnv);
 
       const [appUpdateError, appUpdateData] = await safePromise(
-        updateApp(appEnv, region, authtoken, selectedOrgUid, appUid),
+        updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
         "Error while creating the app."
       );
 
@@ -93,8 +93,10 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         )
       ) {
         appUid = appEnv === "dev" ? devAppManifest.uid : prodAppManifest.uid;
+        const appManifest = appEnv === "dev" ? devAppManifest : prodAppManifest;
+
         const [appError, appData] = await safePromise(
-          updateApp(appEnv, region, authtoken, selectedOrgUid, appUid),
+          updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
           "Error while updating the app"
         );
 
