@@ -1,10 +1,10 @@
 {
-  "name": "qwerty",
+  "name": "ecom dev app",
   "description": "Ecommerce integration app for Contentstack",
   "target_type": "stack",
   "ui_location": {
     "signed": false,
-    "base_url": "https://example.com/#",
+    "base_url": "http://localhost:4000/#",
     "locations": [
       {
         "type": "cs.cm.stack.custom_field",
@@ -54,16 +54,11 @@
       }
     ]
   },
-  "hosting": {
-    "provider": "launch",
-    "deployment_url": "https://example.com",
-    "environment_uid": "",
-    "project_uid": ""
-  },
   "webhook": {
     "signed": true,
     "enabled": true,
     "custom_headers": [],
+    "__comment__": "Please use tunneled url for localhost:8080 for local developement environment",
     "target_url": "https://example.com/webhook",
     "channels": [
       "cs.apps.installations.install",

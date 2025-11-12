@@ -8,6 +8,7 @@ export default {
     SOMETHING_WRONG: 500,
   },
   HTTP_ERROR_TEXTS: {
+    SAMPLE_WEBHOOK_RESPONSE: "This is a sample webhook response.",
     QUERY_MISSING: "Query string parameters are missing.",
     SOMETHING_WENT_WRONG: "Something went wrong, please try again later.",
     API_ERROR: "Error while making API call.",

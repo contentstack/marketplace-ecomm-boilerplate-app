@@ -7,6 +7,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import launchFunction from "./api.js";
+import launchWebhookFunction from "./webhook.js";
 import constants from "./constants/index.js";
 
 const app = express();
@@ -15,6 +16,15 @@ const PORT = 8080;
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.post("/webhook", async (req, res) => {
+  const request = {
+    query: req.query,
+    body: req.body,
+  };
+  const result = await launchWebhookFunction(request);
+  res.status(result.statusCode).json(result.body);
+});
 
 app.use("/", async (req, res) => {
   const request = {
