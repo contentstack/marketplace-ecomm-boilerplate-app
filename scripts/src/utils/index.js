@@ -71,7 +71,7 @@ const updateLaunchManifest = (manifest) => {
   );
 };
 
-const getEnvVariables = () => {
+const getEnvVariables = (launchSubDomain) => {
   try {
     const envVariables = [];
     const apiEnvData = fs.readFileSync(
@@ -88,12 +88,19 @@ const getEnvVariables = () => {
       // Ignore empty lines and comments
       if (!(line.trim() === "" || line.trim().startsWith("#"))) {
         const [key, value] = line.split("=");
-        if (key && value)
-          envVariables.push(
-            `{ key: "${key.trim()}", value: "${value.trim()}" }`
-          );
+        if (!constants.EXCLUDED_ENVS.includes(key)) {
+          if (key && value)
+            envVariables.push(
+              `{ key: "${key.trim()}", value: "${value.trim()}" }`
+            );
+        }
       }
     });
+
+    const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
+    envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
+    envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
+
     return `[${envVariables.join(",")}]`;
   } catch (e) {
     throw new Error(`Error reading or parsing env files: ${e.message}`);
@@ -265,8 +272,10 @@ const uploadAppZip = async (metaData, filePath = "") => {
   }
 };
 
-const _getProjectMetaData = (name, uploadUid, envName) =>
-  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables()}}}`;
+const _getProjectMetaData = (name, uploadUid, envName, launchSubDomain) =>
+  `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
+    launchSubDomain
+  )}}}`;
 
 const createProject = async (
   authtoken,
@@ -274,7 +283,8 @@ const createProject = async (
   baseUrl,
   name,
   uploadUid,
-  envName
+  envName,
+  launchSubDomain
 ) => {
   try {
     console.info("Creating a launch project...");
@@ -291,7 +301,12 @@ const createProject = async (
       data: JSON.stringify({
         query: `mutation CreateProject {
           importProject(
-            project: ${_getProjectMetaData(name, uploadUid, envName)}
+            project: ${_getProjectMetaData(
+              name,
+              uploadUid,
+              envName,
+              launchSubDomain
+            )}
           ) {
             projectType
             name

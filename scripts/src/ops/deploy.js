@@ -44,6 +44,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     const projectName = readlineSync.question("Enter the project name: ");
     const envName = readlineSync.question("Enter the environment name: ");
+    const launchSubDomain = projectName.replace(/ /g, "-");
 
     const buildPath = buildAppZip();
 
@@ -61,7 +62,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       appBaseUrl,
       projectName,
       uploadMetaData?.uploadUid,
-      envName
+      envName,
+      launchSubDomain
     );
 
     const launchProjectDetails = await getProjectDetails(
@@ -74,6 +76,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     updateLaunchManifest({
       project_name: projectName,
       env_name: envName,
+      subdomain: launchSubDomain,
       ...launchProjectDetails,
     });
 
