@@ -25,7 +25,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
     const appBaseUrl = getAppBaseUrl(region);
 
     if (!authtoken) {
-      console.info("Login credentials not found. Please login.");
+      console.info(
+        'Login credentials not found. Please login using "npm run login"'
+      );
       return;
     }
 
