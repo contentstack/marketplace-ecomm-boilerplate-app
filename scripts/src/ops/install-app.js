@@ -1,8 +1,16 @@
 const readlineSync = require("readline-sync");
-const { getOrgStacks, safePromise, installApp } = require("../utils");
+const { getOrgStacks, safePromise, installApp, openLink } = require("../utils");
 const contentModel = require("./content-model");
 
-const install = async (appEnv, region, appUid, baseUrl, authtoken, orgId) => {
+const install = async (
+  appEnv,
+  region,
+  appUid,
+  baseUrl,
+  appBaseUrl,
+  authtoken,
+  orgId
+) => {
   if (readlineSync.keyInYN("Do you want to install the app?")) {
     const [stackError, stackData] = await safePromise(
       getOrgStacks(baseUrl, authtoken, orgId),
@@ -26,7 +34,10 @@ const install = async (appEnv, region, appUid, baseUrl, authtoken, orgId) => {
 
     if (installError) return;
 
-    console.log("App installed successfully.");
+    console.info("App installed successfully.");
+    console.info("Please add and save the configuration at: ");
+    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+    openLink(configPage);
 
     await contentModel(
       appEnv,

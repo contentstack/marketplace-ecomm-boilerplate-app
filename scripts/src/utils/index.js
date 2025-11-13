@@ -4,6 +4,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 const path = require("path");
 const AdmZip = require("adm-zip");
+const { exec } = require("child_process");
 
 const isEmpty = (val) =>
   val === undefined ||
@@ -339,10 +340,12 @@ const createProject = async (
       }),
     });
 
+    const projectUrl = `${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`;
     console.info("Project created successfully...");
     console.info(
-      `Build and deployment has been initiated. You can checks the logs at ${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`
+      "Build and deployment has been initiated. You can checks the logs at: "
     );
+    openLink(projectUrl);
 
     return {
       project_uid: res?.data?.importProject?.uid,
@@ -530,6 +533,22 @@ const createEntry = async (baseUrl, authtoken, stackApiKey, contentTypeId) =>
     },
   });
 
+const openLink = (url) => {
+  console.info(url);
+  const cmd =
+    process.platform === "win32"
+      ? `start ${url}`
+      : process.platform === "darwin"
+      ? `open "${url}"`
+      : `xdg-open "${url}"`;
+  exec(cmd, (err) => {
+    if (err) {
+      console.error("Failed to open the link in browser: ", url);
+      return;
+    }
+  });
+};
+
 module.exports = {
   isEmpty,
   makeApiCall,
@@ -552,4 +571,5 @@ module.exports = {
   createApp,
   updateApp,
   installApp,
+  openLink,
 };

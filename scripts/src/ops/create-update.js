@@ -2,9 +2,11 @@ const readlineSync = require("readline-sync");
 const {
   safePromise,
   getBaseUrl,
+  getAppBaseUrl,
   updateAppManifest,
   createApp,
   updateApp,
+  openLink,
 } = require("../utils");
 const installApp = require("./install-app");
 const loginData = require("../../settings/credentials.json");
@@ -20,6 +22,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
     const userOrgs = loginData?.userOrgs;
     const region = loginData?.region;
     const csBaseUrl = getBaseUrl(region);
+    const appBaseUrl = getAppBaseUrl(region);
 
     if (!authtoken) {
       console.info("Login credentials not found. Please login.");
@@ -33,7 +36,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     orgIndex = readlineSync.keyInSelect(
       userOrgs.map((org) => org.name),
-      "Please select an organization"
+      "Please select an organization to create an app in"
     );
     if (orgIndex === -1) {
       console.info("No organization selected...");
@@ -75,14 +78,17 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         console.error(JSON.stringify(appError, null, 2));
         return;
       }
+      const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
 
       console.info("App created successfully");
+      openLink(url);
 
       await installApp(
         appEnv,
         region,
         appUid,
         csBaseUrl,
+        appBaseUrl,
         authtoken,
         selectedOrgUid
       );
@@ -106,6 +112,8 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         }
 
         console.info("App updated successfully");
+        const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
+        openLink(url);
 
         await installApp(
           appEnv,

@@ -11,7 +11,8 @@
     "update-prod-app": "node src/ops/create-update.js update-app prod",
     "create-dev-app": "node src/ops/create-update.js create-app dev",
     "update-dev-app": "node src/ops/create-update.js update-app dev",
-    "deploy-prod-app": "node src/ops/deploy.js"
+    "deploy-prod-app": "node src/ops/deploy.js",
+    "dev-app-initial-setup": "sh ./src/dev-setup.sh"
   },
   "keywords": [],
   "author": "",

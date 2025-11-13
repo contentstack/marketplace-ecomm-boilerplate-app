@@ -6,6 +6,7 @@ const {
   isEmpty,
   safePromise,
   getAppBaseUrl,
+  openLink,
 } = require("../utils");
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
 const devAppManifest = require("../../settings/dev-app-manifest.json");
@@ -35,8 +36,6 @@ const contentModel = async (
         appUid
       );
 
-      console.info(extensions);
-
       if (isEmpty(extensions)) {
         console.info("The app is not installed or extensions not found.");
         return;
@@ -57,8 +56,6 @@ const contentModel = async (
             (appEnv === "dev" ? devAppManifest : prodAppManifest).ui_location
               .locations[0].meta[1].name
       )?.uid;
-
-      console.info(productCustomFieldId, categoryCustomFieldId);
 
       if (!productCustomFieldId || !categoryCustomFieldId) {
         console.info("App's extensions not found.");
@@ -96,8 +93,10 @@ const contentModel = async (
       const ctUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/content-type-builder`;
       const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/en-us/entry/${EntryData?.entry.uid}/edit`;
 
-      console.info("Content Type Url: ", ctUrl);
-      console.info("Entry Url: ", entryUrl);
+      console.info("Content type url: ");
+      openLink(ctUrl);
+      console.info("Entry url: ");
+      openLink(entryUrl);
     }
   } catch (err) {
     console.info("Something went wrong while creating a content type & entry.");
