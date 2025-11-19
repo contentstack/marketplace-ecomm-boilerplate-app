@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import handler from "../handler/index.js";
 import constants from "../constants/index.js";
 import root_config from "../root_config/index.js";
+import verify from "contentstack-webhook-verify";
 
 // Utility function to check if a value is empty
 const _isEmpty = (val) =>
@@ -77,6 +78,19 @@ const verifyAuthToken = (authToken) => {
   }
 };
 
+const webhookVerify = async (request) => {
+  try {
+    // Get signature from header
+    const signature = request?.headers["x-contentstack-request-signature"];
+
+    // Verify the webhook
+    await verify(signature, request?.body || {});
+    return true;
+  } catch (err) {
+    console.error("Webhook error: ", err);
+    return false;
+  }
+};
 export default {
   _isEmpty,
   decrypt,
@@ -84,4 +98,5 @@ export default {
   verifyRequest,
   generateJwt,
   verifyAuthToken,
+  webhookVerify,
 };

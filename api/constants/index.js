@@ -7,6 +7,7 @@ export default {
     BAD_REQ: 400,
     NOT_FOUND: 404,
     SOMETHING_WRONG: 500,
+    UNAUTHORIZED: 401,
   },
   HTTP_ERROR_TEXTS: {
     SAMPLE_WEBHOOK_RESPONSE: "This is a sample webhook response.",
@@ -17,6 +18,7 @@ export default {
     AUTH_BAD_REQ: "Cannot process this request",
     AUTH_SUCCESS: "Request authorized.",
     JWT_ERROR: "app-token's session has been expired.",
+    WEBHOOK_UNAUTHORIZED: "Unauthorized webhook request.",
   },
   FETCH_PRODUCT_LIMIT: 250,
   HTTP_RESPONSE_HEADERS: {
