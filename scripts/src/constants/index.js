@@ -98,7 +98,12 @@ const constants = {
     },
   ],
   LAUNCH_BASE_PATH: "launch-api/manage/graphql",
-  EXCLUDED_ENVS: ["NODE_ENV", "REACT_APP_UI_URL", "REACT_APP_API_URL"],
+  EXCLUDED_ENVS: [
+    "NODE_ENV",
+    "REACT_APP_UI_URL",
+    "REACT_APP_API_URL",
+    "REACT_APP_API_AUTH_URL",
+  ],
   LAUNCH_DOMAIN: "https://$.contentstackapps.com",
 };
 

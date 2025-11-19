@@ -28,6 +28,7 @@ rm -f "./.env"
 cat <<EOF > ".env"
 REACT_APP_UI_URL=http://localhost:4000
 REACT_APP_API_URL=http://localhost:8080
+REACT_APP_API_AUTH_URL=http://localhost:8080/auth
 REACT_APP_ENCRYPTION_KEY=123
 EOF
 

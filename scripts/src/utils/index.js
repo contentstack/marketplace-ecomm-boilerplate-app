@@ -99,6 +99,9 @@ const getEnvVariables = (launchSubDomain) => {
     const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
     envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
     envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
+    envVariables.push(
+      `{ key: "REACT_APP_API_AUTH_URL", value: "${url}/auth" }`
+    );
 
     return `[${envVariables.join(",")}]`;
   } catch (e) {

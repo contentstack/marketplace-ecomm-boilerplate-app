@@ -153,7 +153,7 @@ const ApiValidationEnabledForConfig = (
 const getAuthtoken = async (appToken: string = "") => {
   try {
     const res = await axios({
-      url: `${process.env.REACT_APP_API_URL}/auth`,
+      url: process.env.REACT_APP_API_AUTH_URL,
       method: "POST",
       headers: { "app-token": appToken },
     });
