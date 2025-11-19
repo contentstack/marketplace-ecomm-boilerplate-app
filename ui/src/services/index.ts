@@ -13,6 +13,7 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
       data,
       headers: {
         "Access-Control-Allow-Origin": "*",
+        authtoken: sessionStorage.getItem("ecom-authtoken"),
       },
     });
 
@@ -53,8 +54,8 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
         return {
           error: true,
           data:
-            resData ||
-            localeTexts.warnings.invalidCredentials.replace(
+            resData
+            || localeTexts.warnings.invalidCredentials.replace(
               "$",
               rootConfig.ecommerceEnv.APP_ENG_NAME
             ),
@@ -63,9 +64,9 @@ const makeAnApiCall = async (url: string, method: Method, data: any) => {
         return {
           error: true,
           data:
-            resData?.message ||
-            localeTexts.warnings.somethingWentWrong ||
-            localeTexts.warnings.unexpectedError,
+            resData?.message
+            || localeTexts.warnings.somethingWentWrong
+            || localeTexts.warnings.unexpectedError,
         };
     }
   }
@@ -149,10 +150,32 @@ const ApiValidationEnabledForConfig = (
     }
   );
 
+const getAuthtoken = async (appToken: string = "") => {
+  try {
+    const res = await axios({
+      url: `${process.env.REACT_APP_API_URL}/auth`,
+      method: "POST",
+      headers: { "app-token": appToken },
+    });
+
+    return {
+      error: false,
+      data: res?.data,
+    };
+  } catch (err: any) {
+    console.error(err);
+    return {
+      error: true,
+      data: err?.response?.data,
+    };
+  }
+};
+
 export {
   getSelectedIDs,
   requestCategories,
   getCustomCategoryData,
   ApiValidationEnabledForConfig,
   makeAnApiCall,
+  getAuthtoken,
 };

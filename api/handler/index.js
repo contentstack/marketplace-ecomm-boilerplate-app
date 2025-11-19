@@ -141,8 +141,17 @@ const getApiValidationForConfigPageKeys = async (
   return response;
 };
 
+const getCSPublicKey = async () =>
+  (
+    await _makeApiCall({
+      url: constants.CS_PUBLIC_KEY,
+      method: "GET",
+    })
+  )?.["signing-key"];
+
 export default {
   _makeApiCall,
+  getCSPublicKey,
   getProductByID,
   getAllProductsAndCategories,
   getSelectedProductsAndCategories,

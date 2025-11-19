@@ -35,8 +35,8 @@ export const DeleteModalConfig = React.memo((props: any) => {
   const handleDeleteConfirmation = () => {
     if (!isConfirmationDisabled) {
       if (
-        deleteConfirmationName &&
-        deleteConfirmationName === props.multiConfigLabelName
+        deleteConfirmationName
+        && deleteConfirmationName === props.multiConfigLabelName
       ) {
         props.removeAccordion();
         toastMessage({

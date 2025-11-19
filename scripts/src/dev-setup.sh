@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# 16-byte random hex string
+uuid_raw=$(openssl rand -hex 16)
+
+# UUID as JWT secret(which you need to update it in ./api/.env)
+uuid_formatted="${uuid_raw:0:8}-${uuid_raw:8:4}-${uuid_raw:12:4}-${uuid_raw:16:4}-${uuid_raw:20:12}"
+
+
 echo "installing API dependencies."
 cd ../api
 npm i 
@@ -7,6 +14,7 @@ echo "creating api/.env file."
 rm -f "./.env"
 cat <<EOF > ".env"
 NODE_ENV=development
+JWT_API_SECRET=$uuid_formatted
 EOF
 
 echo "created api/.env file."

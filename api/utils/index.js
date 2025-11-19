@@ -1,5 +1,8 @@
 // Import necessary modules
 import CryptoJS from "crypto-js";
+import jwt from "jsonwebtoken";
+import handler from "../handler/index.js";
+import constants from "../constants/index.js";
 import root_config from "../root_config/index.js";
 
 // Utility function to check if a value is empty
@@ -55,8 +58,30 @@ const processRequestBody = (requestBody) => {
   return requestBody;
 };
 
+const verifyRequest = async (appToken) =>
+  jwt.verify(appToken, await handler.getCSPublicKey());
+
+const generateJwt = (jwtPayload) => {
+  return jwt.sign(jwtPayload, process.env.JWT_API_SECRET, {
+    expiresIn: constants.JWT_EXPIRES_IN,
+  });
+};
+
+const verifyAuthToken = (authToken) => {
+  try {
+    jwt.verify(authToken, process.env.JWT_API_SECRET);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
 export default {
   _isEmpty,
   decrypt,
   processRequestBody,
+  verifyRequest,
+  generateJwt,
+  verifyAuthToken,
 };

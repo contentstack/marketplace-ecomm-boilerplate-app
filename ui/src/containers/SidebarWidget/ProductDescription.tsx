@@ -8,10 +8,8 @@ import NoImg from "../../assets/NoImg.svg";
 import { getSanitizedHTML } from "../../common/utils";
 
 const ProductDescription: React.FC<Props> = function ({ product, config }) {
-  const { id, name, description, price, sku, image }: TypeProduct =
-    rootConfig.returnFormattedProduct(product, config);
-  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
-    localeTexts.sidebarWidget.labels;
+  const { id, name, description, price, sku, image }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
+  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =    localeTexts.sidebarWidget.labels;
 
   return (
     <div>

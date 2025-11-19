@@ -1,7 +1,18 @@
 /* Import React modules */
-import React, { Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { Suspense, useEffect, useState } from "react";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useSearchParams,
+  useLocation,
+} from "react-router-dom";
+import { SkeletonTile } from "@contentstack/venus-components";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import WarningMessage from "../../components/WarningMessage";
+import rootConfig from "../../root_config";
+import { setAuthtoken } from "../../common/utils/index";
+import localeTexts from "../../common/locale/en-us/index";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";
 import AppConfigurationExtensionProvider from "../../common/providers/AppConfigurationExtensionProvider";
@@ -35,12 +46,49 @@ const SelectorExtension = React.lazy(() => import("../SelectorPage/index"));
 const SidebarExtension = React.lazy(() => import("../SidebarWidget/index"));
 
 function App() {
-  //  below function is called for app signing, i.e. for verifying app tokens in ui
-  // const [searchParams] = useSearchParams();
-  // if (!rootConfig.verifyAppSigning(searchParams.get("app_token"))) {
-  //   return <div>{localeTexts.appFailedText.signFail}</div>;
-  // }
-  return (
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const [verified, setVerified] = useState(false);
+  const [loading, setLaoding] = useState(true);
+
+  useEffect(() => {
+    //  below function is called for app signing, i.e. for verifying app tokens in ui
+    const verify = async () => {
+      if (location.pathname === "/selector-page") {
+        const authToken = searchParams.get("authtoken") || "";
+        if (authToken) {
+          setAuthtoken(authToken);
+          setVerified(true);
+        } else setVerified(false);
+      } else {
+        const response = await rootConfig.verifyAppSigning(
+          searchParams.get("app-token") || ""
+        );
+        setVerified(response);
+      }
+      setLaoding(false);
+    };
+
+    verify();
+  }, []);
+
+  if (loading) {
+    return (
+      <SkeletonTile
+        numberOfTiles={2}
+        tileHeight={10}
+        tileWidth={300}
+        tileBottomSpace={20}
+        tileTopSpace={10}
+        tileleftSpace={10}
+        tileRadius={10}
+      />
+    );
+  }
+
+  return !verified ? (
+    <WarningMessage content={localeTexts.appFailedText.signFail} />
+  ) : (
     <div className="app">
       <ErrorBoundary>
         <MarketplaceAppProvider>

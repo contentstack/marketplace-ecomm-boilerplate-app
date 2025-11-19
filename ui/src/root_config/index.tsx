@@ -23,6 +23,7 @@ import categoryConfig from "./categories";
 import {
   ApiValidationEnabledForConfig,
   makeAnApiCall,
+  getAuthtoken,
 } from "../services/index";
 /* eslint-enable */
 
@@ -385,36 +386,27 @@ interface TokenPayload extends JWTPayload {
  * for more details - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#3-verifyappsigning
  */
 const verifyAppSigning = async (app_token: string): Promise<boolean> => {
-  if (app_token) {
-    try {
-      const { data }: { data: any } = await axios.get(
-        "https://app.contentstack.com/.well-known/public-keys.json"
-      );
-      const publicKeyJWK = data["signing-key"];
-      // Import the public key from the JWK format
-      const publicKey = await importJWK(publicKeyJWK, "RS256");
-      // Verify the token
-      const { payload } = (await jwtVerify(app_token, publicKey)) as {
-        payload: TokenPayload;
-      };
-      const {
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key,
-      } = payload;
-    } catch (e) {
-      console.error(
-        "Token is invalid or request is not initiated from Contentstack!",
-        e
-      );
+  if (!app_token) {
+    console.error("Token is missing!");
+    return false;
+  }
+
+  try {
+    const res = await getAuthtoken(app_token);
+    if (!res.error) {
+      sessionStorage.setItem("ecom-authtoken", res.data?.authtoken);
+      return true;
+    } else {
+      sessionStorage.setItem("ecom-authtoken", "");
       return false;
     }
-    return true;
+  } catch (e) {
+    console.error(
+      "Token is invalid or request is not initiated from Contentstack!",
+      e
+    );
+    return false;
   }
-  console.error("Token is missing!");
-  return false;
 };
 
 /**

@@ -8,6 +8,7 @@ import express from "express";
 import cors from "cors";
 import launchFunction from "./api.js";
 import launchWebhookFunction from "./webhook.js";
+import launchAuthFunction from "./auth.js";
 import constants from "./constants/index.js";
 
 const app = express();
@@ -18,20 +19,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.post("/webhook", async (req, res) => {
-  const request = {
-    query: req.query,
-    body: req.body,
-  };
-  const result = await launchWebhookFunction(request);
+  const result = await launchWebhookFunction(req);
+  res.status(result.statusCode).json(result.body);
+});
+
+app.post("/auth", async (req, res) => {
+  const result = await launchAuthFunction(req);
   res.status(result.statusCode).json(result.body);
 });
 
 app.use("/", async (req, res) => {
-  const request = {
-    query: req.query,
-    body: req.body,
-  };
-  const result = await launchFunction(request);
+  const result = await launchFunction(req);
   res.status(result.statusCode).json(result.body);
 });
 

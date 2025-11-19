@@ -4,7 +4,7 @@
   "target_type": "stack",
   "ui_location": {
     "signed": false,
-    "base_url": "https://example.com/#",
+    "base_url": "https://example.com",
     "locations": [
       {
         "type": "cs.cm.stack.custom_field",

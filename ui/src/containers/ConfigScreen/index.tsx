@@ -178,13 +178,11 @@ const ConfigScreen: React.FC = function () {
         const keyConfig = config?.[key];
 
         if (keyConfig?.isConfidential && keyConfig?.saveInConfig)
-          encryptedObj[key] =
-            typeof obj[key] === "object" && obj[key] !== null
+          encryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
               ? encrypt(JSON.stringify(obj[key]))
               : encrypt(obj[key]);
         else
-          encryptedObj[key] =
-            typeof obj[key] === "object" && obj[key] !== null
+          encryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
               ? encryptObject(obj[key], config)
               : obj[key];
       });
@@ -215,8 +213,7 @@ const ConfigScreen: React.FC = function () {
             decryptedObj[key] = decryptObject(obj[key], config);
           }
         } else {
-          decryptedObj[key] =
-            typeof obj[key] === "object" && obj[key] !== null
+          decryptedObj[key] =            typeof obj[key] === "object" && obj[key] !== null
               ? decryptObject(obj[key], config)
               : obj[key];
         }
@@ -237,14 +234,12 @@ const ConfigScreen: React.FC = function () {
     async (e: any, multiConfigID: any, isMultiConfig: any) => {
       const { name: fieldName, value } = e?.target || {};
       let configuration = state?.installationData?.configuration || {};
-      let serverConfiguration =
-        state?.installationData?.serverConfiguration || {};
+      let serverConfiguration =        state?.installationData?.serverConfiguration || {};
       let fieldValue = e?.target?.checked ? e?.target?.id : value;
       fieldValue = typeof value === "string" ? value?.trim() : value;
 
       if (e?.target?.type === "checkbox") {
-        const previousSelectedOptions =
-          configuration?.multi_config_keys?.[multiConfigID]?.[fieldName];
+        const previousSelectedOptions =          configuration?.multi_config_keys?.[multiConfigID]?.[fieldName];
         const currentData = [...previousSelectedOptions, fieldValue];
         fieldValue = currentData;
       }
@@ -260,8 +255,7 @@ const ConfigScreen: React.FC = function () {
 
       if (isMultiConfig) {
         const shouldSaveInConfig = configInputFields?.[fieldName]?.saveInConfig;
-        const shouldSaveInServerConfig =
-          configInputFields?.[fieldName]?.saveInServerConfig;
+        const shouldSaveInServerConfig =          configInputFields?.[fieldName]?.saveInServerConfig;
 
         if (shouldSaveInConfig && shouldSaveInServerConfig) {
           // Save in both `configuration` and `serverConfiguration`
@@ -280,8 +274,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
-                  {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -305,8 +299,8 @@ const ConfigScreen: React.FC = function () {
             multi_config_keys: {
               ...serverConfiguration?.multi_config_keys,
               [multiConfigID]: {
-                ...(serverConfiguration?.multi_config_keys?.[multiConfigID] ||
-                  {}),
+                ...(serverConfiguration?.multi_config_keys?.[multiConfigID]
+                  || {}),
                 [fieldName]: fieldValue,
               },
             },
@@ -1563,8 +1557,8 @@ const ConfigScreen: React.FC = function () {
                                   }
                                   checked={
                                     state?.installationData?.configuration
-                                      ?.default_multi_config_key ===
-                                    multiConfigurationID
+                                      ?.default_multi_config_key
+                                    === multiConfigurationID
                                   }
                                   onClick={(e: any) =>
                                     handleCheckboxChange(

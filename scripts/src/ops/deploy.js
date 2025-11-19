@@ -82,8 +82,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       ...launchProjectDetails,
     });
 
-    prodAppManifest.ui_location.base_url =
-      `${launchProjectDetails?.deployment_url}/#` || "";
+    prodAppManifest.ui_location.base_url = launchProjectDetails?.deployment_url;
     prodAppManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
     prodAppManifest.hosting = {
       provider: "launch",
