@@ -6,9 +6,11 @@ const {
   buildAppZip,
   uploadAppZip,
   createProject,
+  reDeployProject,
   getProjectDetails,
   updateLaunchManifest,
   updateAppManifest,
+  getLaunchManifest,
 } = require("../utils");
 const loginData = require("../../settings/credentials.json");
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
@@ -20,6 +22,8 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     const region = loginData?.region;
     // const csBaseUrl = getBaseUrl(region);
     const appBaseUrl = getAppBaseUrl(region);
+
+    const launchManifest = getLaunchManifest();
 
     if (!authtoken) {
       console.info(
@@ -44,10 +48,6 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     const selectedOrgUid = userOrgs[orgIndex].uid;
 
-    const projectName = readlineSync.question("Enter the project name: ");
-    const envName = readlineSync.question("Enter the environment name: ");
-    const launchSubDomain = projectName.replace(/ /g, "-");
-
     const buildPath = buildAppZip();
 
     const uploadMetaData = await getUploadMetaData(
@@ -58,40 +58,62 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     await uploadAppZip(uploadMetaData, buildPath);
 
-    const launchMetaData = await createProject(
-      authtoken,
-      selectedOrgUid,
-      appBaseUrl,
-      projectName,
-      uploadMetaData?.uploadUid,
-      envName,
-      launchSubDomain
-    );
+    if (launchManifest.created) {
+      console.info("Launch deployment details found, redeploying the app now.");
 
-    const launchProjectDetails = await getProjectDetails(
-      appBaseUrl,
-      launchMetaData,
-      authtoken,
-      selectedOrgUid
-    );
+      const deploymentId = await reDeployProject(
+        authtoken,
+        selectedOrgUid,
+        appBaseUrl,
+        uploadMetaData?.uploadUid,
+        launchManifest.data
+      );
 
-    updateLaunchManifest({
-      project_name: projectName,
-      env_name: envName,
-      subdomain: launchSubDomain,
-      ...launchProjectDetails,
-    });
+      updateLaunchManifest({
+        ...launchManifest.data,
+        deployment_uid: deploymentId,
+      });
+    } else {
+      const projectName = readlineSync.question("Enter the project name: ");
+      const envName = readlineSync.question("Enter the environment name: ");
+      const launchSubDomain = projectName.replace(/ /g, "-");
 
-    prodAppManifest.ui_location.base_url = launchProjectDetails?.deployment_url;
-    prodAppManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
-    prodAppManifest.hosting = {
-      provider: "launch",
-      deployment_url: launchProjectDetails?.deployment_url || "",
-      environment_uid: launchProjectDetails?.env_uid || "",
-      project_uid: launchProjectDetails?.project_uid || "",
-    };
+      const launchMetaData = await createProject(
+        authtoken,
+        selectedOrgUid,
+        appBaseUrl,
+        projectName,
+        uploadMetaData?.uploadUid,
+        envName,
+        launchSubDomain
+      );
 
-    updateAppManifest(prodAppManifest, "prod");
+      const launchProjectDetails = await getProjectDetails(
+        appBaseUrl,
+        launchMetaData,
+        authtoken,
+        selectedOrgUid
+      );
+
+      updateLaunchManifest({
+        project_name: projectName,
+        env_name: envName,
+        subdomain: launchSubDomain,
+        ...launchProjectDetails,
+      });
+
+      prodAppManifest.ui_location.base_url =
+        launchProjectDetails?.deployment_url;
+      prodAppManifest.webhook.target_url = `${launchProjectDetails?.deployment_url}/webhook`;
+      prodAppManifest.hosting = {
+        provider: "launch",
+        deployment_url: launchProjectDetails?.deployment_url || "",
+        environment_uid: launchProjectDetails?.env_uid || "",
+        project_uid: launchProjectDetails?.project_uid || "",
+      };
+
+      updateAppManifest(prodAppManifest, "prod");
+    }
   } catch (error) {
     console.error("Deployment failed:");
     console.info(error);
