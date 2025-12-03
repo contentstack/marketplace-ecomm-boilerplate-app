@@ -23,7 +23,14 @@ export default async function handler(request, response) {
     console.info(constants.LOGS.QUERY_PARAMS, query);
 
     const authToken = request.headers?.["authtoken"] || "";
-    if (!authToken || !utils.verifyAuthToken(authToken)) {
+    const signature = request.headers?.["ecom-signature"] || "";
+
+    //JWT token verification & simple replay-attack verification
+    if (
+      !authToken ||
+      !utils.verifyAuthToken(authToken) ||
+      !utils.verifyReplay(authToken, signature)
+    ) {
       throw {
         message: constants.HTTP_ERROR_TEXTS.AUTH_BAD_REQ,
         statusCode: constants.HTTP_ERROR_CODES.BAD_REQ,

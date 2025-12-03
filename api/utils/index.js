@@ -91,6 +91,21 @@ const webhookVerify = async (request) => {
     return false;
   }
 };
+
+const verifyReplay = (authToken, signature = "") => {
+  const serverTimestamp = Math.floor(Date.now() / 1000);
+
+  const headerTextArr = (
+    CryptoJS.AES.decrypt(signature, authToken).toString(CryptoJS.enc.Utf8) || ""
+  ).split("-");
+  const receivedTimestamp = headerTextArr?.[0];
+
+  if (_isEmpty(headerTextArr)) return false;
+  if (_isEmpty(receivedTimestamp)) return false;
+
+  return serverTimestamp - receivedTimestamp <= constants.REPLAY_LIMIT_IN_SECS;
+};
+
 export default {
   _isEmpty,
   decrypt,
@@ -99,4 +114,5 @@ export default {
   generateJwt,
   verifyAuthToken,
   webhookVerify,
+  verifyReplay,
 };

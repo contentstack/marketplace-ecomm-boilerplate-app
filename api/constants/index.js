@@ -1,5 +1,6 @@
 export default {
   JWT_EXPIRES_IN: "30m",
+  REPLAY_LIMIT_IN_SECS: 30,
   REQ_TIMEOUT: 17 * 1000,
   EXTRACT_ID_REGX: /\(\d+\)/gm, // extracts the digits from the data as an ID for the error response
   HTTP_ERROR_CODES: {

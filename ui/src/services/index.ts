@@ -1,4 +1,5 @@
 import axios, { Method } from "axios";
+import CryptoJS from "crypto-js";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 import categoryConfig from "../root_config/categories";
@@ -7,13 +8,20 @@ import { KeyValueObj } from "../common/types";
 // common function for an API call to your backend
 const makeAnApiCall = async (url: string, method: Method, data: any) => {
   try {
+    const authtoken = <string>sessionStorage.getItem("ecom-authtoken");
+    const now = Math.floor(Date.now() / 1000);
+    const signature = CryptoJS?.AES?.encrypt(
+      `${now}-${method}`,
+      authtoken
+    ).toString();
     const response = await axios({
       url,
       method,
       data,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        authtoken: sessionStorage.getItem("ecom-authtoken"),
+        authtoken,
+        "ecom-signature": signature,
       },
     });
 
