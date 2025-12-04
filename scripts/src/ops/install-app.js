@@ -1,5 +1,11 @@
 const readlineSync = require("readline-sync");
-const { getOrgStacks, safePromise, installApp, openLink } = require("../utils");
+const {
+  getOrgStacks,
+  safePromise,
+  installApp,
+  openLink,
+  isEmpty,
+} = require("../utils");
 const contentModel = require("./content-model");
 
 const install = async (
@@ -20,6 +26,10 @@ const install = async (
     if (stackError) return;
 
     const stackChoices = stackData.stacks.map((s) => s.name);
+    if (isEmpty(stackChoices)) {
+      console.error("No stacks found!");
+      return;
+    }
     const stackIndex = readlineSync.keyInSelect(
       stackChoices,
       "Select a stack to install the app:"

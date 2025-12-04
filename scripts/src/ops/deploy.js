@@ -79,6 +79,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       const launchSubDomain = projectName.replace(/ /g, "-");
 
       const launchMetaData = await createProject(
+        region,
         authtoken,
         selectedOrgUid,
         appBaseUrl,

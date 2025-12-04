@@ -104,7 +104,6 @@ const constants = {
     "REACT_APP_API_URL",
     "REACT_APP_API_AUTH_URL",
   ],
-  LAUNCH_DOMAIN: "https://$.contentstackapps.com",
 };
 
 module.exports = constants;

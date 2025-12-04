@@ -70,7 +70,7 @@ const updateLaunchManifest = (manifest) => {
   );
 };
 
-const getEnvVariables = (launchSubDomain) => {
+const getEnvVariables = (launchSubDomain, region) => {
   try {
     const envVariables = [];
     const apiEnvData = fs.readFileSync(
@@ -96,7 +96,9 @@ const getEnvVariables = (launchSubDomain) => {
       }
     });
 
-    const url = constants.LAUNCH_DOMAIN.replace("$", launchSubDomain);
+    const url = `https://${launchSubDomain}.${
+      region === "" ? "" : `${region}-`
+    }contentstackapps.com`;
     envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
     envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
     envVariables.push(
@@ -274,12 +276,20 @@ const uploadAppZip = async (metaData, filePath = "") => {
   }
 };
 
-const _getProjectMetaData = (name, uploadUid, envName, launchSubDomain) =>
+const _getProjectMetaData = (
+  name,
+  uploadUid,
+  envName,
+  launchSubDomain,
+  region
+) =>
   `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
-    launchSubDomain
+    launchSubDomain,
+    region
   )}}}`;
 
 const createProject = async (
+  region,
   authtoken,
   orgId,
   baseUrl,
@@ -307,7 +317,8 @@ const createProject = async (
               name,
               uploadUid,
               envName,
-              launchSubDomain
+              launchSubDomain,
+              region
             )}
           ) {
             projectType
