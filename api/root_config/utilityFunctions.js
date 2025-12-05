@@ -1,5 +1,5 @@
 // Import the root configuration
-import root_config from "./index.js";
+import config from "./config.js";
 
 // Function to generate headers
 export const getHeaders = (key) => {
@@ -25,11 +25,11 @@ export const getUrl = (
   if (id) {
     url += `/${id}`;
   } else if (searchParam) {
-    url += `/search?query=${searchParam}&${root_config.FIELDS_URL}`;
+    url += `/search?query=${searchParam}&${config.FIELDS_URL}`;
     if (page) url += `&currentPage=${page}`;
     if (limit) url += `&pageSize=${limit}`;
   } else if (query === "product") {
-    url += `${root_config.SEARCH_URL_PARAMS}?${root_config.FIELDS_URL}`;
+    url += `${config.SEARCH_URL_PARAMS}?${config.FIELDS_URL}`;
     if (page) url += `&currentPage=${page}`;
     if (limit) url += `&pageSize=${limit}`;
   } else {

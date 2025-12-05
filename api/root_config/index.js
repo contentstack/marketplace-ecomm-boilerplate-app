@@ -1,5 +1,6 @@
 import axios from "axios";
 import constants from "../constants/index.js";
+import config from "./config.js";
 import {
   getByCategoryIdUrl,
   getUrl,
@@ -20,18 +21,6 @@ const _makeApiCall = async (opts) => {
 };
 
 const root_config = {
-  API_BASE_URL: "https://my.example.com/$/v3/", // Add the URL of your commerce app API where $ is a value added through Users response
-  URI_ENDPOINTS: {
-    product: "products",
-    category: "catalogs",
-  },
-  SEARCH_URL_PARAMS: "/search",
-  FIELDS_URL: "fields=FULL",
-  SENSITIVE_CONFIG_KEYS: ["access_token", "project_key"],
-  ENDPOINTS_CONFIG: {
-    getSeparateProductsAndCategories: true,
-  },
-
   getSingleProduct: async (productQuery, productPayload) => {
     // const url = getUrl(
     //   {
@@ -119,7 +108,7 @@ const root_config = {
     url += data["id:in"] ?
       `${urlHasQueryParams ? "&" : "?"}id:in=${data["id:in"]}`
       : `${urlHasQueryParams ? "&" : "?"}sku:in=${data["sku:in"]}`;
-    if (data?.query === "product") url += root_config.SEARCH_URL_PARAMS;
+    if (data?.query === "product") url += config.SEARCH_URL_PARAMS;
     if (data?.limit) url += `&limit=${data?.limit}`;
 
     return _makeApiCall({
@@ -179,7 +168,7 @@ const root_config = {
     return _makeApiCall({
       url: `${getUrl({ query: data?.query }, key)}?categories:in=${
         data["categories:in"]
-      }&${root_config.SEARCH_URL_PARAMS}`,
+      }&${config.SEARCH_URL_PARAMS}`,
       method: "GET",
       headers: getHeaders(key),
     });
