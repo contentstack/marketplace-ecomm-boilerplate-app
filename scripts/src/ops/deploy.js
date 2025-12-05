@@ -56,7 +56,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
       selectedOrgUid
     );
 
-    await uploadAppZip(uploadMetaData, buildPath);
+    await uploadAppZip(region, uploadMetaData, buildPath);
 
     if (launchManifest.created) {
       console.info("Launch deployment details found, redeploying the app now.");

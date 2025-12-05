@@ -70,7 +70,7 @@ const updateLaunchManifest = (manifest) => {
   );
 };
 
-const getEnvVariables = (launchSubDomain, region) => {
+const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
   try {
     const envVariables = [];
     const apiEnvData = fs.readFileSync(
@@ -96,9 +96,18 @@ const getEnvVariables = (launchSubDomain, region) => {
       }
     });
 
-    const url = `https://${launchSubDomain}.${
-      region === "" ? "" : `${region}-`
-    }contentstackapps.com`;
+    let url = "";
+    if (deploymentUrl) {
+      url = deploymentUrl;
+    } else {
+      url = `https://${launchSubDomain}.`;
+      if (region === "" || region === "eu")
+        url += `${region === "" ? "" : `${region}-`}contentstackapps.com`;
+      else if (region === "azure-na" || region === "azure-eu")
+        url = `${region === "azure-na" ? "" : "eu-"}azcontentstackapps.com`;
+      else url += "gcpcontentstackapps.com";
+    }
+
     envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
     envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
     envVariables.push(
@@ -242,7 +251,7 @@ const getUploadMetaData = async (authtoken, baseUrl, orgId) => {
   }
 };
 
-const _getUploadFormData = (metaData, filePath) => {
+const _getAwsUploadFormData = (metaData, filePath) => {
   let data = new FormData();
 
   (metaData.fields || []).forEach((field) => {
@@ -254,20 +263,51 @@ const _getUploadFormData = (metaData, filePath) => {
   return data;
 };
 
-const uploadAppZip = async (metaData, filePath = "") => {
+const _getAzureUploadHeaders = (metaData) => {
+  let headers = {};
+
+  (metaData?.headers || []).forEach((header) => {
+    headers[header.key] = header.value;
+  });
+
+  return headers;
+};
+
+const uploadAppZip = async (region, metaData, filePath = "") => {
   try {
     console.info("Uploading the app zip...");
 
-    const data = _getUploadFormData(metaData, filePath);
-    await makeApiCall({
-      method: metaData?.method,
-      maxBodyLength: Infinity,
-      url: metaData?.uploadUrl,
-      headers: {
-        ...data.getHeaders(),
-      },
-      data,
-    });
+    //AZURE cloud service provider
+    if (region === "azure-na" || region === "azure-eu") {
+      await makeApiCall({
+        method: metaData?.method,
+        url: metaData?.uploadUrl,
+        maxBodyLength: Infinity,
+        headers: _getAzureUploadHeaders(metaData),
+        data: fs.readFileSync(filePath),
+      });
+    } else if (region === "" || region === "eu") {
+      //AWS cloud service provider
+      const data = _getAwsUploadFormData(metaData, filePath);
+      await makeApiCall({
+        method: metaData?.method,
+        maxBodyLength: Infinity,
+        url: metaData?.uploadUrl,
+        headers: {
+          ...data.getHeaders(),
+        },
+        data,
+      });
+    } else {
+      //Google cloud service provider
+      await makeApiCall({
+        method: metaData?.method,
+        url: metaData?.uploadUrl,
+        maxBodyLength: Infinity,
+        headers: { "content-type": "application/zip" },
+        data: fs.readFileSync(filePath),
+      });
+    }
 
     console.info("App zip uploaded successfully...");
   } catch (error) {
@@ -284,6 +324,7 @@ const _getProjectMetaData = (
   region
 ) =>
   `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
+    "",
     launchSubDomain,
     region
   )}}}`;
@@ -407,6 +448,50 @@ const getProjectDetails = async (baseUrl, metaData, authtoken, orgId) => {
   };
 };
 
+const updateProjectEnvs = async (baseUrl, metaData, authtoken, orgId) =>
+  makeApiCall({
+    method: "POST",
+    maxBodyLength: Infinity,
+    url: `${baseUrl}/${constants.LAUNCH_BASE_PATH}`,
+    headers: {
+      authtoken,
+      organization_uid: orgId,
+      "x-project-uid": metaData?.project_uid,
+      "content-type": "application/json",
+    },
+    data: JSON.stringify({
+      query: `mutation updateEnvironment {
+  updateEnvironment(
+    environment: {uid: "${
+      metaData?.env_uid
+    }", environmentVariables: ${getEnvVariables(metaData.deployment_url)}}
+  ) {
+    name
+    uid
+    autoDeployOnPush
+    project
+    updatedAt
+    frameworkPreset
+    buildCommand
+    outputDirectory
+    serverCommand
+    gitBranch
+    environmentVariables {
+      key
+      value
+    }
+    passwordProtection {
+      isEnabled
+      username
+      password
+    }
+    isCachePrimingEnabled
+  }
+}`,
+      variables: {},
+    }),
+  });
+
 const reDeployProject = async (
   authtoken,
   orgId,
@@ -415,6 +500,7 @@ const reDeployProject = async (
   launchMetaData
 ) => {
   try {
+    await updateProjectEnvs(baseUrl, launchMetaData, authtoken, orgId);
     const res = await makeApiCall({
       method: "POST",
       maxBodyLength: Infinity,

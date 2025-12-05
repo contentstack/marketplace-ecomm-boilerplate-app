@@ -17,7 +17,8 @@ import useAppConfig from "../../common/hooks/useAppConfig";
 import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
 
 const Category: React.FC<Props> = function ({ categories, remove }) {
-  const { id, name, customUrl, description, isCategoryDeleted } =    rootConfig.returnFormattedCategory(categories);
+  const { id, name, customUrl, description, isCategoryDeleted } =
+    rootConfig.returnFormattedCategory(categories);
 
   const {
     attributes,
@@ -117,8 +118,8 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
   ]?.filter(
     (action) =>
       !(
-        isCategoryDeleted
-        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
+        isCategoryDeleted &&
+        action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
       )
   );
 
