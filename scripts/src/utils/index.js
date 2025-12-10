@@ -592,6 +592,31 @@ const installApp = async (region, authtoken, orgId, appUid, stackApiKey) =>
     },
   });
 
+const updateInstallation = async (
+  region,
+  authtoken,
+  orgId,
+  appUid,
+  stackApiKey
+) => {
+  return makeApiCall({
+    method: "PUT",
+    url: `${getDeveloperhubBaseUrl(
+      region
+    )}/manifests/${appUid}/reinstall?include_draft=true`,
+    headers: {
+      authtoken,
+      organization_uid: orgId,
+      "content-type": "application/json",
+    },
+    data: {
+      include_draft: true,
+      target_type: "stack",
+      target_uid: stackApiKey,
+    },
+  });
+};
+
 const getExtensions = async (baseUrl, authtoken, stackApiKey, appUid) => {
   const res = await makeApiCall({
     url: `${baseUrl}/v3/extensions?include_marketplace_extensions=true&desc=updated_at`,
@@ -798,6 +823,7 @@ module.exports = {
   createApp,
   updateApp,
   installApp,
+  updateInstallation,
   openLink,
   getLaunchManifest,
 };

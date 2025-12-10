@@ -122,6 +122,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           region,
           appUid,
           csBaseUrl,
+          appBaseUrl,
           authtoken,
           selectedOrgUid
         );

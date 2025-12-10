@@ -2,7 +2,9 @@ const readlineSync = require("readline-sync");
 const {
   getOrgStacks,
   safePromise,
+  getExtensions,
   installApp,
+  updateInstallation,
   openLink,
   isEmpty,
 } = require("../utils");
@@ -37,17 +39,41 @@ const install = async (
     if (stackIndex === -1) throw new Error("No stack selected!");
     const stackApiKey = stackData.stacks[stackIndex].api_key;
 
-    const [installError, installData] = await safePromise(
-      installApp(region, authtoken, orgId, appUid, stackApiKey),
-      "Failed to install the app"
+    const [installedError, installedAppsData] = await safePromise(
+      getExtensions(baseUrl, authtoken, stackApiKey, appUid),
+      "Failed to fetch installed apps!"
     );
 
-    if (installError) return;
+    if (installedError) return;
+    let installData;
 
-    console.info("App installed successfully.");
-    console.info("Please add and save the configuration at: ");
-    const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
-    openLink(configPage);
+    if (!isEmpty(installedAppsData)) {
+      console.info(
+        `App already installed in this stack (${stackChoices[stackIndex]}). Updating installation...`
+      );
+
+      const [updateError, updatedData] = await safePromise(
+        updateInstallation(region, authtoken, orgId, appUid, stackApiKey),
+        "App installation failed."
+      );
+
+      if (updateError) return;
+      installData = updatedData;
+    } else {
+      console.info("Installing app...");
+      const [installError, newInstallData] = await safePromise(
+        installApp(region, authtoken, orgId, appUid, stackApiKey),
+        "Failed to install the app"
+      );
+
+      if (installError) return;
+      installData = newInstallData;
+
+      const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+      console.info("App installed successfully.");
+      console.info("Please add and save the configuration at: ");
+      openLink(configPage);
+    }
 
     await contentModel(
       appEnv,
