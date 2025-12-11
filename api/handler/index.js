@@ -1,6 +1,7 @@
 import axios from "axios";
 import constants from "../constants/index.js";
 import root_config from "../root_config/index.js";
+import config from "../root_config/config.js";
 
 /**
  * Makes a third-party API call with the provided options.
@@ -54,7 +55,7 @@ const getAllProductsAndCategories = async (
   productCategoryPayload
 ) => {
   let response = {};
-  if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
+  if (config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
     if (productCategoryQuery?.query === "product") {
       response = await root_config.getAllProducts(
         productCategoryQuery,
@@ -88,7 +89,7 @@ const getSelectedProductsAndCategories = async (
   productCategoryPayload
 ) => {
   let response = {};
-  if (root_config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
+  if (config.ENDPOINTS_CONFIG.getSeparateProductsAndCategories) {
     if (productCategoryQuery?.query === "product") {
       response = await root_config.getSelectedProductsById(
         productCategoryQuery,
@@ -106,7 +107,7 @@ const getSelectedProductsAndCategories = async (
       productCategoryPayload
     );
   }
-  return { [root_config.URI_ENDPOINTS[productCategoryQuery?.query]]: response };
+  return { [config.URI_ENDPOINTS[productCategoryQuery?.query]]: response };
 };
 
 /**

@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import handler from "../handler/index.js";
 import constants from "../constants/index.js";
-import root_config from "../root_config/index.js";
+import config from "../root_config/config.js";
 import verify from "contentstack-webhook-verify";
 
 // Utility function to check if a value is empty
@@ -33,10 +33,10 @@ const processRequestBody = (requestBody) => {
 
       const result = {};
       Object.keys(obj).forEach((key) => {
-        result[key] = root_config?.SENSITIVE_CONFIG_KEYS?.includes(key) ?
-          decrypt(obj?.[key])
-          : typeof obj?.[key] === "object" ?
-          decryptSensitiveKeys(obj?.[key])
+        result[key] = config?.SENSITIVE_CONFIG_KEYS?.includes(key)
+          ? decrypt(obj?.[key])
+          : typeof obj?.[key] === "object"
+          ? decryptSensitiveKeys(obj?.[key])
           : obj?.[key];
       });
       return result;
