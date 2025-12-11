@@ -71,6 +71,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       };
       updateAppManifest(appManifest, appEnv);
 
+      /* Updating the app's manifest, without which we can't install the app.
+        NOTE: This will bump the app's version in the marketplace.
+      */
       const [appUpdateError, appUpdateData] = await safePromise(
         updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
         "Error while creating the app."
@@ -86,6 +89,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       openLink(url);
 
       await installApp(
+        appName,
         appEnv,
         region,
         appUid,
@@ -118,6 +122,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         openLink(url);
 
         await installApp(
+          appManifest.name,
           appEnv,
           region,
           appUid,

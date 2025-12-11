@@ -13,7 +13,8 @@
     "update-dev-app": "node src/ops/create-update.js update-app dev",
     "deploy-prod-app": "node src/ops/deploy.js",
     "dev-app-initial-setup": "sh ./src/dev-setup.sh",
-    "prod-app-initial-setup": "sh ./src/prod-setup.sh"
+    "prod-app-initial-setup": "sh ./src/prod-setup.sh",
+    "create-content-model": "node src/ops/content-model.js"
   },
   "keywords": [],
   "author": "",

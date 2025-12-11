@@ -5,12 +5,14 @@ const {
   getExtensions,
   installApp,
   updateInstallation,
+  updateAppInstallation,
   openLink,
   isEmpty,
 } = require("../utils");
-const contentModel = require("./content-model");
+const appInstallationData = require("../../settings/app-installations.json");
 
 const install = async (
+  appName,
   appEnv,
   region,
   appUid,
@@ -38,6 +40,7 @@ const install = async (
     );
     if (stackIndex === -1) throw new Error("No stack selected!");
     const stackApiKey = stackData.stacks[stackIndex].api_key;
+    const stackName = stackData.stacks[stackIndex].name;
 
     const [installedError, installedAppsData] = await safePromise(
       getExtensions(baseUrl, authtoken, stackApiKey, appUid),
@@ -69,21 +72,29 @@ const install = async (
       if (installError) return;
       installData = newInstallData;
 
+      const appInstallationManifest = {
+        apps: [
+          ...appInstallationData.apps,
+          {
+            env: appEnv,
+            region,
+            org_uid: orgId,
+            app_uid: appUid,
+            app_name: appName,
+            stack_api_key: stackApiKey,
+            stack_name: stackName,
+            status: newInstallData?.data?.status || "",
+            installation_uid: newInstallData?.data?.installation_uid,
+          },
+        ],
+      };
+      updateAppInstallation(appInstallationManifest);
+
       const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
       console.info("App installed successfully.");
       console.info("Please add and save the configuration at: ");
       openLink(configPage);
     }
-
-    await contentModel(
-      appEnv,
-      region,
-      baseUrl,
-      authtoken,
-      stackApiKey,
-      appUid,
-      orgId
-    );
   }
 };
 

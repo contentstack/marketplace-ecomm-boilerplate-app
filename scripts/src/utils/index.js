@@ -70,6 +70,13 @@ const updateLaunchManifest = (manifest) => {
   );
 };
 
+const updateAppInstallation = (installationData) => {
+  fs.writeFileSync(
+    path.join(__dirname, `../../settings/app-installations.json`),
+    JSON.stringify(installationData, null, 2)
+  );
+};
+
 const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
   try {
     const envVariables = [];
@@ -808,6 +815,7 @@ module.exports = {
   getDeveloperhubBaseUrl,
   updateAppManifest,
   updateLaunchManifest,
+  updateAppInstallation,
   getEnvVariables,
   buildAppZip,
   getUploadMetaData,

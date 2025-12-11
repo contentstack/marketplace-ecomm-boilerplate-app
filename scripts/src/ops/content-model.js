@@ -7,23 +7,60 @@ const {
   safePromise,
   getAppBaseUrl,
   openLink,
+  getBaseUrl,
 } = require("../utils");
+const loginData = require("../../settings/credentials.json");
+const appInstallations = require("../../settings/app-installations.json")?.apps;
 const prodAppManifest = require("../../settings/prod-app-manifest.json");
 const devAppManifest = require("../../settings/dev-app-manifest.json");
 
-const contentModel = async (
-  appEnv,
-  region,
-  baseUrl,
-  authtoken,
-  stackApiKey,
-  appUid,
-  orgId
-) => {
+(async () => {
   try {
     if (
       readlineSync.keyInYN("Do you want a new sample content type & an entry?")
     ) {
+      const authtoken = loginData?.authtoken;
+
+      if (!authtoken) {
+        console.info(
+          'Login credentials not found. Please login using "npm run login"'
+        );
+        return;
+      }
+
+      if (isEmpty(appInstallations)) {
+        console.info(
+          "App installations not found. Please install the app locally."
+        );
+        return;
+      }
+
+      const envs = ["prod", "dev"];
+      const envIndex = readlineSync.keyInSelect(
+        envs,
+        "Select The environment of the app:"
+      );
+      if (envIndex === -1) {
+        console.info("Environment not selected!");
+        return;
+      }
+      const appEnv = envs[envIndex];
+      const appInstallationData = appInstallations.find(
+        (app) => app.env === appEnv
+      );
+
+      if (isEmpty(appInstallationData)) {
+        console.info("No app installtions found");
+        return;
+      }
+
+      const {
+        region,
+        org_uid: orgId,
+        app_uid: appUid,
+        stack_api_key: stackApiKey,
+      } = appInstallationData;
+      const baseUrl = getBaseUrl(region);
       const appBaseUrl = getAppBaseUrl(region);
       const ctName = readlineSync.question(
         "Enter a unique Content-type name: "
@@ -99,8 +136,7 @@ const contentModel = async (
       openLink(entryUrl);
     }
   } catch (err) {
+    console.info(err);
     console.info("Something went wrong while creating a content type & entry.");
   }
-};
-
-module.exports = contentModel;
+})();
