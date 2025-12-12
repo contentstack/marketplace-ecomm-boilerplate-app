@@ -7,6 +7,7 @@
     "base_url": "https://example.com",
     "locations": [
       {
+        "__comment__": "Please make sure the names of all the UI locations of other apps to be unique in your org",
         "type": "cs.cm.stack.custom_field",
         "meta": [
           {

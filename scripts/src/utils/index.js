@@ -605,8 +605,8 @@ const updateInstallation = async (
   orgId,
   appUid,
   stackApiKey
-) => {
-  return makeApiCall({
+) =>
+  makeApiCall({
     method: "PUT",
     url: `${getDeveloperhubBaseUrl(
       region
@@ -622,7 +622,6 @@ const updateInstallation = async (
       target_uid: stackApiKey,
     },
   });
-};
 
 const getExtensions = async (baseUrl, authtoken, stackApiKey, appUid) => {
   const res = await makeApiCall({

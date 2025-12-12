@@ -62,6 +62,25 @@ const install = async (
 
       if (updateError) return;
       installData = updatedData;
+
+      const appInstallationManifest = {
+        apps: appInstallationData.apps.map((app) => {
+          return app.env === appEnv && app.app_uid === appUid
+            ? {
+                env: appEnv,
+                region,
+                org_uid: orgId,
+                app_uid: appUid,
+                app_name: appName,
+                stack_api_key: stackApiKey,
+                stack_name: stackName,
+                status: updatedData?.data?.status || "",
+                installation_uid: updatedData?.data?.installation_uid,
+              }
+            : app;
+        }),
+      };
+      updateAppInstallation(appInstallationManifest);
     } else {
       console.info("Installing app...");
       const [installError, newInstallData] = await safePromise(
