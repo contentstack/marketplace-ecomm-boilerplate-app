@@ -81,6 +81,10 @@ const install = async (
         }),
       };
       updateAppInstallation(appInstallationManifest);
+
+      const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
+      console.info("App upgraded successfully.");
+      openLink(configPage);
     } else {
       console.info("Installing app...");
       const [installError, newInstallData] = await safePromise(
