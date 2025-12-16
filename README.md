@@ -1,13 +1,27 @@
 # Contentstack Marketplace E-COMMERCE App Boilerplate
 
-This boilerplate provides a template to create your own Marketplace E-COMMERCE app.
+This boilerplate provides a template to create your own [Marketplace](https://www.contentstack.com/marketplace) E-COMMERCE app, and can be deployed on [Launch](https://www.contentstack.com/launch).
 
-##  Prerequisite
+## Prerequisite
 
-* [Contentstack Account](https://app.contentstack.com/#!/login)
+* [Contentstack Account](https://app.contentstack.com/#!/login) with marketplace & Launch enabled
 * Nodejs - v14.18.2 & NPM - 8.1.4
 
+## features
+
+* React.js app template
+* Express.js API app template
+* Webhook template with request verification.
+* Secured app signing using JWT for APIs
+* Simple replay-attack implementation
+* Mocked API response for initial development support.
+* launch support for the both UI & the API of the app
+* Script's npm command to manage development & production marketplace app.
+* Contentstack's Multi-region support provided in the script's command.
+* Root config support for configuring the whole app.
+
 ## Structure of the Marketplace Ecommerce App Boilerplate
+
 <details>
   <summary>
     Reveal/Collapse the code structure
@@ -46,6 +60,7 @@ marketplace-ecomm-boilerplate-app
     |  |-- ui
     |  | |-- root_config
     |  |   |-- index.js
+|-- scripts
 |-- ui
     |-- public
     |   |-- favicon.ico
@@ -151,87 +166,127 @@ marketplace-ecomm-boilerplate-app
 
 </details>
 
-* To start the development of an eCommerce app using boilerplate, first Clone eCommerce Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP. 
+* To start the development of an eCommerce app using boilerplate, first Clone eCommerce Boilerplate GitHub Repository and copy the content of this repo to the new repo of your APP.
 * The new app repo source folder will be referred to as APP_DIRECTORY from now on.
-* Open the package.json inside the ui and api folders (`<APP_DIRECTORY>/ui/package.json` & `<APP_DIRECTORY>/api/package.json`) and update the name attribute to your app name. 
+* Open the package.json inside the ui and api folders (`<APP_DIRECTORY>/ui/package.json` & `<APP_DIRECTORY>/api/package.json`) and update the name attribute to your app name.
 * Open the root html file of the app (available at `<APP_DIRECTORY>/ui/public/index.html`) and update the `<title>` tag value to the name of your app.
 * Change the favicon.ico as per the requirement of your app. favicon.ico file is available at `<APP_DIRECTORY>/ui/public/favicon.ico`.
 
 ## Environment Variables
 
-* `.env` file are required in <APP_DIRECTORY>/ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_UI_URL` `REACT_APP_API_URL`. 
-* The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be http://localhost:4000 and the url for api will be http://localhost:8080).
+* `.env` file are required in <APP_DIRECTORY>/ui. Rename `.env.example` files to `.env` and add value for `REACT_APP_UI_URL` `REACT_APP_API_URL`.
+* The value of `REACT_APP_UI_URL` is the URL of your app (the url for ui will be <http://localhost:4000> and the url for api will be <http://localhost:8080>).
 
-## Install Dependencies
+## Development Setup
 
 * In the terminal go to APP_DIRECTORY and install the necessary packages :
+
 ```
 cd <APP_DIRECTORY> 
 npm i
 ```
-* To install the necessary packages for ui , navigate to the ui folder
+
+* To install the necessary packages for scripts , navigate to the `scripts` folder
+
 ```
-cd <APP_DIRECTORY>/ui 
+cd <APP_DIRECTORY>/scripts
 npm i
-``` 
-* After you install the packages, run the following command in the ui folder to get started on all the Operation System(except Windows):
+```
+
+* You need to login to you contentstack account to save credentials locally(scripts/settings/credentials.json). This is a must, and will be used in all the further commands. Note: Please login to your account which has required permissions for Marketpalce & Launch.
+
+```
+npm run login
+```
+
+* To setup a development app, Please run the following command in the scripts folder. This will create, install a marketplace app, and creates a sample content-type & entry for the same. Please follow all the prompts after executing the command. The app's manifest will be stored in `scripts/settings/dev-app-manifest.json` and it's installation detailes in `scripts/settings/app-installations.json`. It will also generate all the required enviroment variables of both API & UI, so no need to add them explicitly.
+
+```
+npm run dev-app-initial-setup 
+```
+
+* Run the following command in the `ui` folder to get started on all the Operation System(except Windows):
+
 ```
 npm run start
 ```
+
 * For Windows OS
+
 ```
 npm run startWin
 ```
 
 The UI server will start at port 4000.
-* To install the necessary packages for API , navigate to the API folder
+
+* Now navigate to the API folder
+
 ```
 cd <APP_DIRECTORY>/api
-npm i
 ```
-* After you install the packages, run the following command in the API folder to start the server.
+
+* Run the following command in the API folder to start the server.
+
 ```
 npm run dev
 ```
+
 The API server will start at port 8080.
 All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services/index.ts` file.
 
-In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different pre-defined functions can be utilized for fetching products or categories from various third-party eCommerce systems. These functions are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
+In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different pre-defined functions can be utilized for fetching products or categories from various third-party eCommerce systems. These functions are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource.
 Storing dynamic user data in the root config enables centralization, allowing the handler/index.js to easily access and process this information, promoting consistency and simplifying data management within the API.
+In `api/webhook.js`, you can now add all your webhook logic for contentstack's install, update, and upgrade webhook call. This is usually implemented for storing sensitive information of the config page in a database.
+In `api/api.js`, you need to implement all the functions that are being used in the API endpoints. Currently those functions aer mocked to send a sample response.
+
+* In case, if you want to create a sample content-type & entries again, run the following command and follow the prompts:
+
+```
+npm run create-content-model
+```
+
+* In case, if you want to update the marketplace app, change the manifest file in `scripts/settings/dev-app-manifest.json` accordingly, and run the following command and follow the prompts:
+
+```
+npm run update-prod-app
+```
 
 ## Provider
 
-- `<MarketplaceAppProvider>`:  This initializes the Contentstack SDK , and makes the SDK instance available via hooks to avoid props drilling.
-- `<AppConfigurationExtensionProvider>`: This initializes the configuration screen.
-- `<CustomFieldExtensionProvider>`: This provider is responsible for performing operatins on the  Custom Fields, both Product and Category.
-- `<EntrySidebarExtensionProvider>`: This provider is responsible for providing relevant data to the Entry Sidebar Widget.
+* `<MarketplaceAppProvider>`:  This initializes the Contentstack SDK , and makes the SDK instance available via hooks to avoid props drilling.
+* `<AppConfigurationExtensionProvider>`: This initializes the configuration screen.
+* `<CustomFieldExtensionProvider>`: This provider is responsible for performing operatins on the  Custom Fields, both Product and Category.
+* `<EntrySidebarExtensionProvider>`: This provider is responsible for providing relevant data to the Entry Sidebar Widget.
 
 ## Hooks
 
-- `useAppConfig`: Returns the app configuration data.
-- `useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
-- `useAppSdk`: Returns the appSdk instance after initialization.
-- `useError`: Getter and setter hook for app errors that occur due to API calls or configuration issues.
-- `useCustomField`: Getter and setter hook for custom field data.
-- `useFrame`: Returns the Iframe instance for the location.
-- `useInstallationData`: Getter & Setter for installation data.
-- `useSdkDataByPath`: This is a generic hook which can return the value at the given path;
+* `useAppConfig`: Returns the app configuration data.
+* `useAppLocation`: Returns the location name (eg: CustomField) and the location instance from the SDK.
+* `useAppSdk`: Returns the appSdk instance after initialization.
+* `useError`: Getter and setter hook for app errors that occur due to API calls or configuration issues.
+* `useCustomField`: Getter and setter hook for custom field data.
+* `useFrame`: Returns the Iframe instance for the location.
+* `useInstallationData`: Getter & Setter for installation data.
+* `useSdkDataByPath`: This is a generic hook which can return the value at the given path;
 
 ## Routes
 
 Each route represents one location. It is recommended to lazy load the route components to reduce the bundle
-size. 
+size.
 
 #### Adding new route
 
-- Create a new Route component inside route. Use default export
-  - Inside `App.tsx`, lazy load the route component.  
-    - for instance: 
+* Create a new Route component inside route. Use default export
+  * Inside `App.tsx`, lazy load the route component.  
+    * for instance:
+
     ```javascript
     const AppConfigurationExtension = React.lazy(() => import("../ConfigScreen/index"))
     ```
-  - Add the route wrapped inside `Suspense`. 
-    - for instance: 
+
+  * Add the route wrapped inside `Suspense`.
+    * for instance:
+
     ```javascript
     <Route path="/config" element={
       <Suspense>
@@ -244,19 +299,19 @@ size.
 
 ## Styling
 
-- This setup uses SCSS for styling
-- You can find the style files under `ui/src/containers/<COMPONENT_NAME>/styles.scss`
+* This setup uses SCSS for styling
+* You can find the style files under `ui/src/containers/<COMPONENT_NAME>/styles.scss`
 
-## Creating an app in Developer Hub/Marketplace
+## Manually creating an app in Developer Hub/Marketplace
 
-* Go to developer hub at https://app.contentstack.com/#!/developerhub
-* Create a new app by clicking + New App button at top right and Select app type, add name and description.The app will be initially private. If you want to make that app public,then you need to contact us. 
-* After creating an app, you will be redirected to the Basic Information page. Add the icon for your app. 
-* Open the UI Locations tab and add the URL of your app. 
-For e.g. : https://localhost:4000
+* Go to developer hub at <https://app.contentstack.com/#!/developerhub>
+* Create a new app by clicking + New App button at top right and Select app type, add name and description.The app will be initially private. If you want to make that app public,then you need to contact us.
+* After creating an app, you will be redirected to the Basic Information page. Add the icon for your app.
+* Open the UI Locations tab and add the URL of your app.
+For e.g. : <https://localhost:4000>
 * From Available location(s) , add App Configuration, Custom Field and Entry Sidebar. For App Configuration, add name and path. In `<APP_DIRECTORY>/ui/src/containers/App/index.tsx`, for App Configuration we have added route path as `/config`. So the value of path should be `/config`. Switch on the toggle for Signed if required. Switch on the toggle for Enabled to enable the Configuration location. Add the description if required.
 * For Custom Field, add name and path. The value of path should be `/product-field`. Add one more Custom Fied add name and path. The value for second path should be `/category-field`. Switch on the toggle for Enabled to enable the Custom Field location.Select the required Data Type. Add the description if required.
-* For Entry Sidebar Field, add name and path. The value of path should be `/sidebar-widget`. Switch on the toggle for Enabled to enable the Custom Field location. Add the description if required. 
+* For Entry Sidebar Field, add name and path. The value of path should be `/sidebar-widget`. Switch on the toggle for Enabled to enable the Custom Field location. Add the description if required.
 
 * Now install the app by clicking the Install App button at top right. From the next window, select the stack in which you want to install the app.
 
@@ -276,19 +331,36 @@ Note : You can give any path values but make sure the path value in `<APP_DIRECT
 
 * You can change the source codes and refer to the changes in UI now at corresponding places as mentioned above.
 
-## Create Build
+## Production Setup
 
-* To create build for ui, navigate to ui
+After making all the required root_config changes, UI & API, webhook implementations, run the following command to setup a production marketplace app to be depoyed on Launch. Please follow all the prompts to properlly setup the app. The environment variables present in `<APP_DIRECTORY>/ui/.env` and `<APP_DIRECTORY>/api/.env` will be used as whole during the app's deployment on Launch. And all the containts in the .api folder will be turned into launch's API endpoints by adding them as cloud functions.
+
+* In the terminal go to APP_DIRECTORY/scripts and run:
+
 ```
-cd <APP_DIRECTORY>/ui 
-npm run build
+cd <APP_DIRECTORY>/scripts 
+npm run prod-app-initial-setup 
 ```
-* To create build for api, navigate to api
+
+The above command will builds the UI & API and deploys the apps on Launch, creates a marketplace app and links it to the deployed app. Asks you to install the app, and create a sample content-type & entry linking to the installed app. Please make sure you've enough permissions for the marketplace & launch for the above command to work without any errors. In order for the custom fields to fetch products & categories to work, you will need to save app's configuration in the config page.
+
+* In case, if you want to create a sample content-type & entries again, run the following command and follow the prompts:
+
 ```
-cd <APP_DIRECTORY>/api
-npm run build
+npm run create-content-model
 ```
-You need to upload all the files from the build folder on AWS S3 or any static file hosting service of your preference. 
+
+* In case, if you want to redeploy the app on Launch again, run the following command and follow the prompts:
+
+```
+npm run deploy-prod-app
+```
+
+* In case, if you want to update the marketplace app, change the manifest file in `scripts/settings/prod-app-manifest.json` accordingly, and run the following command and follow the prompts:
+
+```
+npm run update-prod-app
+```
 
 ## Updating changes to the boilerplate as per the third party platform
 
@@ -296,5 +368,6 @@ For continuing to develop your corresponding ecommerce app, you might have to do
 
 An illustrative file containing samples of ecommerce applications like BigCommerce and SAP Commerce Cloud app has been created within the 'example' directory. To confirm the functionality of the application, you can replicate the content of the `example/APPNAME/root_config/index.ts` file and apply it to the `root_config/index.ts of the API and UI` file. Subsequently, you can restart the execution of both the UI and API components.
 
-## Documentation Link 
+## Documentation Link
+
 [Marketplace Ecommerce App Boilerplate](https://www.contentstack.com/docs/developers/developer-hub/marketplace-ecommerce-app-boilerplate)
