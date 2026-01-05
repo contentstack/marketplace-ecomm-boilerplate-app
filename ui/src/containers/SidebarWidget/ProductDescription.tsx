@@ -1,15 +1,17 @@
 import React from "react";
 import { Tooltip } from "@contentstack/venus-components";
-import { Props, TypeProduct } from "../../common/types";
+import { Props } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import "./styles.scss";
 import rootConfig from "../../root_config";
+import { TypeProduct } from "../../types";
 import NoImg from "../../assets/NoImg.svg";
-import { getSanitizedHTML } from "../../common/utils";
 
 const ProductDescription: React.FC<Props> = function ({ product, config }) {
-  const { id, name, description, price, sku, image }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
-  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =    localeTexts.sidebarWidget.labels;
+  const { id, name, description, price, sku, image }: TypeProduct =
+    rootConfig.returnFormattedProduct(product, config);
+  const { nameLbl, skuLbl, descriptionLbl, priceLbl } =
+    localeTexts.sidebarWidget.labels;
 
   return (
     <div>
@@ -51,7 +53,11 @@ const ProductDescription: React.FC<Props> = function ({ product, config }) {
           )}
           <div className="detail-group">
             <div className="label">{descriptionLbl}</div>
-            <div className="value">{getSanitizedHTML(description)}</div>
+            <div
+              className="value"
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           </div>
           <div className="detail-group">
             <div className="label">{priceLbl}</div>

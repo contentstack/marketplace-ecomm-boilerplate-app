@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from "react";
 import {
   ActionTooltip,
@@ -5,20 +7,16 @@ import {
   Icon,
   Tooltip,
 } from "@contentstack/venus-components";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { Props } from "../../common/types";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
 import NoImg from "../../assets/NoImg.svg";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import constants from "../../common/constants";
-import useAppConfig from "../../common/hooks/useAppConfig";
-import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
 
-const Category: React.FC<Props> = function ({ categories, remove }) {
-  const { id, name, customUrl, description, isCategoryDeleted } =    rootConfig.returnFormattedCategory(categories);
-
+const Category: React.FC<Props> = function ({ categories, remove, config }) {
   const {
     attributes,
     listeners,
@@ -26,9 +24,9 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
-  const config = useAppConfig();
+  } = useSortable({ id: categories?.id });
   const { error } = categories;
+
   const getImageUrl = (category: any) => {
     let imageSrc = category?.c_slotBannerImage || category?.image;
 
@@ -69,18 +67,15 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
     borderRadius: 12,
   };
 
-  /* eslint-disable */
   const getDeleteModal = (props: any) => (
     <DeleteModal
-      multiConfigName={categories?.cs_metadata?.multiConfigName}
       type="Category"
       remove={remove}
-      id={id}
-      name={name}
+      id={categories?.id}
+      name={categories?.name}
       {...props}
     />
   );
-  /* eslint-enable */
 
   const toolTipActions = [
     {
@@ -114,52 +109,29 @@ const Category: React.FC<Props> = function ({ categories, remove }) {
         }),
       className: "ActionListItem--warning",
     },
-  ]?.filter(
-    (action) =>
-      !(
-        isCategoryDeleted
-        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
-      )
-  );
+  ];
 
-  /* eslint-disable */
   return (
     <div style={style} ref={setNodeRef} {...attributes} {...listeners}>
       {isDragging ? (
         ""
       ) : (
         <ActionTooltip list={toolTipActions}>
-          <div className="product" key={id} data-testid="render-card-item">
+          <div
+            className="product"
+            key={categories?.id}
+            data-testid="render-card-item"
+          >
             {!error ? (
               <>
-                {isCategoryDeleted ? (
-                  <div className="product-image product_image">
-                    <Tooltip
-                      content={localeTexts.customField.configDeletedImg}
-                      position="top"
-                      showArrow={false}
-                      variantType="light"
-                      type="secondary"
-                    >
-                      <Icon icon="WarningBold" version="v2" size="small" />
-                    </Tooltip>
-                  </div>
-                ) : (
-                  getImageUrl(customUrl)
-                )}
-
+                {getImageUrl(categories)}
                 <div className="divider" />
                 <div className="product-body">
-                  <span className="product-name">{name}</span>
-                  {!isCategoryDeleted && (
-                    <span className="product-desc">
-                      {getSanitizedHTML(removeHTMLTags(description))}
+                  <span className="product-name">{categories?.name}</span>
+                  {categories?.id && (
+                    <span className="product-name sub-name">
+                      {`${localeTexts.customField.idLbl}: ${categories?.id}`}
                     </span>
-                  )}
-                  {isCategoryDeleted && (
-                    <div className="config-deleted-message">
-                      {localeTexts.customField.noConfig}
-                    </div>
                   )}
                 </div>
               </>

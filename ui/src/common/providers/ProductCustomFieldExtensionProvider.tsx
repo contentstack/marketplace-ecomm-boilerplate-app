@@ -1,48 +1,49 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
-import { CustomFieldExtensionContext } from "../contexts/customFieldExtensionContext";
+import { ProductCustomFieldExtensionContext } from "../contexts/productCustomFieldExtensionContext";
 
-const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
-  const [customField, setCustomField] = useState<unknown>(null);
+const ProductCustomFieldExtensionProvider: React.FC = function ({
+  children,
+}: any) {
+  const [productCustomField, setProductCustomField] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
-
   useEffect(() => {
     (async () => {
       // check if the data was loaded earlier or not
-      if (isEmpty(customField)) {
+      if (isEmpty(productCustomField)) {
         setLoading(true);
         const fieldData = await location?.field?.getData();
-        setCustomField(fieldData);
+        setProductCustomField(fieldData);
         setLoading(false);
       }
     })();
-  }, [setLoading, setCustomField, location, customField]);
+  }, [setLoading, setProductCustomField, location, productCustomField]);
 
   const setFieldData = useCallback(
     async (data: unknown) => {
       setLoading(true);
       await location?.field?.setData(data);
-      setCustomField(data);
+      setProductCustomField(data);
       setLoading(false);
     },
-    [location, setLoading, setCustomField]
+    [location, setLoading, setProductCustomField]
   );
 
   const installInfo = useMemo(
     () => ({
-      customField,
+      productCustomField,
       setFieldData,
       loading,
     }),
-    [customField, setFieldData, loading]
+    [productCustomField, setFieldData, loading]
   );
 
   return (
-    <CustomFieldExtensionContext.Provider value={installInfo}>
+    <ProductCustomFieldExtensionContext.Provider value={installInfo}>
       {children}
-    </CustomFieldExtensionContext.Provider>
+    </ProductCustomFieldExtensionContext.Provider>
   );
 };
-export default CustomFieldExtensionProvider;
+export default ProductCustomFieldExtensionProvider;

@@ -1,48 +1,50 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
 import useAppLocation from "../hooks/useAppLocation";
-import { CustomFieldExtensionContext } from "../contexts/customFieldExtensionContext";
+import { CategoryCustomFieldExtensionContext } from "../contexts/categoryCustomFieldExtensionContext";
 
-const CustomFieldExtensionProvider: React.FC = function ({ children }: any) {
-  const [customField, setCustomField] = useState<unknown>(null);
+const CategoryCustomFieldExtensionProvider: React.FC = function ({
+  children,
+}: any) {
+  const [categoryCustomField, setCategoryCustomField] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { location } = useAppLocation();
 
   useEffect(() => {
     (async () => {
       // check if the data was loaded earlier or not
-      if (isEmpty(customField)) {
+      if (isEmpty(categoryCustomField)) {
         setLoading(true);
         const fieldData = await location?.field?.getData();
-        setCustomField(fieldData);
+        setCategoryCustomField(fieldData);
         setLoading(false);
       }
     })();
-  }, [setLoading, setCustomField, location, customField]);
+  }, [setLoading, setCategoryCustomField, location, categoryCustomField]);
 
   const setFieldData = useCallback(
     async (data: unknown) => {
       setLoading(true);
       await location?.field?.setData(data);
-      setCustomField(data);
+      setCategoryCustomField(data);
       setLoading(false);
     },
-    [location, setLoading, setCustomField]
+    [location, setLoading, setCategoryCustomField]
   );
 
   const installInfo = useMemo(
     () => ({
-      customField,
+      categoryCustomField,
       setFieldData,
       loading,
     }),
-    [customField, setFieldData, loading]
+    [categoryCustomField, setFieldData, loading]
   );
 
   return (
-    <CustomFieldExtensionContext.Provider value={installInfo}>
+    <CategoryCustomFieldExtensionContext.Provider value={installInfo}>
       {children}
-    </CustomFieldExtensionContext.Provider>
+    </CategoryCustomFieldExtensionContext.Provider>
   );
 };
-export default CustomFieldExtensionProvider;
+export default CategoryCustomFieldExtensionProvider;
