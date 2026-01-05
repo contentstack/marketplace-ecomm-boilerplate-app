@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 /* Import other node modules */
-// import ContentstackAppSdk from "@contentstack/app-sdk";
+import ContentstackAppSdk from "@contentstack/app-sdk";
 import {
   AsyncLoader,
   Select,
@@ -12,43 +11,106 @@ import {
 
 import ProductDescription from "./ProductDescription";
 import WarningMessage from "../../components/WarningMessage";
+import { TypeSDKData, TypeWarningtext } from "../../common/types";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import { getSelectedIDs } from "../../services";
 import rootConfig from "../../root_config";
-import { EntrySidebarExtensionContext } from "../../common/contexts/entrySidebarExtensionContext";
-import useAppConfig from "../../common/hooks/useAppConfig";
 
 const SidebarWidget: React.FC = function () {
-  const {
-    entryData,
-    contentTypeSchema,
-    isInvalidCredentials,
-    setIsInvalidCredentials,
-    appSdkInitialized,
-  } = useContext(EntrySidebarExtensionContext);
-  const appConfig = useAppConfig();
+  const [state, setState] = useState<TypeSDKData>({
+    config: {},
+    location: {},
+    appSdkInitialized: false,
+  });
   const [loading, setLoading] = useState(true);
   const [productLoading, setProductLoading] = useState(false);
+  const [isInvalidCredentials, setIsInvalidCredentials] =
+    useState<TypeWarningtext>({
+      error: false,
+      data: localeTexts?.warnings?.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
+    });
+  const [entryData, setEntryData] = useState<any>({});
+  const [contentTypeSchema, setContentTypeSchema] = useState<any>({});
   const [productList, setProductList] = useState<any>([]);
   const [fieldList, setFieldList] = useState<any>([]);
   const [productDropdown, setProductDropdown] = useState<any>([]);
   const [isProduct, setIsProduct] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
+  const [selectedDropdownProduct, setselectedDropdownProduct] =
+    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
-  const [isOldUser, setIsOldUser] = useState<any>(false);
+  useEffect(() => {
+    ContentstackAppSdk.init()
+      .then(async (appSdk) => {
+        const config = await appSdk?.getConfig();
+        if (!config?.is_custom_baseUrl) delete config?.api_route;
+        const contentTypeUid =
+          appSdk?.location?.SidebarWidget?.entry?.content_type?.uid;
+        const data = appSdk?.location?.SidebarWidget?.entry?.getData();
+        const contentTypeDetails = await appSdk?.stack?.getContentType(
+          contentTypeUid
+        );
+        setEntryData(data);
+        setContentTypeSchema(contentTypeDetails?.content_type?.schema);
+        setState({
+          config,
+          location: appSdk?.location,
+          appSdkInitialized: true,
+        });
+      })
+      .catch((error) => {
+        console.error(localeTexts.sidebarWidget.appSdkErr, error);
+      });
+  }, []);
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    setIsInvalidCredentials({
+      error: Object.values(state?.config || {}).includes(""),
+      data: localeTexts.warnings.invalidCredentials.replace(
+        "$",
+        rootConfig.ecommerceEnv.APP_ENG_NAME
+      ),
+    });
+  }, [state.config]);
+
+  const fetchSelectedIdData = async (data: any) => {
+    const product = await getSelectedIDs(state?.config, "product", [data]);
+    if (product?.error) {
+      setIsInvalidCredentials(product);
+    } else return product?.data?.items?.[0];
+
+    return null;
+  };
+
+  const getCurrentFieldData = async (field: any) => {
+    if (!state.appSdkInitialized) return;
+    if (entryData?.[field?.value]?.data?.length) {
+      setProductList(entryData?.[field?.value]?.data);
+    } else {
+      setProductList([]);
+    }
+  };
 
   useEffect(() => {
-    if (!appSdkInitialized) return;
-    const eCommerceProductsField = Object.keys(entryData)?.filter(
+    if (isInvalidCredentials.error)
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      isInvalidCredentials?.data;
+  }, [isInvalidCredentials]);
+
+  useEffect(() => {
+    if (!state.appSdkInitialized) return;
+    const sapProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
-        entryData?.[i]?.type
-        === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+        entryData?.[i]?.type ===
+        `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
     );
     const fieldListTemp: any = [];
-    eCommerceProductsField?.forEach((field: string) => {
+    sapProductsField?.forEach((field: string) => {
       contentTypeSchema?.forEach((schemaField: any) => {
         if (schemaField?.uid === field)
           fieldListTemp.push({
@@ -58,56 +120,14 @@ const SidebarWidget: React.FC = function () {
       });
     });
     setFieldList(fieldListTemp);
-  }, [entryData, appConfig, appSdkInitialized]);
-
-  const getCurrentFieldData = async (field: any) => {
-    let isMultiConfigEnabled: Boolean =      rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
-    if (appConfig) {
-      const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
-        "multi_config_keys"
-      );
-
-      if (isMultiConfigEnabled) {
-        if (isMultiConfigEnabled && ISOLDUSER) {
-          isMultiConfigEnabled = false;
-          setIsOldUser(true);
-        }
-      } else {
-        setIsOldUser(false);
-      }
-    }
-    if (entryData?.[field?.value]?.data?.length) {
-      let sideBarData = entryData?.[field?.value]?.data;
-      if (isMultiConfigEnabled === true) {
-        sideBarData = sideBarData?.map((fieldDataSet: any) => ({
-          ...fieldDataSet,
-          cs_metadata: fieldDataSet?.cs_metadata
-            ? fieldDataSet?.cs_metadata
-            : {
-                multiConfigName: "legacy_config",
-                isConfigDeleted: false,
-              },
-        }));
-      }
-      setProductList(sideBarData);
-    } else {
-      setProductList([]);
-    }
-  };
-
+  }, [entryData, state.appSdkInitialized]);
   useEffect(() => {
     if (fieldList?.length) setSelectedField(fieldList[0]);
     getCurrentFieldData(fieldList?.[0]);
   }, [fieldList]);
 
   useEffect(() => {
-    if (isInvalidCredentials.error)
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      isInvalidCredentials?.data;
-  }, [isInvalidCredentials]);
-
-  useEffect(() => {
-    if (!appSdkInitialized) return;
+    if (!state.appSdkInitialized) return;
     setProductDropdown(
       productList?.map((i: any) => ({
         label: i?.name,
@@ -117,7 +137,7 @@ const SidebarWidget: React.FC = function () {
   }, [productList]);
 
   useEffect(() => {
-    if (!appSdkInitialized) return;
+    if (!state.appSdkInitialized) return;
     if (!productList?.length) {
       setLoading(false);
       setIsProduct(false);
@@ -137,66 +157,15 @@ const SidebarWidget: React.FC = function () {
     if (!loading && !selectedDropdownProduct) setIsFieldEmpty(true);
   }, [selectedDropdownProduct]);
 
-  const fetchSelectedIdData = async (data: any, isOldUserLocal: boolean) => {
-    const productID = typeof data === "object" ? data : [data];
-    const product = await getSelectedIDs(
-      appConfig,
-      "product",
-      productID,
-      isOldUserLocal
-    );
-    if (product?.error) {
-      setIsInvalidCredentials(product);
-    } else {
-      return product?.data?.items?.[0];
-    }
-
-    return null;
-  };
   useEffect(() => {
     const setInitialProductDropdown = async () => {
-      let isMultiConfigEnabled = rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
-      let isolduser = false;
-      if (appConfig) {
-        const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
-          "multi_config_keys"
-        );
-
-        if (isMultiConfigEnabled) {
-          if (ISOLDUSER) {
-            isMultiConfigEnabled = false;
-            isolduser = true;
-          }
-        } else {
-          // eslint-disable-next-line
-          if (ISOLDUSER) {
-            isMultiConfigEnabled = false;
-            isolduser = true;
-          } else {
-            isolduser = false;
-          }
-        }
-      }
-      let ids;
-      if (!isMultiConfigEnabled) {
-        ids = selectedDropdownProduct?.value;
-      } else {
-        const product = productList.find(
-          (p: any) => p?.id === selectedDropdownProduct?.value
-        );
-        const formattedData: any = rootConfig.mapProductIdsByMultiConfig(
-          [product],
-          "product"
-        );
-        ids = formattedData;
-      }
-      const selectProduct = await fetchSelectedIdData(ids, isolduser);
-
+      const selectProduct = await fetchSelectedIdData(
+        selectedDropdownProduct?.value
+      );
       if (selectProduct) {
         setSelectedProduct(selectProduct);
       }
     };
-
     if (selectedDropdownProduct) {
       setInitialProductDropdown();
       setLoading(false);
@@ -230,7 +199,9 @@ const SidebarWidget: React.FC = function () {
       return (
         <div className="noProducts">{localeTexts.sidebarWidget.noProducts}</div>
       );
-    return <ProductDescription product={selectedProduct} config={appConfig} />;
+    return (
+      <ProductDescription product={selectedProduct} config={state?.config} />
+    );
   };
 
   const getNoOptionsMessage = useCallback(

@@ -1,6 +1,6 @@
-const constants = {
+const constants: any = {
   REQ_TIMEOUT: 17 * 1000,
-  EXTRACT_ID_REGX: /\(\d+\)/gm, // extracts the digits from the data as an ID for the error response
+  EXTRACT_ID_REGX: /(\d+)/gm, // extracts the digits from the data as an ID for the error response
   HTTP_ERROR_CODES: {
     OK: 200,
     BAD_REQ: 400,
@@ -15,10 +15,12 @@ const constants = {
   },
   FETCH_PRODUCT_LIMIT: 250,
   HTTP_RESPONSE_HEADERS: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "Access-Control-Allow-Origin": "*",
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "Content-type": "application/json",
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Expose-Headers": "authToken",
   },
   LOGS: {
     QUERY_PARAMS: "Request's query-string params are: ",
@@ -32,4 +34,4 @@ const constants = {
   },
 };
 
-module.exports = constants;
+export default constants;

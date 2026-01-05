@@ -12,7 +12,8 @@ import {
  * const { installationData, setInstallationData, loading } = useInstallationData();
  */
 const useInstallationData = () => {
-  const { installationData, setInstallationData, loading } =    useContext<AppConfigurationExtensionContextType>(
+  const { installationData, setInstallationData, loading } =
+    useContext<AppConfigurationExtensionContextType>(
       AppConfigurationExtensionContext
     );
 

@@ -9,10 +9,8 @@ import {
 import React from "react";
 import localeTexts from "../../common/locale/en-us";
 import { Props } from "../../common/types";
-import { getSanitizedHTML } from "../../common/utils";
 
 const DeleteModal: React.FC<Props> = function ({
-  multiConfigName,
   type,
   remove,
   id,
@@ -26,11 +24,11 @@ const DeleteModal: React.FC<Props> = function ({
         closeModal={props.closeModal}
       />
       <ModalBody className="deleteModalBody">
-        <p>
-          {getSanitizedHTML(
-            localeTexts.deleteModal.body.replace("$", itemName)
-          )}
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: `${localeTexts.deleteModal.body.replace("$", itemName)}`,
+          }}
+        />
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>
@@ -41,7 +39,7 @@ const DeleteModal: React.FC<Props> = function ({
             buttonType="delete"
             icon="TrashMini"
             onClick={() => {
-              remove(id, multiConfigName);
+              remove(id);
               props.closeModal();
             }}
           >

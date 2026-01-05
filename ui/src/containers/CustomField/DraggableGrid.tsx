@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import {
   DndContext,
@@ -8,20 +9,19 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { Props } from "../../common/types";
 import { findProduct } from "../../common/utils";
 import Product from "./Product";
 import rootConfig from "../../root_config";
 import Category from "./Category";
-import useProductCustomField from "../../common/hooks/useCustomField";
 
-const DraggableGrid: React.FC<any> = function ({
+const DraggableGrid: React.FC<Props> = function ({
+  products,
   remove,
+  config,
+  setSelectedItems,
   type,
-}: {
-  remove: (id: string, multiConfigName: string) => void;
-  type: "product" | "category";
 }) {
-  const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
@@ -44,11 +44,11 @@ const DraggableGrid: React.FC<any> = function ({
 
     setActiveId(null);
     if (active?.id !== over?.id) {
-      handleDragEvent(
+      setSelectedItems(
         arrayMove(
-          selectedItems,
-          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
-          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
+          products,
+          products?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
+          products?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
         )
       );
     }
@@ -58,12 +58,14 @@ const DraggableGrid: React.FC<any> = function ({
     if (activeId) {
       return type === "category" ? (
         <Category
-          categories={findProduct(selectedItems, activeId, uniqueKey)}
+          config={config}
+          categories={findProduct(products, activeId)}
           remove={remove}
         />
       ) : (
         <Product
-          product={findProduct(selectedItems, activeId, uniqueKey)}
+          config={config}
+          product={findProduct(products, activeId)}
           remove={remove}
         />
       );
@@ -76,26 +78,28 @@ const DraggableGrid: React.FC<any> = function ({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
-      // eslint-disable-next-line
       onDragCancel={handleDragCancel}
       onDragStart={handleDragStart}
     >
-      <SortableContext items={selectedItems}>
+      <SortableContext items={products}>
         <div className="gridContainer">
           {type === "category"
-            ? selectedItems?.map((category: any) => (
+            ? products?.map((data: any) => (
                 <Category
-                  categories={category}
+                  categories={data}
                   remove={remove}
-                  key={category?.[uniqueKey]}
-                  id={category?.[uniqueKey]}
+                  config={config}
+                  key={data?.id}
+                  id={data?.id}
                 />
               ))
-            : selectedItems?.map((product: any) => (
+            : products?.map((product: any) => (
                 <Product
-                  key={product?.[uniqueKey]}
+                  key={product?.id || product?.code}
                   product={product}
+                  id={product?.id || product?.code}
                   remove={remove}
+                  config={config}
                 />
               ))}
         </div>
