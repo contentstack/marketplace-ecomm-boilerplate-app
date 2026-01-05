@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
-import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
+import Extension from "@contentstack/app-sdk/dist/src/extension";
 import { isNull } from "lodash";
-import { KeyValueObj, TypeWarningtext } from "../types";
+import { KeyValueObj } from "../types/type";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
-import localeTexts from "../locale/en-us";
-import rootConfig from "../../root_config";
 
 /**
  * Marketplace App Provider
@@ -13,15 +11,8 @@ import rootConfig from "../../root_config";
  */
 const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
-  const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
+  const [appSdk, setAppSdk] = useState<Extension | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
-  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
-      error: false,
-      data: localeTexts.warnings.invalidCredentials.replace(
-        "$",
-        rootConfig.ecommerceEnv.APP_ENG_NAME
-      ),
-    });
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
@@ -41,11 +32,8 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
     () => ({
       appSdk,
       appConfig,
-      isInvalidCredentials,
-      setIsInvalidCredentials,
-      failed,
     }),
-    [appSdk, appConfig, isInvalidCredentials]
+    [appSdk, appConfig]
   );
 
   // wait until the SDK is initialized. This will ensure the values are set

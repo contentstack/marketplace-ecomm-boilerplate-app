@@ -6,56 +6,21 @@ export default {
     learnMore: "Learn more",
     signFail: "Signature Verification failed",
   },
-  error_Messages: {
-    keyInputLimit: `Maximum character limit reached. $ key path length should not exceed 100 characters.`,
-  },
   configPage: {
-    customWholeJson: {
-      modal: {
-        header: `Add $ Key Field`,
-        label: "Key Name or Path",
-        placeholder: "Enter Key Name or Path",
-        instructionS:
-          'Use the dot format to enter nested objects, for eg: "file.url".',
-        instructionE: "Existing labels in the dropdown will not be created.",
-        note: "Note: ",
-        btn: {
-          cancel: "Cancel",
-          create: "Create",
-          apply: "Create",
-        },
-        addOption: "New Key Field",
-        successToast: {
-          type: "success",
-          text: `$ Key Field added successfully`,
-        },
-      },
-      notification: {
-        errorS: "The option",
-        errorE: "already exists",
-      },
-    },
     errorInADK: "Something Went Wrong While Loading App SDK",
     saveInEntry: {
       label: "Save In Entry",
       help: "You can select different ways to store your ecommerce data.",
       placeholder: "Enter the structure of data you want to save in the entry",
-      allFieldsInstruction:
-        "The 'All Fields' option allows you to add a limited number of products based on the entry's response data structure. (Refer ",
-      customFieldsInstruction:
-        "The 'Custom Field' option allows you to define and select the data structure you want to save in the entry. (Refer ",
-      link: "Custom Fields Limitations",
+      instruction1:
+        "If you select the ''Custom Fields'' option, you can select the structure of the data you want to save in the entry. If 'All Fields' option is selected, you might be able to add limited products in the custom field depending on the size of the data (Refer to the ",
+      link: "Custom Fields Limitations documentation",
       url: "https://www.contentstack.com/docs/developers/create-custom-fields/limitations-of-custom-fields/",
-      contentstackSupportText:
-        " for more details). To increase this limit, please contact ",
+      instruction2:
+        ", for more details). To increase this limit, please contact support.",
       wholeJson: "All Fields",
-      supportLink: "support.",
-      supportUrl: "support@contentstack.com",
-      NoteText:
-        "Note: Switching options with existing data in entry may cause data loss. Proceed with caution.",
       customJson: "Custom Fields",
       isCustomJson: "is_custom_json",
-      onlyID: "Only ID",
     },
     customKeys: {
       label: "Ecommerce Fields",
@@ -68,44 +33,6 @@ export default {
       name: "page_count",
       placeholder: "Enter the number items you want to fetch per page.",
       instruction: "You can enter the page count as numbers eg. 1, 5, 10, etc",
-    },
-    multiConfig: {
-      deleteModalNameNotPresent: "Validation error: Config Names don't match",
-      buttonLabel: "New Configuration",
-      accordionLabel: "$ Configuration",
-      setDefaultText: "Set as Default",
-      deleteButtonText: "Delete",
-      accordionSubLabel: "Configure your $ credentials",
-      multiConfigCheckBoxLabel: "Set as Default",
-      addConfigurationModal: {
-        modalHeaderLabel: "Add Configuration",
-        modalFooterButtonLabel: "Add",
-        multiConfigNameLabel: "Name",
-        multiConfigNameLabelPlaceHolder: "Enter configuration name",
-      },
-      deleteModal: {
-        deleteMessage: "Configuration deleted successfully",
-        confirMationText: "Are you sure you want to delete ",
-        confirMationYesText:
-          " configuration? If yes, type the name of the configuration and press Delete.",
-        cancelButtonText: "cancel",
-        deleteButtonText: "Delete",
-      },
-
-      ErrorMessage: {
-        invalidAlphanumeric:
-          "Only alphanumeric characters, hyphens, and underscores are allowed, with no spaces.",
-        validInputMsg: "Please enter atleast one multiconfig",
-        oneDefaultMsg: "Please select at least one default configuration.  ",
-        configDefaultMessgae:
-          "Please ensure that the latest Shopify app includes at least one default configuration setting.",
-        emptyConfigNotifyMsg: "Please enter valid inputs for ",
-        oldV2KeysNameMsg:
-          "Please enter unique configuration label name. 'legacy_config' is not allowed.",
-        duplicateLabelError: {
-          msg: "Configuration label name already exists. Please use a different name and try again.",
-        },
-      },
     },
   },
   gridViewDropdown: {
@@ -120,12 +47,6 @@ export default {
     help: "help center",
   },
   customField: {
-    noConfig: "This Product's config is either deleted or updated",
-    noImage: {
-      text: "No image available",
-    },
-    configDeletedImg:
-      "We are unable to access the image url. The link could be broken, the asset might be deleted or you do not have access to it.",
     idLbl: "ID",
     add: "Add ",
     noItems: "No $ have been Added",
@@ -144,7 +65,6 @@ export default {
       content: "Change View",
       thumbnail: "Thumbnail",
       list: "List",
-      newTab: "NewTab",
     },
     addHere: "Add",
     buttonText: {
@@ -240,28 +160,9 @@ export default {
       "Something went wrong while fetching data, please try again.",
     cookiesBlocked:
       "Third-party cookies are blocked. To use the $ app, please disable this setting in your browser.",
-    unexpectedError: "An unexpected error occurred. Please try again later.",
   },
   Decryption: {
     keySize: "256",
     iterations: "100",
-  },
-  TextInputFieldWithSuffix: {
-    tooltip: {
-      hide: "Hide",
-      show: "Show",
-    },
-    icon: {
-      eyeClose: "EyeClose",
-      eye: "Eye",
-    },
-  },
-
-  errors: {
-    badRequest: "Bad Request. Please check your input.",
-    unauthorized: "Unauthorized access. Please login again.",
-    forbidden: "Forbidden. You do not have permission to access this resource.",
-    notFound: "Resource not found. Please check the URL or try again later.",
-    tooManyRequests: "Too many requests. Please try again later.",
   },
 };

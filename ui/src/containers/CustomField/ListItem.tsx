@@ -8,21 +8,20 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { Props } from "../../common/types";
 import { findProduct } from "../../common/utils";
 import DraggableListItem from "./DraggableListItem";
 import rootConfig from "../../root_config";
 import localeTexts from "../../common/locale/en-us";
 import DraggableListItemCategory from "./DraggableListItemCategory";
-import useProductCustomField from "../../common/hooks/useCustomField";
 
-const ListItem: React.FC<any> = function ({
+const ListItem: React.FC<Props> = function ({
+  products,
   remove,
+  config,
+  setSelectedItems,
   type,
-}: {
-  remove: any;
-  type: "product" | "category";
 }) {
-  const { selectedItems, handleDragEvent } = useProductCustomField();
   const uniqueKey = rootConfig.ecommerceEnv.UNIQUE_KEY?.[type];
 
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -38,11 +37,11 @@ const ListItem: React.FC<any> = function ({
     const { active, over } = event;
     setActiveId(null);
     if (active?.id !== over?.id) {
-      handleDragEvent(
+      setSelectedItems(
         arrayMove(
-          selectedItems,
-          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
-          selectedItems?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
+          products,
+          products?.findIndex((p: any) => p?.[uniqueKey] === active?.id),
+          products?.findIndex((p: any) => p?.[uniqueKey] === over?.id)
         )
       );
     }
@@ -53,14 +52,14 @@ const ListItem: React.FC<any> = function ({
       return type === "category" ? (
         <DraggableListItemCategory
           key={activeId}
-          category={findProduct(selectedItems, activeId, uniqueKey)}
+          product={findProduct(products, activeId)}
           id={activeId}
           type={type}
         />
       ) : (
         <DraggableListItem
           key={activeId}
-          product={findProduct(selectedItems, activeId, uniqueKey)}
+          product={findProduct(products, activeId)}
           id={activeId}
           type={type}
         />
@@ -73,7 +72,7 @@ const ListItem: React.FC<any> = function ({
     <div
       role="table"
       className="Table"
-      style={{ height: selectedItems?.length > 2 ? "340px" : "203px" }}
+      style={{ height: products?.length > 2 ? "340px" : "203px" }}
     >
       <div role="rowgroup">
         <div style={{ position: "relative" }}>
@@ -99,15 +98,15 @@ const ListItem: React.FC<any> = function ({
                   role="columnheader"
                   className="Table__head__column third-child "
                 >
-                  {type === "category"
-                    ? localeTexts.customField.listViewTable.id
+                  {type === "category" ?
+                    localeTexts.customField.listViewTable.id
                     : localeTexts.customField.listViewTable.price}
                 </div>
               </div>
             </div>
             <div
               className="Table__body"
-              style={{ height: `${(selectedItems?.length || 0) * 60}` }}
+              style={{ height: `${(products?.length || 0) * 60}` }}
             >
               <DndContext
                 sensors={sensors}
@@ -116,23 +115,25 @@ const ListItem: React.FC<any> = function ({
                 onDragCancel={() => setActiveId(null)}
                 onDragStart={handleDragStart}
               >
-                <SortableContext items={selectedItems}>
-                  {type === "category"
-                    ? selectedItems?.map((category: any) => (
+                <SortableContext items={products}>
+                  {type === "category" ?
+                    products?.map((data: any) => (
                         <DraggableListItemCategory
-                          key={category?.[uniqueKey]}
-                          product={category}
-                          id={category?.[uniqueKey]}
+                          key={data?.[uniqueKey] || data?.id}
+                          product={data}
+                          id={data?.[uniqueKey] || data?.id}
                           remove={remove}
                           type={type}
+                          config={config}
                         />
                       ))
-                    : selectedItems?.map((product: any) => (
+                    : products?.map((product: any) => (
                         <DraggableListItem
-                          key={product?.[uniqueKey]}
+                          key={product?.[uniqueKey] || product?.code}
                           product={product}
-                          id={product?.[uniqueKey]}
+                          id={product?.[uniqueKey] || product?.code}
                           remove={remove}
+                          config={config}
                           type={type}
                         />
                       ))}

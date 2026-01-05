@@ -1,75 +1,50 @@
-import axios, { Method } from "axios";
+import axios from "axios";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
-import categoryConfig from "../root_config/categories";
-import { KeyValueObj } from "../common/types";
 
 // common function for an API call to your backend
-const makeAnApiCall = async (url: string, method: Method, data: any) => {
+const makeAnApiCall = async (url: any, method: any, data: any) => {
   try {
     const response = await axios({
       url,
       method,
       data,
       headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         "Access-Control-Allow-Origin": "*",
       },
     });
 
     return {
       error: false,
-      data: rootConfig.getFormattedResponse(response),
+      data: rootConfig.returnUrl(response),
     };
   } catch (e: any) {
-    const status = e?.response?.status;
-    const resData = e?.response?.data;
-    switch (status) {
-      case 400:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.badRequest,
-        };
-      case 401:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.unauthorized,
-        };
-      case 403:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.forbidden,
-        };
-      case 404:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.notFound,
-        };
-      case 429:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.tooManyRequests,
-        };
-      case 500:
-        return {
-          error: true,
-          data:
-            resData
-            || localeTexts.warnings.invalidCredentials.replace(
-              "$",
-              rootConfig.ecommerceEnv.APP_ENG_NAME
-            ),
-        };
-      default:
-        return {
-          error: true,
-          data:
-            resData?.message
-            || localeTexts.warnings.somethingWentWrong
-            || localeTexts.warnings.unexpectedError,
-        };
+    console.error(e);
+    const { status, data: resData } = e?.response || {};
+    if (status === 500) {
+      return {
+        error: true,
+        data: localeTexts.warnings.invalidCredentials.replace(
+          "$",
+          rootConfig.ecommerceEnv.APP_ENG_NAME
+        ),
+      };
     }
+    if (status === 429) {
+      return { error: true, data: resData };
+    }
+    return { error: true, data: localeTexts.warnings.somethingWentWrong };
   }
 };
+
+// get paginated products and categories
+const request = (config: any, requestType: any, page = 1) =>
+  makeAnApiCall(
+    `${process.env.REACT_APP_API_URL}?query=${requestType}&page=${page}&limit=${config?.page_count}`,
+    "POST",
+    config
+  );
 
 // get all available categories
 const requestCategories = (config: any) =>
@@ -79,127 +54,47 @@ const requestCategories = (config: any) =>
     config
   );
 
-/**
- * Fetches selected products or categories based on the provided parameters.
- *
- * @param {object} config - Configuration data of the app.
- * @param {string} type - Indicates whether the request is for product or category.
- * @param {Array<any>} selectedIDs - Array of selected IDs to filter by.
- * @param {boolean} isOldUser - Indicates if the user is an old user with multiconfig enabled.
- *
- * @returns {Promise<any>} - The API response.
- */
-const getSelectedIDs = async (
-  config: KeyValueObj | null,
-  type: string,
-  selectedIDs: any[],
-  isOldUser: boolean | Boolean
-) => {
-  const ids = isOldUser ? selectedIDs?.join(",") : JSON.stringify(selectedIDs);
-  const queryParams = new URLSearchParams({
-    query: type,
-    "id:in": ids,
-    isOldUser: String(isOldUser),
-    configKey: ids,
-  });
-  const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`;
-  return makeAnApiCall(apiUrl, "POST", { config: { ...config } });
-};
-// runes when categoryConfig.customCategoryStructure is true/false
-const getCustomCategoryData = async (
-  config: any,
-  type: any,
-  selectedIDs: any,
-  isOldUser: any
-) => {
-  if (
-    isOldUser
-      ? Array.isArray(selectedIDs) && selectedIDs?.length
-      : Object.keys(selectedIDs)?.length
-  ) {
-    const categoryID = isOldUser
-      ? selectedIDs?.join(",")
-      : JSON.stringify(selectedIDs);
-    const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
+// get selected products/categories
+const getSelectedIDs = async (config: any, type: any, selectedIDs: any) =>
+  Array.isArray(selectedIDs) && selectedIDs?.length ?
+    makeAnApiCall(
+        `${process.env.REACT_APP_API_URL}?query=${type}&id:in=${
+          selectedIDs?.reduce((str: any, i: any) => `${str}${i},`, "") || ""
+        }`,
+        "POST",
+        config
+      )
+    : null;
+
+// filter products with categories
+const filter = async (config: any, type: any, selectedIDs: any) => {
+  if (Array.isArray(selectedIDs) && selectedIDs.length) {
+    const { apiUrl, requestData } = rootConfig.getSelectedCategoriesUrl(
       config,
       type,
-      categoryID,
-      isOldUser
+      selectedIDs
     );
     return makeAnApiCall(apiUrl, "POST", requestData);
   }
   return null;
 };
-
-//  Retrieves API validation for configuration page keys when  isApiValidation is true
-const ApiValidationEnabledForConfig = (
-  configurationObject: any,
-  serverConfigurationObject: any,
-  multiConfigTrueAndApiValidationEnabledKeys: any,
-  multiConfigFalseAndApiValidationEnabledKeys: any
-) =>
-  makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?type=isApiValidationEnabled`,
-    "POST",
-    {
-      configurationObject,
-      serverConfigurationObject,
-      multiConfigTrueAndApiValidationEnabledKeys,
-      multiConfigFalseAndApiValidationEnabledKeys,
-    }
+// search products and categories
+const search = (
+  config: any,
+  keyword: any,
+  page: any,
+  limit: any,
+  categories = []
+) => {
+  const { apiUrl, requestData } = rootConfig.generateSearchApiUrlAndData(
+    config,
+    keyword,
+    page,
+    limit,
+    categories
   );
 
-  const getProductsByCategory = (
-    config: any,
-    isOldUser: any,
-    multiConfigDropDown: any,
-    skip: number,
-    limit: number,
-    category: string
-  ) => {
-    let url = `${process.env.REACT_APP_API_URL}?query=product&skip=${skip}&limit=${limit}&categories:in=${category}`;
-  
-    if (!isOldUser) {
-      const configKey = JSON.stringify({
-        [multiConfigDropDown?.value]: {},
-      });
-  
-      url += `&configKey=${configKey}`;
-    }
-  
-    return makeAnApiCall(url, "POST", { config, isOldUser, multiConfigDropDown });
-  };
-
-  const search = (
-    config: any,
-    keyword: any,
-    skip: any,
-    limit: any,
-    isOldUser: Boolean,
-    multiConfigDropDown: any,
-    searchCategories?: string
-  ) => {
-    let url = `${process.env.REACT_APP_API_URL}?query=${config?.type}&searchParam=keyword=${keyword}&skip=${skip}&limit=${limit}`;
-  
-    if (searchCategories) url += `&searchCategories=${searchCategories}`;
-  
-    if (!isOldUser) {
-      const configKey = JSON.stringify({
-        [multiConfigDropDown?.value]: {},
-      });
-  
-      url += `&configKey=${configKey}`;
-    }
-  
-    return makeAnApiCall(url, "POST", { config, isOldUser, multiConfigDropDown });
-  };
-
-export {
-  getSelectedIDs,
-  requestCategories,
-  getCustomCategoryData,
-  ApiValidationEnabledForConfig,
-  makeAnApiCall,
-  getProductsByCategory,
-  search,
+  return makeAnApiCall(apiUrl, "POST", requestData);
 };
+
+export { getSelectedIDs, request, requestCategories, search, filter };

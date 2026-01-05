@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -7,18 +9,18 @@ import {
   Tooltip,
   cbModal,
 } from "@contentstack/venus-components";
-import { Props, TypeProduct } from "../../common/types";
-import { getSanitizedHTML, removeHTMLTags } from "../../common/utils";
+import { Props } from "../../common/types";
+import { removeHTMLTags } from "../../common/utils";
 import localeTexts from "../../common/locale/en-us";
 import constants from "../../common/constants";
 import DeleteModal from "./DeleteModal";
 import rootConfig from "../../root_config";
-import useAppConfig from "../../common/hooks/useAppConfig";
-import noImage from "../../assets/NoImg.svg";
+import { TypeProduct } from "../../types";
+import NoImg from "../../assets/NoImg.svg";
 
-const Product: React.FC<Props> = function ({ product, remove }) {
-  const config = useAppConfig();
-  const { id, name, description, image, price, isProductDeleted }: TypeProduct =    rootConfig.returnFormattedProduct(product, config);
+const Product: React.FC<Props> = function ({ product, remove, config }) {
+  const { id, name, description, image, price }: TypeProduct =
+    rootConfig.returnFormattedProduct(product, config);
 
   const {
     attributes,
@@ -27,28 +29,25 @@ const Product: React.FC<Props> = function ({ product, remove }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id: product?.id || product?.code });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     border: isDragging ? constants.droppingDOMBorder : undefined,
     backgroundColor: isDragging ? constants.droppingDOMBackground : "inherit",
-    height: isDragging ? constants.droppingAreaHeight : "inherit",
     borderRadius: 12,
   };
-  /* eslint-disable */
+
   const deleteModal = (props: any) => (
     <DeleteModal
-      multiConfigName={product?.cs_metadata?.multiConfigName}
       type="Product"
       remove={remove}
-      id={id}
+      id={id || product?.code}
       name={name}
       {...props}
     />
   );
-  /* eslint-enable */
 
   const { error } = product;
   const toolTipActions = [
@@ -83,81 +82,57 @@ const Product: React.FC<Props> = function ({ product, remove }) {
         }),
       className: "ActionListItem--warning",
     },
-  ]?.filter(
-    (action) =>
-      !(
-        isProductDeleted
-        && action?.label?.props?.icon === localeTexts.customField.toolTip.newTab
-      )
-  );
+  ];
 
-  /* eslint-disable */
   return (
     <div style={style} ref={setNodeRef} {...attributes} {...listeners}>
       {isDragging ? (
         ""
       ) : (
         <ActionTooltip list={toolTipActions}>
-          <div className="product" key={id} data-testid="render-card-item">
+          <div
+            className="product"
+            key={id || product?.code}
+            data-testid="render-card-item"
+          >
             {!error ? (
               <>
-                {isProductDeleted ? (
-                  <div className="product-image product_image">
-                    <Tooltip
-                      content={localeTexts.customField.configDeletedImg}
-                      position="top"
-                      showArrow={false}
-                      variantType="light"
-                      type="secondary"
-                    >
-                      <Icon icon="WarningBold" version="v2" size="small" />
-                    </Tooltip>
+                {image ? (
+                  <div className="product-image">
+                    <img src={image} alt={name} />
                   </div>
-                ) : image ? (
-                  <>
-                    <div className="product-image">
-                      <img src={image} alt={name} />
-                    </div>
-                    <div className="divider" />
-                  </>
                 ) : (
-                  <div className="product-image product_image">
+                  <div className="product-image">
                     <Tooltip
-                      content={localeTexts.customField.noImage.text}
+                      content={localeTexts.selectorPage.ImageTooltip.label}
                       position="top"
                       showArrow={false}
                       variantType="light"
                       type="secondary"
                     >
                       <img
-                        src={noImage}
-                        alt={localeTexts.customField.noImage.text}
-                        className={"selector-product-image"}
+                        src={NoImg}
+                        alt={localeTexts.selectorPage.noImageAvailable}
+                        className="selector-product-image"
                       />
                     </Tooltip>
                   </div>
                 )}
+
+                <div className="divider" />
                 <div className="product-body">
-                  {isProductDeleted ? (
-                    <span className="product-name">{name}</span>
-                  ) : (
-                    <>
-                      <span className="product-name">{name}</span>
-                      {price && (
-                        <span className="product-name">
-                          {localeTexts.customField.listViewTable.price}:{price}
-                        </span>
-                      )}
-                      <span className="product-desc">
-                        {getSanitizedHTML(removeHTMLTags(description))}
-                      </span>
-                    </>
+                  <span className="product-name">{name}</span>
+                  {price && (
+                    <span className="product-name">
+                      {localeTexts.customField.listViewTable.price}: {price}
+                    </span>
                   )}
-                  {isProductDeleted && (
-                    <div className="config-deleted-message">
-                      {localeTexts.customField.noConfig}
-                    </div>
-                  )}
+                  <span
+                    className="product-desc"
+                    dangerouslySetInnerHTML={{
+                      __html: `${removeHTMLTags(description)}`,
+                    }}
+                  />
                 </div>
               </>
             ) : (
