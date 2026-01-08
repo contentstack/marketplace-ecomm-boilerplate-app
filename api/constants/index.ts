@@ -30,7 +30,7 @@ const constants: any = {
   DECRYPTION: {
     keySize: 256,
     iterations: 100,
-    password: "password#123",
+    password: "", // NOTE: Add your decryption password here
   },
 };
 
