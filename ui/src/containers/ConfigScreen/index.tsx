@@ -246,7 +246,11 @@ const ConfigScreen: React.FC = function () {
                 {objValue?.labelText}
               </FieldLabel>
               {objValue?.helpText && (
-                <Help text={objValue?.helpText} data-testid="text_help" type="primary"/>
+                <Help
+                  text={objValue?.helpText}
+                  data-testid="text_help"
+                  type="primary"
+                />
               )}
               {/* Change the help caption as per your requirement */}
               <TextInput
@@ -350,7 +354,10 @@ const ConfigScreen: React.FC = function () {
                     )}
                   </FieldLabel>
                   {/* Change the help caption as per your requirement */}
-                  <Help text={localeTexts.configPage.customKeys.help} type="primary"/>
+                  <Help
+                    text={localeTexts.configPage.customKeys.help}
+                    type="primary"
+                  />
                 </div>
                 <Select
                   options={rootConfig.getCustomKeys()}
