@@ -1,7 +1,6 @@
 import currency from "currency.js";
 import axios from "axios";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtVerify, importSPKI, JWTPayload } from "jose";
 import { ColumnsProp } from "../common/types";
 // eslint-disable-next-line import/no-cycle
 import { wrapWithDiv, getImage } from "../common/utils";
@@ -20,43 +19,50 @@ import Logo from "../assets/Logo.svg";
     but please do not change any keys or function names.
 */
 
-// this function is used for app signing, i.e. for verifying app tokens in ui
 const verifyAppSigning = async (app_token: any): Promise<boolean> => {
-  if (app_token) {
-    try {
-      const { data }: { data: any } = await axios.get(
-        "https://app.contentstack.com/.well-known/public-keys.json"
-      );
-      const publicKey = data["signing-key"];
-
-      const {
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key,
-      }: any = jwt.verify(app_token, publicKey) as JwtPayload;
-
-      console.info(
-        "app token is valid!",
-        app_uid,
-        installation_uid,
-        organization_uid,
-        user_uid,
-        stack_api_key
-      );
-    } catch (e) {
-      console.error(
-        "app token is invalid or request is not initiated from Contentstack!"
-      );
-      return false;
-    }
-    return true;
-  } else {
+  if (!app_token) {
     console.error("app token is missing!");
     return false;
   }
+  try {
+    const { data }: { data: any } = await axios.get(
+      "https://app.contentstack.com/.well-known/public-keys.json"
+    );
+    const publicKeyPem = data["signing-key"];
+    // Convert PEM → CryptoKey (browser-native)
+    const publicKey = await importSPKI(publicKeyPem, "RS256");
+    const { payload } = await jwtVerify(app_token, publicKey);
+    const {
+      app_uid,
+      installation_uid,
+      organization_uid,
+      user_uid,
+      stack_api_key,
+    } = payload as JWTPayload & {
+      app_uid: string;
+      installation_uid: string;
+      organization_uid: string;
+      user_uid: string;
+      stack_api_key: string;
+    };
+    console.info(
+      "app token is valid!",
+      app_uid,
+      installation_uid,
+      organization_uid,
+      user_uid,
+      stack_api_key
+    );
+    return true;
+  } catch (e) {
+    console.error(
+      "app token is invalid or request is not initiated from Contentstack!"
+    );
+    return false;
+  }
 };
+
+
 
 // Please refer to the doc for getting more information on each ecommerceEnv fields/keys.
 const ecommerceEnv: EcommerceEnv = {
