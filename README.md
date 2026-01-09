@@ -26,6 +26,7 @@ marketplace-ecomm-boilerplate-app
     |-- index.js
     |-- package-lock.json
     |-- package.json
+    |-- server.js
 |-- example
     |-- sapcc
     |  |-- api
@@ -196,6 +197,41 @@ npm run dev
 ```
 The API server will start at port 8080.
 All the backend APIs are handled in an handler file in the `api/handler/index.js` and all the UI API calls are handled in the `ui/src/services.index.tsx` file.
+
+## Development Server (server.js)
+
+The `server.js` file is used for local development only. The production deployment is done on AWS Lambda, where the Lambda function calls the handler function in `./index.js` directly without any server requirement.
+
+Create `server.js` file in the root of api folder and use below code.
+
+```javascript
+/* 
+import express from "express";
+import cors from "cors";
+import handler from "./index";
+
+const app = express();
+
+app.use(cors({ origin: "*" }));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+const port: number = 8080;
+
+app.post("/", async (req: any, res: any) => {
+  const event: any = {
+    queryStringParameters: req.query,
+    body: req.body,
+  };
+  const response: any = await handler(event);
+  res.set(response.headers);
+  res.status(response.statusCode).json(response.body);
+});
+
+app.listen(port, () => {
+  console.info("Server listening at port ", port);
+});
+*/
+```
 
 In the API, the exports.handler function will be the entry point for processing incoming requests. Depending on the specific API route or endpoint, different predefined functions can be utilized for fetching products or categories from various third-party ecommerce systems are added inside handler/index.js, enabling modular and flexible data retrieval based on the requested resource. 
 Storing dynamic user data in the root config enables centralization, allowing the handler/index.js to easily access and process this information, promoting consistency and simplifying data management within the API.
