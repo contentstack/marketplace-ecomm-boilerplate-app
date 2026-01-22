@@ -12,7 +12,14 @@ const isEmpty = (val) =>
   (typeof val === "object" && !Object.keys(val)?.length) ||
   (typeof val === "string" && !val.trim().length);
 
-const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
+const makeApiCall = async ({
+  url,
+  method,
+  headers,
+  data,
+  maxBodyLength,
+  printError = true,
+}) => {
   try {
     const res = await axios({
       url,
@@ -27,16 +34,17 @@ const makeApiCall = async ({ url, method, headers, data, maxBodyLength }) => {
 
     return res?.data;
   } catch (error) {
-    console.info(JSON.stringify(error));
+    if (printError) console.info(JSON.stringify(error));
+
     throw error.response.data || error.message || error;
   }
 };
 
-const safePromise = (promise, errorText) =>
+const safePromise = (promise, errorText, printError = true) =>
   promise
     .then((res) => [null, res])
     .catch((err) => {
-      console.error(errorText);
+      if (printError) console.error(errorText);
       return [err];
     });
 
@@ -47,7 +55,7 @@ const getBaseUrl = (region) => {
 
 const getAppBaseUrl = (region) => {
   const baseUrl = constants.APP_BASE_URLS.find(
-    (item) => item.region === region
+    (item) => item.region === region,
   );
   return baseUrl ? baseUrl.url : constants.APP_BASE_URLS[0].url;
 };
@@ -59,21 +67,21 @@ const getDeveloperhubBaseUrl = (region) =>
 const updateAppManifest = (manifest, appEnv) => {
   fs.writeFileSync(
     path.join(__dirname, `../../settings/${appEnv}-app-manifest.json`),
-    JSON.stringify(manifest, null, 2)
+    JSON.stringify(manifest, null, 2),
   );
 };
 
 const updateLaunchManifest = (manifest) => {
   fs.writeFileSync(
     path.join(__dirname, "../../settings/prod-app-launch-manifest.json"),
-    JSON.stringify(manifest, null, 2)
+    JSON.stringify(manifest, null, 2),
   );
 };
 
 const updateAppInstallation = (installationData) => {
   fs.writeFileSync(
     path.join(__dirname, `../../settings/app-installations.json`),
-    JSON.stringify(installationData, null, 2)
+    JSON.stringify(installationData, null, 2),
   );
 };
 
@@ -82,12 +90,12 @@ const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
     const envVariables = [];
     const apiEnvData = fs.readFileSync(
       path.join(__dirname, "../../../api/.env"),
-      "utf-8"
+      "utf-8",
     );
 
     const uiEnvData = fs.readFileSync(
       path.join(__dirname, "../../../ui/.env"),
-      "utf-8"
+      "utf-8",
     );
 
     `${apiEnvData}\n${uiEnvData}`.split("\n").forEach((line) => {
@@ -97,7 +105,7 @@ const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
         if (!constants.EXCLUDED_ENVS.includes(key)) {
           if (key && value)
             envVariables.push(
-              `{ key: "${key.trim()}", value: "${value.trim()}" }`
+              `{ key: "${key.trim()}", value: "${value.trim()}" }`,
             );
         }
       }
@@ -118,7 +126,7 @@ const getEnvVariables = (deploymentUrl, launchSubDomain, region) => {
     envVariables.push(`{ key: "REACT_APP_UI_URL", value: "${url}" }`);
     envVariables.push(`{ key: "REACT_APP_API_URL", value: "${url}/api" }`);
     envVariables.push(
-      `{ key: "REACT_APP_API_AUTH_URL", value: "${url}/auth" }`
+      `{ key: "REACT_APP_API_AUTH_URL", value: "${url}/auth" }`,
     );
 
     return `[${envVariables.join(",")}]`;
@@ -174,11 +182,11 @@ const buildAppZip = () => {
     });
 
     const uiPackageJson = JSON.parse(
-      fs.readFileSync(`${uiAppBasePath}/package.json`, "utf8")
+      fs.readFileSync(`${uiAppBasePath}/package.json`, "utf8"),
     );
 
     const apiPackageJson = JSON.parse(
-      fs.readFileSync(`${apiAppBasePath}/package.json`, "utf8")
+      fs.readFileSync(`${apiAppBasePath}/package.json`, "utf8"),
     );
 
     (Object.keys(apiPackageJson?.dependencies) || []).forEach((key) => {
@@ -186,7 +194,7 @@ const buildAppZip = () => {
         key != "axios" &&
         key != "crypto-js" &&
         (Object.keys(uiPackageJson?.dependencies) || []).find(
-          (uiKey) => uiKey == key
+          (uiKey) => uiKey == key,
         )
       )
         throw new Error("Conflicting dependency packages found in ui & api.");
@@ -203,7 +211,7 @@ const buildAppZip = () => {
     // Updating the final app's package.json file
     fs.writeFileSync(
       `${buildBasePath}/package.json`,
-      JSON.stringify(appPackageJson, null, 2)
+      JSON.stringify(appPackageJson, null, 2),
     );
 
     const zip = new AdmZip();
@@ -328,12 +336,12 @@ const _getProjectMetaData = (
   uploadUid,
   envName,
   launchSubDomain,
-  region
+  region,
 ) =>
   `{name: "${name}", fileUpload: {uploadUid: "${uploadUid}"}, projectType: "FILEUPLOAD", cmsStackApiKey: "", environment: {name: "${envName}", frameworkPreset: "CRA", buildCommand: "npm run build", outputDirectory: "./build", environmentVariables: ${getEnvVariables(
     "",
     launchSubDomain,
-    region
+    region,
   )}}}`;
 
 const createProject = async (
@@ -344,7 +352,7 @@ const createProject = async (
   name,
   uploadUid,
   envName,
-  launchSubDomain
+  launchSubDomain,
 ) => {
   try {
     console.info("Creating a launch project...");
@@ -366,7 +374,7 @@ const createProject = async (
               uploadUid,
               envName,
               launchSubDomain,
-              region
+              region,
             )}
           ) {
             projectType
@@ -405,7 +413,7 @@ const createProject = async (
     const projectUrl = `${baseUrl}/#!/launch/projects/${res?.data?.importProject?.uid}/envs/${res?.data?.importProject?.environments[0]?.uid}/deployments/${res?.data?.importProject?.environments[0]?.deployments?.edges[0]?.node?.uid}`;
     console.info("Project created successfully...");
     console.info(
-      "Build and deployment has been initiated. You can checks the logs at: "
+      "Build and deployment has been initiated. You can checks the logs at: ",
     );
     openLink(projectUrl);
 
@@ -504,7 +512,7 @@ const reDeployProject = async (
   orgId,
   baseUrl,
   uploadUid,
-  launchMetaData
+  launchMetaData,
 ) => {
   try {
     await updateProjectEnvs(baseUrl, launchMetaData, authtoken, orgId);
@@ -543,7 +551,7 @@ const reDeployProject = async (
     const projectUrl = `${baseUrl}/#!/launch/projects/${launchMetaData?.project_uid}/envs/${launchMetaData?.env_uid}/deployments/${res?.data?.createDeployment?.uid}`;
     console.info("redeployment was successfully...");
     console.info(
-      "Build and deployment has been initiated. You can checks the logs at: "
+      "Build and deployment has been initiated. You can checks the logs at: ",
     );
     openLink(projectUrl);
 
@@ -604,12 +612,12 @@ const updateInstallation = async (
   authtoken,
   orgId,
   appUid,
-  stackApiKey
+  stackApiKey,
 ) =>
   makeApiCall({
     method: "PUT",
     url: `${getDeveloperhubBaseUrl(
-      region
+      region,
     )}/manifests/${appUid}/reinstall?include_draft=true`,
     headers: {
       authtoken,
@@ -640,7 +648,7 @@ const createContentType = async (
   stackApiKey,
   ctName,
   productCustomFieldId,
-  categoryCustomFieldId
+  categoryCustomFieldId,
 ) =>
   makeApiCall({
     url: `${baseUrl}/v3/content_types?organization_uid=${orgId}`,
@@ -788,8 +796,8 @@ const getLaunchManifest = () => {
     const launchData = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, "../../settings/prod-app-launch-manifest.json"),
-        "utf8"
-      ) || "{}"
+        "utf8",
+      ) || "{}",
     );
     return {
       data: launchData,
