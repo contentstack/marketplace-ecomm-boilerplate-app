@@ -26,7 +26,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     if (!authtoken) {
       console.info(
-        'Login credentials not found. Please login using "npm run login"'
+        'Login credentials not found. Please login using "npm run login"',
       );
       return;
     }
@@ -38,7 +38,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
     orgIndex = readlineSync.keyInSelect(
       userOrgs.map((org) => org.name),
-      "Please select an organization to create an app in"
+      "Please select an organization to create an app in",
     );
     if (orgIndex === -1) {
       console.info("No organization selected...");
@@ -55,7 +55,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
       const [appError, appData] = await safePromise(
         createApp(region, authtoken, selectedOrgUid, appName, appDescription),
-        "Error while creating the app."
+        "Error while creating the app.",
       );
 
       if (appError) {
@@ -76,7 +76,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       */
       const [appUpdateError, appUpdateData] = await safePromise(
         updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
-        "Error while creating the app."
+        "Error while creating the app.",
       );
 
       if (appUpdateError) {
@@ -96,12 +96,12 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         csBaseUrl,
         appBaseUrl,
         authtoken,
-        selectedOrgUid
+        selectedOrgUid,
       );
     } else if (op === "update-app") {
       if (
         readlineSync.keyInYN(
-          `Have you updated the settings/${appEnv}-app-manifest.json?`
+          `Have you updated the settings/${appEnv}-app-manifest.json?`,
         )
       ) {
         appUid = appEnv === "dev" ? devAppManifest.uid : prodAppManifest.uid;
@@ -109,7 +109,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
         const [appError, appData] = await safePromise(
           updateApp(appManifest, region, authtoken, selectedOrgUid, appUid),
-          "Error while updating the app"
+          "Error while updating the app",
         );
 
         if (appError) {
@@ -129,7 +129,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           csBaseUrl,
           appBaseUrl,
           authtoken,
-          selectedOrgUid
+          selectedOrgUid,
         );
       }
     }

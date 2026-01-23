@@ -27,7 +27,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     if (!authtoken) {
       console.info(
-        'Login credentials not found. Please login using "npm run login"'
+        'Login credentials not found. Please login using "npm run login"',
       );
       return;
     }
@@ -39,7 +39,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
 
     orgIndex = readlineSync.keyInSelect(
       userOrgs.map((org) => org.name),
-      "Please select an organization"
+      "Please select an organization",
     );
     if (orgIndex === -1) {
       console.info("No organization selected...");
@@ -53,7 +53,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
     const uploadMetaData = await getUploadMetaData(
       authtoken,
       appBaseUrl,
-      selectedOrgUid
+      selectedOrgUid,
     );
 
     await uploadAppZip(region, uploadMetaData, buildPath);
@@ -66,7 +66,7 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         selectedOrgUid,
         appBaseUrl,
         uploadMetaData?.uploadUid,
-        launchManifest.data
+        launchManifest.data,
       );
 
       updateLaunchManifest({
@@ -86,14 +86,14 @@ const prodAppManifest = require("../../settings/prod-app-manifest.json");
         projectName,
         uploadMetaData?.uploadUid,
         envName,
-        launchSubDomain
+        launchSubDomain,
       );
 
       const launchProjectDetails = await getProjectDetails(
         appBaseUrl,
         launchMetaData,
         authtoken,
-        selectedOrgUid
+        selectedOrgUid,
       );
 
       updateLaunchManifest({

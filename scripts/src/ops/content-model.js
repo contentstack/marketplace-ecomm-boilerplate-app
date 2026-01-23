@@ -23,14 +23,14 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
       if (!authtoken) {
         console.info(
-          'Login credentials not found. Please login using "npm run login"'
+          'Login credentials not found. Please login using "npm run login"',
         );
         return;
       }
 
       if (isEmpty(appInstallations)) {
         console.info(
-          "App installations not found. Please install the app locally."
+          "App installations not found. Please install the app locally.",
         );
         return;
       }
@@ -38,7 +38,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       const envs = ["prod", "dev"];
       const envIndex = readlineSync.keyInSelect(
         envs,
-        "Select The environment of the app:"
+        "Select The environment of the app:",
       );
       if (envIndex === -1) {
         console.info("Environment not selected!");
@@ -46,7 +46,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       }
       const appEnv = envs[envIndex];
       const appInstallationData = appInstallations.find(
-        (app) => app.env === appEnv
+        (app) => app.env === appEnv,
       );
 
       if (isEmpty(appInstallationData)) {
@@ -63,14 +63,14 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       const baseUrl = getBaseUrl(region);
       const appBaseUrl = getAppBaseUrl(region);
       const ctName = readlineSync.question(
-        "Enter a unique Content-type name: "
+        "Enter a unique Content-type name: ",
       );
 
       const extensions = await getExtensions(
         baseUrl,
         authtoken,
         stackApiKey,
-        appUid
+        appUid,
       );
 
       if (isEmpty(extensions)) {
@@ -83,7 +83,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           ext.type == "field" &&
           ext.title ==
             (appEnv === "dev" ? devAppManifest : prodAppManifest)?.ui_location
-              .locations[0].meta[0].name
+              .locations[0].meta[0].name,
       )?.uid;
 
       const categoryCustomFieldId = extensions?.find(
@@ -91,7 +91,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           ext.type == "field" &&
           ext.title ==
             (appEnv === "dev" ? devAppManifest : prodAppManifest).ui_location
-              .locations[0].meta[1].name
+              .locations[0].meta[1].name,
       )?.uid;
 
       if (!productCustomFieldId || !categoryCustomFieldId) {
@@ -107,9 +107,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           stackApiKey,
           ctName,
           productCustomFieldId,
-          categoryCustomFieldId
+          categoryCustomFieldId,
         ),
-        "Error while creating content type."
+        "Error while creating content type.",
       );
 
       if (contentTypeError) return;
@@ -120,7 +120,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
       const [EntryError, EntryData] = await safePromise(
         createEntry(baseUrl, authtoken, stackApiKey, contentTypeId),
-        "Error while creating an entry."
+        "Error while creating an entry.",
       );
 
       if (EntryError) return;

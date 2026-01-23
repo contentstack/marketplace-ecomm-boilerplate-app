@@ -19,12 +19,12 @@ const install = async (
   baseUrl,
   appBaseUrl,
   authtoken,
-  orgId
+  orgId,
 ) => {
   if (readlineSync.keyInYN("Do you want to install the app?")) {
     const [stackError, stackData] = await safePromise(
       getOrgStacks(baseUrl, authtoken, orgId),
-      "No stacks found!"
+      "No stacks found!",
     );
 
     if (stackError) return;
@@ -36,7 +36,7 @@ const install = async (
     }
     const stackIndex = readlineSync.keyInSelect(
       stackChoices,
-      "Select a stack to install the app:"
+      "Select a stack to install the app:",
     );
     if (stackIndex === -1) throw new Error("No stack selected!");
     const stackApiKey = stackData.stacks[stackIndex].api_key;
@@ -44,7 +44,7 @@ const install = async (
 
     const [installedError, installedAppsData] = await safePromise(
       getExtensions(baseUrl, authtoken, stackApiKey, appUid),
-      "Failed to fetch installed apps!"
+      "Failed to fetch installed apps!",
     );
 
     if (installedError) return;
@@ -52,12 +52,12 @@ const install = async (
 
     if (!isEmpty(installedAppsData)) {
       console.info(
-        `App already installed in this stack (${stackChoices[stackIndex]}). Updating installation...`
+        `App already installed in this stack (${stackChoices[stackIndex]}). Updating installation...`,
       );
 
       const [updateError, updatedData] = await safePromise(
         updateInstallation(region, authtoken, orgId, appUid, stackApiKey),
-        "App installation failed."
+        "App installation failed.",
       );
 
       if (updateError) return;
@@ -89,7 +89,7 @@ const install = async (
       console.info("Installing app...");
       const [installError, newInstallData] = await safePromise(
         installApp(region, authtoken, orgId, appUid, stackApiKey),
-        "Failed to install the app"
+        "Failed to install the app",
       );
 
       if (installError) return;
