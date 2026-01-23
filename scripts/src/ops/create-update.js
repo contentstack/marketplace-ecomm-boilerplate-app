@@ -6,7 +6,6 @@ const {
   updateAppManifest,
   createApp,
   updateApp,
-  openLink,
 } = require("../utils");
 const installApp = require("./install-app");
 const loginData = require("../../settings/credentials.json");
@@ -86,7 +85,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
 
       console.info("App created successfully");
-      openLink(url);
 
       await installApp(
         appName,
@@ -97,6 +95,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
         appBaseUrl,
         authtoken,
         selectedOrgUid,
+        url,
       );
     } else if (op === "update-app") {
       if (
@@ -119,7 +118,6 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
 
         console.info("App updated successfully");
         const url = `${appBaseUrl}/#!/developerhub/app/${appUid}/ui-locations`;
-        openLink(url);
 
         await installApp(
           appManifest.name,
@@ -130,6 +128,7 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
           appBaseUrl,
           authtoken,
           selectedOrgUid,
+          url,
         );
       }
     }
