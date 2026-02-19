@@ -86,9 +86,9 @@ const install = async (
       const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
       console.info("App upgraded successfully.");
       console.info("Opening the app's manifest in the developerHub: ");
-      openLink(appUrl);
+      openLink(appUrl, 'install-app-manifest');
       console.info("Opening the app's configuration page: ");
-      openLink(configPage);
+      openLink(configPage, 'install-app-config');
     } else {
       console.info("Installing app...");
       const [installError, newInstallData] = await safePromise(
@@ -120,13 +120,13 @@ const install = async (
       const configPage = `${appBaseUrl}/#!/marketplace/installed-apps/${installData?.data?.installation_uid}/configuration`;
       console.info("App installed successfully.");
       console.info("Opening the app's manifest in the developerHub: ");
-      openLink(appUrl);
+      openLink(appUrl, 'install-app-manifest');
       console.info("Please add and save the configuration at: ");
-      openLink(configPage);
+      openLink(configPage, 'install-app-config');
     }
   } else {
     console.info("Opening the app's manifest in the developerHub: ");
-    openLink(appUrl);
+    openLink(appUrl, 'install-app-manifest');
   }
 };
 

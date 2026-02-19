@@ -131,9 +131,9 @@ const devAppManifest = require("../../settings/dev-app-manifest.json");
       const entryUrl = `${appBaseUrl}/#!/stack/${stackApiKey}/content-type/${contentTypeId}/en-us/entry/${EntryData?.entry.uid}/edit`;
 
       console.info("Content type url: ");
-      openLink(ctUrl);
+      openLink(ctUrl, 'content-model-type');
       console.info("Entry url: ");
-      openLink(entryUrl);
+      openLink(entryUrl, 'content-model-entry');
     }
   } catch (err) {
     console.info(err);

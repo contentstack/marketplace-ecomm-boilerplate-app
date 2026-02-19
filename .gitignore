@@ -29,4 +29,5 @@ ui/.npmrc
 coverage/
 
 scripts/*/credentials.json
+scripts/*/collected-links.json
 scripts/*/build
