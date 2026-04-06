@@ -1,11 +1,9 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
+import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 import useAppSdk from "./useAppSdk";
 
-// Mock the useContext function to provide a dummy appSdk
-jest.mock("react", () => ({
-  ...jest.requireActual("react"),
-  useContext: jest.fn().mockReturnValue({ appSdk: { someMethod: jest.fn() } }),
-}));
+const mockAppSdk = { someMethod: "mock-sdk-handle" } as never;
 
 describe("useAppSdk", () => {
   it("should return the appSdk instance", () => {
@@ -15,8 +13,16 @@ describe("useAppSdk", () => {
       return <div>{JSON.stringify(appSdk)}</div>;
     }
     // eslint-disable-next-line react/react-in-jsx-scope
-    render(<AppSdkFunc />);
+    render(
+      <MarketplaceAppContext.Provider
+        value={{ appSdk: mockAppSdk, appConfig: null }}
+      >
+        <AppSdkFunc />
+      </MarketplaceAppContext.Provider>
+    );
 
-    expect(screen.getByText(/{"someMethod":/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/"someMethod":"mock-sdk-handle"/i)
+    ).toBeInTheDocument();
   });
 });

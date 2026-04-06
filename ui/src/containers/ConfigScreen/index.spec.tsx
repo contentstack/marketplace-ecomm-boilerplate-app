@@ -1,48 +1,45 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react/pure";
 import ConfigScreen from ".";
 
-const configUIElements = [
-  "store_id-label",
-  "store_id-help",
-  "store_id-input",
-  "store_id-instruction",
-  "auth_token-label",
-  "auth_token-help",
-  "auth_token-input",
-  "auth_token-instruction",
-  "is_custom_json-label",
-  "is_custom_json-help",
-  "is_custom_json-wholeJson",
-  "is_custom_json-customJson",
-  "is_custom_json-instruction",
-  "page_count-field",
-  "page_count-input",
-  "page_count-instruction",
-];
+let configScreenRenderedDOM: ReturnType<typeof render> | null = null;
 
-const conditionalRenderUIElements = ["custom_keys-field", "custom_keys-help"];
-
-let configScreenRenderedDOM: any = null;
-beforeAll(async () => {
-  // eslint-disable-next-line react/react-in-jsx-scope
+beforeAll(() => {
   configScreenRenderedDOM = render(<ConfigScreen />);
 });
 
 describe("UI Elements of Configuration Screen", () => {
-  configUIElements.forEach((id: string) => {
-    test(`Rendered ${id} element`, () => {
-      expect(screen.getByTestId(`${id}`)).toBeTruthy();
-    });
+  it("renders config form wrapper", () => {
+    expect(screen.getByTestId("config-wrapper")).toBeTruthy();
   });
 
-  test("Rendered Custom JSON Dropdown", () => {
-    fireEvent.click(screen.getByTestId("is_custom_json-customJson"));
+  it("renders two text field groups from root config", () => {
+    expect(screen.getAllByTestId("text_label")).toHaveLength(2);
+    expect(screen.getAllByTestId("text_help")).toHaveLength(2);
+    expect(screen.getAllByTestId("text_input")).toHaveLength(2);
+    expect(screen.getAllByTestId("text_instruction")).toHaveLength(2);
+  });
 
-    conditionalRenderUIElements.forEach((id: string) => {
-      expect(screen.getByTestId(`${id}`)).toBeTruthy();
-    });
+  it("renders configured field labels", () => {
+    expect(
+      screen.getByText("Sample Ecommerce App Client ID")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Sample Ecommerce App Client Secret")
+    ).toBeInTheDocument();
+  });
+
+  it("renders save-in-entry and page count sections", () => {
+    expect(screen.getByText("Save In Entry")).toBeInTheDocument();
+    expect(screen.getByText("Items Per Page")).toBeInTheDocument();
+    expect(screen.getByTestId("page_count-input")).toBeTruthy();
+  });
+
+  it("shows custom keys selector when Custom Fields is selected", () => {
+    fireEvent.click(screen.getByLabelText("Custom Fields"));
+    expect(screen.getByText("Ecommerce Fields")).toBeInTheDocument();
     const selectElement = configScreenRenderedDOM?.container?.querySelector(
-      `[data-test-id=cs-select]`
+      "[data-test-id=cs-select]"
     );
     expect(selectElement).toBeTruthy();
   });

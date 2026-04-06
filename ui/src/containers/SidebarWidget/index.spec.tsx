@@ -1,61 +1,55 @@
 import React from "react";
-import {
-  render as customRender,
-  screen,
-  cleanup,
-} from "@testing-library/react/pure";
-import CustomField from "./index";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import SidebarWidget from "./index";
+import localeTexts from "../../common/locale/en-us";
+import rootConfig from "../../root_config";
 
-let customFieldRenderedDOM: any = null;
-
-const render = (ui: React.ReactElement, options?: any) => {
-  const { container } = customRender(ui, options);
-  customFieldRenderedDOM = { container };
-  return { container };
-};
-
-beforeEach(() => {
-  const setStateMock = React.useState;
-  const useStateMock: any = (useState: any) => [useState, setStateMock];
-  jest
-    .spyOn(React, "useState")
-    .mockImplementationOnce(() =>
-      useStateMock({
-        config: {},
-        location: {},
-        appSdkInitialized: true,
+/* eslint-disable @typescript-eslint/naming-convention -- Jest ESM interop and SDK shapes */
+jest.mock("@contentstack/app-sdk", () => ({
+  __esModule: true,
+  default: {
+    init: jest.fn(() =>
+      Promise.resolve({
+        getConfig: jest.fn(() =>
+          Promise.resolve({
+            configField1: "",
+            configField2: "x",
+          })
+        ),
+        location: {
+          SidebarWidget: {
+            entry: {
+              content_type: { uid: "ct-uid" },
+              getData: jest.fn(() => ({})),
+            },
+          },
+        },
+        stack: {
+          getContentType: jest.fn(() =>
+            Promise.resolve({ content_type: { schema: [] } })
+          ),
+        },
       })
-    )
-    .mockImplementationOnce(() => useStateMock(false))
-    .mockImplementationOnce(() => useStateMock(false))
-    .mockImplementationOnce(() =>
-      useStateMock({
-        error: true,
-        data: "Invalid credentials.",
-      })
+    ),
+  },
+}));
+/* eslint-enable @typescript-eslint/naming-convention */
+
+describe("SidebarWidget with invalid configuration", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("shows credentials warning and sidebar chrome", async () => {
+    render(<SidebarWidget />);
+    const message = localeTexts.warnings.invalidCredentials.replace(
+      "$",
+      rootConfig.ecommerceEnv.APP_ENG_NAME
     );
-
-  jest.spyOn(React, "useEffect").mockImplementation();
-
-  customFieldRenderedDOM = render(<CustomField />);
-});
-
-describe(`UI Elements of SidebarWidget without Products`, () => {
-  test(`Rendering text element`, async () => {
-    const isTextVisible = () =>
-      screen.queryByText(
-        (content, element) =>
-          element !== null && element.textContent === "Invalid credentials."
-      );
-
-    expect(isTextVisible()).toBeTruthy();
-    expect(
-      customFieldRenderedDOM.container.querySelector(`[class=sidebar]`)
-    ).toBeTruthy();
-    expect(
-      customFieldRenderedDOM.container.querySelector("[class=Icon--small]")
-    ).toBeTruthy();
+    expect(await screen.findByText(message)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(document.querySelector(".sidebar")).toBeTruthy();
+      expect(document.querySelector(".Icon--small")).toBeTruthy();
+    });
   });
 });
-
-afterEach(cleanup);

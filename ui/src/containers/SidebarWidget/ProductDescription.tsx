@@ -55,7 +55,7 @@ const ProductDescription: React.FC<Props> = function ({ product, config }) {
             <div className="label">{descriptionLbl}</div>
             <div
               className="value"
-              // eslint-disable-next-line @typescript-eslint/naming-convention
+              // eslint-disable-next-line @typescript-eslint/naming-convention, react/no-danger -- DOM API; HTML from commerce
               dangerouslySetInnerHTML={{ __html: description }}
             />
           </div>
