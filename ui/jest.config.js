@@ -77,6 +77,7 @@ module.exports = {
     "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
       "<rootDir>/jest.IMAGEtub.js",
     "\\.(css|less|scss|svg)$": "<rootDir>/jest.CSStub.js",
+    "^jose$": "<rootDir>/jest.jose.mock.js",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

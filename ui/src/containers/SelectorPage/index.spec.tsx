@@ -1,30 +1,19 @@
 import React from "react";
 import { render, screen, cleanup } from "@testing-library/react/pure";
-import CustomField from "./index";
+import SelectorPage from "./index";
+import rootConfig from "../../root_config";
+import localeTexts from "../../common/locale/en-us";
 
-beforeEach(() => {
-  const setStateMock = React.useState;
-  const useStateMock: any = (useState: any) => [useState, setStateMock];
-  jest
-    .spyOn(React, "useState")
-    .mockImplementationOnce(() => useStateMock([]))
-    .mockImplementationOnce(() =>
-      useStateMock({
-        error: true,
-        data: "Invalid credentials.",
-      })
-    );
+describe("SelectorPage header", () => {
+  afterEach(() => {
+    cleanup();
+  });
 
-  jest.spyOn(React, "useEffect").mockImplementation();
-
-  render(<CustomField />);
-});
-
-describe(`UI Elements of SelectorPage without Products`, () => {
-  test(`Rendering text element`, async () => {
-    expect(screen.getByAltText("Your App Name Logo")).toBeInTheDocument();
-    expect(screen.getByText("Your App Name Extension")).toBeInTheDocument();
+  it("renders logo and heading from root config", () => {
+    render(<SelectorPage />);
+    const appName = rootConfig.ecommerceEnv.APP_ENG_NAME;
+    expect(screen.getByAltText(`${appName} Logo`)).toBeInTheDocument();
+    const heading = localeTexts.selectorPage.heading.replace("$", appName);
+    expect(screen.getByText(heading)).toBeInTheDocument();
   });
 });
-
-afterEach(cleanup);
