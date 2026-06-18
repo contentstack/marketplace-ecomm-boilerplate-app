@@ -34,8 +34,7 @@ const SidebarWidget: React.FC = function () {
   const [productDropdown, setProductDropdown] = useState<any>([]);
   const [isProduct, setIsProduct] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedDropdownProduct, setselectedDropdownProduct] =
-    useState<any>("");
+  const [selectedDropdownProduct, setselectedDropdownProduct] =    useState<any>("");
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [selectedField, setSelectedField] = useState<any>("");
   // const [isOldUser, setIsOldUser] = useState<any>(false);
@@ -44,8 +43,8 @@ const SidebarWidget: React.FC = function () {
     if (!appSdkInitialized) return;
     const eCommerceProductsField = Object.keys(entryData)?.filter(
       (i: any) =>
-        entryData?.[i]?.type ===
-        `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
+        entryData?.[i]?.type
+        === `${rootConfig.ecommerceEnv.REACT_APP_NAME}_product`
     );
     const fieldListTemp: any = [];
     eCommerceProductsField?.forEach((field: string) => {
@@ -61,8 +60,7 @@ const SidebarWidget: React.FC = function () {
   }, [entryData, appConfig, appSdkInitialized]);
 
   const getCurrentFieldData = async (field: any) => {
-    let isMultiConfigEnabled: Boolean =
-      rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
+    let isMultiConfigEnabled: Boolean =      rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG;
     if (appConfig) {
       const ISOLDUSER = !Object.keys(appConfig ?? {}).includes(
         "multi_config_keys"

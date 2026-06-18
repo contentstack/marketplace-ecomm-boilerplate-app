@@ -20,11 +20,7 @@ import MultiConfigCustomComponent from "./configscreen/MultiConfigCustomComponen
 import NonMultiConfigCustomComponent from "./configscreen/NonMultiConfigCustomComponent";
 /* eslint-disable */
 import categoryConfig from "./categories";
-import {
-  ApiValidationEnabledForConfig,
-  makeAnApiCall,
-  getAuthtoken,
-} from "../services/index";
+import { requestProductsAndCategories, getAuthtoken } from "../services/index";
 /* eslint-enable */
 
 /* all values in this file are an example.
@@ -41,7 +37,8 @@ const ecommerceEnv: EcommerceEnv = {
     product: "id",
     category: "id",
   },
-  ENABLE_MULTI_CONFIG: true,
+  // A single global API key (non multi-config) is all the mock vendor needs.
+  ENABLE_MULTI_CONFIG: false,
 };
 
 /**
@@ -68,36 +65,26 @@ const ecommerceEnv: EcommerceEnv = {
  * refer this - https://github.com/contentstack/marketplace-ecomm-boilerplate-app/blob/staging/TEMPLATE.md#root-confi
  */
 const configureConfigScreen: () => ConfigureConfigScreen = () => ({
-  configField1: {
+  // Single field: the mock ecommerce server's API key. Stored ONLY in the
+  // server configuration (saveInServerConfig + !saveInConfig) so it is never
+  // exposed to the browser. In Contentstack, add an Advanced Settings mapping
+  // (API_KEY) pointing at this server-config value; the rewrite then injects it
+  // server-side via the `Authorization: Bearer {{map.API_KEY}}` header.
+  api_key: {
     type: "textInputFields",
-    labelText: "Store ID",
-    helpText: "You can find your store's ID on your ECommerce ConsoleL",
-    placeholderText: "Enter your Store ID",
-    instructionText: "Copy and Paste your Store ID",
-    saveInConfig: true,
-    isSensitive: false,
-    saveInServerConfig: false,
-    isMultiConfig: false,
-    isConfidential: false,
-    isApiValidationEnabled: false,
-    suffixName: "",
-    allowDuplicateKeyValue: false,
-    required: true,
-  },
-  configField2: {
-    type: "textInputFields",
-    labelText: "Auth Token",
+    labelText: "API Key",
     helpText:
-      "You can find your store's Auth Token as 'Access Token' in the file you downloaded.",
-    placeholderText: "Enter your Auth Token",
-    instructionText: "Copy and Paste your Auth Token",
-    saveInConfig: true,
-    isSensitive: false,
-    saveInServerConfig: false,
-    isMultiConfig: false,
+      "The API key used to authenticate requests to your ecommerce server.",
+    placeholderText: "Enter your ecommerce API Key",
+    instructionText:
+      "Stored in server configuration and injected server-side via the Advanced Settings API_KEY mapping. It is never exposed to the browser.",
+    saveInConfig: false,
+    saveInServerConfig: true,
+    isSensitive: true,
     isConfidential: false,
+    isMultiConfig: false,
     isApiValidationEnabled: false,
-    suffixName: "",
+    suffixName: "API Key",
     allowDuplicateKeyValue: false,
     required: true,
   },
@@ -392,14 +379,9 @@ const verifyAppSigning = async (app_token: string): Promise<boolean> => {
   }
 
   try {
+    // The UI now only verifies the app-token (no authtoken is generated).
     const res = await getAuthtoken(app_token);
-    if (!res.error) {
-      sessionStorage.setItem("ecom-authtoken", res.data?.authtoken);
-      return true;
-    } else {
-      sessionStorage.setItem("ecom-authtoken", "");
-      return false;
-    }
+    return !res.error;
   } catch (e) {
     console.error(
       "Token is invalid or request is not initiated from Contentstack!",
@@ -583,33 +565,16 @@ const customNonMultiConfigComponent = (
  * - If the configuration is not multi-config, the `source` should be "configuration" or "serverConfiguration", and `keys` should include the names of the invalid fields.
  */
 const validateConfigKeyByApi = async (
-  configurationObject: any, // Data stored in the configuration of the app (appsdk)
-  serverConfiguration: any, // Data stored in the server configuration of the app (appsdk)
-  multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
-  multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
+  _configurationObject: any, // Data stored in the configuration of the app (appsdk)
+  _serverConfiguration: any, // Data stored in the server configuration of the app (appsdk)
+  _multiConfigTrueAndApiValidationEnabled: any, // Keys with API validation enabled and isMultiConfig true
+  _multiConfigFalseAndApiValidationEnabled: any // Keys with API validation enabled and isMultiConfig false
 ): Promise<ValidationResult> => {
-  const apiValidationEnabledForConfigResponse: any =
-    await ApiValidationEnabledForConfig(
-      configurationObject,
-      serverConfiguration,
-      multiConfigTrueAndApiValidationEnabled,
-      multiConfigFalseAndApiValidationEnabled
-    );
-
-  if (apiValidationEnabledForConfigResponse?.error === false) {
-    return {
-      invalidKeys: [],
-    };
-  }
-
-  return {
-    invalidKeys: [
-      {
-        source: "demos-95", // Example of multi-config name
-        keys: ["configField8"], // Example of invalid field name
-      },
-    ],
-  };
+  // API-based config validation previously called the app backend, which has
+  // been removed (this is now a frontend-only app). There is no endpoint to
+  // validate against, so no keys are reported invalid here. Note: no config
+  // field sets `isApiValidationEnabled: true`, so this is not invoked anyway.
+  return { invalidKeys: [] };
 };
 
 /**
@@ -646,13 +611,11 @@ const getProductandCategory = (
     });
   }
 
-  const queryParams = new URLSearchParams(queryParamsObject);
-
-  return makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`,
-    "POST",
-    { config, isOldUser, multiConfigDropDown }
-  );
+  return requestProductsAndCategories(queryParamsObject, {
+    config,
+    isOldUser,
+    multiConfigDropDown,
+  });
 };
 
 /**
@@ -689,10 +652,7 @@ const search = (
     Object.entries(queryParamsObject)?.filter(([_, value]) => value)
   );
 
-  const queryParams = new URLSearchParams(filteredParams)?.toString();
-  const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams}`;
-
-  return makeAnApiCall(apiUrl, "POST", {
+  return requestProductsAndCategories(filteredParams, {
     config,
     oldUser,
     selectedMultiConfigValue,

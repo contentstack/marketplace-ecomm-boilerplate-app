@@ -33,14 +33,12 @@ const SelectorPage: React.FC = function () {
     config?.type === "category" ? [] : ["id"]
   );
   const [metaState, setMetaState] = useState<any>({});
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials,
     });
   const [multiConfigDropDown, setMultiConfigDropDown] = useState<any>([]);
-  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =
-    useState<any>();
+  const [selectedMultiConfigValue, setSelectedMultiConfigValue] =    useState<any>();
   const [oldUser, setOldUser] = useState<any>(false);
 
   const tableRef: any = useRef(null);
@@ -117,21 +115,48 @@ const SelectorPage: React.FC = function () {
     }
   }, []);
 
+  // This page runs in a popup window where appSdk.api() is unavailable. Proxy
+  // data fetches to the opener (the custom field — a Contentstack iframe with a
+  // live appSdk), which runs the root_config op and posts the result back.
+  const requestFromOpener = (op: string, args: any[]): Promise<any> =>
+    new Promise((resolve) => {
+      const windowOpener = window.opener;
+      if (!windowOpener) {
+        resolve({ error: true, data: localeTexts.warnings.unexpectedError });
+        return;
+      }
+      const requestId = `${Date.now()}-${Math.random()}`;
+      const listener = (event: any) => {
+        if (
+          event?.data?.message === "fetchResult"
+          && event?.data?.requestId === requestId
+        ) {
+          window.removeEventListener("message", listener);
+          resolve(event?.data?.result);
+        }
+      };
+      window.addEventListener("message", listener);
+      windowOpener.postMessage(
+        { message: "fetch", requestId, op, args },
+        window.location.origin
+      );
+    });
+
   const fetchInitialData = async (meta: any) => {
     try {
       if (!isEmpty(config)) {
         setItemStatus({
           ...getItemStatusMap({}, "loading", meta?.startIndex, meta?.stopIndex),
         });
-        const response = await rootConfig.getProductandCategory(
+        const response = await requestFromOpener("getProductandCategory", [
           config,
           config?.type,
           meta?.skip,
           meta?.limit,
           oldUser,
           selectedMultiConfigValue,
-          list
-        );
+          list,
+        ]);
         if (!response?.error) {
           setList(response?.data?.items);
           setTotalCounts(response?.data?.meta?.total);
@@ -159,15 +184,15 @@ const SelectorPage: React.FC = function () {
     try {
       if (meta?.searchText && !isEmpty(config)) {
         setSearchText(meta?.searchText);
-        const response = await rootConfig.search(
+        const response = await requestFromOpener("search", [
           config,
           meta?.searchText,
           meta?.skip,
           meta?.limit,
           oldUser,
           selectedMultiConfigValue,
-          list
-        );
+          list,
+        ]);
         if (!response?.error) {
           setList(response?.data?.items);
           setLoading(false);

@@ -6,6 +6,7 @@ import { KeyValueObj, TypeWarningtext } from "../types";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 import localeTexts from "../locale/en-us";
 import rootConfig from "../../root_config";
+import { setEcomAppSdk } from "../../services/ecomClient";
 
 /**
  * Marketplace App Provider
@@ -15,8 +16,7 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
   const [failed, setFailed] = useState<boolean>(false);
   const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
   const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
-  const [isInvalidCredentials, setIsInvalidCredentials] =
-    useState<TypeWarningtext>({
+  const [isInvalidCredentials, setIsInvalidCredentials] =    useState<TypeWarningtext>({
       error: false,
       data: localeTexts.warnings.invalidCredentials.replace(
         "$",
@@ -29,6 +29,9 @@ const MarketplaceAppProvider: React.FC = function ({ children }: any) {
     ContentstackAppSDK.init()
       .then(async (appSdkinit) => {
         setAppSdk(appSdkinit);
+        // Hand the initialized SDK to the ecommerce client so service calls
+        // can reach the vendor API via appSdk.api() (Advanced Settings rewrite).
+        setEcomAppSdk(appSdkinit);
         const appConfiguration = await appSdkinit?.getConfig();
         setConfig(appConfiguration);
         setFailed(false);

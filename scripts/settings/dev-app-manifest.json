@@ -72,5 +72,30 @@
     "notifiers": [],
     "branch_scope": "main"
   },
+  "__advanced_settings_example__": {
+    "__comment__": "REFERENCE ONLY — not applied by deploy. Configure these in Developer Hub > your app > Advanced Settings. They let appSdk.api() reach the mock vendor API (../../api) with the key injected server-side.",
+    "mappings": [
+      {
+        "name": "API_KEY",
+        "__comment__": "Dotted path into the installation Server Configuration. Our config-page field stores the key at serverConfiguration.api_key (top level), so the value is just 'api_key'. Referenced in UI code as {{map.API_KEY}}.",
+        "value": "api_key"
+      }
+    ],
+    "rewrites": [
+      {
+        "__comment__": "Replace <your-tunnel-host> with the public tunnel forwarding to localhost:8080. Query strings (?id:in=, ?categories:in=) ride along with the request.",
+        "source": "/ecom/products/:id",
+        "destination": "https://<your-tunnel-host>/products/:id"
+      },
+      {
+        "source": "/ecom/products",
+        "destination": "https://<your-tunnel-host>/products"
+      },
+      {
+        "source": "/ecom/catalogs",
+        "destination": "https://<your-tunnel-host>/catalogs"
+      }
+    ]
+  },
   "uid": ""
 }

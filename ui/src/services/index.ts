@@ -1,92 +1,49 @@
-import axios, { Method } from "axios";
-import CryptoJS from "crypto-js";
 import localeTexts from "../common/locale/en-us";
 import rootConfig from "../root_config";
 import categoryConfig from "../root_config/categories";
 import { KeyValueObj } from "../common/types";
+import {
+  getSelectedProductsAndCategories,
+  getAllProductsAndCategories,
+} from "./ecommerce";
+import { authenticate } from "./auth";
 
-// common function for an API call to your backend
-const makeAnApiCall = async (url: string, method: Method, data: any) => {
+/**
+ * Runs a migrated ecommerce function and formats its result into the same
+ * `{ error, data }` shape the consumers previously received from the backend
+ * call. Previously these went out over HTTP to the backend; now the ecommerce
+ * logic runs directly in the UI.
+ */
+const callEcommerce = async (
+  fn: (query: any, body: any) => Promise<any>,
+  query: any,
+  body: any
+) => {
   try {
-    const authtoken = <string>sessionStorage.getItem("ecom-authtoken");
-    const now = Math.floor(Date.now() / 1000);
-    const signature = CryptoJS?.AES?.encrypt(
-      `${now}-${method}`,
-      authtoken
-    ).toString();
-    const response = await axios({
-      url,
-      method,
-      data,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        authtoken,
-        "ecom-signature": signature,
-      },
-    });
-
+    const responseBody = await fn(query, body);
     return {
       error: false,
-      data: rootConfig.getFormattedResponse(response),
+      data: rootConfig.getFormattedResponse({ data: responseBody }),
     };
   } catch (e: any) {
-    const status = e?.response?.status;
-    const resData = e?.response?.data;
-    switch (status) {
-      case 400:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.badRequest,
-        };
-      case 401:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.unauthorized,
-        };
-      case 403:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.forbidden,
-        };
-      case 404:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.notFound,
-        };
-      case 429:
-        return {
-          error: true,
-          data: resData || localeTexts.errors.tooManyRequests,
-        };
-      case 500:
-        return {
-          error: true,
-          data:
-            resData ||
-            localeTexts.warnings.invalidCredentials.replace(
-              "$",
-              rootConfig.ecommerceEnv.APP_ENG_NAME
-            ),
-        };
-      default:
-        return {
-          error: true,
-          data:
-            resData?.message ||
-            localeTexts.warnings.somethingWentWrong ||
-            localeTexts.warnings.unexpectedError,
-        };
-    }
+    return {
+      error: true,
+      data:
+        e?.message
+        || localeTexts.warnings.somethingWentWrong
+        || localeTexts.warnings.unexpectedError,
+    };
   }
 };
 
 // get all available categories
 const requestCategories = (config: any) =>
-  makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?query=category`,
-    "POST",
-    config
-  );
+  callEcommerce(getAllProductsAndCategories, { query: "category" }, config);
+
+// fetch a page of products or categories (migrated from the backend "get all"
+// flow; query carries the type/skip/limit/search params)
+const requestProductsAndCategories = (query: any, body: any) =>
+  callEcommerce(getAllProductsAndCategories, query, body);
 
 /**
  * Fetches selected products or categories based on the provided parameters.
@@ -105,14 +62,17 @@ const getSelectedIDs = async (
   isOldUser: boolean | Boolean
 ) => {
   const ids = isOldUser ? selectedIDs?.join(",") : JSON.stringify(selectedIDs);
-  const queryParams = new URLSearchParams({
+  // The query/payload shape mirrors what the backend handler used to receive,
+  // so the migrated function behaves identically.
+  const query = {
     query: type,
     "id:in": ids,
     isOldUser: String(isOldUser),
     configKey: ids,
-  });
-  const apiUrl = `${process.env.REACT_APP_API_URL}?${queryParams.toString()}`;
-  return makeAnApiCall(apiUrl, "POST", { config: { ...config } });
+  };
+  const payload = { config: { ...config } };
+
+  return callEcommerce(getSelectedProductsAndCategories, query, payload);
 };
 // runes when categoryConfig.customCategoryStructure is true/false
 const getCustomCategoryData = async (
@@ -129,61 +89,33 @@ const getCustomCategoryData = async (
     const categoryID = isOldUser
       ? selectedIDs?.join(",")
       : JSON.stringify(selectedIDs);
-    const { apiUrl, requestData } = categoryConfig.fetchCustomCategoryData(
+    const { requestData } = categoryConfig.fetchCustomCategoryData(
       config,
       type,
       categoryID,
       isOldUser
     );
-    return makeAnApiCall(apiUrl, "POST", requestData);
+    // This previously hit the backend `query=<type>&id:in=<ids>` endpoint,
+    // which routed to getSelectedProductsAndCategories. Same logic now runs
+    // in the UI.
+    return callEcommerce(
+      getSelectedProductsAndCategories,
+      { query: type, "id:in": categoryID, isOldUser: String(isOldUser) },
+      requestData
+    );
   }
   return null;
 };
 
-//  Retrieves API validation for configuration page keys when  isApiValidation is true
-const ApiValidationEnabledForConfig = (
-  configurationObject: any,
-  serverConfigurationObject: any,
-  multiConfigTrueAndApiValidationEnabledKeys: any,
-  multiConfigFalseAndApiValidationEnabledKeys: any
-) =>
-  makeAnApiCall(
-    `${process.env.REACT_APP_API_URL}?type=isApiValidationEnabled`,
-    "POST",
-    {
-      configurationObject,
-      serverConfigurationObject,
-      multiConfigTrueAndApiValidationEnabledKeys,
-      multiConfigFalseAndApiValidationEnabledKeys,
-    }
-  );
-
-const getAuthtoken = async (appToken: string = "") => {
-  try {
-    const res = await axios({
-      url: process.env.REACT_APP_API_AUTH_URL,
-      method: "POST",
-      headers: { "app-token": appToken },
-    });
-
-    return {
-      error: false,
-      data: res?.data,
-    };
-  } catch (err: any) {
-    console.error(err);
-    return {
-      error: true,
-      data: err?.response?.data,
-    };
-  }
-};
+// Previously this POSTed the app-token to the backend auth endpoint
+// (REACT_APP_API_AUTH_URL). The verify-and-sign logic now runs in the UI; see
+// ./auth.ts. The return shape is unchanged, so verifyAppSigning stays the same.
+const getAuthtoken = async (appToken: string = "") => authenticate(appToken);
 
 export {
   getSelectedIDs,
   requestCategories,
+  requestProductsAndCategories,
   getCustomCategoryData,
-  ApiValidationEnabledForConfig,
-  makeAnApiCall,
   getAuthtoken,
 };

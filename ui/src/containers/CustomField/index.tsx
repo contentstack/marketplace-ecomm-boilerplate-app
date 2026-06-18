@@ -77,8 +77,8 @@ const CustomField: React.FC<any> = function ({
           const data: any[] = [];
           const customKeys = config?.custom_keys ?? config?.bc_keys;
           if (
-            rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG &&
-            isOldUser === false
+            rootConfig.ecommerceEnv.ENABLE_MULTI_CONFIG
+            && isOldUser === false
           ) {
             customKeys?.push({ label: "cs_metadata", value: "cs_metadata" });
           }
@@ -124,11 +124,35 @@ const CustomField: React.FC<any> = function ({
         );
       } else if (data.message === "add") {
         if (
-          type === "category" &&
-          categoryConfig.customCategoryStructure === true
+          type === "category"
+          && categoryConfig.customCategoryStructure === true
         )
           setSelectedIds(data?.dataIds); // FIXME remove this logic
         else setSelectedIds(data?.dataIds);
+      } else if (data.message === "fetch") {
+        // The selector page runs in a popup window where appSdk.api() is not
+        // available, so it proxies its data fetches here. We run the requested
+        // root_config op (which calls appSdk.api under the hood, available in
+        // this Contentstack iframe) and post the result back to the popup.
+        const { requestId, op, args } = data;
+        Promise.resolve()
+          .then(() => (rootConfig as any)?.[op]?.(...(args || [])))
+          .then((result) =>
+            childWindow?.postMessage(
+              { message: "fetchResult", requestId, result },
+              window.location.origin
+            )
+          )
+          .catch((error) =>
+            childWindow?.postMessage(
+              {
+                message: "fetchResult",
+                requestId,
+                result: { error: true, data: error?.message },
+              },
+              window.location.origin
+            )
+          );
       } else if (data.message === "close") {
         childWindow = undefined;
       }
@@ -137,9 +161,8 @@ const CustomField: React.FC<any> = function ({
 
   const handleClick = () => {
     if (!childWindow) {
-      const authToken = sessionStorage.getItem("ecom-authtoken");
       childWindow = popupWindow({
-        url: `${process.env.REACT_APP_UI_URL}/selector-page?type=${type}&authtoken=${authToken}`,
+        url: `${process.env.REACT_APP_UI_URL}/selector-page?type=${type}`,
         title: `${rootConfig.ecommerceEnv.APP_ENG_NAME}Client`,
         w: 1440,
         h: 844,

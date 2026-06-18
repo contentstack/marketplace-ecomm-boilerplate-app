@@ -11,7 +11,6 @@ import { SkeletonTile } from "@contentstack/venus-components";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import WarningMessage from "../../components/WarningMessage";
 import rootConfig from "../../root_config";
-import { setAuthtoken } from "../../common/utils/index";
 import localeTexts from "../../common/locale/en-us/index";
 import MarketplaceAppProvider from "../../common/providers/MarketplaceAppProvider";
 import EntrySidebarExtensionProvider from "../../common/providers/EntrySidebarExtensionProvider";
@@ -55,11 +54,10 @@ function App() {
     //  below function is called for app signing, i.e. for verifying app tokens in ui
     const verify = async () => {
       if (location.pathname === "/selector-page") {
-        const authToken = searchParams.get("authtoken") || "";
-        if (authToken) {
-          setAuthtoken(authToken);
-          setVerified(true);
-        } else setVerified(false);
+        // The selector page only works when launched as a popup by the app:
+        // its data fetches are proxied through window.opener. Gate on that
+        // instead of a token — a standalone visit has no opener and can't fetch.
+        setVerified(Boolean(window.opener));
       } else {
         const response = await rootConfig.verifyAppSigning(
           searchParams.get("app-token") || ""

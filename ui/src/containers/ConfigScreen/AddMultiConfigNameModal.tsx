@@ -28,12 +28,9 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
     isOpen,
     onRequestClose,
   } = props;
-  const [enteredConfigurationName, setEnteredConfigurationName] =
-    useState<any>("");
-  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =
-    useState<boolean>(false);
-  const [alphanumericIdentifier, setAlphanumericIdentifier] =
-    useState<any>(false);
+  const [enteredConfigurationName, setEnteredConfigurationName] =    useState<any>("");
+  const [hasDuplicateConfigurationName, setHasDuplicateConfigurationName] =    useState<boolean>(false);
+  const [alphanumericIdentifier, setAlphanumericIdentifier] =    useState<any>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onInputChange = (e: any) => {
     const inputValue = e?.target?.value ?? "";
@@ -47,8 +44,8 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
       setAlphanumericIdentifier(false);
 
       if (
-        Object.keys(addMultiConfigurationData)?.length &&
-        trimmedValue !== "legacy_config"
+        Object.keys(addMultiConfigurationData)?.length
+        && trimmedValue !== "legacy_config"
       ) {
         const isDuplicate = Object.keys(addMultiConfigurationData)?.some(
           (addMultiConfigurationKeys: string) =>
@@ -144,10 +141,10 @@ const AddMultiConfigurationModal: React.FC<AddMultiConfigurationModalProps> = (
                   <Button
                     onClick={onSaveConfiguration}
                     disabled={
-                      !enteredConfigurationName ||
-                      hasDuplicateConfigurationName ||
-                      enteredConfigurationName === "legacy_config" ||
-                      alphanumericIdentifier
+                      !enteredConfigurationName
+                      || hasDuplicateConfigurationName
+                      || enteredConfigurationName === "legacy_config"
+                      || alphanumericIdentifier
                     }
                   >
                     {
