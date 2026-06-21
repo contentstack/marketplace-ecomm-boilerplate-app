@@ -33,8 +33,8 @@ UI service call
                             │
             ┌───────────────┘  (leaves the browser here)
             ▼
-Contentstack Advanced Settings
-  ├─ Rewrite:  /ecom/(.*)  ->  https://vendor.example.com/$1
+Contentstack Advanced Settings   (explicit :param routes — no catch-all wildcard)
+  ├─ Rewrite:  /ecom/.../catalog/products  ->  https://vendor.example.com/.../catalog/products
   └─ Mapping:  {{map.AUTH_TOKEN}}  ->  serverConfiguration.<secret>   (injected into header)
             │
             ▼
@@ -61,7 +61,7 @@ store id) can be read in the browser via `getConfig()` and placed in the URL pat
 | `ui/src/services/ecomClient.ts` | how credentials are injected (header vs path), which id is read from client config | ⚠️ partly — credential **sensitivity** is a product decision |
 | `ui/src/services/ecommerce.ts` | path building, query-param mapping (pagination + filters), response extraction, per-resource id normalization | ✅ yes |
 | `ui/src/root_config/index.tsx` | `configureConfigScreen` fields, `UNIQUE_KEY`, `returnFormattedProduct/Category`, selector columns, `getFormattedResponse`, `getOpenerLink` | ✅ field names from response schema |
-| Advanced Settings (Dev Hub, manual) | one rewrite + one mapping per secret credential | ✅ securitySchemes → header; rewrite host from `servers[]` |
+| Advanced Settings (Dev Hub, manual) | explicit rewrite route per endpoint + one mapping per secret credential | ✅ securitySchemes → header; rewrite host from `servers[]` |
 
 Everything else (React components, providers, custom-field/selector/sidebar
 plumbing, drag-drop, multi-config) is **vendor-agnostic — do not touch it.**
@@ -168,9 +168,13 @@ it's a secret**. You must decide per field:
 
 Per app install, under **Advanced Settings**:
 
-1. **Rewrite** — host swap from the rewrite base to the vendor:
-   - Source: `/ecom/(.*)`  →  Destination: `https://<vendor-host>/$1`
-   - (If `(.*)` isn't accepted, add explicit `:param` routes per endpoint.)
+1. **Rewrite** — host swap from the rewrite base to the vendor.
+   - ⚠️ **Contentstack does NOT accept a catch-all wildcard** like `/ecom/(.*)`.
+     You must add **one explicit route per endpoint**, using `:param` for dynamic
+     path segments (tenant id, resource id). List every path your service layer
+     calls (`ecommerce.ts`), including single-item routes.
+   - Pattern: Source `/ecom/<path-with-:params>`  →  Destination
+     `https://<vendor-host>/<same-path-with-:params>`.
 2. **Mapping** — one per secret, pointing into server config (dot notation):
    - `AUTH_TOKEN` → `<server_config_field>` (e.g. `auth_token`)
    - Used in the header as `{{map.AUTH_TOKEN}}`.
@@ -201,6 +205,10 @@ treat each as an explicit verification step:
 - [ ] **Auth header name** — not always `Authorization: Bearer`.
 - [ ] **Credential location** — secret→mapping/header, id→path. A mapping cannot
       read client `configuration`.
+- [ ] **Rewrites need explicit routes** — Contentstack rejects catch-all wildcards
+      (`/ecom/(.*)`). Enumerate one `:param` route per endpoint (list + single-item)
+      from `ecommerce.ts`. Symptom: rewrite save rejected, or 404/HTML from the
+      vendor because the path wasn't rewritten.
 - [ ] **Image/price field paths** — `returnFormattedProduct` must point at real
       fields (e.g. BigCommerce images use `url_standard`, not `url`).
 - [ ] **Selector column accessors** — must reference fields that exist (the product
@@ -272,8 +280,18 @@ configureConfigScreen:
   auth_token  -> saveInServerConfig:true, isSensitive:true  (server; goes in mapping)
 
 Advanced Settings:
-  Rewrite:  /ecom/(.*)  ->  https://api.bigcommerce.com/$1
   Mapping:  AUTH_TOKEN  ->  serverConfiguration.auth_token   (header: X-Auth-Token: {{map.AUTH_TOKEN}})
+
+  Rewrites — explicit per-endpoint routes (catch-all /ecom/(.*) is NOT accepted).
+  :store_id and :id are dynamic path params:
+    /ecom/stores/:store_id/v3/catalog/products
+        -> https://api.bigcommerce.com/stores/:store_id/v3/catalog/products
+    /ecom/stores/:store_id/v3/catalog/products/:id
+        -> https://api.bigcommerce.com/stores/:store_id/v3/catalog/products/:id
+    /ecom/stores/:store_id/v3/catalog/trees/categories
+        -> https://api.bigcommerce.com/stores/:store_id/v3/catalog/trees/categories
+  (Query strings — id:in, categories:in, category_id:in, keyword, page, limit,
+   include — pass through automatically and need no separate route.)
 ```
 
 ### 7.5 Endpoint reference
