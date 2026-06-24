@@ -68,56 +68,78 @@ plumbing, drag-drop, multi-config) is **vendor-agnostic — do not touch it.**
 
 ### 2.1 `config.ts`
 
+These keys **already exist** in the baseline with mock-vendor defaults — adapt
+their values, don't invent the structure:
+
 ```ts
 const config = {
-  API_BASE_URL: "https://api.vendor.com/<path>/$/...",   // reference only; $ = the id segment
-  URI_ENDPOINTS: { product: "...", category: "..." },     // resource paths (no leading slash)
-  PRODUCT_INCLUDE: "...",                                  // optional expand/include param value
-  SENSITIVE_CONFIG_KEYS: ["<secret_field>"],
-  ENDPOINTS_CONFIG: { getSeparateProductsAndCategories: true },  // true if products/categories are different endpoints
+  API_BASE_URL: "https://my.example.com/$/v3/",           // reference only; $ = the id segment
+  URI_ENDPOINTS: { product: "products", category: "catalogs" }, // resource paths (no leading slash)
+  SEARCH_URL_PARAMS: "/search",                           // optional search-endpoint suffix
+  FIELDS_URL: "fields=FULL",                              // optional field-selection param
+  SENSITIVE_CONFIG_KEYS: ["access_token", "project_key"], // server-config (secret) field names
+  ENDPOINTS_CONFIG: { getSeparateProductsAndCategories: true }, // products/categories are different endpoints
   ECOM_API: {
     REWRITE_BASE: "/ecom",                                 // path prefix the rewrite matches
-    STORE_PATH_TEMPLATE: "/stores/{store_id}/v3",          // per-tenant path segment, or "" if none
-    AUTH_HEADER_NAME: "X-Auth-Token",                      // vendor's auth header name
-    AUTH_HEADER_TEMPLATE: "{{map.AUTH_TOKEN}}",            // mapping placeholder, resolved server-side
+    STORE_PATH_TEMPLATE: "",                               // per-tenant path, e.g. "/stores/{store_id}/v3"; "" if none
+    TENANT_CONFIG_KEY: "",                                 // client-config field that fills the {…} above; "" if none
+    AUTH_HEADER_NAME: "Authorization",                     // vendor's auth header name
+    AUTH_HEADER_TEMPLATE: "Bearer {{map.API_KEY}}",        // header value; {{map.*}} resolved server-side
   },
 };
 ```
 
-- If the vendor has **no per-tenant path segment**, set `STORE_PATH_TEMPLATE: ""`
-  and skip `resolveStoreId()` use.
-- If the vendor authenticates with `Authorization: Bearer`, set
-  `AUTH_HEADER_NAME: "Authorization"` and `AUTH_HEADER_TEMPLATE: "Bearer {{map.TOKEN}}"`.
+- **No per-tenant path?** Leave `STORE_PATH_TEMPLATE` and `TENANT_CONFIG_KEY` as
+  `""` (the mock default) — `resolveStoreId()` then returns `""` and no path is
+  prepended. For a vendor like BigCommerce, set
+  `STORE_PATH_TEMPLATE: "/stores/{store_id}/v3"` and `TENANT_CONFIG_KEY: "store_id"`
+  (and declare `store_id` as a **non-secret** client-config field, §4).
+- **Non-Bearer auth?** Just change `AUTH_HEADER_NAME` (e.g. `"X-Auth-Token"`) and
+  `AUTH_HEADER_TEMPLATE` (e.g. `"{{map.AUTH_TOKEN}}"`). No code edit needed —
+  `ecomClient.ts` reads both from config.
+- **Need an expand/include param** (e.g. BigCommerce `include=`)? Add a key like
+  `PRODUCT_INCLUDE` here and reference it in `toListParams` — it is not in the
+  baseline because the mock doesn't need one.
 
 ### 2.2 `ecomClient.ts`
 
-Generic transport — usually only two things change:
+Generic transport — for most vendors **no code change is needed here**, only
+config:
 1. **Credential injection** — the header is built from `AUTH_HEADER_NAME` /
-   `AUTH_HEADER_TEMPLATE`, so normally no code change; just config. If the vendor
-   needs the secret in the **query string** instead of a header, add it there.
-2. **The non-secret tenant id** — `resolveStoreId()` reads it from
-   `appSdk.getConfig()` (client config). Rename/repoint it to whatever the vendor
-   calls its non-secret tenant identifier, or drop it if there's none.
+   `AUTH_HEADER_TEMPLATE` (both read from `config`), so changing the auth scheme
+   is config-only. Edit code *only* if the vendor needs the secret in the **query
+   string** instead of a header.
+2. **The non-secret tenant id** — `resolveStoreId()` reads the field named by
+   `config.ECOM_API.TENANT_CONFIG_KEY` from `appSdk.getConfig()` (client config)
+   and caches it; `buildUrl` prepends `STORE_PATH_TEMPLATE` with that value
+   substituted. Point `TENANT_CONFIG_KEY` at the vendor's non-secret tenant
+   identifier, or leave it `""` if there's none.
 
 ### 2.3 `ecommerce.ts`
 
-This is where vendor request/response *shape* lives. Adapt these helpers:
+This is where vendor request/response *shape* lives. All these helpers **already
+exist** as seams (identity / mock-shaped by default) — fill them in:
 
 - **`toListParams(query)`** — map the app's `{skip, limit, searchParam}` onto the
-  vendor's pagination + search params. (BigCommerce uses 1-based `page`; others
-  use `offset`/`cursor`. Search term key varies: `keyword`, `q`, `query`…)
+  vendor's pagination + search params. (Baseline: `offset`/`limit`/`q`.
+  BigCommerce uses 1-based `page`; others use `cursor`. Search key varies:
+  `keyword`, `q`, `query`…)
 - **`toPagination(meta)`** — map the vendor's pagination block onto
   `{ totalResults, currentPage }` (the contract `getFormattedResponse` expects).
-- **`toIdCsv(raw)`** — normalize the selected-ids value into the format the
-  vendor's "by id" filter wants (BigCommerce: comma-separated ints for `id:in`).
-- **`normalize<Resource>()`** — if the response's unique-id field name differs
-  between endpoints, surface it as the field the boilerplate expects (`id`).
+- **`toIdCsv(raw)`** — already normalizes CSV / JSON-array / array / object into a
+  bare comma-separated list (what `id:in`-style filters want). Applied at every
+  id/category filter call site. Usually no change; tweak only if the vendor wants
+  a different shape (e.g. a JSON array).
+- **`normalizeProducts()` / `normalizeCategories()`** — identity by default,
+  already called at every list/selected return point. If the response's unique-id
+  field differs (e.g. categories under `category_id`), remap it to `id` here.
 - The `root_config` methods — set the right path, filter param names, and which
   response key holds the array (`res.data` vs `res.items` vs `res.products`).
 
-> **Contract to preserve:** the selected-items methods must return objects keyed
-> by `products` / `catalogs` (NOT the raw endpoint path), because
+> **Contract already enforced:** the selected-items method keys its result by the
+> stable `products` / `catalogs` name (NOT `URI_ENDPOINTS[query]`), because
 > `getFormattedResponse` reads `response.data.products || response.data.catalogs`.
+> The baseline now does this for you — don't reintroduce the endpoint-path key.
 
 ### 2.4 `root_config/index.tsx`
 
@@ -193,16 +215,20 @@ treat each as an explicit verification step:
 - [ ] **Pagination model** — page (1-based) vs offset vs cursor. Compute correctly
       in `toListParams` (BigCommerce: `page = floor(skip/limit)+1`).
 - [ ] **Filter value format** — strict vendors reject `id:in=[77]`; they want
-      `id:in=77,80`. Normalize with `toIdCsv` (handles CSV / JSON-array /
-      multi-config object). Symptom: HTTP 422 "id param format is invalid".
+      `id:in=77,80`. `toIdCsv` (already applied at every filter call site) handles
+      CSV / JSON-array / multi-config object — verify the vendor wants CSV, else
+      adjust it. Symptom: HTTP 422 "id param format is invalid".
 - [ ] **Unique-id field name mismatch** — list/detail/filter may use different id
-      fields (e.g. categories return `category_id`, not `id`). Normalize to `id`,
+      fields (e.g. categories return `category_id`, not `id`). Remap to `id` in
+      `normalizeProducts`/`normalizeCategories` (the seams are already wired in),
       and ensure `UNIQUE_KEY` + selector `accessor`s agree. Symptom: blank ID
       column + 422 on re-fetch of saved items.
-- [ ] **Response array key** — `res.data` vs `res.items` vs `res.products`. And the
-      **selected-items return key** must be `products`/`catalogs`, not the endpoint
-      path. Symptom: data fetches fine but nothing renders (items `undefined`).
-- [ ] **Auth header name** — not always `Authorization: Bearer`.
+- [ ] **Response array key** — `res.data` vs `res.items` vs `res.products` (set per
+      method). The **selected-items return key** is already fixed to
+      `products`/`catalogs` in the baseline — don't revert it to the endpoint path.
+      Symptom of regressing it: data fetches fine but nothing renders.
+- [ ] **Auth header name** — not always `Authorization: Bearer`. Config-driven now
+      (`AUTH_HEADER_NAME` + `AUTH_HEADER_TEMPLATE`); no code edit.
 - [ ] **Credential location** — secret→mapping/header, id→path. A mapping cannot
       read client `configuration`.
 - [ ] **Rewrites need explicit routes** — Contentstack rejects catch-all wildcards
@@ -265,8 +291,12 @@ const normalizeCategories = (arr) =>
 
 ### 7.3 `ecommerce.ts` — response key contract
 
+This is now **baseline behavior** (the original BigCommerce bug, fixed in the
+boilerplate). Shown here so you don't accidentally revert it when changing
+`URI_ENDPOINTS`:
+
 ```ts
-// Selected items must be keyed by products/catalogs, NOT URI_ENDPOINTS[query]
+// Selected items are keyed by products/catalogs, NOT URI_ENDPOINTS[query]
 // ("catalog/products"), or getFormattedResponse can't find them.
 const resultKey = query === "category" ? "catalogs" : "products";
 return { [resultKey]: response };

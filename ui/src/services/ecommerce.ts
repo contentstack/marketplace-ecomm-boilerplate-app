@@ -43,6 +43,44 @@ const toPagination = (meta?: any) => ({
   currentPage: meta?.limit ? Math.floor((meta?.offset || 0) / meta.limit) : 0,
 });
 
+// Normalizes a selected-ids value into the bare comma-separated list that most
+// vendors' `id:in`-style filters expect. Accepts a CSV string ("77,80"), a
+// JSON-array string ("[77,80]"), a real array, or a multi-config object whose
+// leaf values are ids — and returns "77,80". Strict vendors reject other shapes
+// (e.g. BigCommerce 422 "id param format is invalid"); the mock already gets
+// CSV, so this is a no-op there.
+const toIdCsv = (raw: any): string => {
+  if (raw === undefined || raw === null || raw === "") return "";
+  const collect = (val: any): any[] => {
+    if (Array.isArray(val)) return val.flatMap(collect);
+    if (typeof val === "string") {
+      const s = val.trim();
+      if (s.startsWith("[") || s.startsWith("{")) {
+        try {
+          return collect(JSON.parse(s));
+        } catch {
+          /* not JSON; treat as CSV below */
+        }
+      }
+      return s.split(",").map((v) => v.trim());
+    }
+    if (val && typeof val === "object") return Object.values(val).flatMap(collect);
+    return [val];
+  };
+  return collect(raw)
+    .filter((v) => v !== "" && v !== undefined && v !== null)
+    .join(",");
+};
+
+// Seams: remap each vendor's resource objects onto the field names the
+// boilerplate expects — chiefly the UNIQUE_KEY id (root_config: `id`). Identity
+// for the mock (it already keys on `id`). A vendor that returns a different id
+// field (e.g. categories under `category_id`) maps it here, e.g.:
+//   arr.map((c) => (c.id == null && c.category_id != null
+//     ? { ...c, id: c.category_id } : c));
+const normalizeProducts = (arr: any[]): any[] => arr;
+const normalizeCategories = (arr: any[]): any[] => arr;
+
 /*
   The `root_config` object mirrors the third-party access layer: each method
   issues a real request to the vendor API via appSdk.api().
@@ -58,17 +96,17 @@ const root_config = {
   // Filter products by the selected IDs -> GET /products?id:in=
   getSelectedProductsById: async (productQuery: any) => {
     const res = await ecomGet("/products", {
-      "id:in": productQuery?.["id:in"],
+      "id:in": toIdCsv(productQuery?.["id:in"]),
     });
-    return res?.products ?? [];
+    return normalizeProducts(res?.products ?? []);
   },
 
   // Filter categories by the selected IDs -> GET /catalogs?id:in=
   getSelectedCategoriesById: async (categoryQuery: any) => {
     const res = await ecomGet("/catalogs", {
-      "id:in": categoryQuery?.["id:in"],
+      "id:in": toIdCsv(categoryQuery?.["id:in"]),
     });
-    return res?.catalogs ?? [];
+    return normalizeCategories(res?.catalogs ?? []);
   },
 
   // Combined products + categories by IDs (used when
@@ -78,18 +116,20 @@ const root_config = {
     const isCategory = data?.query === "category";
     const path = isCategory ? "/catalogs" : "/products";
     const params: Record<string, any> = {};
-    if (data?.["id:in"]) params["id:in"] = data["id:in"];
+    if (data?.["id:in"]) params["id:in"] = toIdCsv(data["id:in"]);
     if (data?.["sku:in"]) params["sku:in"] = data["sku:in"];
     if (data?.limit) params.limit = data.limit;
     const res = await ecomGet(path, params);
-    return isCategory ? res?.catalogs ?? [] : res?.products ?? [];
+    return isCategory
+      ? normalizeCategories(res?.catalogs ?? [])
+      : normalizeProducts(res?.products ?? []);
   },
 
   // All products -> GET /products
   getAllProducts: async (productQuery?: any) => {
     const res = await ecomGet("/products", toListParams(productQuery));
     return {
-      products: res?.products ?? [],
+      products: normalizeProducts(res?.products ?? []),
       pagination: toPagination(res?.meta),
     };
   },
@@ -98,7 +138,7 @@ const root_config = {
   getAllCategories: async (categoryQuery?: any) => {
     const res = await ecomGet("/catalogs", toListParams(categoryQuery));
     return {
-      catalogs: res?.catalogs ?? [],
+      catalogs: normalizeCategories(res?.catalogs ?? []),
       pagination: toPagination(res?.meta),
     };
   },
@@ -110,17 +150,23 @@ const root_config = {
     const path = isCategory ? "/catalogs" : "/products";
     const res = await ecomGet(path, toListParams(data));
     return isCategory
-      ? { catalogs: res?.catalogs ?? [], pagination: toPagination(res?.meta) }
-      : { products: res?.products ?? [], pagination: toPagination(res?.meta) };
+      ? {
+          catalogs: normalizeCategories(res?.catalogs ?? []),
+          pagination: toPagination(res?.meta),
+        }
+      : {
+          products: normalizeProducts(res?.products ?? []),
+          pagination: toPagination(res?.meta),
+        };
   },
 
   // Filter products by category -> GET /products?categories:in=
   filterProductsByCategory: async (data: any) => {
     const res = await ecomGet("/products", {
-      "categories:in": data?.["categories:in"],
+      "categories:in": toIdCsv(data?.["categories:in"]),
     });
     return {
-      products: res?.products ?? [],
+      products: normalizeProducts(res?.products ?? []),
       pagination: toPagination(res?.meta),
     };
   },
@@ -172,7 +218,12 @@ const getSelectedProductsAndCategories = async (
     );
   }
 
-  return { [config.URI_ENDPOINTS[productCategoryQuery?.query]]: response };
+  // Key the result by the STABLE name getFormattedResponse reads
+  // (response.data.products || response.data.catalogs) — NOT URI_ENDPOINTS[query],
+  // which becomes the endpoint path (e.g. "catalog/products") for vendors whose
+  // paths aren't literally "products"/"catalogs", silently breaking rendering.
+  const resultKey = productCategoryQuery?.query === "category" ? "catalogs" : "products";
+  return { [resultKey]: response };
 };
 
 /**
