@@ -1,0 +1,812 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BigCommerce Catalog API (subset exercised by the marketplace boilerplate)",
+    "version": "1.1.0",
+    "description": "Curated OpenAPI spec for the BigCommerce v3 Catalog endpoints that the frontend-only marketplace ecommerce boilerplate exercises (products + categories custom fields, product/category selectors, and the sidebar widget).\nThis is a SUBSET, not the full BigCommerce API. It intentionally omits the long tail of filter operators (`:min`, `:max`, `:greater`, `:less`, `:not_in`, date filters, inventory filters, etc.) and non-catalog services. However, the field names, types, enums, parameter serialization, and response envelopes below were reconciled against BigCommerce's official OpenAPI specs (github.com/bigcommerce/api-specs, reference/catalog/*.yml) on 2026-07-03, so what IS here is accurate. It is intended as an input to the AI workflow that generates vendor-specific commerce apps from a spec.\nAuth note: BigCommerce uses `X-Auth-Token`, NOT `Authorization: Bearer`. In the boilerplate this token is injected server-side via a Contentstack Advanced Settings mapping (`X-Auth-Token: {{map.AUTH_TOKEN}}`), and `store_id` is read on the frontend from `appSdk.getConfig()` and placed in the URL path.\nID-filter serialization: `id:in`, `categories:in`, `category_id:in`, etc. are modeled as arrays with `style: form, explode: false`, i.e. serialized as a plain comma-separated list (`id:in=77,80`). This is the correct contract: passing a JSON-array string like `[77]` yields 422 (error 20203).\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.bigcommerce.com/stores/{store_id}/v3",
+      "description": "BigCommerce v3 store-scoped catalog API",
+      "variables": {
+        "store_id": {
+          "default": "your_store_id",
+          "description": "Store hash / id. In the boilerplate this comes from client config (appSdk.getConfig()) and is templated into the path, not a mapping.\n"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "AuthToken": []
+    }
+  ],
+  "paths": {
+    "/catalog/products": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "List products",
+        "description": "Returns a page of products. The boilerplate uses this for the product selector browse list, the custom-field selected products (via `id:in`), the sidebar widget, and keyword search.\n",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Direction"
+          },
+          {
+            "$ref": "#/components/parameters/IncludeFields"
+          },
+          {
+            "$ref": "#/components/parameters/ExcludeFields"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "description": "Comma-separated sub-resources to embed. The boilerplate requests `primary_image,variants,images`.\n",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "primary_image,variants,images",
+              "enum": [
+                "variants",
+                "images",
+                "custom_fields",
+                "bulk_pricing_rules",
+                "primary_image",
+                "modifiers",
+                "options",
+                "videos"
+              ]
+            }
+          },
+          {
+            "name": "id:in",
+            "in": "query",
+            "description": "Restrict to these product ids. Serialized as a comma-separated list (`id:in=77,80`). A JSON-array string like `[77]` is rejected with 422 (error 20203, \"id param format is invalid\").\n",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "example": [
+              77,
+              80
+            ]
+          },
+          {
+            "name": "categories:in",
+            "in": "query",
+            "description": "Restrict to products in these category ids (comma-separated).",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Full-text search across products.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sku",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "digital",
+                "physical"
+              ]
+            }
+          },
+          {
+            "name": "availability",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "available",
+                "disabled",
+                "preorder"
+              ]
+            }
+          },
+          {
+            "name": "brand_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "is_visible",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged list of products.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          }
+        }
+      }
+    },
+    "/catalog/products/{id}": {
+      "get": {
+        "operationId": "getProduct",
+        "summary": "Get a single product by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "primary_image,variants,images"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IncludeFields"
+          },
+          {
+            "$ref": "#/components/parameters/ExcludeFields"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single product.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSingleResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found."
+          }
+        }
+      }
+    },
+    "/catalog/trees/categories": {
+      "get": {
+        "operationId": "listCategories",
+        "summary": "List categories (from the category trees endpoint)",
+        "description": "Returns categories. NOTE: items are keyed by `category_id` (not `id`) on this endpoint. The boilerplate normalizes `category_id` -> `id` for its internal contract, then re-fetches selected categories via `category_id:in`.\n",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/IncludeFields"
+          },
+          {
+            "$ref": "#/components/parameters/ExcludeFields"
+          },
+          {
+            "name": "category_id:in",
+            "in": "query",
+            "description": "Restrict to these category ids. Comma-separated list (same serialization/422 rule as `id:in`).\n",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "tree_id:in",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "parent_id:in",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_visible",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged list of categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AuthToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Auth-Token",
+        "description": "BigCommerce store API token. Not a Bearer token."
+      }
+    },
+    "parameters": {
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "description": "1-based page number. Boilerplate computes floor(skip/limit)+1.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "description": "Page size.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50
+        }
+      },
+      "Sort": {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "id",
+            "name",
+            "sku",
+            "price",
+            "date_modified",
+            "date_last_imported",
+            "inventory_level",
+            "is_visible",
+            "total_sold"
+          ]
+        }
+      },
+      "Direction": {
+        "name": "direction",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "IncludeFields": {
+        "name": "include_fields",
+        "in": "query",
+        "description": "Comma-separated list of fields to return (whitelist).",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ExcludeFields": {
+        "name": "exclude_fields",
+        "in": "query",
+        "description": "Comma-separated list of fields to omit.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "UnprocessableEntity": {
+        "description": "Validation error. Notably returned (error 20203) when an id filter is passed as a JSON-array string instead of a comma-separated list.\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 422
+                },
+                "title": {
+                  "type": "string",
+                  "example": "The provided id param format is invalid."
+                },
+                "errors": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Pagination": {
+        "type": "object",
+        "description": "BigCommerce meta.pagination block.",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of matching records."
+          },
+          "count": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "previous": {
+                "type": "string"
+              },
+              "current": {
+                "type": "string"
+              },
+              "next": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "total",
+          "current_page"
+        ]
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "CustomUrl": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "is_customized": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Image": {
+        "type": "object",
+        "description": "Catalog product image. The boilerplate reads `url_standard` (with fallbacks) for display. Fields verbatim from BigCommerce's OAS.\n",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "product_id": {
+            "type": "integer"
+          },
+          "is_thumbnail": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image_file": {
+            "type": "string"
+          },
+          "url_zoom": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url_standard": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url_thumbnail": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url_tiny": {
+            "type": "string",
+            "format": "uri"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Variant": {
+        "type": "object",
+        "description": "Product variant (embedded via include=variants). Core fields only; the full variant schema lives in BigCommerce's product-variants spec.\n",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "product_id": {
+            "type": "integer"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "inventory_level": {
+            "type": "integer"
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "description": "Products are keyed on `id`. Fields reconciled with BigCommerce's OAS.",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "digital",
+              "physical"
+            ]
+          },
+          "sku": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "depth": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "cost_price": {
+            "type": "number"
+          },
+          "retail_price": {
+            "type": "number"
+          },
+          "sale_price": {
+            "type": "number"
+          },
+          "calculated_price": {
+            "type": "number"
+          },
+          "map_price": {
+            "type": "number"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "brand_id": {
+            "type": "integer"
+          },
+          "brand_name": {
+            "type": "string"
+          },
+          "inventory_level": {
+            "type": "integer"
+          },
+          "inventory_tracking": {
+            "type": "string",
+            "enum": [
+              "none",
+              "product",
+              "variant"
+            ]
+          },
+          "is_visible": {
+            "type": "boolean"
+          },
+          "is_featured": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "available",
+              "disabled",
+              "preorder"
+            ]
+          },
+          "availability_description": {
+            "type": "string"
+          },
+          "upc": {
+            "type": "string"
+          },
+          "gtin": {
+            "type": "string"
+          },
+          "mpn": {
+            "type": "string"
+          },
+          "page_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "meta_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "custom_url": {
+            "$ref": "#/components/schemas/CustomUrl"
+          },
+          "date_created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "primary_image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Image"
+            }
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variant"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Category": {
+        "type": "object",
+        "description": "Category from the trees endpoint, keyed on `category_id` (the boilerplate maps this to `id` internally).\n",
+        "properties": {
+          "category_id": {
+            "type": "integer"
+          },
+          "parent_id": {
+            "type": "integer"
+          },
+          "tree_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "is_visible": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "page_title": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url": {
+            "$ref": "#/components/schemas/CustomUrl"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        },
+        "required": [
+          "category_id",
+          "name"
+        ]
+      },
+      "ProductListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "ProductSingleResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "CategoryListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      }
+    }
+  }
+}
