@@ -1,0 +1,592 @@
+openapi: 3.0.3
+info:
+  title: Mock Ecommerce Vendor API (ecommerce-mock-server)
+  version: "1.0.0"
+  description: >
+    OpenAPI spec for the bundled mock vendor API in `ecommerce-mock-server/`.
+    This Express server stands in for a real third-party ecommerce platform so
+    the marketplace app can be exercised end-to-end (frontend -> Contentstack
+    Advanced Settings Rewrites -> this server) without calling or
+    authenticating against a real vendor.
+
+    Authored directly from the server source (routes/, lib/store.js,
+    middleware/auth.js, config.js) and the shipped dataset (data/products.js,
+    data/categories.js), so it reflects exactly what the mock returns.
+
+    Auth: every /products and /catalogs request requires
+    `Authorization: Bearer <ECOM_API_KEY>`. In the Contentstack flow the
+    frontend sends `Bearer {{map.API_KEY}}` and Advanced Settings substitutes
+    the real key server-side before the request reaches this server. `/` and
+    `/health` are open (no key).
+
+    Response envelopes (note: NOT BigCommerce's `data`/`meta.pagination` shape):
+      list products  -> { products: [...], meta }
+      single product -> { product: {...} }
+      list catalogs  -> { catalogs: [...], meta }
+      single catalog -> { catalog: {...} }
+    where meta = { total, count, limit (nullable), offset }.
+
+servers:
+  - url: http://localhost:{port}
+    description: Local dev server (default PORT 8080; matches scripts/dev-setup.sh and the dev tunnel).
+    variables:
+      port:
+        default: "8080"
+
+security:
+  - ApiKeyBearer: []
+
+paths:
+  /:
+    get:
+      operationId: getIndex
+      summary: API index + advertised endpoints
+      security: []
+      responses:
+        "200":
+          description: Service metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Mock Ecommerce Vendor API
+                  status:
+                    type: string
+                    example: ok
+                  endpoints:
+                    type: array
+                    items:
+                      type: string
+
+  /health:
+    get:
+      operationId: getHealth
+      summary: Liveness probe
+      security: []
+      responses:
+        "200":
+          description: Service is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /products:
+    get:
+      operationId: listProducts
+      summary: List / filter products
+      description: >
+        Filters are ANDed. Absent filters are ignored. When no `limit` is
+        passed the full (small) dataset is returned.
+      parameters:
+        - $ref: "#/components/parameters/IdIn"
+        - name: "sku:in"
+          in: query
+          description: Filter by product SKUs (comma-separated).
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: "categories:in"
+          in: query
+          description: Filter to products belonging to any of these category ids (comma-separated).
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+        - $ref: "#/components/parameters/Query"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: A page of products.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /products/search:
+    get:
+      operationId: searchProducts
+      summary: Search products (same filters as GET /products)
+      description: >
+        Identical behavior/handler to GET /products; exists to mirror a real
+        vendor that exposes a distinct search endpoint.
+      parameters:
+        - $ref: "#/components/parameters/IdIn"
+        - name: "sku:in"
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: "categories:in"
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+        - $ref: "#/components/parameters/Query"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: A page of matching products.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /products/{id}:
+    get:
+      operationId: getProductById
+      summary: Get a single product by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The product.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductSingleResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /catalogs:
+    get:
+      operationId: listCatalogs
+      summary: List / filter catalogs (categories)
+      parameters:
+        - $ref: "#/components/parameters/IdIn"
+        - $ref: "#/components/parameters/Query"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: A page of catalogs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /catalogs/{id}:
+    get:
+      operationId: getCatalogById
+      summary: Get a single catalog by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The catalog.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogSingleResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  securitySchemes:
+    ApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: >
+        Static API key sent as `Authorization: Bearer <ECOM_API_KEY>`. Not a
+        JWT. Injected server-side by Contentstack Advanced Settings as
+        `Bearer {{map.API_KEY}}`.
+
+  parameters:
+    IdIn:
+      name: "id:in"
+      in: query
+      description: Filter by ids (comma-separated, e.g. `id:in=77,80`).
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: integer
+    Query:
+      name: q
+      in: query
+      description: >
+        Free-text search over name/sku/description (products) or
+        name/description (catalogs). Aliases `query` and `keyword` are also
+        accepted; precedence is q > query > keyword.
+      required: false
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      description: Max items to return. Omit to return everything (dataset is small).
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+    Offset:
+      name: offset
+      in: query
+      description: Number of items to skip.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Meta:
+      type: object
+      description: Pagination metadata returned alongside every list.
+      properties:
+        total:
+          type: integer
+          description: Total records matching the filters (before paging).
+        count:
+          type: integer
+          description: Records in this response.
+        limit:
+          type: integer
+          nullable: true
+          description: Applied limit; null when unpaginated.
+        offset:
+          type: integer
+      required:
+        - total
+        - count
+        - offset
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        is_thumbnail:
+          type: boolean
+        sort_order:
+          type: integer
+        description:
+          type: string
+        image_file:
+          type: string
+        url_zoom:
+          type: string
+          format: uri
+        url_standard:
+          type: string
+          format: uri
+        url_thumbnail:
+          type: string
+          format: uri
+        url_tiny:
+          type: string
+          format: uri
+        date_modified:
+          type: string
+          format: date-time
+
+    CustomUrl:
+      type: object
+      properties:
+        url:
+          type: string
+        is_customized:
+          type: boolean
+
+    CategoryUrl:
+      type: object
+      properties:
+        path:
+          type: string
+        is_customized:
+          type: boolean
+
+    CsMetadata:
+      type: object
+      description: Contentstack-specific metadata attached to dataset records.
+      properties:
+        multiConfigName:
+          type: string
+        isConfigDeleted:
+          type: boolean
+
+    VariantOptionValue:
+      type: object
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+        option_id:
+          type: integer
+        option_display_name:
+          type: string
+
+    Variant:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        sku:
+          type: string
+        sku_id:
+          type: integer
+        price:
+          type: number
+          nullable: true
+        calculated_price:
+          type: number
+        sale_price:
+          type: number
+          nullable: true
+        retail_price:
+          type: number
+          nullable: true
+        image_url:
+          type: string
+        inventory_level:
+          type: integer
+        option_values:
+          type: array
+          items:
+            $ref: "#/components/schemas/VariantOptionValue"
+
+    Product:
+      type: object
+      description: >
+        Product record. Shaped like a BigCommerce catalog product (the dataset
+        was seeded from BigCommerce sample data). Only the commonly used fields
+        are enumerated; `additionalProperties` is true because records carry
+        many more attributes verbatim.
+      additionalProperties: true
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [physical, digital]
+        sku:
+          type: string
+        description:
+          type: string
+        weight:
+          type: number
+        price:
+          type: number
+        cost_price:
+          type: number
+        retail_price:
+          type: number
+        sale_price:
+          type: number
+        calculated_price:
+          type: number
+        categories:
+          type: array
+          items:
+            type: integer
+        brand_id:
+          type: integer
+        inventory_level:
+          type: integer
+        inventory_tracking:
+          type: string
+        is_visible:
+          type: boolean
+        is_featured:
+          type: boolean
+        availability:
+          type: string
+        sort_order:
+          type: integer
+        upc:
+          type: string
+        gtin:
+          type: string
+        mpn:
+          type: string
+        page_title:
+          type: string
+        meta_keywords:
+          type: array
+          items:
+            type: string
+        meta_description:
+          type: string
+        custom_url:
+          $ref: "#/components/schemas/CustomUrl"
+        date_created:
+          type: string
+          format: date-time
+        date_modified:
+          type: string
+          format: date-time
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        primary_image:
+          $ref: "#/components/schemas/Image"
+        variants:
+          type: array
+          items:
+            $ref: "#/components/schemas/Variant"
+        cs_metadata:
+          $ref: "#/components/schemas/CsMetadata"
+      required:
+        - id
+        - name
+
+    Catalog:
+      type: object
+      description: Catalog (category) record. Keyed on `id`.
+      additionalProperties: true
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+        tree_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        views:
+          type: integer
+        sort_order:
+          type: integer
+        page_title:
+          type: string
+        search_keywords:
+          type: string
+        meta_keywords:
+          type: array
+          items:
+            type: string
+        meta_description:
+          type: string
+        layout_file:
+          type: string
+        is_visible:
+          type: boolean
+        default_product_sort:
+          type: string
+        url:
+          $ref: "#/components/schemas/CategoryUrl"
+        image_url:
+          type: string
+        cs_metadata:
+          $ref: "#/components/schemas/CsMetadata"
+      required:
+        - id
+        - name
+
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+        - products
+        - meta
+
+    ProductSingleResponse:
+      type: object
+      properties:
+        product:
+          $ref: "#/components/schemas/Product"
+      required:
+        - product
+
+    CatalogListResponse:
+      type: object
+      properties:
+        catalogs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Catalog"
+        meta:
+          $ref: "#/components/schemas/Meta"
+      required:
+        - catalogs
+        - meta
+
+    CatalogSingleResponse:
+      type: object
+      properties:
+        catalog:
+          $ref: "#/components/schemas/Catalog"
+      required:
+        - catalog

@@ -53,6 +53,11 @@ marketplace-ecomm-boilerplate-app
 |-- scripts                        # create/manage/deploy the marketplace app (see scripts/README.md)
 |   |-- settings                   # app manifests & installation details
 |   |-- src
+|-- specs                          # OpenAPI specs (reference; not built or deployed)
+|   |-- ecommerce-mock-server-openapi.yaml   # contract for the bundled mock vendor server
+|   |-- ecommerce-mock-server-openapi.json   #   (same spec, JSON)
+|   |-- bigcommerce-catalog-openapi.yaml     # BigCommerce v3 Catalog subset exercised by the app
+|   |-- bigcommerce-catalog-openapi.json     #   (same spec, JSON)
 |-- ui                             # the React app (this is what gets deployed)
 |   |-- public
 |   |-- src
@@ -276,6 +281,15 @@ To create and deploy the production marketplace app on Launch, see [scripts/READ
 To adapt this boilerplate to your ecommerce platform, you mainly change `ui/src/root_config/index.tsx` (how UI elements/data are shaped) and `ui/src/services/` (how the vendor API is called). See [`TEMPLATE.md`](./TEMPLATE.md) for full details on the root config and the ecommerce data layer.
 
 Reference implementations for platforms like BigCommerce and SAP Commerce Cloud are available under the `examples/` directory. You can copy the contents of `examples/<APPNAME>/ui/root_config/index.ts` into `ui/src/root_config/index.tsx` and adapt the service layer accordingly.
+
+## API Specifications (`specs/`)
+
+The `specs/` directory holds OpenAPI 3.0 specifications describing the ecommerce APIs the app talks to. They are **reference documents only** — nothing here is built, imported, or deployed — useful for exploring endpoints (e.g. in Swagger UI), generating clients, or as an input when adapting the boilerplate to a new vendor.
+
+* `ecommerce-mock-server-openapi.{yaml,json}` — the bundled mock vendor server (`ecommerce-mock-server/`): its endpoints, `Authorization: Bearer` auth, query filters, and `{ products/catalogs, meta }` response envelopes. Authored from the server source.
+* `bigcommerce-catalog-openapi.{yaml,json}` — the subset of BigCommerce's v3 Catalog API the app exercises (products + categories), reconciled against BigCommerce's official specs. A worked example of a real vendor contract.
+
+Each spec is provided in both YAML and JSON; the two are equivalent.
 
 ## Documentation Link
 
