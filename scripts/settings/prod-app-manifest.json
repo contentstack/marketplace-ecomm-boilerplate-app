@@ -61,18 +61,25 @@
     "environment_uid": "",
     "project_uid": ""
   },
-  "webhook": {
-    "signed": true,
-    "enabled": true,
-    "custom_headers": [],
-    "target_url": "https://example.com/webhook",
-    "channels": [
-      "cs.apps.installations.install",
-      "cs.apps.installations.uninstall",
-      "cs.apps.installations.update"
-    ],
-    "notifiers": [],
-    "branch_scope": "main"
+  "advanced_settings": {
+    "variables": {},
+    "mappings": {
+      "AUTH_TOKEN": "auth_token"
+    },
+    "rewrites": [
+      {
+        "source": "",
+        "destination": ""
+      },
+      {
+        "source": "",
+        "destination": ""
+      },
+      {
+        "source": "",
+        "destination": ""
+      }
+    ]
   },
   "uid": ""
 }
