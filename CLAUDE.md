@@ -18,7 +18,7 @@ What a copy inherits (so a change here reaches every future copy; existing copie
 How to copy it: create a new repo from this one; rename `name` in `ui/package.json` and `api/package.json`; set `<title>` in `ui/public/index.html` and the favicon; copy `ui/.env.example` to `ui/.env`; replace `ui/src/root_config/index.ts` and `api/root_config/index.ts` with your vendor's, starting from `examples/bigcommerce/` or `examples/sapcc/`; see `TEMPLATE.md`.
 
 - `ui/`: React 18 CRA, `BrowserRouter` (a `HomeRedirectHandler` works around iframe path detection), port 4000. Routes: `/config`, `/product-field`, `/category-field`, `/sidebar-widget`, `/selector-page`. Manifest `ui/update-app-info.json` has `/config`, `/field-extension`, `/product-field`, `/sidebar-widget`; there is no `/category-field` entry although the route exists.
-- `api/`: TypeScript Lambda handler (`api/index.ts`, `api/handler/index.ts`), decrypts sensitive config keys with CryptoJS. `api/constants/index.ts` holds a decryption password literal in source: treat as a finding, do not copy it to a real app.
+- `api/`: TypeScript Lambda handler (`api/index.ts`, `api/handler/index.ts`), decrypts sensitive config keys with CryptoJS. `api/constants/index.ts` has an empty `DECRYPTION.password` with a note to add one: a copy must supply it without committing the value.
 - `examples/`: `bigcommerce` and `sapcc` `root_config` samples for ui and api.
 - Env var names: `REACT_APP_API_URL`, `REACT_APP_UI_URL` (read by the code); `TEMPLATE.md` also lists `REACT_APP_NAME`, `SELECTOR_PAGE_LOGO`, `APP_ENG_NAME`, `UNIQUE_KEY`, `FETCH_PER_PAGE` as root-config fields.
 - Tests: 8 Jest spec files in `ui/src/` (4 hooks, 4 containers). None for `api/`, which has a `jest` script but no config or specs.
