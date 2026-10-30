@@ -15,9 +15,13 @@
   "scripts": {
     "dev": "nodemon --exec ts-node server.ts",
     "test": "jest",
+    "test:security": "node --test tests/noSecretLogs.test.ts",
     "prettify": "prettier --write .",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/'  --ignore-pattern '.eslintrc.js'",
     "precommit": "npm run prettify && npm run lint:fix"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/", "noSecretLogs"]
   },
   "author": "Contentstack",
   "license": "ISC",
