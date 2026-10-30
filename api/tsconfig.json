@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["constants", "example", "handler", "root_config", "server", "src"]
+  "include": ["constants", "example", "handler", "root_config", "utils", "server", "src"]
 }
