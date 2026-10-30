@@ -56,7 +56,9 @@ describe("Products field (CustomField)", () => {
   it("opens selector window when add is clicked", async () => {
     const { container } = render(<ProductsField />);
     await waitFor(() => {
-      expect(container.querySelector("button.add-product-btn")).toBeTruthy();
+      const btn = container.querySelector("button.add-product-btn") as HTMLButtonElement;
+      expect(btn).toBeTruthy();
+      expect(btn.disabled).toBe(false);
     });
     fireEvent.click(container.querySelector("button.add-product-btn")!);
     expect(window.open).toHaveBeenCalled();
