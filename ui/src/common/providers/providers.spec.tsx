@@ -237,7 +237,7 @@ describe("ErrorBoundary", () => {
     expect(screen.getByText("fine")).toBeInTheDocument();
   });
 
-  // BUG: componentDidCatch rethrows (`throw new Error(errorInfo)`), so the "Something went wrong." fallback never
+  // BUG: TODO-BUG(ecomm-6) componentDidCatch rethrows (`throw new Error(errorInfo)`), so the "Something went wrong." fallback never
   // stays on screen and the error escapes the boundary. No Jira key yet; raise under Epic MKT-19906.
   it.skip("shows the fallback instead of rethrowing", () => {
     jest.spyOn(console, "error").mockImplementation(() => {});

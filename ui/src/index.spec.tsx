@@ -142,7 +142,7 @@ describe("entry at the manifest paths", () => {
     );
   });
 
-  // BUG: App/index.tsx:45 tests the Promise from the async verifyAppSigning, which is always truthy, so an
+  // BUG: TODO-BUG(ecomm-1) App/index.tsx:45 tests the Promise from the async verifyAppSigning, which is always truthy, so an
   // unsigned request still renders the app (security-gaps G6; no Jira key yet, raise under Epic MKT-19906).
   it.skip("refuses to render without a valid app token", async () => {
     mockInit.mockResolvedValue(sdkFor(fieldLocation()));

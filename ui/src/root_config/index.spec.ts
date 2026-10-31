@@ -162,7 +162,7 @@ describe("template defaults", () => {
     );
   });
 
-  // BUG: SelectorPage/index.tsx passes `data?.id` (a bare id) but getOpenerLink reads `data?.id` again, so the
+  // BUG: TODO-BUG(ecomm-5) SelectorPage/index.tsx passes `data?.id` (a bare id) but getOpenerLink reads `data?.id` again, so the
   // hover "open in app" link ends in /undefined. No Jira key yet; raise under Epic MKT-19906.
   it.skip("builds a working link from the id the selector passes", () => {
     expect(rootConfig.getOpenerLink(7, {}, "product")).toMatch(/edit\/7$/);
