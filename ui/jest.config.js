@@ -48,7 +48,7 @@ module.exports = {
 
   // An object that configures minimum threshold enforcement for coverage results
   // ratchet target 90 — MKT-19936
-  coverageThreshold: { global: { lines: 82, branches: 57 } },
+  coverageThreshold: { global: { lines: 83, branches: 57 } },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,

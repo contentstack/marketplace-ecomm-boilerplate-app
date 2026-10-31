@@ -10,13 +10,6 @@ const isEmpty = (val: any): boolean =>
   (typeof val === "object" && !Object.keys(val)?.length) ||
   (typeof val === "string" && !val.trim().length);
 
-const filterFetchedArray = (array: any[]) => {
-  const tempFetchedList = [...array];
-  return Array.from(new Set(tempFetchedList?.map((a) => a.id))).map((id) =>
-    tempFetchedList.find((a) => a.id === id)
-  );
-};
-
 const popupWindow = (windowDetails: TypePopupWindowDetails) => {
   const left = window.screen.width / 2 - windowDetails.w / 2;
   const top = window.screen.height / 2 - windowDetails.h / 2;
@@ -41,43 +34,6 @@ const mergeObjects = (target: any, source: any) => {
   return target;
 };
 
-const getCurrencySymbol = (code: string) => {
-  switch (code) {
-    case "USD":
-      return "$"; // US Dollar
-    case "EUR":
-      return "€"; // Euro
-    case "CRC":
-      return "₡"; // Costa Rican Colón
-    case "GBP":
-      return "£"; // British Pound Sterling
-    case "ILS":
-      return "₪"; // Israeli New Sheqel
-    case "INR":
-      return "₹"; // Indian Rupee
-    case "JPY":
-      return "¥"; // Japanese Yen
-    case "KRW":
-      return "₩"; // South Korean Won
-    case "NGN":
-      return "₦"; // Nigerian Naira
-    case "PHP":
-      return "₱"; // Philippine Peso
-    case "PLN":
-      return "zł"; // Polish Zloty
-    case "PYG":
-      return "₲"; // Paraguayan Guarani
-    case "THB":
-      return "฿"; // Thai Baht
-    case "UAH":
-      return "₴"; // Ukrainian Hryvnia
-    case "VND":
-      return "₫"; // Vietnamese Dong
-    default:
-      return "";
-  }
-};
-
 const wrapWithDiv = (description: string) =>
   description ? (
     <div
@@ -91,9 +47,6 @@ const wrapWithDiv = (description: string) =>
 
 const findProduct = (products: any, id: any) =>
   products?.find((p: any) => p?.id === id) || {};
-
-const findProductIndex = (products: any, id: any) =>
-  products?.findIndex((p: any) => p?.id === id);
 
 const getImage = (url: string, customField: boolean = false) =>
   url ? (
@@ -130,90 +83,6 @@ const getImage = (url: string, customField: boolean = false) =>
     </div>
   );
 
-const productColumns = [
-  {
-    Header: "Product Id",
-    id: "code",
-    accessor: "code",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Image",
-    accessor: (obj: any) =>
-      obj?.images?.[0]?.url ?
-        getImage(
-            `https://api.ct8lafaf1m-contentst1-d1-public.model-t.cc.commerce.ondemand.com${obj?.images?.[0]?.url}`
-          )
-        : getImage(obj?.images?.[0]?.url),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.7,
-  },
-  {
-    Header: "Product Name",
-    id: "name",
-    accessor: "name",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3,
-  },
-  {
-    Header: "Price",
-    accessor: (obj: any) => obj?.price?.formattedValue,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 1,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 3.5,
-  },
-];
-const categoryColumns = [
-  {
-    Header: "ID",
-    id: "id",
-    accessor: "id",
-    default: true,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 0.8,
-  },
-  {
-    Header: "Category Name",
-    id: "name",
-    accessor: "name",
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Custom URL",
-    accessor: (obj: any) => obj?.custom_url?.url || obj?.url,
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-  },
-  {
-    Header: "Description",
-    accessor: (obj: any) => wrapWithDiv(obj?.description),
-    default: false,
-    disableSortBy: true,
-    addToColumnSelector: true,
-    columnWidthMultiplier: 4,
-  },
-];
-
 const gridViewDropdown = [
   {
     label: (
@@ -248,9 +117,6 @@ const getTypeLabel = (type: string, length: number) => {
   return "Product";
 };
 
-const getRowsStatus = (len: number, loading: boolean = true) => ({
-  ...[...Array(len)]?.map(() => (loading ? "loading" : "loaded")),
-});
 const EmptyObjForSearchCase: any = {
   heading: (
     <h4 style={{ color: "#222222" }}>{localeTexts.EmptyObj.NoResults}</h4>
@@ -308,18 +174,12 @@ const arrangeSelectedIds = (sortedIdsArray: any[], dataArray: any[]) => {
 export {
   isEmpty,
   popupWindow,
-  filterFetchedArray,
   mergeObjects,
-  productColumns,
-  categoryColumns,
   gridViewDropdown,
   wrapWithDiv,
   getTypeLabel,
-  getCurrencySymbol,
   findProduct,
-  findProductIndex,
   getImage,
-  getRowsStatus,
   EmptyObjForSearchCase,
   arrangeSelectedIds,
   getItemStatusMap,
