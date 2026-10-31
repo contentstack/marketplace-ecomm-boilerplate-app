@@ -187,8 +187,8 @@ describe("custom field: saved data shape", () => {
 });
 
 describe("custom field: items the vendor returns without optional fields", () => {
-  // BUG: returnFormattedProduct falls back to `description: {}`, which Product.tsx passes to removeHTMLTags,
-  // so a product with no description throws while rendering. No Jira key yet; raise under Epic MKT-19906.
+  // BUG: MKT-20839 returnFormattedProduct falls back to `description: {}`, which Product.tsx passes to removeHTMLTags,
+  // so a product with no description throws while rendering.
   it.skip("renders a product that has no description", async () => {
     initSdk(config, { data: [{ id: 1 }] });
     vendorReturns([{ id: 1, name: "One", price: 1 }]);
@@ -267,8 +267,8 @@ describe("custom field: selector popup handshake", () => {
     expect(open).toHaveBeenCalledTimes(2);
   });
 
-  // BUG: the beforeunload listener is added once with the first render's `childWindow`, but handleClick sets the
-  // variable of a later render, so the popup is never closed on unload. No Jira key yet; raise under Epic MKT-19906.
+  // BUG: MKT-20838 the beforeunload listener is added once with the first render's `childWindow`, but handleClick sets the
+  // variable of a later render, so the popup is never closed on unload.
   it.skip("closes the popup when the page unloads", async () => {
     initSdk();
     const popup = {
@@ -284,8 +284,7 @@ describe("custom field: selector popup handshake", () => {
     expect(popup.close).toHaveBeenCalled();
   });
 
-  // BUG: CustomField/index.tsx handleMessage trusts any window message without checking event.origin
-  // (security-gaps G7; no Jira key yet, raise under Epic MKT-19906).
+  // BUG: MKT-20269 CustomField/index.tsx handleMessage trusts any window message without checking event.origin
   it.skip("ignores messages from another origin", async () => {
     initSdk();
     const popup = {
