@@ -3,6 +3,7 @@
 import axios from "axios";
 import constants from "../constants";
 import root_config from "../root_config";
+import { describeError } from "../utils/safeLog";
 
 const _getApiOptions: any = (
   {
@@ -50,7 +51,7 @@ const _makeApiCall: any = async (opts: any) => {
       };
     }
     console.error(constants.HTTP_ERROR_TEXTS.API_ERROR);
-    console.error(e);
+    console.error(describeError(e));
     throw e;
   }
 };
@@ -83,7 +84,7 @@ const getByCategoryId = (data: any, query: any, key: any) =>
   )
     .then((response) => response)
     .catch((err: any) => {
-      console.error(err);
+      console.error(describeError(err));
     });
 
 // get an array of selected products and categories

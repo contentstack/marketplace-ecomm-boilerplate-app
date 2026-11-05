@@ -1,3 +1,4 @@
+import "./utils/installSafeLog";
 import CryptoJS from "crypto-js";
 import constants from "./constants";
 import {
@@ -7,6 +8,7 @@ import {
   filterByCategory,
 } from "./handler";
 import root_config from "./root_config";
+import { describeError } from "./utils/safeLog";
 
 const _isEmpty: any = (val: any) =>
   val === undefined ||
@@ -46,8 +48,6 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     }
   }
   try {
-    console.info(constants.LOGS.REQ_BODY, body);
-    console.info(constants.LOGS.QUERY_PARAMS, query);
     const resErr: any = new Error();
     if (_isEmpty(body)) {
       resErr.statusCode = constants.HTTP_ERROR_CODES.BAD_REQ;
@@ -80,7 +80,8 @@ const handler: any = async ({ queryStringParameters: query, body }: any) => {
     statusCode = e?.statusCode || constants.HTTP_ERROR_CODES.SOMETHING_WRONG;
     message = e?.message || constants.HTTP_ERROR_TEXTS.SOMETHING_WENT_WRONG;
     console.error(
-      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`
+      `Error: stack_api_key: ${query?.stack_apiKey}, status_code: ${statusCode}, error_message: ${message}`,
+      describeError(e)
     );
   }
   const res = {
