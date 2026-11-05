@@ -31,6 +31,7 @@
     "startWin": "SET PORT=4000 && react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "eject": "react-scripts eject",
     "prettify": "prettier --write .",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . --ignore-pattern './node_modules/' --ignore-pattern './build/' --ignore-pattern '.eslintrc.js'",

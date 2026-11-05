@@ -18,16 +18,22 @@ module.exports = {
   clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: true,
+  collectCoverage: false,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/common/types/**", // type-only
+    "!src/types/**", // type-only
+  ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/src/services/"],
+  coveragePathIgnorePatterns: ["/node_modules/"],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "v8",
@@ -41,7 +47,8 @@ module.exports = {
   // ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  // ratchet target 90 — MKT-19936
+  coverageThreshold: { global: { lines: 82, branches: 56 } },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -75,7 +82,7 @@ module.exports = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-      "<rootDir>/jest.IMAGEtub.js",
+      "<rootDir>/jest.CSStub.js",
     "\\.(css|less|scss|svg)$": "<rootDir>/jest.CSStub.js",
     "^jose$": "<rootDir>/jest.jose.mock.js",
   },
